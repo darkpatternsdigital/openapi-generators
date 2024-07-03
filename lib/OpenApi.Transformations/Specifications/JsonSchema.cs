@@ -7,7 +7,7 @@ namespace PrincipleStudios.OpenApi.Transformations.Specifications;
 
 public abstract class JsonSchema
 {
-	public abstract Uri Id { get; }
+	public abstract NodeMetadata Metadata { get; }
 	public virtual IReadOnlyCollection<IJsonSchemaAnnotation> Annotations => Array.Empty<IJsonSchemaAnnotation>();
 	public virtual bool? BoolValue => null;
 
@@ -16,9 +16,9 @@ public abstract class JsonSchema
 
 public record EvaluationContext(DocumentRegistry DocumentRegistry);
 
-public class JsonSchemaBool(Uri id, bool value) : JsonSchema
+public class JsonSchemaBool(NodeMetadata metadata, bool value) : JsonSchema
 {
-	public override Uri Id => id;
+	public override NodeMetadata Metadata => metadata;
 
 	public override bool? BoolValue => value;
 
@@ -26,7 +26,7 @@ public class JsonSchemaBool(Uri id, bool value) : JsonSchema
 	{
 		return value
 			? Enumerable.Empty<DiagnosticBase>()
-			: [new FalseJsonSchemasFailDiagnostic(id, evaluationContext.DocumentRegistry.ResolveLocation(nodeMetadata))];
+			: [new FalseJsonSchemasFailDiagnostic(metadata.Id, evaluationContext.DocumentRegistry.ResolveLocation(nodeMetadata))];
 	}
 }
 
@@ -36,13 +36,13 @@ public class AnnotatedJsonSchema : JsonSchema
 {
 	private readonly List<IJsonSchemaAnnotation> keywords;
 
-	public AnnotatedJsonSchema(Uri id, IEnumerable<IJsonSchemaAnnotation> keywords)
+	public AnnotatedJsonSchema(NodeMetadata metadata, IEnumerable<IJsonSchemaAnnotation> keywords)
 	{
-		this.Id = id;
+		this.Metadata = metadata;
 		this.keywords = keywords.ToList();
 	}
 
-	public override Uri Id { get; }
+	public override NodeMetadata Metadata { get; }
 
 	public override IReadOnlyCollection<IJsonSchemaAnnotation> Annotations => keywords.AsReadOnly();
 

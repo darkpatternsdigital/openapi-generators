@@ -16,7 +16,7 @@ public static class JsonSchemaParser
 			case JsonObject obj:
 				return DeserializeKeywords(obj);
 			case JsonValue v when v.TryGetValue<bool>(out var boolValue):
-				return DiagnosableResult<JsonSchema>.Pass(new JsonSchemaBool(nodeInfo.Id, boolValue));
+				return DiagnosableResult<JsonSchema>.Pass(new JsonSchemaBool(nodeInfo.Metadata, boolValue));
 			default:
 				return DiagnosableResult<JsonSchema>.Fail(nodeInfo.Metadata, options.Registry, UnableToParseSchema.Builder());
 		}
@@ -30,7 +30,7 @@ public static class JsonSchemaParser
 			if (diagnostics.Length > 0) return DiagnosableResult<JsonSchema>.Fail(diagnostics);
 
 			return DiagnosableResult<JsonSchema>.Pass(new AnnotatedJsonSchema(
-				nodeInfo.Id,
+				nodeInfo.Metadata,
 				keywords.OfType<DiagnosableResult<IJsonSchemaAnnotation>.Success>().Select(k => k.Value)
 			));
 		}

@@ -12,7 +12,7 @@ public record OpenApiResponse(
 	IReadOnlyList<OpenApiParameter> Headers,
 	IReadOnlyDictionary<string, OpenApiMediaTypeObject>? Content
 
-) : IReferenceableDocument
+) : IReferenceableDocumentNode
 {
 	// links?
 }

@@ -10,4 +10,4 @@ public record OpenApiContact(
 	string? Name,
 	Uri? Url,
 	string? Email
-) : IReferenceableDocument;
+) : IReferenceableDocumentNode;

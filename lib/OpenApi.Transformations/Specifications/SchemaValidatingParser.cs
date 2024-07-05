@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace PrincipleStudios.OpenApi.Transformations.Specifications;
 
 public abstract class SchemaValidatingParser<TInterface> : IParser<TInterface>
-	where TInterface : class, IReferenceableDocument
+	where TInterface : class, IReferenceableDocumentNode
 {
 	private readonly Func<DocumentRegistry, JsonSchema> schemaResolver;
 

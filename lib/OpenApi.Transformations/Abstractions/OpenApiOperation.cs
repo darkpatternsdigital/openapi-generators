@@ -20,7 +20,7 @@ public record OpenApiOperation(
 	OpenApiResponses? Responses,
 
 	bool Deprecated
-) : IReferenceableDocument
+) : IReferenceableDocumentNode
 {
 
 	// externalDocs?

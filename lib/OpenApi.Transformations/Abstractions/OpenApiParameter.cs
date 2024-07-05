@@ -20,7 +20,7 @@ public record OpenApiParameter(
 	string Style,
 	bool Explode,
 	JsonSchema? Schema
-) : IReferenceableDocument
+) : IReferenceableDocumentNode
 {
 }
 

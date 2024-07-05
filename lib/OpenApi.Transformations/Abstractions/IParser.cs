@@ -7,14 +7,14 @@ using System.Text;
 namespace PrincipleStudios.OpenApi.Transformations.Abstractions;
 
 public interface IParser<TResult>
-	where TResult : class, IReferenceableDocument
+	where TResult : class, IReferenceableDocumentNode
 {
 	bool CanParse(IDocumentReference documentReference);
 	ParseResult<TResult> Parse(IDocumentReference documentReference, DocumentRegistry documentRegistry);
 }
 
 public record ParseResult<TResult>(TResult? Document, IReadOnlyList<Diagnostics.DiagnosticBase> Diagnostics)
-	where TResult : class, IReferenceableDocument
+	where TResult : class, IReferenceableDocumentNode
 {
 	public bool HasDocument => Document != null;
 }

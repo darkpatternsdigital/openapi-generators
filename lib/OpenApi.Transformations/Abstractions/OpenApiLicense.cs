@@ -10,4 +10,4 @@ public record OpenApiLicense(
 	string Name,
 	Uri? Url,
 	string? Identifier
-) : IReferenceableDocument;
+) : IReferenceableDocumentNode;

@@ -15,6 +15,6 @@ public record OpenApiInfo(
 	OpenApiContact? Contact,
 	OpenApiLicense? License,
 	string Version
-) : IReferenceableDocument
+) : IReferenceableDocumentNode
 {
 }

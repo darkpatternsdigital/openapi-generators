@@ -13,7 +13,7 @@ public record OpenApiPath(
 	string? Description,
 
 	IReadOnlyDictionary<string, OpenApiOperation> Operations
-) : IReferenceableDocument
+) : IReferenceableDocumentNode
 {
 	// TODO: parameters
 	// servers?

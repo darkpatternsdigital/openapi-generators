@@ -11,4 +11,4 @@ public record OpenApiRequestBody(
 	string? Description,
 	IReadOnlyDictionary<string, OpenApiMediaTypeObject>? Content,
 	bool Required
-) : IReferenceableDocument;
+) : IReferenceableDocumentNode;

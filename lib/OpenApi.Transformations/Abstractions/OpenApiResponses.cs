@@ -10,4 +10,4 @@ public record OpenApiResponses(
 	Uri Id,
 	OpenApiResponse? Default,
 	IReadOnlyDictionary<int, OpenApiResponse> StatusCodeResponses
-) : IReferenceableDocument;
+) : IReferenceableDocumentNode;

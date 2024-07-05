@@ -9,4 +9,4 @@ namespace PrincipleStudios.OpenApi.Transformations.Abstractions;
 public record OpenApiMediaTypeObject(
 	Uri Id,
 	JsonSchema? Schema
-) : IReferenceableDocument;
+) : IReferenceableDocumentNode;

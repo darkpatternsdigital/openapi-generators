@@ -37,6 +37,8 @@ public class DiscriminatorKeyword(string keyword, string propertyName, IReadOnly
 	public string PropertyName => propertyName;
 	public IReadOnlyDictionary<string, Uri>? Mapping => mapping;
 
+	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
+
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
 	{
 		// TODO

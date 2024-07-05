@@ -27,6 +27,8 @@ public class AnyOfKeyword(string keyword, IReadOnlyList<JsonSchema> schemas) : I
 
 	public IReadOnlyList<JsonSchema> Schemas => schemas;
 
+	public IEnumerable<JsonSchema> GetReferencedSchemas() => Schemas;
+
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
 	{
 		var results = Schemas.Select(s => s.Evaluate(nodeMetadata, evaluationContext).ToArray()).ToArray();

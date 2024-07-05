@@ -21,6 +21,8 @@ public class MinimumKeyword(string keyword, decimal value) : IJsonSchemaAnnotati
 	public string Keyword => keyword;
 	public decimal Value => value;
 
+	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
+
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
 	{
 		// TODO

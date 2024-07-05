@@ -20,6 +20,8 @@ public class ItemsKeyword(string keyword, JsonSchema schema) : IJsonSchemaAnnota
 
 	public JsonSchema Schema => schema;
 
+	public IEnumerable<JsonSchema> GetReferencedSchemas() => [Schema];
+
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
 	{
 		// TODO - leverage prefixItems and contains

@@ -18,6 +18,8 @@ public class DefaultKeyword(string keyword, JsonNode? defaultValue) : IJsonSchem
 
 	public JsonNode? DefaultValue => defaultValue;
 
+	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
+
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
 	{
 		yield break;

@@ -21,6 +21,8 @@ public class NotKeyword(string keyword, JsonSchema schema) : IJsonSchemaAnnotati
 
 	public JsonSchema Schema => schema;
 
+	public IEnumerable<JsonSchema> GetReferencedSchemas() => [Schema];
+
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
 	{
 		if (!Schema.Evaluate(nodeMetadata, evaluationContext).Any())

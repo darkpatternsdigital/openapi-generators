@@ -21,6 +21,8 @@ public class EnumKeyword(string keyword, JsonArray values) : IJsonSchemaAnnotati
 	public string Keyword => keyword;
 	public JsonArray Values => values;
 
+	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
+
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
 	{
 		// TODO

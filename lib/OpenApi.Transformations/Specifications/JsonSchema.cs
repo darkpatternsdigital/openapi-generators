@@ -74,5 +74,7 @@ public interface IJsonSchemaAnnotation
 {
 	string Keyword { get; }
 
+	IEnumerable<JsonSchema> GetReferencedSchemas();
+
 	IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext);
 }

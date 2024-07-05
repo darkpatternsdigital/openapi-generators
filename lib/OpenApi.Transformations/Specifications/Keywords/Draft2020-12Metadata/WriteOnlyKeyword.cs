@@ -23,6 +23,8 @@ public class WriteOnlyKeyword(string keyword, bool isWriteOnly) : IJsonSchemaAnn
 	/// </summary>
 	public bool IsWriteOnly => isWriteOnly;
 
+	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
+
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
 	{
 		yield break;

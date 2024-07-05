@@ -20,6 +20,8 @@ public class AdditionalPropertiesKeyword(string keyword, JsonSchema schema) : IJ
 
 	public JsonSchema Schema => schema;
 
+	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
+
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
 	{
 		if (nodeMetadata.Node is not JsonObject array)

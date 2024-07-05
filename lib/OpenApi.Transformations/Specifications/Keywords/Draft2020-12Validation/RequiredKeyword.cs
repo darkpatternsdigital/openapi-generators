@@ -13,6 +13,8 @@ public class RequiredKeyword(string keyword, IReadOnlyList<string> requiredPrope
 	public string Keyword => keyword;
 	public IReadOnlyList<string> RequiredProperties => requiredProperties;
 
+	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
+
 	private static DiagnosableResult<IJsonSchemaAnnotation> Parse(string keyword, ResolvableNode nodeInfo, JsonSchemaParserOptions options)
 	{
 		if (nodeInfo.Node is not JsonArray array) return DiagnosableResult<IJsonSchemaAnnotation>.Fail(new UnableToParseKeyword(keyword, options.Registry.ResolveLocation(nodeInfo)));

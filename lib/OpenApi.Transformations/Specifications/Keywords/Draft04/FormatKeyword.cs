@@ -20,6 +20,8 @@ public class FormatKeyword(string keyword, string format) : IJsonSchemaAnnotatio
 
 	public string Format => format;
 
+	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
+
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
 	{
 		yield break;

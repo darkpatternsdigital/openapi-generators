@@ -18,6 +18,8 @@ public class ExampleKeyword(string keyword, JsonNode? example) : IJsonSchemaAnno
 
 	public JsonNode? Example => example;
 
+	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
+
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
 	{
 		yield break;

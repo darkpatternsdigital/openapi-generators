@@ -23,6 +23,8 @@ public class DeprecatedKeyword(string keyword, bool isDeprecated) : IJsonSchemaA
 	/// </summary>
 	public bool IsDeprecated => isDeprecated;
 
+	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
+
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
 	{
 		yield break;

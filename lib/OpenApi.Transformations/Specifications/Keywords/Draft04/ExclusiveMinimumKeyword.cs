@@ -2,6 +2,7 @@
 using System;
 using System.Text.Json.Nodes;
 using PrincipleStudios.OpenApi.Transformations.Diagnostics;
+using System.Linq;
 
 namespace PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft04;
 
@@ -22,6 +23,8 @@ public class ExclusiveMinimumKeyword(string keyword, bool isExclusive) : IJsonSc
 	/// Whether to use the minimumValue as an exclusive value.
 	/// </summary>
 	public bool IsExclusive => isExclusive;
+
+	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
 
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
 	{

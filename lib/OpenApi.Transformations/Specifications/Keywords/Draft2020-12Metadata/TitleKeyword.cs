@@ -20,6 +20,8 @@ public class TitleKeyword(string keyword, string title) : IJsonSchemaAnnotation
 
 	public string Title => title;
 
+	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
+
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
 	{
 		yield break;

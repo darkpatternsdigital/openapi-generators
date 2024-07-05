@@ -24,6 +24,8 @@ public class TypeKeyword(string keyword, string value) : IJsonSchemaAnnotation
 
 	public string Value => value;
 
+	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
+
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
 	{
 		switch (value)

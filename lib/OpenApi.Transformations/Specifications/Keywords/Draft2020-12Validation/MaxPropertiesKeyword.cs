@@ -20,6 +20,8 @@ public class MaxPropertiesKeyword(string keyword, int value) : IJsonSchemaAnnota
 
 	public string Keyword => keyword;
 
+	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
+
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
 	{
 		// TODO

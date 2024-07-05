@@ -22,6 +22,8 @@ public class UniqueItemsKeyword(string keyword, bool mustBeUnique) : IJsonSchema
 	public string Keyword => keyword;
 	public bool MustBeUnique => mustBeUnique;
 
+	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
+
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
 	{
 		if (nodeMetadata.Node is not JsonArray array) yield break;

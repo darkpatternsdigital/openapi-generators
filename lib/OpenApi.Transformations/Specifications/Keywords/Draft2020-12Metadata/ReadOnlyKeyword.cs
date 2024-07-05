@@ -23,6 +23,8 @@ public class ReadOnlyKeyword(string keyword, bool isReadOnly) : IJsonSchemaAnnot
 	/// </summary>
 	public bool IsReadOnly => isReadOnly;
 
+	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
+
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
 	{
 		yield break;

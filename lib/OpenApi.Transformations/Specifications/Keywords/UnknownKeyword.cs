@@ -19,6 +19,8 @@ public class UnknownKeyword(string keyword, ResolvableNode nodeInfo) : IJsonSche
 	public string Keyword => keyword;
 	public JsonNode? Value => nodeInfo.Node;
 
+	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
+
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
 	{
 		yield break;

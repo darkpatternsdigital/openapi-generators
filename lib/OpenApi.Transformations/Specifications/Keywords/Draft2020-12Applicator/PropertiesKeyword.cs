@@ -39,6 +39,8 @@ public class PropertiesKeyword(string keyword, IReadOnlyDictionary<string, JsonS
 	// TODO: an array of schemas is supported for each property in a later version of this keyword
 	public IReadOnlyDictionary<string, JsonSchema> Properties => properties;
 
+	public IEnumerable<JsonSchema> GetReferencedSchemas() => Properties.Values;
+
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
 	{
 		if (nodeMetadata.Node is not JsonObject obj) yield break;

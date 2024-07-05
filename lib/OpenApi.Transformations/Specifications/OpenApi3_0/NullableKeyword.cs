@@ -24,6 +24,8 @@ public class NullableKeyword(string keyword, bool isNullable) : IJsonSchemaAnnot
 	/// </summary>
 	public bool IsNullable => isNullable;
 
+	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
+
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
 	{
 		yield break;

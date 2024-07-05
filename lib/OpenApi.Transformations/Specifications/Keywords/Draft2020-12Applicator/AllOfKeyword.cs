@@ -37,6 +37,8 @@ public class AllOfKeyword(string keyword, IReadOnlyList<JsonSchema> schemas) : I
 
 	public IReadOnlyList<JsonSchema> Schemas => schemas;
 
+	public IEnumerable<JsonSchema> GetReferencedSchemas() => Schemas;
+
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
 	{
 		for (var i = 0; i < Schemas.Count; i++)

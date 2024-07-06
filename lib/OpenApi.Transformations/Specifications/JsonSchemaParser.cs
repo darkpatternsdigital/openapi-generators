@@ -9,7 +9,7 @@ namespace PrincipleStudios.OpenApi.Transformations.Specifications;
 
 public static class JsonSchemaParser
 {
-	internal static DiagnosableResult<JsonSchema> Deserialize(ResolvableNode nodeInfo, JsonSchemaParserOptions options)
+	public static DiagnosableResult<JsonSchema> Deserialize(ResolvableNode nodeInfo, JsonSchemaParserOptions options)
 	{
 		switch (nodeInfo.Node)
 		{

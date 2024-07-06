@@ -19,6 +19,7 @@ public class MaxLengthKeyword(string keyword, int value) : IJsonSchemaAnnotation
 	}
 
 	public string Keyword => keyword;
+	public int Value => value;
 
 	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
 

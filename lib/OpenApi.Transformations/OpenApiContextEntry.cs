@@ -1,7 +1,9 @@
-﻿using Microsoft.OpenApi.Interfaces;
+﻿using System;
+using Microsoft.OpenApi.Interfaces;
 
 namespace PrincipleStudios.OpenApi.Transformations
 {
+	[Obsolete("Use JSON Pointer instead")]
 	[System.Diagnostics.DebuggerDisplay("{Property}[{Key}], {Element}")]
 	public class OpenApiContextEntry
 	{

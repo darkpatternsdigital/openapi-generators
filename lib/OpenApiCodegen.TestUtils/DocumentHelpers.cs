@@ -19,7 +19,8 @@ namespace PrincipleStudios.OpenApiCodegen.TestUtils
 			return parseResult;
 		}
 
-		public static Microsoft.OpenApi.Models.OpenApiDocument GetDocument(string name)
+		[Obsolete("Use GetOpenApiDocument instead")]
+		public static Microsoft.OpenApi.Models.OpenApiDocument GetMsDocument(string name)
 		{
 			var doc = GetOpenApiDocument(name);
 

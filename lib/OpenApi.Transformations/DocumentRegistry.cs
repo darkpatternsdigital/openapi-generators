@@ -41,6 +41,9 @@ public class ResolvableNode(NodeMetadata metadata, DocumentRegistry registry)
 		return new ResolvableNode(NodeMetadata.FromRoot(documentReference), registry, documentReference);
 	}
 
+	public Location ToLocation() =>
+		registry.ResolveLocation(metadata);
+
 	public Uri Id => metadata.Id;
 	public DocumentRegistry Registry => registry;
 	public NodeMetadata Metadata => metadata;
@@ -200,10 +203,12 @@ public class DocumentRegistry(DocumentRegistryOptions registryOptions)
 
 	public Location ResolveLocation(ResolvableNode node) => ResolveLocation(node.Metadata);
 
-	public Location ResolveLocation(NodeMetadata key)
+	public Location ResolveLocation(NodeMetadata key) => ResolveLocation(key.Id);
+
+	public Location ResolveLocation(Uri id)
 	{
-		var registryEntry = InternalResolveDocumentEntry(key.Id, null);
-		var fileLocation = registryEntry.Document.GetLocation(ResolvePointer(key.Id, registryEntry));
+		var registryEntry = InternalResolveDocumentEntry(id, null);
+		var fileLocation = registryEntry.Document.GetLocation(ResolvePointer(id, registryEntry));
 		return new Location(registryEntry.Document.RetrievalUri, fileLocation);
 	}
 

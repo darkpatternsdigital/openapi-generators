@@ -37,7 +37,7 @@ namespace PrincipleStudios.OpenApiCodegen.Client.CSharp
 
 		public static byte[] GetGeneratedLibrary(string documentName, Action<CSharpSchemaOptions>? configureOptions = null)
 		{
-			var document = GetDocument(documentName);
+			var document = GetMsDocument(documentName);
 			var options = LoadOptions();
 			configureOptions?.Invoke(options);
 

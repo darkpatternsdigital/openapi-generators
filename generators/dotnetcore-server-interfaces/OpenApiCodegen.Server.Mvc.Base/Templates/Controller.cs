@@ -22,8 +22,8 @@ namespace PrincipleStudios.OpenApi.CSharp.Templates
 
 	public record ControllerOperation(
 		string HttpMethod,
-		string Summary,
-		string Description,
+		string? Summary,
+		string? Description,
 		string Name,
 		string Path,
 		OperationRequestBody[] RequestBodies,
@@ -45,7 +45,7 @@ namespace PrincipleStudios.OpenApi.CSharp.Templates
 		bool IsFormParam,
 		bool Required,
 		bool Optional,
-		string Pattern,
+		string? Pattern,
 		int? MinLength,
 		int? MaxLength,
 		decimal? Minimum,
@@ -93,7 +93,7 @@ namespace PrincipleStudios.OpenApi.CSharp.Templates
 		string DataType,
 		bool DataTypeNullable,
 		bool Required,
-		string Pattern,
+		string? Pattern,
 		int? MinLength,
 		int? MaxLength,
 		decimal? Minimum,

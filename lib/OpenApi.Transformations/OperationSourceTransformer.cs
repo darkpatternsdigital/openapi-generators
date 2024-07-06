@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 namespace PrincipleStudios.OpenApi.Transformations
 {
+	[Obsolete("TODO: Refactor")]
 	public class OperationSourceTransformer : ISourceProvider
 	{
 		private readonly OpenApiDocument document;
@@ -37,7 +38,7 @@ namespace PrincipleStudios.OpenApi.Transformations
 			return operations;
 		}
 
-		class OperationVisitor : OpenApiDocumentVisitor<OperationVisitor.Argument>
+		class OperationVisitor : OpenApiDotNetDocumentVisitor<OperationVisitor.Argument>
 		{
 			public record Argument(RegisterOperationEntry RegisterSourceEntry, OpenApiTransformDiagnostic Diagnostic);
 			public delegate void RegisterOperationEntry(OpenApiOperation operation, OpenApiContext context);

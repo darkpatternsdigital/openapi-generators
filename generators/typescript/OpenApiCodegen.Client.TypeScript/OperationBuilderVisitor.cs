@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript
 {
 
-	class OperationBuilderVisitor : OpenApiDocumentVisitor<OperationBuilderVisitor.Argument>
+	class OperationBuilderVisitor : OpenApiDotNetDocumentVisitor<OperationBuilderVisitor.Argument>
 	{
 		private const string formMimeType = "application/x-www-form-urlencoded";
 		private readonly ISchemaSourceResolver<InlineDataType> typeScriptSchemaResolver;

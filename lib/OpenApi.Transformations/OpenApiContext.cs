@@ -7,6 +7,7 @@ using System.Linq;
 
 namespace PrincipleStudios.OpenApi.Transformations
 {
+	[Obsolete("Use JSON Pointer instead")]
 	public record OpenApiContext(IReadOnlyList<OpenApiContextEntry> Entries) : IEnumerable<OpenApiContextEntry>
 	{
 		public OpenApiContext() : this(Array.Empty<OpenApiContextEntry>()) { }

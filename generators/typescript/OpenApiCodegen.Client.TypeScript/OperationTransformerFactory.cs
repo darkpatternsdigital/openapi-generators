@@ -1,6 +1,7 @@
 ﻿using Microsoft.OpenApi.Models;
 using PrincipleStudios.OpenApi.Transformations;
 using PrincipleStudios.OpenApi.TypeScript;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,6 +10,7 @@ namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript
 	public static class OperationTransformerFactory
 	{
 
+		[Obsolete("TODO: Refactor")]
 		public static ISourceProvider BuildTypeScriptOperationSourceProvider(this OpenApiDocument document, string versionInfo, TypeScriptSchemaOptions options)
 		{
 			ISourceProvider? result;

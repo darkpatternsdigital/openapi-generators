@@ -1,9 +1,11 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using System;
+using Microsoft.OpenApi.Models;
 
 namespace PrincipleStudios.OpenApi.Transformations
 {
 	public delegate TInlineDataType InlineDataTypeResolver<TInlineDataType>();
 
+	[Obsolete("Use ISourceProvider or SchemaRegistry instead")]
 	public interface ISchemaSourceResolver<TInlineDataType> : ISourceProvider
 	{
 		InlineDataTypeResolver<TInlineDataType> ToInlineDataType(OpenApiSchema schema);

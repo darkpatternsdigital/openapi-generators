@@ -7,7 +7,8 @@ using System.Linq;
 
 namespace PrincipleStudios.OpenApi.Transformations
 {
-	public abstract class OpenApiDocumentVisitor<TArgument> : IOpenApiDocumentVisitor<TArgument>, IOpenApiAnyVisitor<TArgument>
+	[Obsolete("Avoid Microsoft.OpenApi")]
+	public abstract class OpenApiDotNetDocumentVisitor<TArgument> : IOpenApiDocumentVisitor<TArgument>, IOpenApiAnyVisitor<TArgument>
 	{
 		public virtual void VisitAny(IOpenApiElement openApiElement, OpenApiContext context, TArgument argument) => OpenApiDocumentVisitorExtensions.VisitAny(this, openApiElement, context, argument);
 		public virtual void VisitAny(Microsoft.OpenApi.Any.IOpenApiAny any, OpenApiContext context, TArgument argument) => OpenApiDocumentVisitorExtensions.VisitAny(this, any, context, argument);

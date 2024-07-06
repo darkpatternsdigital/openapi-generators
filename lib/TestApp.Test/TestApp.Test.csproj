@@ -1,11 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 
 		<IsPackable>false</IsPackable>
 
-		<RootNamespace>$(RootNamespacePrefix).OpenApiCodegen.Server.Mvc</RootNamespace>
+		<RootNamespace>$(RootNamespacePrefix).OpenApiCodegen.Server.Mvc.TestApp</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -26,8 +26,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="$(SolutionRoot)generators\dotnetcore-server-interfaces\OpenApiCodegen.Server.Mvc.Base\OpenApiCodegen.Server.Mvc.Base.csproj" />
 		<ProjectReference Include="..\OpenApiCodegen.Json.Extensions\OpenApiCodegen.Json.Extensions.csproj" />
+		<ProjectReference Include="..\TestApp\OpenApiCodegen.Server.Mvc.TestApp.csproj" />
 		<ProjectReference Include="..\OpenApiCodegen.TestUtils\OpenApiCodegen.TestUtils.csproj" />
 	</ItemGroup>
 </Project>

@@ -16,19 +16,19 @@ namespace PrincipleStudios.OpenApi.CSharp.Templates
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1724:Type names should not match namespaces")]
 	public record Model(
-		string Description,
+		string? Description,
 		string ClassName
 	);
 
 	public record EnumModel(
-		string Description,
+		string? Description,
 		string ClassName,
 		bool IsString,
 		EnumVar[] EnumVars
 	) : Model(Description, ClassName);
 
 	public record TypeUnionModel(
-		string Description,
+		string? Description,
 		string ClassName,
 		bool AllowAnyOf,
 		string? DiscriminatorProperty,
@@ -48,7 +48,7 @@ namespace PrincipleStudios.OpenApi.CSharp.Templates
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1724:Type names should not match namespaces")]
 	public record ObjectModel(
-		string Description,
+		string? Description,
 		string ClassName,
 		string? Parent,
 		ModelVar[] Vars
@@ -62,7 +62,7 @@ namespace PrincipleStudios.OpenApi.CSharp.Templates
 		string Name,
 		bool Required,
 		bool Optional,
-		string Pattern,
+		string? Pattern,
 		int? MinLength,
 		int? MaxLength,
 		decimal? Minimum,

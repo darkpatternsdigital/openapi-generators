@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text.Json.Nodes;
 
 namespace PrincipleStudios.OpenApi.Transformations.Abstractions;
 
@@ -12,7 +13,8 @@ public record OpenApiPath(
 	string? Summary,
 	string? Description,
 
-	IReadOnlyDictionary<string, OpenApiOperation> Operations
+	IReadOnlyDictionary<string, OpenApiOperation> Operations,
+	IReadOnlyDictionary<string, JsonNode?> Extensions
 ) : IReferenceableDocumentNode
 {
 	// TODO: parameters

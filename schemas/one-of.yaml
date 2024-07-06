@@ -38,8 +38,8 @@ components:
       discriminator:
         propertyName: petType
         mapping:
-          dog: Dog
-          cat: Cat
+          dog: '#/components/schemas/Dog'
+          cat: '#/components/schemas/Cat'
 paths:
   /pet:
     get:

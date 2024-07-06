@@ -1,15 +1,17 @@
 ﻿using Json.Pointer;
 using Microsoft.OpenApi.Models;
+using PrincipleStudios.OpenApi.Transformations.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Nodes;
 
 namespace PrincipleStudios.OpenApi.Transformations.Abstractions;
 
 
 /// <summary>
 /// Includes defaults for required fields - for when OpenAPI validation is failing, but we still are "doing our best" to generate
-/// 
+///
 /// </summary>
 // TODO - do we want to swap these out so that it captures the id in exceptions?
 internal static class MissingRequiredFieldDefaults
@@ -43,7 +45,8 @@ internal static class MissingRequiredFieldDefaults
 		Id,
 		Summary: null,
 		Description: null,
-		Operations: new Dictionary<string, OpenApiOperation>()
+		Operations: new Dictionary<string, OpenApiOperation>(),
+		Extensions: new Dictionary<string, JsonNode?>()
 	);
 	public static OpenApiPath ConstructPlaceholderPath(Uri id) => new EmptyPath(id);
 
@@ -56,7 +59,8 @@ internal static class MissingRequiredFieldDefaults
 		Parameters: Array.Empty<OpenApiParameter>(),
 		RequestBody: null,
 		Responses: null,
-		Deprecated: false
+		Deprecated: false,
+		Extensions: new Dictionary<string, JsonNode?>()
 	);
 	public static OpenApiOperation ConstructPlaceholderOperation(Uri id) => new PlaceholderOperation(id);
 

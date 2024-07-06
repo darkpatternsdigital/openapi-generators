@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 
 namespace PrincipleStudios.OpenApi.CSharp
 {
+	[Obsolete("Use CSharpSchemaSourceProvider instead")]
 	public record InlineDataType(string text, bool nullable = false, bool isEnumerable = false)
 	{
 		// Assumes C#8, since it's standard in VS2019+, which is when nullable reference types were introduced
@@ -17,6 +18,7 @@ namespace PrincipleStudios.OpenApi.CSharp
 			nullable ? this : new(text + "?", nullable: true, isEnumerable: isEnumerable);
 	}
 
+	[Obsolete("Use CSharpSchemaSourceProvider instead")]
 	public class CSharpSchemaSourceResolver : SchemaSourceResolver<InlineDataType>
 	{
 		private readonly string baseNamespace;

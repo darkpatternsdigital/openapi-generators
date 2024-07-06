@@ -1,4 +1,5 @@
 ﻿using Microsoft.OpenApi.Models;
+using PrincipleStudios.OpenApi.Transformations.Specifications;
 using PrincipleStudios.OpenApiCodegen;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,25 @@ using System.Text;
 
 namespace PrincipleStudios.OpenApi.Transformations
 {
+	public abstract class SchemaSourceProvider(ISchemaRegistry schemaRegistry) : ISourceProvider
+	{
+		public IEnumerable<SourceEntry> GetSources(OpenApiTransformDiagnostic diagnostic) =>
+			(from entry in schemaRegistry.GetSchemas()
+			 let sourceEntry = GetSourceEntry(entry, diagnostic)
+			 where sourceEntry != null
+			 select sourceEntry)
+			.Concat(GetAdditionalSources(diagnostic));
+
+		protected virtual IEnumerable<SourceEntry> GetAdditionalSources(OpenApiTransformDiagnostic diagnostic) =>
+			Enumerable.Empty<SourceEntry>();
+
+		protected abstract SourceEntry? GetSourceEntry(JsonSchema entry, OpenApiTransformDiagnostic diagnostic);
+
+	}
+
+	[Obsolete("Use SchemaSourceProvider instead")]
 	public delegate void SchemaCallback(OpenApiSchema schema, OpenApiContext context);
+	[Obsolete("Use SchemaSourceProvider instead")]
 	public abstract class SchemaSourceResolver<TInlineDataType> : ISchemaSourceResolver<TInlineDataType>
 	{
 		protected SchemaSourceResolver()
@@ -100,7 +119,8 @@ namespace PrincipleStudios.OpenApi.Transformations
 		}
 	}
 
-	public class DefaultSchemaVisitor : OpenApiDocumentVisitor<SchemaCallback>
+	[Obsolete("Use SchemaSourceProvider instead")]
+	public class DefaultSchemaVisitor : OpenApiDotNetDocumentVisitor<SchemaCallback>
 	{
 		public override void Visit(OpenApiSchema schema, OpenApiContext context, SchemaCallback argument)
 		{

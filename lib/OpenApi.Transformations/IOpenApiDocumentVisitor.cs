@@ -1,10 +1,12 @@
 ﻿using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Collections.Generic;
 
 namespace PrincipleStudios.OpenApi.Transformations
 {
+	[Obsolete("Use PrincipleStudios.OpenApi.Transformations.Abstractions.IOpenApiDocumentVisitor")]
 	public interface IOpenApiDocumentVisitor<TArgument>
 	{
 		void Visit(OpenApiCallback callback, OpenApiContext context, TArgument argument);
@@ -41,6 +43,7 @@ namespace PrincipleStudios.OpenApi.Transformations
 		void VisitUnknown(IOpenApiElement openApiElement, OpenApiContext context, TArgument argument);
 	}
 
+	[Obsolete("Use PrincipleStudios.OpenApi.Transformations.Abstractions.IOpenApiDocumentVisitor")]
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:ParameterNameStartsWithUnderscores")]
 	public interface IOpenApiAnyVisitor<TArgument>
 	{

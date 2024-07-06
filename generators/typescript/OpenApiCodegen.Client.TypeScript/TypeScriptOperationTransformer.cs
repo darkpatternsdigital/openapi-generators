@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript
 {
+	[Obsolete("TODO: Refactor")]
 	public class TypeScriptOperationTransformer : IOpenApiOperationTransformer
 	{
 		private readonly ISchemaSourceResolver<InlineDataType> typeScriptSchemaResolver;

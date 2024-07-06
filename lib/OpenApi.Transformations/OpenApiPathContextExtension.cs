@@ -5,6 +5,7 @@ using System.Text;
 
 namespace PrincipleStudios.OpenApi.Transformations
 {
+	[Obsolete("TODO: Avoid and use Uri's")]
 	public static class OpenApiPathContextExtension
 	{
 		public static string ToOpenApiPathContext(this string original) => original.Replace("/", "~1");

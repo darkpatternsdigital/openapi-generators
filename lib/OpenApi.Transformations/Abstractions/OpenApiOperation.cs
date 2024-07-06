@@ -1,6 +1,7 @@
 ﻿using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Nodes;
 
 namespace PrincipleStudios.OpenApi.Transformations.Abstractions;
 
@@ -19,7 +20,8 @@ public record OpenApiOperation(
 	OpenApiRequestBody? RequestBody,
 	OpenApiResponses? Responses,
 
-	bool Deprecated
+	bool Deprecated,
+	IReadOnlyDictionary<string, JsonNode?> Extensions
 ) : IReferenceableDocumentNode
 {
 

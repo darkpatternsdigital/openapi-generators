@@ -107,7 +107,7 @@ namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript
 		[MemberData(nameof(InlineAssertionData))]
 		public void ConvertToInlineTypes(string documentName, Func<OpenApiDocument, OpenApiSchema> findSchema, string expectedInline)
 		{
-			var document = GetDocument(documentName);
+			var document = GetMsDocument(documentName);
 
 			var schema = findSchema(document);
 

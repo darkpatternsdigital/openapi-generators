@@ -1,5 +1,8 @@
-﻿using PrincipleStudios.OpenApi.CSharp;
+﻿using Microsoft.Win32;
+using PrincipleStudios.OpenApi.CSharp;
 using PrincipleStudios.OpenApi.Transformations;
+using PrincipleStudios.OpenApi.Transformations.Diagnostics;
+using PrincipleStudios.OpenApiCodegen.TestUtils;
 using System.Linq;
 using Xunit;
 using static PrincipleStudios.OpenApiCodegen.Server.Mvc.OptionsHelpers;
@@ -34,10 +37,12 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 
 		private static OpenApiTransformDiagnostic GetDocumentDiagnostics(string name)
 		{
-			var document = GetDocument(name);
+			var registry = DocumentLoader.CreateRegistry();
+			var docResult = GetOpenApiDocument(name);
+			Assert.NotNull(docResult.Document);
 			var options = LoadOptions();
 
-			var transformer = document.BuildCSharpPathControllerSourceProvider("", "PS.Controller", options);
+			var transformer = docResult.Document.BuildCSharpPathControllerSourceProvider(registry, "", "PS.Controller", options);
 			OpenApiTransformDiagnostic diagnostic = new();
 
 			transformer.GetSources(diagnostic).ToArray(); // force all sources to load to get diagnostics
@@ -49,10 +54,9 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 		{
 			OpenApiTransformDiagnostic diagnostic = GetDocumentDiagnostics("bad.yaml");
 
-			Assert.Collection(diagnostic.Errors, new[]
-			{
-				(OpenApiTransformError error) => Assert.Contains("Unresolved external reference", error.Message)
-			});
+			Assert.Collection(diagnostic.Diagnostics, [
+				(DiagnosticBase diag) => Assert.Null(diag)
+			]);
 		}
 
 	}

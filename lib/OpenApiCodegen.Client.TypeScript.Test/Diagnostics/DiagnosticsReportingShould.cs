@@ -26,7 +26,7 @@ public class DiagnosticsReportingShould
 
 	private static OpenApiTransformDiagnostic GetDocumentDiagnostics(string name)
 	{
-		var document = GetDocument(name);
+		var document = GetMsDocument(name);
 
 		var options = LoadOptions();
 

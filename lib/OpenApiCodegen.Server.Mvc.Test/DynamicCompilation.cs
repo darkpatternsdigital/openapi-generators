@@ -11,6 +11,7 @@ using PrincipleStudios.OpenApi.CSharp;
 using PrincipleStudios.OpenApi.Transformations;
 using static PrincipleStudios.OpenApiCodegen.Server.Mvc.OptionsHelpers;
 using static PrincipleStudios.OpenApiCodegen.TestUtils.DocumentHelpers;
+using PrincipleStudios.OpenApiCodegen.TestUtils;
 
 namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 {
@@ -43,15 +44,17 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 
 		public static byte[] GetGeneratedLibrary(string documentName)
 		{
-			var document = GetDocument(documentName);
+			var registry = DocumentLoader.CreateRegistry();
+			var docResult = GetOpenApiDocument(documentName);
+			Assert.NotNull(docResult.Document);
 			var options = LoadOptions();
 
-			var transformer = document.BuildCSharpPathControllerSourceProvider("", "PS.Controller", options);
+			var transformer = docResult.Document.BuildCSharpPathControllerSourceProvider(registry, "", "PS.Controller", options);
 			OpenApiTransformDiagnostic diagnostic = new();
 
 			var entries = transformer.GetSources(diagnostic).ToArray();
 
-			Assert.Empty(diagnostic.Errors);
+			Assert.Empty(diagnostic.Diagnostics);
 
 			var parseOptions = CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.CSharp11);
 			var syntaxTrees = entries.Select(e => CSharpSyntaxTree.ParseText(e.SourceText, options: parseOptions, path: e.Key)).ToArray();

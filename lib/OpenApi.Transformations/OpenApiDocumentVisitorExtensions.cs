@@ -7,6 +7,7 @@ using System.Text;
 
 namespace PrincipleStudios.OpenApi.Transformations
 {
+	[Obsolete("Use PrincipleStudios.OpenApi.Transformations.OpenApiDocumentVisitor")]
 	public static class OpenApiDocumentVisitorExtensions
 	{
 		// Intentionally not an extension method, so that the overridden functionality is more likely to be used

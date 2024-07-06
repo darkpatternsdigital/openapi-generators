@@ -16,7 +16,7 @@ namespace PrincipleStudios.OpenApi.Transformations.Specifications.OpenApi3_0;
 /// <summary>
 /// See https://spec.openapis.org/oas/v3.0.3
 /// </summary>
-internal class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
+public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 {
 	private static string[] validMethods = new[]
 	{
@@ -203,8 +203,14 @@ internal class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 			Parameters: ReadArray(key.Navigate("parameters"), ConstructParameter),
 			RequestBody: ConstructRequestBody(key.Navigate("requestBody")),
 			Responses: ConstructResponses(key.Navigate("responses")),
-			Deprecated: obj["deprecated"]?.GetValue<bool>() ?? false
+			Deprecated: obj["deprecated"]?.GetValue<bool>() ?? false,
+			Extensions: GetExtensions(obj)
 		);
+	}
+
+	private Dictionary<string, JsonNode?> GetExtensions(JsonObject obj)
+	{
+		return obj.Where(kvp => kvp.Key.StartsWith("x-")).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 	}
 
 	private OpenApiParameter ConstructParameter(ResolvableNode key) =>
@@ -294,7 +300,8 @@ internal class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 		return new OpenApiPath(key.Id,
 			Summary: obj["summary"]?.GetValue<string>(),
 			Description: obj["description"]?.GetValue<string>(),
-			Operations: ReadDictionary(key, validMethods.Contains, toKeyValuePair: (method, key) => (Key: method, Value: ConstructOperation(key)))
+			Operations: ReadDictionary(key, validMethods.Contains, toKeyValuePair: (method, key) => (Key: method, Value: ConstructOperation(key))),
+			Extensions: GetExtensions(obj)
 		);
 	}
 

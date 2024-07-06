@@ -9,7 +9,7 @@ public abstract class OpenApiDocumentVisitor<TArgument> : IOpenApiDocumentVisito
 {
 	public virtual void VisitAny(IReferenceableDocumentNode? openApiElement, TArgument argument) => OpenApiDocumentVisitorExtensions.VisitAny(this, openApiElement, argument);
 
-	public void Visit(OpenApiContact contact, TArgument? argument) { }
+	public virtual void Visit(OpenApiContact contact, TArgument? argument) { }
 
 	public virtual void Visit(OpenApiDocument document, TArgument argument)
 	{
@@ -43,7 +43,7 @@ public abstract class OpenApiDocumentVisitor<TArgument> : IOpenApiDocumentVisito
 		this.VisitHelper(path.Operations.Values, argument);
 	}
 
-	public void Visit(OpenApiMediaTypeObject mediaTypeObject, TArgument argument) { }
+	public virtual void Visit(OpenApiMediaTypeObject mediaTypeObject, TArgument argument) { }
 
 	public virtual void Visit(OpenApiRequestBody requestBody, TArgument argument)
 	{

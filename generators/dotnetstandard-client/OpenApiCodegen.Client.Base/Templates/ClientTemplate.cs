@@ -18,8 +18,8 @@ namespace PrincipleStudios.OpenApi.CSharp.Templates
 
 	public record Operation(
 		string HttpMethod,
-		string Summary,
-		string Description,
+		string? Summary,
+		string? Description,
 		string Name,
 		string Path,
 		bool HasQueryStringEmbedded,
@@ -42,7 +42,7 @@ namespace PrincipleStudios.OpenApi.CSharp.Templates
 		bool IsBodyParam,
 		bool IsFormParam,
 		bool Required,
-		string Pattern,
+		string? Pattern,
 		int? MinLength,
 		int? MaxLength,
 		decimal? Minimum,
@@ -86,7 +86,7 @@ namespace PrincipleStudios.OpenApi.CSharp.Templates
 		string DataType,
 		bool DataTypeNullable,
 		bool Required,
-		string Pattern,
+		string? Pattern,
 		int? MinLength,
 		int? MaxLength,
 		decimal? Minimum,

@@ -1,5 +1,8 @@
-﻿namespace PrincipleStudios.OpenApi.Transformations
+﻿using System;
+
+namespace PrincipleStudios.OpenApi.Transformations
 {
+	[Obsolete("Use a DiagnosticBase instance instead")]
 	public class OpenApiTransformError
 	{
 		public OpenApiTransformError(OpenApiContext context, string message)

@@ -12,22 +12,17 @@ namespace PrincipleStudios.OpenApi.Transformations;
 public class OperationGroupingSourceTransformer : ISourceProvider
 {
 	public delegate (string groupName, string? groupSummary, string? groupDescription) OperationToGroup(OpenApiOperation operation, OpenApiPath path);
-	private readonly IReferenceableDocumentNode openApiElement;
+	private readonly OpenApiDocument document;
 	private readonly OperationToGroup operationToGroup;
 	private readonly IOpenApiOperationControllerTransformer operationControllerTransformer;
 	private readonly OperationGroupingVisitor visitor;
 	private readonly ISchemaRegistry schemaRegistry;
 
 	public OperationGroupingSourceTransformer(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, OpenApiDocument document, OperationToGroup operationToGroup, IOpenApiOperationControllerTransformer operationControllerTransformer)
-		: this(documentRegistry, schemaRegistry, (IReferenceableDocumentNode)document, operationToGroup, operationControllerTransformer)
-	{
-	}
-
-	public OperationGroupingSourceTransformer(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, IReferenceableDocumentNode openApiElement, OperationToGroup operationToGroup, IOpenApiOperationControllerTransformer operationControllerTransformer)
 	{
 		this.visitor = new OperationGroupingVisitor(documentRegistry);
 		this.schemaRegistry = schemaRegistry;
-		this.openApiElement = openApiElement;
+		this.document = document;
 		this.operationToGroup = operationToGroup;
 		this.operationControllerTransformer = operationControllerTransformer;
 	}
@@ -35,7 +30,7 @@ public class OperationGroupingSourceTransformer : ISourceProvider
 	private Dictionary<string, OperationGroupData> GetGroups(OpenApiTransformDiagnostic diagnostic)
 	{
 		var result = new Dictionary<string, OperationGroupData>();
-		visitor.VisitAny(openApiElement, new OperationGroupingVisitor.Argument((operation, path) =>
+		visitor.Visit(document, new OperationGroupingVisitor.Argument((operation, path) =>
 		{
 			var (group, summary, description) = operationToGroup(operation, path);
 			group = operationControllerTransformer.SanitizeGroupName(group);

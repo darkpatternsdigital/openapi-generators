@@ -45,12 +45,12 @@ class OperationVisitor : OpenApiDocumentVisitor<OperationVisitor.Argument>
 		public OpenApiOperation Operation { get; }
 	}
 
-	public OperationVisitor(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, CSharpSchemaOptions options, string controllerClassName)
+	public OperationVisitor(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, CSharpSchemaOptions options, string controllerClassName, OpenApiDocument document)
 	{
 		this.documentRegistry = documentRegistry;
 		this.schemaRegistry = schemaRegistry;
 		this.options = options;
-		this.inlineSchemas = new(documentRegistry, options);
+		this.inlineSchemas = new(options, [document]);
 		this.controllerClassName = controllerClassName;
 	}
 

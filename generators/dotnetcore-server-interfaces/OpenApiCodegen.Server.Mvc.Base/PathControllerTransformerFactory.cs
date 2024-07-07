@@ -18,12 +18,12 @@ namespace PrincipleStudios.OpenApi.CSharp
 				InfoEmail: document.Info.Contact?.Email,
 				CodeGeneratorVersionInfo: versionInfo
 			);
-			SchemaSourceProvider schemaProvider = new CSharpSchemaSourceProvider(documentRegistry, schemaRegistry, documentNamespace ?? "", options, handlebarsFactory, header);
+			SchemaSourceProvider schemaProvider = new CSharpSchemaSourceProvider(documentRegistry, schemaRegistry, documentNamespace ?? "", options, handlebarsFactory, header, [document]);
 			// ISchemaSourceResolver<InlineDataType> schemaResolver = new CSharpSchemaSourceResolver(documentNamespace ?? "", options, handlebarsFactory, versionInfo);
 			var controllerTransformer = new CSharpControllerTransformer(documentRegistry, schemaRegistry, document, documentNamespace ?? "", options, versionInfo, handlebarsFactory);
 
 			var operationGrouping =
-				new PathControllerSourceTransformer(documentRegistry, document, controllerTransformer, (operation, path) =>
+				new PathControllerSourceTransformer(documentRegistry, schemaRegistry, document, controllerTransformer, (operation, path) =>
 				{
 					var key = $"x-{options.ControllerNameExtension}";
 					return operation.Extensions.TryGetValue(key, out var opOverride) ? opOverride?.GetValue<string>()

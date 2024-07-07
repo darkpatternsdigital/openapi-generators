@@ -1,5 +1,7 @@
 ﻿using Microsoft.OpenApi.Models;
+using PrincipleStudios.OpenApi.Transformations.Specifications;
 using System;
+using System.Collections.Generic;
 
 namespace PrincipleStudios.OpenApi.Transformations.Abstractions;
 
@@ -17,4 +19,13 @@ public record OpenApiInfo(
 	string Version
 ) : IReferenceableDocumentNode
 {
+	public NodeMetadata Metadata => new NodeMetadata(Id);
+
+	public IEnumerable<IJsonDocumentNode> GetNestedNodes()
+	{
+		if (Contact != null)
+			yield return Contact;
+		if (License != null)
+			yield return License;
+	}
 }

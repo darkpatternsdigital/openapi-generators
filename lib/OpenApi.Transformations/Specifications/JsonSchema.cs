@@ -5,11 +5,19 @@ using PrincipleStudios.OpenApi.Transformations.Diagnostics;
 
 namespace PrincipleStudios.OpenApi.Transformations.Specifications;
 
-public abstract class JsonSchema
+public interface IJsonDocumentNode
+{
+	NodeMetadata Metadata { get; }
+	IEnumerable<IJsonDocumentNode> GetNestedNodes();
+}
+
+public abstract class JsonSchema : IJsonDocumentNode
 {
 	public abstract NodeMetadata Metadata { get; }
 	public virtual IReadOnlyCollection<IJsonSchemaAnnotation> Annotations => Array.Empty<IJsonSchemaAnnotation>();
 	public virtual bool? BoolValue => null;
+	IEnumerable<IJsonDocumentNode> IJsonDocumentNode.GetNestedNodes() => GetNestedSchemas();
+	public abstract IEnumerable<JsonSchema> GetNestedSchemas();
 
 	public abstract IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, EvaluationContext evaluationContext);
 }
@@ -21,6 +29,8 @@ public class JsonSchemaBool(NodeMetadata metadata, bool value) : JsonSchema
 	public override NodeMetadata Metadata => metadata;
 
 	public override bool? BoolValue => value;
+
+	public override IEnumerable<JsonSchema> GetNestedSchemas() => Enumerable.Empty<JsonSchema>();
 
 	public override IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, EvaluationContext evaluationContext)
 	{
@@ -45,6 +55,10 @@ public class AnnotatedJsonSchema : JsonSchema
 	public override NodeMetadata Metadata { get; }
 
 	public override IReadOnlyCollection<IJsonSchemaAnnotation> Annotations => keywords.AsReadOnly();
+
+	public override IEnumerable<JsonSchema> GetNestedSchemas() =>
+		Annotations
+			.SelectMany(a => a.GetReferencedSchemas());
 
 	public override IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, EvaluationContext evaluationContext)
 	{

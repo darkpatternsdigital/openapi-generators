@@ -20,7 +20,7 @@ using static OptionsHelpers;
 
 public class CSharpInlineSchemasShould
 {
-	private CSharpInlineSchemas CreateTarget(DocumentRegistry registry, CSharpServerSchemaOptions options) => new(registry, options);
+	private CSharpInlineSchemas CreateTarget(CSharpServerSchemaOptions options, OpenApiDocument document) => new(options, [document]);
 
 	[Theory]
 	[InlineData(false, "petstore.yaml", "/paths/~1pets/get/parameters/0/schema")]
@@ -41,7 +41,7 @@ public class CSharpInlineSchemasShould
 		var docRef = GetDocumentReference(documentName);
 		var options = LoadOptions();
 		var (registry, document, schema) = GetSchema(docRef, path);
-		var target = CreateTarget(registry, options);
+		var target = CreateTarget(options, document!);
 		Assert.NotNull(document);
 		Assert.NotNull(schema);
 
@@ -57,7 +57,7 @@ public class CSharpInlineSchemasShould
 		var docResult = GetDocumentReference(documentName);
 		Assert.NotNull(docResult);
 		var (registry, document, schema) = GetSchema(docResult, path);
-		var target = CreateTarget(registry, LoadOptions());
+		var target = CreateTarget(LoadOptions(), document!);
 
 		Assert.NotNull(schema);
 

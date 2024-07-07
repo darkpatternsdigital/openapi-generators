@@ -26,11 +26,11 @@ public class CSharpSchemaSourceProvider : SchemaSourceProvider
 	private readonly HandlebarsFactory handlebarsFactory;
 	private readonly PartialHeader header;
 
-	public CSharpSchemaSourceProvider(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, string baseNamespace, CSharpSchemaOptions options, HandlebarsFactory handlebarsFactory, Templates.PartialHeader header) : base(schemaRegistry)
+	public CSharpSchemaSourceProvider(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, string baseNamespace, CSharpSchemaOptions options, HandlebarsFactory handlebarsFactory, Templates.PartialHeader header, ICollection<IReferenceableDocument> documents) : base(schemaRegistry)
 	{
 		this.documentRegistry = documentRegistry;
 		this.schemaRegistry = schemaRegistry;
-		this.inlineSchemas = new CSharpInlineSchemas(documentRegistry, options);
+		this.inlineSchemas = new CSharpInlineSchemas(options, documents);
 		this.baseNamespace = baseNamespace;
 		this.options = options;
 		this.handlebarsFactory = handlebarsFactory;
@@ -71,6 +71,7 @@ public class CSharpSchemaSourceProvider : SchemaSourceProvider
 
 	private ObjectModel? BuildObjectModel(JsonSchema schema)
 	{
+		// TODO: resolve schema $ref? How should this get handled?
 		if (schema.TryGetAnnotation<AllOfKeyword>() is AllOfKeyword allOf && allOf.Schemas.Count > 0)
 		{
 			var models = allOf.Schemas.Select(BuildObjectModel).ToArray();

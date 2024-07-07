@@ -1,5 +1,6 @@
 ﻿using PrincipleStudios.OpenApi.Transformations.Abstractions;
 using PrincipleStudios.OpenApi.Transformations.Diagnostics;
+using PrincipleStudios.OpenApi.Transformations.Specifications;
 using PrincipleStudios.OpenApiCodegen;
 using System;
 using System.Collections.Generic;
@@ -15,15 +16,17 @@ public class OperationGroupingSourceTransformer : ISourceProvider
 	private readonly OperationToGroup operationToGroup;
 	private readonly IOpenApiOperationControllerTransformer operationControllerTransformer;
 	private readonly OperationGroupingVisitor visitor;
+	private readonly ISchemaRegistry schemaRegistry;
 
-	public OperationGroupingSourceTransformer(DocumentRegistry documentRegistry, OpenApiDocument document, OperationToGroup operationToGroup, IOpenApiOperationControllerTransformer operationControllerTransformer)
-		: this(documentRegistry, (IReferenceableDocumentNode)document, operationToGroup, operationControllerTransformer)
+	public OperationGroupingSourceTransformer(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, OpenApiDocument document, OperationToGroup operationToGroup, IOpenApiOperationControllerTransformer operationControllerTransformer)
+		: this(documentRegistry, schemaRegistry, (IReferenceableDocumentNode)document, operationToGroup, operationControllerTransformer)
 	{
 	}
 
-	public OperationGroupingSourceTransformer(DocumentRegistry documentRegistry, IReferenceableDocumentNode openApiElement, OperationToGroup operationToGroup, IOpenApiOperationControllerTransformer operationControllerTransformer)
+	public OperationGroupingSourceTransformer(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, IReferenceableDocumentNode openApiElement, OperationToGroup operationToGroup, IOpenApiOperationControllerTransformer operationControllerTransformer)
 	{
 		this.visitor = new OperationGroupingVisitor(documentRegistry);
+		this.schemaRegistry = schemaRegistry;
 		this.openApiElement = openApiElement;
 		this.operationToGroup = operationToGroup;
 		this.operationControllerTransformer = operationControllerTransformer;
@@ -45,6 +48,8 @@ public class OperationGroupingSourceTransformer : ISourceProvider
 				resultList.Summary = null;
 			if (resultList.Description != description)
 				resultList.Description = null;
+			foreach (var referencedSchema in operation.GetNestedNodes(recursive: true).OfType<JsonSchema>())
+				schemaRegistry.EnsureSchemasRegistered(referencedSchema);
 			resultList.Operations.Add((operation, path));
 		}, diagnostic));
 		return result;

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using PrincipleStudios.OpenApi.Transformations.Specifications;
 
 namespace PrincipleStudios.OpenApi.Transformations.Abstractions;
@@ -9,4 +11,14 @@ namespace PrincipleStudios.OpenApi.Transformations.Abstractions;
 public record OpenApiMediaTypeObject(
 	Uri Id,
 	JsonSchema? Schema
-) : IReferenceableDocumentNode;
+) : IReferenceableDocumentNode
+{
+	public NodeMetadata Metadata => new NodeMetadata(Id);
+
+	public IEnumerable<IJsonDocumentNode> GetNestedNodes()
+	{
+		if (Schema != null)
+			yield return Schema;
+	}
+}
+

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using PrincipleStudios.OpenApi.Transformations.Specifications;
 
 namespace PrincipleStudios.OpenApi.Transformations.Abstractions;
 
@@ -15,4 +16,14 @@ public record OpenApiResponse(
 ) : IReferenceableDocumentNode
 {
 	// links?
+	public NodeMetadata Metadata => new NodeMetadata(Id);
+
+	public IEnumerable<IJsonDocumentNode> GetNestedNodes()
+	{
+		foreach (var h in Headers)
+			yield return h;
+		if (Content != null)
+			foreach (var h in Content.Values)
+				yield return h;
+	}
 }

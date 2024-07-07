@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using PrincipleStudios.OpenApi.Transformations.Specifications;
 
 namespace PrincipleStudios.OpenApi.Transformations.Abstractions;
 
@@ -10,4 +13,11 @@ public record OpenApiLicense(
 	string Name,
 	Uri? Url,
 	string? Identifier
-) : IReferenceableDocumentNode;
+) : IReferenceableDocumentNode
+{
+	public NodeMetadata Metadata => new NodeMetadata(Id);
+
+	public IEnumerable<IJsonDocumentNode> GetNestedNodes() =>
+		Enumerable.Empty<IJsonDocumentNode>();
+}
+

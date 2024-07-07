@@ -1,4 +1,5 @@
 ﻿using Microsoft.OpenApi.Models;
+using PrincipleStudios.OpenApi.Transformations.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
@@ -24,6 +25,15 @@ public record OpenApiOperation(
 	IReadOnlyDictionary<string, JsonNode?> Extensions
 ) : IReferenceableDocumentNode
 {
+	public NodeMetadata Metadata => new NodeMetadata(Id);
+
+	public IEnumerable<IJsonDocumentNode> GetNestedNodes()
+	{
+		foreach (var p in Parameters)
+			yield return p;
+		if (RequestBody != null) yield return RequestBody;
+		if (Responses != null) yield return Responses;
+	}
 
 	// externalDocs?
 	// callbacks?

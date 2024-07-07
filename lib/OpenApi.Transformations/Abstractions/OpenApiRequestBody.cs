@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using PrincipleStudios.OpenApi.Transformations.Specifications;
 
 namespace PrincipleStudios.OpenApi.Transformations.Abstractions;
 
@@ -11,4 +13,11 @@ public record OpenApiRequestBody(
 	string? Description,
 	IReadOnlyDictionary<string, OpenApiMediaTypeObject>? Content,
 	bool Required
-) : IReferenceableDocumentNode;
+) : IReferenceableDocumentNode
+{
+	public NodeMetadata Metadata => new NodeMetadata(Id);
+
+	public IEnumerable<IJsonDocumentNode> GetNestedNodes() =>
+		Content?.Values
+		?? Enumerable.Empty<IReferenceableDocumentNode>();
+}

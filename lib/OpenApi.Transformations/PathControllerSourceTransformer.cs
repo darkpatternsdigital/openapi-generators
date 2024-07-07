@@ -7,8 +7,8 @@ namespace PrincipleStudios.OpenApi.Transformations
 		public delegate string? OperationToGroupOverride(OpenApiOperation operation, OpenApiPath path);
 
 
-		public PathControllerSourceTransformer(DocumentRegistry registry, OpenApiDocument document, IOpenApiOperationControllerTransformer operationControllerTransformer, OperationToGroupOverride? operationToGroupOverride = null)
-			: base(registry, document, GetGroup(operationToGroupOverride), operationControllerTransformer)
+		public PathControllerSourceTransformer(DocumentRegistry registry, ISchemaRegistry schemaRegistry, OpenApiDocument document, IOpenApiOperationControllerTransformer operationControllerTransformer, OperationToGroupOverride? operationToGroupOverride = null)
+			: base(registry, schemaRegistry, document, GetGroup(operationToGroupOverride), operationControllerTransformer)
 		{
 		}
 

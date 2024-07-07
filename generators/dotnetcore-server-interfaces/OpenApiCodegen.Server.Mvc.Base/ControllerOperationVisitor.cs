@@ -44,12 +44,12 @@ class ControllerOperationVisitor : Transformations.Abstractions.OpenApiDocumentV
 		public OpenApiOperation Operation { get; }
 	}
 
-	public ControllerOperationVisitor(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, CSharpServerSchemaOptions options, string controllerClassName)
+	public ControllerOperationVisitor(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, CSharpServerSchemaOptions options, string controllerClassName, OpenApiDocument document)
 	{
 		this.documentRegistry = documentRegistry;
 		this.schemaRegistry = schemaRegistry;
 		this.options = options;
-		this.inlineSchemas = new CSharpInlineSchemas(documentRegistry, options);
+		this.inlineSchemas = new CSharpInlineSchemas(options, [document]);
 		this.controllerClassName = controllerClassName;
 	}
 
@@ -75,11 +75,11 @@ class ControllerOperationVisitor : Transformations.Abstractions.OpenApiDocumentV
 
 		base.Visit(operation, argument with { Builder = builder });
 
-		var operationId = operation.OperationId ?? (httpMethod + path);
+		var operationId = operation.OperationId ?? $"{httpMethod} {path}";
 		var sharedParameters = builder.SharedParameters.ToArray();
 		argument.RegisterControllerOperation(
 			new Templates.ControllerOperation(
-				HttpMethod: httpMethod,
+				HttpMethod: CSharpNaming.ToTitleCaseIdentifier(httpMethod, []),
 				Summary: operation.Summary,
 				Description: operation.Description,
 				Name: CSharpNaming.ToTitleCaseIdentifier(operationId, options.ReservedIdentifiers("ControllerBase", controllerClassName)),

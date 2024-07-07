@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using PrincipleStudios.OpenApi.Transformations.Specifications;
 
 namespace PrincipleStudios.OpenApi.Transformations.Abstractions;
 
@@ -24,4 +26,14 @@ public record OpenApiDocument(
 	// security
 	// tags
 	// externalDocs
+
+	public NodeMetadata Metadata => new NodeMetadata(Id);
+
+	public IEnumerable<IJsonDocumentNode> GetNestedNodes()
+	{
+		yield return Info;
+		foreach (var path in Paths.Values)
+			yield return path;
+	}
+
 }

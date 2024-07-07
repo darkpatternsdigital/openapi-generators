@@ -2,8 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using HandlebarsDotNet;
 using Json.Pointer;
+using Microsoft.OpenApi.Expressions;
 using PrincipleStudios.OpenApi.Transformations;
+using PrincipleStudios.OpenApi.Transformations.Abstractions;
 using PrincipleStudios.OpenApi.Transformations.Specifications;
 using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft04;
 using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Applicator;
@@ -19,7 +22,7 @@ public record CSharpInlineDefinition(string Text, bool Nullable = false, bool Is
 		Nullable ? this : new(Text + "?", Nullable: true, IsEnumerable: IsEnumerable);
 }
 
-public class CSharpInlineSchemas(DocumentRegistry documentRegistry, CSharpSchemaOptions options)
+public class CSharpInlineSchemas(CSharpSchemaOptions options, ICollection<IReferenceableDocument> documents)
 {
 	public CSharpInlineDefinition ToInlineDataType(JsonSchema? schema)
 	{
@@ -78,12 +81,14 @@ public class CSharpInlineSchemas(DocumentRegistry documentRegistry, CSharpSchema
 #pragma warning disable CA1707 // Identifiers should not contain underscores
 	private static readonly Regex _2xxRegex = new Regex("2[0-9]{2}");
 #pragma warning restore CA1707 // Identifiers should not contain underscores
+	private static bool Is2xx(int statusCode) => statusCode is >= 200 and < 300;
 	private string UriToIdentifier(Uri uri)
 	{
-		// TODO
-		var docReference = documentRegistry.ResolveDocument(uri, null);
+		var docReference = documents.FirstOrDefault(d => d.Id == uri);
+		if (docReference == null)
+			return string.Join(" ", JsonPointer.Parse(uri.Fragment).Segments.Select(s => s.Value));
 
-		var (parts, remaining) = Simplify(JsonPointer.Parse(uri.Fragment).Segments);
+		var (parts, remaining) = Simplify(GetNodesTo(uri, docReference));
 		while (remaining.Count > 0)
 		{
 			IEnumerable<string> newParts;
@@ -93,10 +98,97 @@ public class CSharpInlineSchemas(DocumentRegistry documentRegistry, CSharpSchema
 
 		return string.Join(" ", parts);
 
-		(IEnumerable<string> parts, IReadOnlyList<PointerSegment> remaining) Simplify(IReadOnlyList<PointerSegment> context)
+		(IEnumerable<string> parts, IReadOnlyList<JsonDocumentNodeContext> remaining) Simplify(IReadOnlyList<JsonDocumentNodeContext> context)
 		{
-			// TODO
-			return (context.Select(s => s.Value), Array.Empty<PointerSegment>());
+			switch (context[0])
+			{
+				case (["paths", var path], OpenApiPath):
+					switch (context[1])
+					{
+						case ([var method], OpenApiOperation { OperationId: null }):
+							return ([$"{method} ${path}"], context.Skip(2).ToArray());
+						case (_, OpenApiOperation { OperationId: string opId }):
+							return ([opId], context.Skip(2).ToArray());
+						default:
+							throw new NotImplementedException();
+					}
+				case ([], OpenApiDocument) when context[1] is (["components", _, string componentName], JsonSchema or OpenApiResponse):
+					return ([componentName], context.Skip(2).ToArray());
+				case (_, OpenApiDocument or OpenApiPath):
+					return (Enumerable.Empty<string>(), context.Skip(1).ToArray());
+				case (["responses"], OpenApiResponses responses):
+					{
+						if (context[1] is not ([var statusCode], OpenApiResponse response)) throw new NotImplementedException();
+						if (context[3] is not (["schema"], _)) throw new NotImplementedException();
+
+						var responseName = statusCode switch
+						{
+							"default" when responses.StatusCodeResponses.Count == 0 => "",
+							"default" => "other",
+							_ when responses.StatusCodeResponses.Count == 1 && responses.Default == null
+								=> "",
+							_ when _2xxRegex.IsMatch(statusCode) && responses.StatusCodeResponses.Keys.Count(Is2xx) == 1
+								=> "",
+							_ when int.TryParse(statusCode, out var numeric) && HttpStatusCodes.StatusCodeNames.TryGetValue(numeric, out var statusCodeName)
+								=> statusCodeName,
+							_ => statusCode,
+						};
+						var mimeTypeSegment = context[2] switch
+						{
+							(["content", _], _) when response.Content!.Count == 1 => "",
+							(["content", var mimeType], _) => mimeType,
+							_ => throw new NotImplementedException()
+						};
+						return ([responseName, mimeTypeSegment, "response"], context.Skip(4).ToArray());
+					}
+				case (["requestBody"], OpenApiRequestBody requestBody):
+					{
+						if (context[1] is not (["content", var mimeType], _)) throw new NotImplementedException();
+						if (context[2] is not (["schema"], _)) throw new NotImplementedException();
+
+						return ([requestBody.Content!.Count == 1 ? "" : mimeType, "request"], context.Skip(3).ToArray());
+					}
+				case (["parameters", _], OpenApiParameter { Name: string paramName }):
+					if (context[1] is not (["schema"], _)) throw new NotImplementedException();
+					return ([paramName], context.Skip(2).ToArray());
+				case (["items"], JsonSchema):
+					return (["Item"], context.Skip(1).ToArray());
+				case (["additionalProperties"], JsonSchema):
+					return (["AdditionalProperty"], context.Skip(1).ToArray());
+				case (var parts, JsonSchema):
+					return (parts, context.Skip(1).ToArray());
+				default:
+					throw new NotImplementedException();
+			};
 		}
+	}
+
+	private record JsonDocumentNodeContext(IReadOnlyList<string> Steps, IJsonDocumentNode Element);
+	private static JsonDocumentNodeContext[] GetNodesTo(Uri uri, IReferenceableDocument document)
+	{
+		if (document.Id != uri) throw new ArgumentException("Document Id must match given uri", nameof(document));
+		var fragment = Normalize(uri.Fragment);
+		var relevantNodes = (from n in document.GetNestedNodes(recursive: true)
+							 let id = Id(n)
+							 where id == fragment || fragment.StartsWith(id + "/")
+							 orderby id.Length
+							 select n).Prepend(document).ToArray();
+		var ids = relevantNodes.Select(Id).ToArray();
+		var steps = ids
+			.Select((id, index) => index == 0 ? id : id.Substring(ids[index - 1].Length))
+			.ToArray();
+
+		return relevantNodes
+			.Zip(steps, (node, step) => new JsonDocumentNodeContext(JsonPointer.Parse(step).Segments.Select(s => s.Value).ToArray(), node))
+			.ToArray();
+
+		static string Id(IJsonDocumentNode node) => Normalize(node.Metadata.Id.Fragment);
+		static string Normalize(string fragment) => fragment switch
+		{
+			{ Length: 0 } => "",
+			"#/" => "",
+			var s when s[s.Length - 1] == '/' => s.Substring(1, s.Length - 1),
+			var s => s.Substring(1),
+		};
 	}
 }

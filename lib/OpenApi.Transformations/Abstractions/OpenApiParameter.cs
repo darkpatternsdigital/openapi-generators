@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using PrincipleStudios.OpenApi.Transformations.Specifications;
 
 namespace PrincipleStudios.OpenApi.Transformations.Abstractions;
@@ -22,6 +24,13 @@ public record OpenApiParameter(
 	JsonSchema? Schema
 ) : IReferenceableDocumentNode
 {
+	public NodeMetadata Metadata => new NodeMetadata(Id);
+
+	public IEnumerable<IJsonDocumentNode> GetNestedNodes()
+	{
+		if (Schema != null)
+			yield return Schema;
+	}
 }
 
 public enum ParameterLocation

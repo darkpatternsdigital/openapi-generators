@@ -168,7 +168,7 @@ public class CSharpSchemaSourceProvider : SchemaSourceProvider
 				.Select((e, index) =>
 				{
 					var id = e.Metadata.Id;
-					string? discriminatorValue = null;
+					string? discriminatorValue = e.GetLastContextPart();
 					if (discriminator?.Mapping?.FirstOrDefault(kvp => kvp.Value.OriginalString == id.OriginalString) is { Key: string key, Value: var relativeId })
 					{
 						discriminatorValue = key;

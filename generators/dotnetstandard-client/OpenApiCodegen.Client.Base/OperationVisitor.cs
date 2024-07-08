@@ -103,7 +103,7 @@ class OperationVisitor : OpenApiDocumentVisitor<OperationVisitor.Argument>
 
 	public override void Visit(OpenApiParameter param, Argument argument)
 	{
-		var dataType = inlineSchemas.ToInlineDataType(param.Schema);
+		var dataType = inlineSchemas.ToInlineDataType(param.Schema) ?? CSharpInlineSchemas.AnyObject;
 		argument.Builder?.SharedParameters.Add(new Templates.OperationParameter(
 			RawName: param.Name,
 			ParamName: CSharpNaming.ToParameterName(param.Name, options.ReservedIdentifiers()),

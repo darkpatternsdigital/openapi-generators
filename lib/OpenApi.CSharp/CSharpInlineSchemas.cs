@@ -24,9 +24,12 @@ public record CSharpInlineDefinition(string Text, bool Nullable = false, bool Is
 
 public class CSharpInlineSchemas(CSharpSchemaOptions options, ICollection<IReferenceableDocument> documents)
 {
-	public CSharpInlineDefinition ToInlineDataType(JsonSchema? schema)
+	public static readonly CSharpInlineDefinition AnyObject = new("object", Nullable: true);
+
+	[return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull(nameof(schema))]
+	public CSharpInlineDefinition? ToInlineDataType(JsonSchema? schema)
 	{
-		if (schema == null) return new("object", Nullable: true);
+		if (schema == null) return null;
 
 		CSharpInlineDefinition result = CSharpTypeInfo.From(schema) switch
 		{

@@ -97,7 +97,7 @@ class ControllerOperationVisitor : Transformations.Abstractions.OpenApiDocumentV
 	{
 		if (param.Schema != null)
 			schemaRegistry.EnsureSchemasRegistered(param.Schema);
-		var dataType = inlineSchemas.ToInlineDataType(param.Schema);
+		var dataType = inlineSchemas.ToInlineDataType(param.Schema) ?? CSharpInlineSchemas.AnyObject;
 		if (!param.Required)
 		{
 			// Path/Query/Header/Cookie parameters can't really be nullable, but rather than using custom ModelBinding on Optional<T>, we use nullability.
@@ -146,23 +146,23 @@ class ControllerOperationVisitor : Transformations.Abstractions.OpenApiDocumentV
 					  select new OperationResponseContentOption(
 						  MediaType: entry.Key,
 						  ResponseMethodName: CSharpNaming.ToTitleCaseIdentifier($"{(contentCount > 1 ? entry.Key : "")} {statusCodeName}", options.ReservedIdentifiers()),
-						  DataType: dataType.Text
+						  DataType: dataType?.Text
 					  )).ToArray(),
 			Headers: (from entry in response.Headers
 					  let required = entry.Required
-					  let dataType = inlineSchemas.ToInlineDataType(entry.Schema)
+					  let dataType = inlineSchemas.ToInlineDataType(entry.Schema) ?? CSharpInlineSchemas.AnyObject
 					  select new Templates.OperationResponseHeader(
-					  RawName: entry.Name,
-					  ParamName: CSharpNaming.ToParameterName("header " + entry.Name, options.ReservedIdentifiers()),
-					  Description: entry.Description,
-					  DataType: dataType.Text,
-					  DataTypeNullable: dataType.Nullable,
-					  Required: entry.Required,
-					  Pattern: entry.Schema?.TryGetAnnotation<PatternKeyword>()?.Pattern,
-					  MinLength: entry.Schema?.TryGetAnnotation<MinLengthKeyword>()?.Value,
-					  MaxLength: entry.Schema?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
-					  Minimum: entry.Schema?.TryGetAnnotation<MinimumKeyword>()?.Value,
-					  Maximum: entry.Schema?.TryGetAnnotation<MaximumKeyword>()?.Value
+						RawName: entry.Name,
+						ParamName: CSharpNaming.ToParameterName("header " + entry.Name, options.ReservedIdentifiers()),
+						Description: entry.Description,
+						DataType: dataType.Text,
+						DataTypeNullable: dataType.Nullable,
+						Required: entry.Required,
+						Pattern: entry.Schema?.TryGetAnnotation<PatternKeyword>()?.Pattern,
+						MinLength: entry.Schema?.TryGetAnnotation<MinLengthKeyword>()?.Value,
+						MaxLength: entry.Schema?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
+						Minimum: entry.Schema?.TryGetAnnotation<MinimumKeyword>()?.Value,
+						Maximum: entry.Schema?.TryGetAnnotation<MaximumKeyword>()?.Value
 					  )).ToArray()
 		);
 

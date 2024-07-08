@@ -96,6 +96,8 @@ public class DocumentRegistry(DocumentRegistryOptions registryOptions)
 
 	public ResolvableNode ResolveMetadataNode(Uri uri, NodeMetadata? context = null) => uri.IsAbsoluteUri
 		? ResolveMetadataNode(new NodeMetadata(uri, context))
+		: context is { Id: Uri baseUri }
+		? ResolveMetadataNode(new NodeMetadata(new Uri(baseUri, uri), context))
 		: throw new InvalidOperationException(Errors.ReceivedRelativeUriWithoutDocument);
 
 	public ResolvableNode ResolveMetadataNode(NodeMetadata nodeMetadata)

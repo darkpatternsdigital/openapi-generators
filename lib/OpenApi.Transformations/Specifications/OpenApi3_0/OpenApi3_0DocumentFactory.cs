@@ -47,6 +47,8 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 			// https://github.com/OAI/OpenAPI-Specification/blob/d4fdc6cae9043dfc1abcad3c1a55282c49b3a7eb/schemas/v3.0/schema.yaml#L203
 			jsonSchemaMeta,
 			[
+				("$ref", RefKeyword.Instance),
+
 				// Most of `Vocabularies.Validation202012Id` works, but the exclusiveMinimum / exclusiveMaximum work differently
 				("title", Keywords.Draft2020_12Metadata.TitleKeyword.Instance),
 				("multipleOf", Keywords.Draft2020_12Validation.MultipleOfKeyword.Instance),
@@ -99,7 +101,17 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 					Vocabulary,
 					// should be all of "https://spec.openapis.org/oas/3.0/schema/2021-09-28"
 				],
-				UnknownKeyword.Instance
+				UnknownKeyword.Instance,
+				process: (nodeInfo, options, next) =>
+				{
+					var result = next(nodeInfo, options);
+					if (result.Fold(s => s.TryGetAnnotation<RefKeyword>(), _ => null) is { Reference: var reference })
+						return JsonSchemaParser.Deserialize(
+							options.Registry.ResolveMetadataNode(reference, nodeInfo.Metadata),
+							options
+						);
+					return result;
+				}
 			);
 	}
 

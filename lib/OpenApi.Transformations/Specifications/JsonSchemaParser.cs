@@ -11,6 +11,11 @@ public static class JsonSchemaParser
 {
 	public static DiagnosableResult<JsonSchema> Deserialize(ResolvableNode nodeInfo, JsonSchemaParserOptions options)
 	{
+		return options.Dialect.ParseMiddleware(nodeInfo, options, InnerDeserialize);
+	}
+
+	private static DiagnosableResult<JsonSchema> InnerDeserialize(ResolvableNode nodeInfo, JsonSchemaParserOptions options)
+	{
 		switch (nodeInfo.Node)
 		{
 			case JsonObject obj:

@@ -71,7 +71,6 @@ public class CSharpSchemaSourceProvider : SchemaSourceProvider
 
 	private ObjectModel? BuildObjectModel(JsonSchema schema)
 	{
-		// TODO: resolve schema $ref? How should this get handled?
 		if (schema.TryGetAnnotation<AllOfKeyword>() is AllOfKeyword allOf && allOf.Schemas.Count > 0)
 		{
 			var models = allOf.Schemas.Select(BuildObjectModel).ToArray();

@@ -39,6 +39,7 @@ public class CSharpSchemaSourceProvider : SchemaSourceProvider
 
 	protected override SourceEntry? GetSourceEntry(JsonSchema entry, OpenApiTransformDiagnostic diagnostic)
 	{
+		if (!inlineSchemas.ProduceSourceEntry(entry)) return null;
 		var targetNamespace = baseNamespace;
 		var className = GetClassName(entry);
 

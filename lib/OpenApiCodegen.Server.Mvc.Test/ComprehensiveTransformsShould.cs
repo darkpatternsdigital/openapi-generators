@@ -2,6 +2,7 @@
 using PrincipleStudios.OpenApi.CSharp;
 using PrincipleStudios.OpenApi.Transformations;
 using PrincipleStudios.OpenApi.Transformations.Diagnostics;
+using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords;
 using PrincipleStudios.OpenApiCodegen.TestUtils;
 using System.Linq;
 using Xunit;
@@ -35,7 +36,7 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 			DynamicCompilation.GetGeneratedLibrary(name);
 		}
 
-		private static OpenApiTransformDiagnostic GetDocumentDiagnostics(string name)
+		private static DiagnosticBase[] GetDocumentDiagnostics(string name)
 		{
 			var registry = DocumentLoader.CreateRegistry();
 			var docResult = GetOpenApiDocument(name);
@@ -45,17 +46,31 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 			var transformer = docResult.Document.BuildCSharpPathControllerSourceProvider(registry, "", "PS.Controller", options);
 			OpenApiTransformDiagnostic diagnostic = new();
 
-			transformer.GetSources(diagnostic).ToArray(); // force all sources to load to get diagnostics
-			return diagnostic;
+			var sources = transformer.GetSources(diagnostic).ToArray(); // force all sources to load to get diagnostics
+			return docResult.Diagnostics.Concat(diagnostic.Diagnostics).ToArray();
 		}
 
 		[Fact]
 		public void Report_unresolved_external_references()
 		{
-			OpenApiTransformDiagnostic diagnostic = GetDocumentDiagnostics("bad.yaml");
+			var diagnostics = GetDocumentDiagnostics("bad.yaml");
 
-			Assert.Collection(diagnostic.Diagnostics, [
-				(DiagnosticBase diag) => Assert.Null(diag)
+			Assert.Collection(diagnostics, [
+				(DiagnosticBase diag) =>
+				{
+					Assert.IsType<UnableToParseKeyword>(diag);
+					Assert.Equal("proj://embedded/bad.yaml", diag.Location.RetrievalUri.OriginalString);
+					Assert.Equal(26, diag.Location.Range?.Start.Line);
+					Assert.Equal(23, diag.Location.Range?.Start.Column);
+				},
+				(DiagnosticBase diag) =>
+				{
+					var targetNodeDiagnostic = Assert.IsType<CouldNotFindTargetNodeDiagnostic>(diag);
+					Assert.Equal("proj://embedded/bad.yaml", diag.Location.RetrievalUri.OriginalString);
+					Assert.Equal(75, diag.Location.Range?.Start.Line);
+					Assert.Equal(17, diag.Location.Range?.Start.Column);
+					Assert.Equal("proj://embedded/petstore.yaml#/Pet", targetNodeDiagnostic.Uri.OriginalString);
+				}
 			]);
 		}
 

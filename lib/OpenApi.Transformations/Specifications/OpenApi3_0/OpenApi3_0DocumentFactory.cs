@@ -273,7 +273,7 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 		CatchDiagnostic(AllowReference(AllowNull(InternalConstructSchema)), (_) => null)(key);
 	private JsonSchema InternalConstructSchema(ResolvableNode key)
 	{
-		var resolved = documentRegistry.ResolveSchema(key);
+		var resolved = JsonSchemaParser.Deserialize(key, new JsonSchemaParserOptions(documentRegistry, OpenApiDialect));
 		return resolved.Fold(
 			schema => schema,
 			diagnostics => throw new MultipleDiagnosticException(diagnostics)

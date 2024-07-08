@@ -100,7 +100,7 @@ public class CSharpSchemaSourceProvider : SchemaSourceProvider
 	private string GetClassName(JsonSchema schema)
 	{
 		var context = schema.Metadata.Id;
-		return CSharpNaming.ToClassName(context.Fragment, options.ReservedIdentifiers());
+		return CSharpNaming.ToClassName(inlineSchemas.UriToClassIdentifier(context), options.ReservedIdentifiers());
 	}
 
 	record ObjectModel(Func<IReadOnlyDictionary<string, JsonSchema>> Properties, Func<IEnumerable<string>> Required, bool LegacyOptionalBehavior);
@@ -167,15 +167,17 @@ public class CSharpSchemaSourceProvider : SchemaSourceProvider
 			TypeEntries: oneOf.Schemas
 				.Select((e, index) =>
 				{
-					var id = e.Metadata.Id.OriginalString;
-					if (discriminator?.Mapping?.FirstOrDefault(kvp => kvp.Value.OriginalString == id) is { Key: var mapped })
+					var id = e.Metadata.Id;
+					string? discriminatorValue = null;
+					if (discriminator?.Mapping?.FirstOrDefault(kvp => kvp.Value.OriginalString == id.OriginalString) is { Key: string key, Value: var relativeId })
 					{
-						id = mapped;
+						discriminatorValue = key;
+						id = new Uri(id, relativeId);
 					}
 					return new TypeUnionEntry(
 						TypeName: inlineSchemas.ToInlineDataType(e).Text,
-						Identifier: CSharpNaming.ToPropertyName(id, options.ReservedIdentifiers("object", className)),
-						DiscriminatorValue: discriminator == null ? null : id
+						Identifier: CSharpNaming.ToPropertyName(discriminatorValue ?? inlineSchemas.UriToClassIdentifier(id), options.ReservedIdentifiers("object", className)),
+						DiscriminatorValue: discriminatorValue
 					);
 				}).ToArray()
 		);

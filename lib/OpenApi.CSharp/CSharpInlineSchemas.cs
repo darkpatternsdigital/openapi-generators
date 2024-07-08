@@ -75,14 +75,14 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, ICollection<IRefer
 
 	private string GetClassName(JsonSchema schema)
 	{
-		return CSharpNaming.ToClassName(UriToIdentifier(schema.Metadata.Id), options.ReservedIdentifiers());
+		return CSharpNaming.ToClassName(UriToClassIdentifier(schema.Metadata.Id), options.ReservedIdentifiers());
 	}
 
 #pragma warning disable CA1707 // Identifiers should not contain underscores
 	private static readonly Regex _2xxRegex = new Regex("2[0-9]{2}");
 #pragma warning restore CA1707 // Identifiers should not contain underscores
 	private static bool Is2xx(int statusCode) => statusCode is >= 200 and < 300;
-	private string UriToIdentifier(Uri uri)
+	public string UriToClassIdentifier(Uri uri)
 	{
 		var docReference = documents.FirstOrDefault(d => d.Id == uri);
 		if (docReference == null)
@@ -133,13 +133,14 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, ICollection<IRefer
 								=> statusCodeName,
 							_ => statusCode,
 						};
-						var mimeTypeSegment = context[2] switch
+						var (qualifierName, typeName) = context[2] switch
 						{
-							(["content", _], _) when response.Content!.Count == 1 => "",
-							(["content", var mimeType], _) => mimeType,
+							(["content", _], _) when response.Content!.Count == 1 => ("", "response"),
+							(["content", var mimeType], _) => (mimeType, "response"),
+							(["headers", var headerNam], _) => (headerNam, "header"),
 							_ => throw new NotImplementedException()
 						};
-						return ([responseName, mimeTypeSegment, "response"], context.Skip(4).ToArray());
+						return ([responseName, qualifierName, typeName], context.Skip(4).ToArray());
 					}
 				case (["requestBody"], OpenApiRequestBody requestBody):
 					{

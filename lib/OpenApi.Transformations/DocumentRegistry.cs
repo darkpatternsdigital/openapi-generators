@@ -187,6 +187,7 @@ public class DocumentRegistry(DocumentRegistryOptions registryOptions)
 
 		return InternalAddDocument(document);
 	}
+
 	public DiagnosableResult<JsonSchema> ResolveSchema(ResolvableNode resolved)
 	{
 		return JsonSchemaParser.Deserialize(resolved, new(

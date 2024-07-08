@@ -69,6 +69,8 @@ public abstract class OpenApiDocumentVisitor<TArgument> : IOpenApiDocumentVisito
 	{
 		foreach (var e in responses.StatusCodeResponses.Values)
 			this.Visit(e, argument);
+		if (responses.Default != null)
+			this.Visit(responses.Default, argument);
 	}
 
 	public virtual void VisitUnknown(IReferenceableDocumentNode node, TArgument argument)

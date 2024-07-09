@@ -58,11 +58,8 @@ class ControllerOperationVisitor : Transformations.Abstractions.OpenApiDocumentV
 		base.Visit(path, argument with { CurrentPath = path });
 	}
 
-	public override void Visit(OpenApiOperation operation, Argument argument)
+	public override void Visit(OpenApiOperation operation, string httpMethod, Argument argument)
 	{
-		var httpMethod = operation.GetLastContextPart();
-		if (httpMethod == null)
-			throw new ArgumentException("Expected HTTP method from id", nameof(operation));
 		if (argument.CurrentPath is not OpenApiPath pathObj)
 			throw new ArgumentException("Could not find path in argument; be sure to visit a whole OpenAPI doc", nameof(argument));
 		var pathSuffix = JsonPointer.Parse(pathObj.Id.Fragment).Segments.Last().Value;
@@ -73,7 +70,7 @@ class ControllerOperationVisitor : Transformations.Abstractions.OpenApiDocumentV
 			+ pathSuffix.TrimStart('/');
 		var builder = new OperationBuilder(operation);
 
-		base.Visit(operation, argument with { Builder = builder });
+		base.Visit(operation, httpMethod, argument with { Builder = builder });
 
 		var operationId = operation.OperationId ?? $"{httpMethod} {path}";
 		var sharedParameters = builder.SharedParameters.ToArray();
@@ -125,14 +122,14 @@ class ControllerOperationVisitor : Transformations.Abstractions.OpenApiDocumentV
 		));
 	}
 
-	public override void Visit(OpenApiResponse response, Argument argument)
+	public override void Visit(OpenApiResponse response, int? statusCode, Argument argument)
 	{
-		var responseKey = response.GetLastContextPart();
-		int? statusCode = int.TryParse(responseKey, out var s) ? s : null;
 		if (!statusCode.HasValue || !HttpStatusCodes.StatusCodeNames.TryGetValue(statusCode.Value, out var statusCodeName))
 			statusCodeName = "other status code";
-		if (statusCodeName == responseKey)
+		else
 			statusCodeName = $"status code {statusCode}";
+		if (argument.Builder == null)
+			throw new ArgumentException("Argument is not ready", nameof(argument));
 		if (argument.Builder?.Operation is not OpenApiOperation op)
 			throw new ArgumentException("Could not find operation in argument; be sure to visit a whole OpenAPI doc", nameof(argument));
 		var content = response.Content;
@@ -167,11 +164,9 @@ class ControllerOperationVisitor : Transformations.Abstractions.OpenApiDocumentV
 		);
 
 		if (statusCode.HasValue)
-			argument.Builder?.StatusResponses.Add(statusCode.Value, result);
-		else if (responseKey == "default" && argument.Builder != null)
-			argument.Builder.DefaultResponse = result;
+			argument.Builder.StatusResponses.Add(statusCode.Value, result);
 		else
-			argument.Diagnostic.Diagnostics.Add(new UnknownResponseStatus(documentRegistry.ResolveLocation(new NodeMetadata(response.Id)), responseKey));
+			argument.Builder.DefaultResponse = result;
 	}
 	//public override void Visit(OpenApiRequestBody requestBody, Argument argument)
 	//{
@@ -252,9 +247,4 @@ class ControllerOperationVisitor : Transformations.Abstractions.OpenApiDocumentV
 							  select new Templates.OperationSecuritySchemeRequirement(scheme.SchemeName, scheme.ScopeNames.ToArray())).ToArray())
 						 );
 	}
-}
-
-public record UnknownResponseStatus(Location Location, string ResponseStatus) : DiagnosticBase(Location)
-{
-	public override IReadOnlyList<string> GetTextArguments() => [ResponseStatus];
 }

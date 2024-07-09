@@ -105,7 +105,7 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, ICollection<IRefer
 		{
 			switch (context[0])
 			{
-				case (["paths", var path], OpenApiPath):
+				case (["paths", var path], OpenApiPath) when context.Count >= 2:
 					switch (context[1])
 					{
 						case ([var method], OpenApiOperation { OperationId: null }):
@@ -115,11 +115,11 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, ICollection<IRefer
 						default:
 							throw new NotImplementedException();
 					}
-				case ([], OpenApiDocument) when context[1] is (["components", _, string componentName], JsonSchema or OpenApiResponse):
+				case ([], OpenApiDocument) when context.Count >= 2 && context[1] is (["components", _, string componentName], JsonSchema):
 					return ([componentName], context.Skip(2).ToArray());
 				case (_, OpenApiDocument or OpenApiPath):
 					return (Enumerable.Empty<string>(), context.Skip(1).ToArray());
-				case (["responses"], OpenApiResponses responses):
+				case (["responses"], OpenApiResponses responses) when context.Count >= 4:
 					{
 						if (context[1] is not ([var statusCode], OpenApiResponse response)) throw new NotImplementedException();
 						if (context[3] is not (["schema"], _)) throw new NotImplementedException();
@@ -145,14 +145,27 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, ICollection<IRefer
 						};
 						return ([responseName, qualifierName, typeName], context.Skip(4).ToArray());
 					}
-				case (["requestBody"], OpenApiRequestBody requestBody):
+				case (["components", "responses", var responseName], OpenApiResponse response) when context.Count >= 3:
+					{
+						if (context[2] is not (["schema"], _)) throw new NotImplementedException();
+
+						var (qualifierName, typeName) = context[1] switch
+						{
+							(["content", _], _) when response.Content!.Count == 1 => ("", "response"),
+							(["content", var mimeType], _) => (mimeType, "response"),
+							(["headers", var headerNam], _) => (headerNam, "header"),
+							_ => throw new NotImplementedException()
+						};
+						return ([responseName, qualifierName, typeName], context.Skip(3).ToArray());
+					}
+				case (["requestBody"], OpenApiRequestBody requestBody) when context.Count >= 3:
 					{
 						if (context[1] is not (["content", var mimeType], _)) throw new NotImplementedException();
 						if (context[2] is not (["schema"], _)) throw new NotImplementedException();
 
 						return ([requestBody.Content!.Count == 1 ? "" : mimeType, "request"], context.Skip(3).ToArray());
 					}
-				case (["parameters", _], OpenApiParameter { Name: string paramName }):
+				case (["parameters", _], OpenApiParameter { Name: string paramName }) when context.Count >= 1:
 					if (context[1] is not (["schema"], _)) throw new NotImplementedException();
 					return ([paramName], context.Skip(2).ToArray());
 				case (["items"], JsonSchema):
@@ -161,6 +174,8 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, ICollection<IRefer
 					return (["AdditionalProperty"], context.Skip(1).ToArray());
 				case (var parts, JsonSchema):
 					return (parts, context.Skip(1).ToArray());
+				case (var parts, var t):
+					throw new NotImplementedException($"{string.Join(", ", parts)} {t.GetType().FullName}");
 				default:
 					throw new NotImplementedException();
 			};

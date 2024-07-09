@@ -13,9 +13,9 @@ namespace PrincipleStudios.OpenApi.Transformations
 	{
 		public string? Summary { get; set; }
 		public string? Description { get; set; }
-		public List<(Abstractions.OpenApiOperation Operation, Abstractions.OpenApiPath Path)> Operations { get; } = new();
+		public List<(Abstractions.OpenApiOperation Operation, string Method, Abstractions.OpenApiPath Path)> Operations { get; } = new();
 
-		public void Deconstruct(out string? summary, out string? description, out IEnumerable<(Abstractions.OpenApiOperation Operation, Abstractions.OpenApiPath Path)> operations)
+		public void Deconstruct(out string? summary, out string? description, out IEnumerable<(Abstractions.OpenApiOperation Operation, string Method, Abstractions.OpenApiPath Path)> operations)
 		{
 			summary = Summary;
 			description = Description;

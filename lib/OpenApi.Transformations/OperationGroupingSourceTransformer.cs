@@ -30,7 +30,7 @@ public class OperationGroupingSourceTransformer : ISourceProvider
 	private Dictionary<string, OperationGroupData> GetGroups(OpenApiTransformDiagnostic diagnostic)
 	{
 		var result = new Dictionary<string, OperationGroupData>();
-		visitor.Visit(document, new OperationGroupingVisitor.Argument((operation, path) =>
+		visitor.Visit(document, new OperationGroupingVisitor.Argument((operation, method, path) =>
 		{
 			var (group, summary, description) = operationToGroup(operation, path);
 			group = operationControllerTransformer.SanitizeGroupName(group);
@@ -45,7 +45,7 @@ public class OperationGroupingSourceTransformer : ISourceProvider
 				resultList.Description = null;
 			foreach (var referencedSchema in operation.GetNestedNodes(recursive: true).OfType<JsonSchema>())
 				schemaRegistry.EnsureSchemasRegistered(referencedSchema);
-			resultList.Operations.Add((operation, path));
+			resultList.Operations.Add((operation, method, path));
 		}, diagnostic));
 		return result;
 	}
@@ -63,21 +63,21 @@ public class OperationGroupingSourceTransformer : ISourceProvider
 	class OperationGroupingVisitor(DocumentRegistry documentRegistry) : Abstractions.OpenApiDocumentVisitor<OperationGroupingVisitor.Argument>
 	{
 		public record Argument(RegisterOperationEntry RegisterSourceEntry, OpenApiTransformDiagnostic Diagnostic, OpenApiPath? Path = null);
-		public delegate void RegisterOperationEntry(OpenApiOperation operation, OpenApiPath path);
+		public delegate void RegisterOperationEntry(OpenApiOperation operation, string method, OpenApiPath path);
 
 		public override void Visit(OpenApiPath path, Argument argument)
 		{
 			base.Visit(path, argument with { Path = path });
 		}
 
-		public override void Visit(OpenApiOperation operation, Argument argument)
+		public override void Visit(OpenApiOperation operation, string method, Argument argument)
 		{
 			if (argument is not { Path: OpenApiPath path })
 				throw new ArgumentException("Cannot visit operation without a path", nameof(argument));
 
 			try
 			{
-				argument.RegisterSourceEntry(operation, path);
+				argument.RegisterSourceEntry(operation, method, path);
 			}
 #pragma warning disable CA1031 // Do not catch general exception types
 			catch (Exception ex)

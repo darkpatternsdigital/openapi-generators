@@ -1,0 +1,45 @@
+openapi: "3.0.3"
+info:
+  version: 1.0.0
+  title: Response Ref Demo
+  description: A sample API that uses response references
+paths:
+  /random:
+    get:
+      operationId: getRandom
+      responses:
+        '200':
+          $ref: '#/components/responses/Number'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/Unknown'
+components:
+  responses:
+    Number:
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: integer
+    BadRequest:
+      description: unexpected error
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - code
+              - message
+            properties:
+              code:
+                type: string
+              message:
+                type: string
+    Unknown:
+      description: unexpected error
+      content:
+        application/json:
+          schema:
+            type: object
+            format: any

@@ -30,7 +30,7 @@ public abstract class OpenApiDocumentVisitor<TArgument> : IOpenApiDocumentVisito
 	}
 
 	public virtual void Visit(OpenApiLicense license, TArgument argument) { }
-	public virtual void Visit(OpenApiOperation operation, TArgument argument)
+	public virtual void Visit(OpenApiOperation operation, string method, TArgument argument)
 	{
 		foreach (var e in operation.SecurityRequirements)
 			this.Visit(e, argument);
@@ -47,8 +47,8 @@ public abstract class OpenApiDocumentVisitor<TArgument> : IOpenApiDocumentVisito
 	public virtual void Visit(OpenApiParameter parameter, TArgument argument) { }
 	public virtual void Visit(OpenApiPath path, TArgument argument)
 	{
-		foreach (var e in path.Operations.Values)
-			this.Visit(e, argument);
+		foreach (var kvp in path.Operations)
+			this.Visit(kvp.Value, kvp.Key, argument);
 	}
 
 	public virtual void Visit(OpenApiMediaTypeObject mediaTypeObject, TArgument argument) { }
@@ -59,7 +59,7 @@ public abstract class OpenApiDocumentVisitor<TArgument> : IOpenApiDocumentVisito
 			foreach (var e in requestBody.Content.Values)
 				this.Visit(e, argument);
 	}
-	public virtual void Visit(OpenApiResponse response, TArgument argument)
+	public virtual void Visit(OpenApiResponse response, int? statusCode, TArgument argument)
 	{
 		foreach (var e in response.Headers)
 			this.Visit(e, argument);
@@ -69,10 +69,10 @@ public abstract class OpenApiDocumentVisitor<TArgument> : IOpenApiDocumentVisito
 	}
 	public virtual void Visit(OpenApiResponses responses, TArgument argument)
 	{
-		foreach (var e in responses.StatusCodeResponses.Values)
-			this.Visit(e, argument);
+		foreach (var kvp in responses.StatusCodeResponses)
+			this.Visit(kvp.Value, kvp.Key, argument);
 		if (responses.Default != null)
-			this.Visit(responses.Default, argument);
+			this.Visit(responses.Default, null, argument);
 	}
 
 	public virtual void Visit(OpenApiSecurityRequirement securityRequirement, TArgument argument)

@@ -41,8 +41,8 @@ namespace PrincipleStudios.OpenApi.CSharp
 
 			var resultOperations = new List<ControllerOperation>();
 			var visitor = new ControllerOperationVisitor(documentRegistry, schemaRegistry, options, controllerClassName: className, document);
-			foreach (var (operation, path) in operations)
-				visitor.Visit(operation, new ControllerOperationVisitor.Argument(diagnostic, resultOperations.Add, CurrentPath: path));
+			foreach (var (operation, method, path) in operations)
+				visitor.Visit(operation, method, new ControllerOperationVisitor.Argument(diagnostic, resultOperations.Add, CurrentPath: path));
 
 			var template = new Templates.ControllerTemplate(
 				Header: new Templates.PartialHeader(

@@ -30,6 +30,7 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 		[InlineData("nullable-vs-optional.yaml")]
 		[InlineData("nullable-vs-optional-legacy.yaml")]
 		[InlineData("annotations.yaml")]
+		[InlineData("response-ref.yaml")]
 		[Theory]
 		public void Compile_api_documents_included_in_the_TestApp(string name)
 		{

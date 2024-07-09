@@ -22,7 +22,7 @@ public class ItemsKeyword(string keyword, JsonSchema schema) : IJsonSchemaAnnota
 
 	public IEnumerable<JsonSchema> GetReferencedSchemas() => [Schema];
 
-	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
+	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchema context, EvaluationContext evaluationContext)
 	{
 		// TODO - leverage prefixItems and contains
 		if (nodeMetadata.Node is not JsonArray array)

@@ -7,6 +7,7 @@ namespace PrincipleStudios.OpenApi.Transformations.Abstractions;
 
 public interface IReferenceableDocument : IReferenceableDocumentNode
 {
+	IJsonSchemaDialect Dialect { get; }
 }
 
 public interface IReferenceableDocumentNode : IJsonDocumentNode
@@ -18,14 +19,16 @@ public static class ReferenceableDocumentNodeExtensions
 {
 	public static IEnumerable<IJsonDocumentNode> GetNestedNodes(this IJsonDocumentNode node, bool recursive)
 	{
-		foreach (var n in node.GetNestedNodes())
+		if (!recursive) return node.GetNestedNodes();
+		var result = new HashSet<IJsonDocumentNode>();
+		var stack = new Stack<IJsonDocumentNode>(node.GetNestedNodes());
+		while (stack.Count > 0)
 		{
-			yield return n;
-			if (recursive)
-				foreach (var deeper in n.GetNestedNodes(recursive))
-					if (deeper.Metadata.Id == node.Metadata.Id
-						|| deeper.Metadata.Id.Fragment.StartsWith(node.Metadata.Id.Fragment + "/"))
-						yield return deeper;
+			var next = stack.Pop();
+			if (result.Add(next))
+				foreach (var n in next.GetNestedNodes())
+					stack.Push(n);
 		}
+		return result;
 	}
 }

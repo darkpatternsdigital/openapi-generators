@@ -25,7 +25,7 @@ public class ExclusiveMaximumKeyword(string keyword, bool isExclusive) : IJsonSc
 
 	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
 
-	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
+	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchema context, EvaluationContext evaluationContext)
 	{
 		throw new NotImplementedException();
 	}

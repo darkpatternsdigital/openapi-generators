@@ -26,7 +26,7 @@ public class PatternKeyword(string keyword, string pattern) : IJsonSchemaAnnotat
 
 	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
 
-	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
+	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchema context, EvaluationContext evaluationContext)
 	{
 		if (nodeMetadata.Node is not JsonValue value || !value.TryGetValue<string>(out var s))
 		{

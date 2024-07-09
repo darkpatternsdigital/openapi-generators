@@ -23,7 +23,7 @@ public class NotKeyword(string keyword, JsonSchema schema) : IJsonSchemaAnnotati
 
 	public IEnumerable<JsonSchema> GetReferencedSchemas() => [Schema];
 
-	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
+	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchema context, EvaluationContext evaluationContext)
 	{
 		if (!Schema.Evaluate(nodeMetadata, evaluationContext).Any())
 			yield return new MustNotMatch(evaluationContext.DocumentRegistry.ResolveLocation(nodeMetadata));

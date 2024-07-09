@@ -29,7 +29,7 @@ public class AnyOfKeyword(string keyword, IReadOnlyList<JsonSchema> schemas) : I
 
 	public IEnumerable<JsonSchema> GetReferencedSchemas() => Schemas;
 
-	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
+	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchema context, EvaluationContext evaluationContext)
 	{
 		var results = Schemas.Select(s => s.Evaluate(nodeMetadata, evaluationContext).ToArray()).ToArray();
 		var matches = results.Count(r => r.Length == 0);

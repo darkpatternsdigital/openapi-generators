@@ -22,7 +22,7 @@ public class MultipleOfKeyword(string keyword, decimal value) : IJsonSchemaAnnot
 
 	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
 
-	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
+	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchema context, EvaluationContext evaluationContext)
 	{
 		// TODO
 		throw new System.NotImplementedException($"Check multiple of {value}");

@@ -41,7 +41,7 @@ public class PropertiesKeyword(string keyword, IReadOnlyDictionary<string, JsonS
 
 	public IEnumerable<JsonSchema> GetReferencedSchemas() => Properties.Values;
 
-	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
+	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchema context, EvaluationContext evaluationContext)
 	{
 		if (nodeMetadata.Node is not JsonObject obj) yield break;
 

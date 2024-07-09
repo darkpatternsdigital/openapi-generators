@@ -26,8 +26,7 @@ public class SchemaRegistry : ISchemaRegistry
 		if (allSchemas.ContainsKey(id)) return;
 		allSchemas.Add(id, schema);
 
-		if (schema is not AnnotatedJsonSchema annotated) return;
-		foreach (var annotation in annotated.Annotations)
+		foreach (var annotation in schema.Annotations)
 			foreach (var referencedSchema in annotation.GetReferencedSchemas())
 				EnsureSchemasRegistered(referencedSchema);
 	}

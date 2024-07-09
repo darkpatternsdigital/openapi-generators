@@ -102,19 +102,7 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 					Vocabulary,
 					// should be all of "https://spec.openapis.org/oas/3.0/schema/2021-09-28"
 				],
-				UnknownKeyword.Instance,
-				process: (nodeInfo, options, next) =>
-				{
-					// TODO: use a fixup stage
-					// For OpenAPI 3.0 ONLY, the Ref keyword actually _replaces_ the schema rather than merges
-					var result = next(nodeInfo, options);
-					if (result.Fold(s => s.TryGetAnnotation<RefKeyword>(), _ => null) is { Reference: var reference })
-						return JsonSchemaParser.Deserialize(
-							options.Registry.ResolveMetadataNode(reference, nodeInfo.Metadata),
-							options
-						);
-					return result;
-				}
+				UnknownKeyword.Instance
 			);
 	}
 
@@ -137,7 +125,7 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 		return new OpenApiDocument(key.Id,
 			OpenApiSpecVersion: new OpenApiSpecVersion("openapi", obj["openapi"]?.GetValue<string>() ?? "3.0.3"),
 			Info: ConstructInfo(key.Navigate("info")),
-			JsonSchemaDialect: jsonSchemaDialect,
+			Dialect: OpenApiDialect,
 			Paths: ConstructPaths(key.Navigate("paths")),
 			SecurityRequirements: ReadArray(key.Navigate("security"), ConstructSecurityRequirement)
 		);

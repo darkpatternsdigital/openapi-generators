@@ -22,7 +22,7 @@ public class AdditionalPropertiesKeyword(string keyword, JsonSchema schema) : IJ
 
 	public IEnumerable<JsonSchema> GetReferencedSchemas() => [schema];
 
-	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
+	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchema context, EvaluationContext evaluationContext)
 	{
 		if (nodeMetadata.Node is not JsonObject array)
 			yield break;

@@ -20,11 +20,26 @@ public static class CommonParsers
 	public static ParseResult<TResult> Parse<TResult>(this IEnumerable<IParser<TResult>> parsers, IDocumentReference document, DocumentRegistry documentRegistry)
 		where TResult : class, IReferenceableDocument
 	{
-		return parsers
+		var result = parsers
 			.Where(parser => parser.CanParse(document))
 			.Select(parser => parser.Parse(document, documentRegistry))
 			.FirstOrDefault()
 			?? new ParseResult<TResult>(null, [new UnableToParseDiagnostic(documentRegistry.ResolveLocation(NodeMetadata.FromRoot(document)))]);
+		if (result.Document != null)
+		{
+			documentRegistry.Register(result.Document);
+			var options = new JsonSchemaParserOptions(documentRegistry, result.Document.Dialect);
+			do
+			{
+				var schemas = result.Document.GetNestedNodes(recursive: true).OfType<JsonSchema>().Where(s => !s.IsFixupComplete).ToArray();
+				foreach (var schema in schemas)
+				{
+					// TODO: there may be some edge cases where the fixup does not catch
+					schema.FixupInPlace(options);
+				}
+			} while (result.Document.GetNestedNodes(recursive: true).OfType<JsonSchema>().Where(s => !s.IsFixupComplete).Any());
+		}
+		return result;
 	}
 }
 

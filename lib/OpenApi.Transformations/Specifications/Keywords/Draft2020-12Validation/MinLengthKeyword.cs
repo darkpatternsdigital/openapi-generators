@@ -23,7 +23,7 @@ public class MinLengthKeyword(string keyword, int value) : IJsonSchemaAnnotation
 
 	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
 
-	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, AnnotatedJsonSchema context, EvaluationContext evaluationContext)
+	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchema context, EvaluationContext evaluationContext)
 	{
 		// TODO
 		throw new System.NotImplementedException($"Not implemented: limit min length to {value}");

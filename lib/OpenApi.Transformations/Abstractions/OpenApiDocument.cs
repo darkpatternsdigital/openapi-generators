@@ -13,7 +13,7 @@ public record OpenApiDocument(
 	Uri Id,
 	OpenApiSpecVersion OpenApiSpecVersion,
 	OpenApiInfo Info,
-	Uri JsonSchemaDialect,
+	IJsonSchemaDialect Dialect,
 	IReadOnlyDictionary<string, OpenApiPath> Paths,
 	IReadOnlyList<OpenApiSecurityRequirement> SecurityRequirements
 ) : IReferenceableDocument

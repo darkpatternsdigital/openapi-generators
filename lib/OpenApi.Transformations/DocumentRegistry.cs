@@ -1,4 +1,5 @@
 ﻿using Json.Pointer;
+using PrincipleStudios.OpenApi.Transformations.Abstractions;
 using PrincipleStudios.OpenApi.Transformations.Diagnostics;
 using PrincipleStudios.OpenApi.Transformations.DocumentTypes;
 using PrincipleStudios.OpenApi.Transformations.Specifications;
@@ -56,7 +57,11 @@ public class DocumentRegistry(DocumentRegistryOptions registryOptions)
 	private record DocumentRegistryEntry(
 		IDocumentReference Document,
 		IReadOnlyDictionary<string, JsonPointer> Anchors
-	);
+	)
+	{
+		public Dictionary<string, IJsonDocumentNode> Parsed { get; } = new();
+	}
+
 	private readonly ICollection<DocumentRegistryEntry> entries = new HashSet<DocumentRegistryEntry>();
 
 	public void AddDocument(IDocumentReference document)
@@ -86,6 +91,33 @@ public class DocumentRegistry(DocumentRegistryOptions registryOptions)
 	public bool HasDocument(Uri uri)
 	{
 		return entries.Any(doc => doc.Document.BaseUri == uri);
+	}
+
+	public void Register(IJsonDocumentNode node)
+	{
+		var entry = entries.FirstOrDefault(doc => doc.Document.BaseUri == node.Metadata.Id);
+		var stack = new Stack<IJsonDocumentNode>([node]);
+		while (stack.Count > 0)
+		{
+			var next = stack.Pop();
+			if (entry.Parsed.ContainsKey(next.Metadata.Id.Fragment)) return;
+			entry.Parsed[next.Metadata.Id.Fragment] = next;
+			foreach (var n in next.GetNestedNodes()) stack.Push(n);
+		}
+	}
+
+	public bool TryGetNode<T>(Uri nodeUri, [NotNullWhen(true)] out T? node)
+		where T : class, IJsonDocumentNode
+	{
+		var entry = entries
+			.FirstOrDefault(doc => doc.Document.BaseUri == nodeUri);
+		if (entry == null)
+		{
+			node = null;
+			return false;
+		}
+		node = entry.Parsed.TryGetValue(nodeUri.Fragment, out var result) ? result as T : null;
+		return node != null;
 	}
 
 	public bool TryGetDocument(Uri uri, [NotNullWhen(true)] out IDocumentReference? doc)

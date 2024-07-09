@@ -11,17 +11,12 @@ public static class JsonSchemaParser
 {
 	public static DiagnosableResult<JsonSchema> Deserialize(ResolvableNode nodeInfo, JsonSchemaParserOptions options)
 	{
-		return options.Dialect.ParseMiddleware(nodeInfo, options, InnerDeserialize);
-	}
-
-	private static DiagnosableResult<JsonSchema> InnerDeserialize(ResolvableNode nodeInfo, JsonSchemaParserOptions options)
-	{
 		switch (nodeInfo.Node)
 		{
 			case JsonObject obj:
 				return DeserializeKeywords(obj);
 			case JsonValue v when v.TryGetValue<bool>(out var boolValue):
-				return DiagnosableResult<JsonSchema>.Pass(new JsonSchemaBool(nodeInfo.Metadata, boolValue));
+				return DiagnosableResult<JsonSchema>.Pass(new JsonSchema(nodeInfo.Metadata, boolValue));
 			default:
 				return DiagnosableResult<JsonSchema>.Fail(nodeInfo.Metadata, options.Registry, UnableToParseSchema.Builder());
 		}
@@ -34,7 +29,7 @@ public static class JsonSchemaParser
 			var diagnostics = keywords.OfType<DiagnosableResult<IJsonSchemaAnnotation>.Failure>().SelectMany(k => k.Diagnostics).ToArray();
 			if (diagnostics.Length > 0) return DiagnosableResult<JsonSchema>.Fail(diagnostics);
 
-			return DiagnosableResult<JsonSchema>.Pass(new AnnotatedJsonSchema(
+			return DiagnosableResult<JsonSchema>.Pass(new JsonSchema(
 				nodeInfo.Metadata,
 				keywords.OfType<DiagnosableResult<IJsonSchemaAnnotation>.Success>().Select(k => k.Value)
 			));

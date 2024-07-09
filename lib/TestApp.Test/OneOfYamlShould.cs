@@ -28,7 +28,7 @@ public class OneOfYamlShould
 	public Task Handle_OneOf_with_discriminator() =>
 		TestSingleRequest<OneOf.PetControllerBase.AddPetActionResult, OneOf.SpecifiedPet>(new(
 			OneOf.PetControllerBase.AddPetActionResult.Ok(),
-			client => client.PostAsync("/one-of/pet", JsonContent.Create(new { petType = "dog", bark = true, breed = "Shiba Inu" }))
+			client => client.PostAsync("/one-of/pet", JsonContent.Create(new { petType = "Dog", bark = true, breed = "Shiba Inu" }))
 		)
 		{
 			AssertRequest = (controller, request) =>
@@ -45,6 +45,6 @@ public class OneOfYamlShould
 	public Task Handle_invalid_OneOf_with_discriminator() =>
 		TestValidationError(
 			OneOf.PetControllerBase.AddPetActionResult.Unsafe,
-			client => client.PostAsync("/one-of/pet", JsonContent.Create(new { petType = "dog" }))
+			client => client.PostAsync("/one-of/pet", JsonContent.Create(new { petType = "Dog" }))
 		);
 }

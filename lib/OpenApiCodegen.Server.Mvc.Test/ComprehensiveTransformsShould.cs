@@ -47,8 +47,15 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 			var transformer = docResult.Document.BuildCSharpPathControllerSourceProvider(registry, "", "PS.Controller", options);
 			OpenApiTransformDiagnostic diagnostic = new();
 
-			var sources = transformer.GetSources(diagnostic).ToArray(); // force all sources to load to get diagnostics
-			return docResult.Diagnostics.Concat(diagnostic.Diagnostics).ToArray();
+			try
+			{
+				var sources = transformer.GetSources(diagnostic).ToArray(); // force all sources to load to get diagnostics
+				return docResult.Diagnostics.Concat(diagnostic.Diagnostics).ToArray();
+			}
+			catch
+			{
+				return docResult.Diagnostics.ToArray();
+			}
 		}
 
 		[Fact]

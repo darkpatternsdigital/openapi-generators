@@ -13,7 +13,7 @@ namespace PrincipleStudios.OpenApi.Transformations;
 public delegate IDocumentReference? DocumentResolver(Uri baseUri, IDocumentReference? currentDocument);
 public record NodeMetadata(Uri Id, NodeMetadata? Context = null)
 {
-	internal static NodeMetadata FromRoot(IDocumentReference documentReference)
+	public static NodeMetadata FromRoot(IDocumentReference documentReference)
 	{
 		return new NodeMetadata(documentReference.BaseUri);
 	}

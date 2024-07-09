@@ -41,13 +41,28 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 		var sourceProvider = CreateSourceProvider(parseResult.Document, registry, options, additionalTextMetadata);
 		var openApiDiagnostic = new OpenApiTransformDiagnostic();
 
-		var sources = (from entry in sourceProvider.GetSources(openApiDiagnostic)
-					   select new OpenApiCodegen.SourceEntry(entry.Key, entry.SourceText)).ToArray();
+		try
+		{
+			var sources = (from entry in sourceProvider.GetSources(openApiDiagnostic)
+						   select new OpenApiCodegen.SourceEntry(entry.Key, entry.SourceText)).ToArray();
 
-		return new GenerationResult(
-			sources,
-			parsedDiagnostics
-		);
+			return new GenerationResult(
+				sources,
+				parsedDiagnostics
+			);
+		}
+#pragma warning disable CA1031 // Catching a general exception type here to turn it into a diagnostic for reporting
+		catch (Exception ex)
+		{
+			var diagnostics = new List<DiagnosticBase>();
+			diagnostics.AddExceptionAsDiagnostic(ex, registry, NodeMetadata.FromRoot(baseDocument));
+
+			return new GenerationResult(
+				Array.Empty<OpenApiCodegen.SourceEntry>(),
+				parsedDiagnostics.Concat(parsedDiagnostics.Concat(diagnostics.Select(DiagnosticsConversion.ToDiagnosticInfo))).ToArray()
+			);
+		}
+#pragma warning restore CA1031 // Do not catch general exception types
 	}
 
 	private static ISourceProvider CreateSourceProvider(OpenApiDocument document, DocumentRegistry registry, CSharpServerSchemaOptions options, IReadOnlyDictionary<string, string?> opt)

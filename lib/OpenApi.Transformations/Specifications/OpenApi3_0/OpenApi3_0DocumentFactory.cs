@@ -457,22 +457,10 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 			{
 				return toItem(key);
 			}
-			catch (DocumentException ex)
-			{
-				diagnostics.Add(ex.Diagnostic);
-			}
-			catch (DiagnosticException ex)
-			{
-				diagnostics.Add(ex.ConstructDiagnostic(documentRegistry.ResolveLocation(key.Metadata)));
-			}
-			catch (MultipleDiagnosticException ex)
-			{
-				diagnostics.AddRange(ex.Diagnostics);
-			}
 #pragma warning disable CA1031 // Catching a general exception type here to turn it into a diagnostic for reporting
 			catch (Exception ex)
 			{
-				diagnostics.Add(new UnhandledExceptionDiagnostic(ex, documentRegistry.ResolveLocation(key.Metadata)));
+				diagnostics.AddExceptionAsDiagnostic(ex, documentRegistry, key.Metadata);
 			}
 #pragma warning restore CA1031 // Do not catch general exception types
 			return constructDefault(key.Id);
@@ -483,9 +471,4 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 public record InvalidNode(string NodeType, Location Location) : DiagnosticBase(Location)
 {
 	public static DiagnosticException.ToDiagnostic Builder(string nodeType) => (Location) => new InvalidNode(nodeType, Location);
-}
-
-public record UnhandledExceptionDiagnostic(Exception Exception, Location Location) : DiagnosticBase(Location)
-{
-	public override IReadOnlyList<string> GetTextArguments() => [Exception.GetType().FullName, Exception.ToString()];
 }

@@ -57,6 +57,7 @@ internal static class MissingRequiredFieldDefaults
 		Description: null,
 		OperationId: null,
 		Parameters: Array.Empty<OpenApiParameter>(),
+		SecurityRequirements: Array.Empty<OpenApiSecurityRequirement>(),
 		RequestBody: null,
 		Responses: null,
 		Deprecated: false,
@@ -105,4 +106,6 @@ internal static class MissingRequiredFieldDefaults
 		Content: new Dictionary<string, OpenApiMediaTypeObject>()
 	);
 	public static OpenApiResponse ConstructPlaceholderResponse(Uri id) => new PlaceholderResponse(id);
+
+	internal static OpenApiSecurityRequirement ConstructPlaceholderSecurityRequirement(Uri id) => new OpenApiSecurityRequirement(id, Array.Empty<OpenApiSecuritySchemeRequirement>());
 }

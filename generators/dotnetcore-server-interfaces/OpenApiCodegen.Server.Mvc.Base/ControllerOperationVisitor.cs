@@ -245,13 +245,13 @@ class ControllerOperationVisitor : Transformations.Abstractions.OpenApiDocumentV
 			);
 	}
 
-	// public override void Visit(OpenApiSecurityRequirement securityRequirement, Argument argument)
-	// {
-	// 	argument.Builder?.SecurityRequirements.Add(new OperationSecurityRequirement(
-	// 						 (from scheme in securityRequirement
-	// 						  select new Templates.OperationSecuritySchemeRequirement(scheme.Key.Reference.Id, scheme.Value.ToArray())).ToArray())
-	// 					 );
-	// }
+	public override void Visit(OpenApiSecurityRequirement securityRequirement, Argument argument)
+	{
+		argument.Builder?.SecurityRequirements.Add(new OperationSecurityRequirement(
+							 (from scheme in securityRequirement.SchemeRequirements
+							  select new Templates.OperationSecuritySchemeRequirement(scheme.SchemeName, scheme.ScopeNames.ToArray())).ToArray())
+						 );
+	}
 }
 
 public record UnknownResponseStatus(Location Location, string ResponseStatus) : DiagnosticBase(Location)

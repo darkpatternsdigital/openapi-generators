@@ -14,5 +14,6 @@ public interface IOpenApiDocumentVisitor<TArgument>
 	void Visit(OpenApiRequestBody requestBody, TArgument argument);
 	void Visit(OpenApiResponse response, TArgument argument);
 	void Visit(OpenApiResponses responses, TArgument argument);
+	void Visit(OpenApiSecurityRequirement securityRequirement, TArgument argument);
 	void VisitUnknown(IReferenceableDocumentNode node, TArgument argument);
 }

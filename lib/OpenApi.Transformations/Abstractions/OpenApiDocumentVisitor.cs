@@ -16,7 +16,8 @@ public abstract class OpenApiDocumentVisitor<TArgument> : IOpenApiDocumentVisito
 		foreach (var e in document.Paths.Values)
 			this.Visit(e, argument);
 		this.Visit(document.Info, argument);
-		// this.VisitHelper(document.SecurityRequirements, argument);
+		foreach (var e in document.SecurityRequirements)
+			this.Visit(e, argument);
 		// this.VisitHelper(document.Tags, argument);
 	}
 
@@ -31,7 +32,8 @@ public abstract class OpenApiDocumentVisitor<TArgument> : IOpenApiDocumentVisito
 	public virtual void Visit(OpenApiLicense license, TArgument argument) { }
 	public virtual void Visit(OpenApiOperation operation, TArgument argument)
 	{
-		// this.VisitHelper(operation.Security, argument);
+		foreach (var e in operation.SecurityRequirements)
+			this.Visit(e, argument);
 		// this.VisitHelper(operation.Callbacks, argument);
 		if (operation.Responses != null)
 			this.Visit(operation.Responses, argument);
@@ -71,6 +73,11 @@ public abstract class OpenApiDocumentVisitor<TArgument> : IOpenApiDocumentVisito
 			this.Visit(e, argument);
 		if (responses.Default != null)
 			this.Visit(responses.Default, argument);
+	}
+
+	public virtual void Visit(OpenApiSecurityRequirement securityRequirement, TArgument argument)
+	{
+		// TODO
 	}
 
 	public virtual void VisitUnknown(IReferenceableDocumentNode node, TArgument argument)

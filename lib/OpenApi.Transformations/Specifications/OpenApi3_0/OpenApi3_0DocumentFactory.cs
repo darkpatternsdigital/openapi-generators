@@ -1,4 +1,4 @@
-using PrincipleStudios.OpenApi.Transformations.Abstractions;
+﻿using PrincipleStudios.OpenApi.Transformations.Abstractions;
 using PrincipleStudios.OpenApi.Transformations.Diagnostics;
 using PrincipleStudios.OpenApi.Transformations.DocumentTypes;
 using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords;
@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using Draft04 = PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft04;
 
@@ -135,7 +136,8 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 			OpenApiSpecVersion: new OpenApiSpecVersion("openapi", obj["openapi"]?.GetValue<string>() ?? "3.0.3"),
 			Info: ConstructInfo(key.Navigate("info")),
 			JsonSchemaDialect: jsonSchemaDialect,
-			Paths: ConstructPaths(key.Navigate("paths"))
+			Paths: ConstructPaths(key.Navigate("paths")),
+			SecurityRequirements: ReadArray(key.Navigate("security"), ConstructSecurityRequirement)
 		);
 	}
 
@@ -213,6 +215,7 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 			Description: obj["description"]?.GetValue<string>(),
 			OperationId: obj["operationId"]?.GetValue<string>(),
 			Parameters: ReadArray(key.Navigate("parameters"), ConstructParameter),
+			SecurityRequirements: ReadArray(key.Navigate("security"), ConstructSecurityRequirement),
 			RequestBody: ConstructRequestBody(key.Navigate("requestBody")),
 			Responses: ConstructResponses(key.Navigate("responses")),
 			Deprecated: obj["deprecated"]?.GetValue<bool>() ?? false,
@@ -267,6 +270,22 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 		if (key.Node is not JsonObject obj) throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiParameter)));
 
 		return LoadParameter(key, obj, ParameterLocation.Header);
+	}
+
+	private OpenApiSecurityRequirement ConstructSecurityRequirement(ResolvableNode key) =>
+		CatchDiagnostic(InternalConstructSecurityRequirement, MissingRequiredFieldDefaults.ConstructPlaceholderSecurityRequirement)(key);
+	private OpenApiSecurityRequirement InternalConstructSecurityRequirement(ResolvableNode key)
+	{
+		if (key.Node is not JsonObject obj) throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiSecurityRequirement)));
+
+		var schemeRequirements = (from kvp in obj
+								  let arr = kvp.Value as JsonArray ?? throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiSecurityRequirement)))
+								  select new OpenApiSecuritySchemeRequirement(
+									 SchemeName: kvp.Key,
+									 ScopeNames: arr.Deserialize<string[]>() ?? throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiSecurityRequirement)))
+								  )).ToArray();
+
+		return new OpenApiSecurityRequirement(key.Id, schemeRequirements);
 	}
 
 	private JsonSchema? ConstructSchema(ResolvableNode key) =>

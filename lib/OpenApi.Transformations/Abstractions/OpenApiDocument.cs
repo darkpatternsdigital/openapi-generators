@@ -14,7 +14,8 @@ public record OpenApiDocument(
 	OpenApiSpecVersion OpenApiSpecVersion,
 	OpenApiInfo Info,
 	Uri JsonSchemaDialect,
-	IReadOnlyDictionary<string, OpenApiPath> Paths
+	IReadOnlyDictionary<string, OpenApiPath> Paths,
+	IReadOnlyList<OpenApiSecurityRequirement> SecurityRequirements
 ) : IReferenceableDocument
 {
 	// TODO:
@@ -34,6 +35,8 @@ public record OpenApiDocument(
 		yield return Info;
 		foreach (var path in Paths.Values)
 			yield return path;
+		foreach (var securityRequirement in SecurityRequirements)
+			yield return securityRequirement;
 	}
 
 }

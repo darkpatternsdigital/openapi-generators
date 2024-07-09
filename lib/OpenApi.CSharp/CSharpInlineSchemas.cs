@@ -54,6 +54,9 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, ICollection<IRefer
 
 	public bool ProduceSourceEntry(JsonSchema schema)
 	{
+		var nodes = GetNodesTo(schema.Metadata.Id);
+		if (nodes.LastOrDefault() is (["allOf", _], JsonSchema))
+			return false;
 		// C# can't inline things that must be referenced, and vice versa.
 		// (Except with tuples, but those don't serialize/deserialize reliably yet.)
 		return CSharpTypeInfo.From(schema) switch
@@ -87,12 +90,11 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, ICollection<IRefer
 	private static bool Is2xx(int statusCode) => statusCode is >= 200 and < 300;
 	public string UriToClassIdentifier(Uri uri)
 	{
-		var docReference = documents.FirstOrDefault(d => d.Id == uri);
-		if (docReference == null)
+		IReadOnlyList<JsonDocumentNodeContext> remaining = GetNodesTo(uri);
+		if (remaining.Count == 0)
 			return string.Join(" ", JsonPointer.Parse(uri.Fragment).Segments.Select(s => s.Value));
 
 		IEnumerable<string> parts = Enumerable.Empty<string>();
-		IReadOnlyList<JsonDocumentNodeContext> remaining = GetNodesTo(uri, docReference);
 		while (remaining.Count > 0)
 		{
 			(var newParts, remaining) = Simplify(remaining);
@@ -185,15 +187,21 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, ICollection<IRefer
 	}
 
 	private record JsonDocumentNodeContext(IReadOnlyList<string> Steps, IJsonDocumentNode Element);
-	private static JsonDocumentNodeContext[] GetNodesTo(Uri uri, IReferenceableDocument document)
+	private JsonDocumentNodeContext[] GetNodesTo(Uri uri)
 	{
-		if (document.Id != uri) throw new ArgumentException("Document Id must match given uri", nameof(document));
+		var document = documents.FirstOrDefault(d => d.Id == uri);
+		if (document == null)
+			// TODO - should be able to look this up from the doument registry instead
+			// However, the document registry doesn't know the _type_ of the document
+			return Array.Empty<JsonDocumentNodeContext>();
+
 		var fragment = Normalize(uri.Fragment);
 		var relevantNodes = (from n in document.GetNestedNodes(recursive: true)
 							 let id = Id(n)
 							 where id == fragment || fragment.StartsWith(id + "/")
-							 orderby id.Length
-							 select n).Prepend(document).ToArray();
+							 group n by id into similar
+							 orderby similar.Key.Length
+							 select similar.First()).Prepend(document).ToArray();
 		var ids = relevantNodes.Select(Id).ToArray();
 		var steps = ids
 			.Select((id, index) => index == 0 ? id : id.Substring(ids[index - 1].Length))

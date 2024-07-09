@@ -124,9 +124,10 @@ class ControllerOperationVisitor : Transformations.Abstractions.OpenApiDocumentV
 
 	public override void Visit(OpenApiResponse response, int? statusCode, Argument argument)
 	{
-		if (!statusCode.HasValue || !HttpStatusCodes.StatusCodeNames.TryGetValue(statusCode.Value, out var statusCodeName))
+		string statusCodeName;
+		if (!statusCode.HasValue)
 			statusCodeName = "other status code";
-		else
+		else if (!HttpStatusCodes.StatusCodeNames.TryGetValue(statusCode.Value, out statusCodeName))
 			statusCodeName = $"status code {statusCode}";
 		if (argument.Builder == null)
 			throw new ArgumentException("Argument is not ready", nameof(argument));

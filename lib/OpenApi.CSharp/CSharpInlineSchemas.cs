@@ -91,11 +91,11 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, ICollection<IRefer
 		if (docReference == null)
 			return string.Join(" ", JsonPointer.Parse(uri.Fragment).Segments.Select(s => s.Value));
 
-		var (parts, remaining) = Simplify(GetNodesTo(uri, docReference));
+		IEnumerable<string> parts = Enumerable.Empty<string>();
+		IReadOnlyList<JsonDocumentNodeContext> remaining = GetNodesTo(uri, docReference);
 		while (remaining.Count > 0)
 		{
-			IEnumerable<string> newParts;
-			(newParts, remaining) = Simplify(remaining);
+			(var newParts, remaining) = Simplify(remaining);
 			parts = parts.Concat(newParts).ToArray();
 		}
 
@@ -170,6 +170,8 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, ICollection<IRefer
 					return ([paramName], context.Skip(2).ToArray());
 				case (["items"], JsonSchema):
 					return (["Item"], context.Skip(1).ToArray());
+				case (["properties", var propName], JsonSchema):
+					return ([propName], context.Skip(1).ToArray());
 				case (["additionalProperties"], JsonSchema):
 					return (["AdditionalProperty"], context.Skip(1).ToArray());
 				case (var parts, JsonSchema):
@@ -202,7 +204,7 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, ICollection<IRefer
 			.ToArray();
 
 		static string Id(IJsonDocumentNode node) => Normalize(node.Metadata.Id.Fragment);
-		static string Normalize(string fragment) => fragment switch
+		static string Normalize(string fragment) => Uri.UnescapeDataString(fragment) switch
 		{
 			{ Length: 0 } => "",
 			"#/" => "",

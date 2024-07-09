@@ -45,7 +45,7 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, ICollection<IRefer
 				new(GetClassName(schema)),
 			{ Type: string type, Format: var format } =>
 				new(options.Find(type, format)),
-			_ => throw new NotSupportedException("Unknown schema"),
+			_ => throw new NotSupportedException($"Unable to create inline reference for schema {schema.Metadata.Id}"),
 		};
 		return schema?.TryGetAnnotation<NullableKeyword>() is { IsNullable: true }
 			? result.MakeNullable()

@@ -1,4 +1,4 @@
-﻿using PrincipleStudios.OpenApi.Transformations.Abstractions;
+using PrincipleStudios.OpenApi.Transformations.Abstractions;
 using PrincipleStudios.OpenApi.Transformations.Diagnostics;
 using PrincipleStudios.OpenApi.Transformations.DocumentTypes;
 using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords;
@@ -105,6 +105,8 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 				UnknownKeyword.Instance,
 				process: (nodeInfo, options, next) =>
 				{
+					// TODO: use a fixup stage
+					// For OpenAPI 3.0 ONLY, the Ref keyword actually _replaces_ the schema rather than merges
 					var result = next(nodeInfo, options);
 					if (result.Fold(s => s.TryGetAnnotation<RefKeyword>(), _ => null) is { Reference: var reference })
 						return JsonSchemaParser.Deserialize(

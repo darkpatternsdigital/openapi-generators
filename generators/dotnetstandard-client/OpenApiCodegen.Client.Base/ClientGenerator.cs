@@ -1,7 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Readers.Interface;
-using Microsoft.OpenApi.Readers;
 using PrincipleStudios.OpenApi.Transformations;
 using PrincipleStudios.OpenApiCodegen;
 using System;
@@ -36,57 +33,43 @@ public class ClientGenerator : IOpenApiCodeGenerator
 		var (baseDocument, registry) = LoadDocument(documentPath, documentContents, options);
 		var parseResult = CommonParsers.DefaultParsers.Parse(baseDocument, registry);
 		var parsedDiagnostics = parseResult.Diagnostics.Select(DiagnosticsConversion.ToDiagnosticInfo).ToArray();
-		if (!parseResult.HasDocument)
+		if (!parseResult.HasDocument || parseResult.Document == null)
 			return new GenerationResult(Array.Empty<OpenApiCodegen.SourceEntry>(), parsedDiagnostics);
 
-		// TODO - use result from `parseResult` instead of re-parsing with alternative
-		if (!TryParseFile(documentContents, out var document, out var diagnostic))
-		{
-			return new GenerationResult(Array.Empty<OpenApiCodegen.SourceEntry>(), parsedDiagnostics);
-		}
-		var sourceProvider = CreateSourceProvider(document, additionalTextMetadata);
+		var sourceProvider = CreateSourceProvider(parseResult.Document, registry, options, additionalTextMetadata);
 		var openApiDiagnostic = new OpenApiTransformDiagnostic();
 
-		var sources = (from entry in sourceProvider.GetSources(openApiDiagnostic)
-					   select new OpenApiCodegen.SourceEntry(entry.Key, entry.SourceText)).ToArray();
-
-		return new GenerationResult(
-			sources,
-			parsedDiagnostics
-		);
-	}
-
-	private static bool TryParseFile(string openapiTextContent, [NotNullWhen(true)] out OpenApiDocument? document, out IReadOnlyList<DiagnosticInfo> diagnostic)
-	{
-		document = null;
-		diagnostic = Array.Empty<DiagnosticInfo>();
 		try
 		{
-			var reader = new OpenApiStringReader();
-			document = reader.Read(openapiTextContent, out var openApiDiagnostic);
-			if (openApiDiagnostic.Errors.Any())
-			{
-				return false;
-			}
+			var sources = (from entry in sourceProvider.GetSources(openApiDiagnostic)
+						   select new OpenApiCodegen.SourceEntry(entry.Key, entry.SourceText)).ToArray();
 
-			return true;
+			return new GenerationResult(
+				sources,
+				parsedDiagnostics
+			);
 		}
-#pragma warning disable CA1031 // Do not catch general exception types
-		catch
-#pragma warning restore CA1031 // Do not catch general exception types
+#pragma warning disable CA1031 // Catching a general exception type here to turn it into a diagnostic for reporting
+		catch (Exception ex)
 		{
-			return false;
+			var diagnostics = new List<DiagnosticBase>();
+			diagnostics.AddExceptionAsDiagnostic(ex, registry, NodeMetadata.FromRoot(baseDocument));
+
+			return new GenerationResult(
+				Array.Empty<OpenApiCodegen.SourceEntry>(),
+				parsedDiagnostics.Concat(parsedDiagnostics.Concat(diagnostics.Select(DiagnosticsConversion.ToDiagnosticInfo))).ToArray()
+			);
 		}
+#pragma warning restore CA1031 // Do not catch general exception types
 	}
 
-	private static ISourceProvider CreateSourceProvider(OpenApiDocument document, IReadOnlyDictionary<string, string?> opt)
+	private static ISourceProvider CreateSourceProvider(Transformations.Abstractions.OpenApiDocument document, DocumentRegistry registry, CSharpSchemaOptions options, IReadOnlyDictionary<string, string?> opt)
 	{
-		var options = LoadOptions(opt[propConfig]);
 		var documentNamespace = opt[propNamespace];
 		if (string.IsNullOrEmpty(documentNamespace))
 			documentNamespace = GetStandardNamespace(opt, options);
 
-		return document.BuildCSharpClientSourceProvider(GetVersionInfo(), documentNamespace, options);
+		return document.BuildCSharpClientSourceProvider(registry, GetVersionInfo(), documentNamespace, options);
 	}
 
 	private static CSharpSchemaOptions LoadOptionsFromMetadata(IReadOnlyDictionary<string, string?> additionalTextMetadata)

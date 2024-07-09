@@ -59,9 +59,8 @@ class OperationVisitor : OpenApiDocumentVisitor<OperationVisitor.Argument>
 		base.Visit(path, argument with { CurrentPath = path });
 	}
 
-	public override void Visit(OpenApiOperation operation, Argument argument)
+	public override void Visit(OpenApiOperation operation, string httpMethod, Argument argument)
 	{
-		var httpMethod = operation.GetLastContextPart();
 		if (argument.CurrentPath is not OpenApiPath pathObj)
 			throw new ArgumentException("Could not find path in argument; be sure to visit a whole OpenAPI doc", nameof(argument));
 		var path = JsonPointer.Parse(pathObj.Id.Fragment).Segments.Last().Value;
@@ -75,7 +74,7 @@ class OperationVisitor : OpenApiDocumentVisitor<OperationVisitor.Argument>
 		if (operation.RequestBody == null || !operation.RequestBody.Required)
 			builder.RequestBodies.Add(noBody);
 
-		base.Visit(operation, argument with { Builder = builder, CurrentOperation = operation });
+		base.Visit(operation, httpMethod, argument with { Builder = builder, CurrentOperation = operation });
 
 		var sharedParameters = builder.SharedParameters.ToArray();
 		var requestBodies = builder.RequestBodies.DefaultIfEmpty(noBody).Select(transform => transform(sharedParameters))
@@ -85,7 +84,7 @@ class OperationVisitor : OpenApiDocumentVisitor<OperationVisitor.Argument>
 		{
 			argument.RegisterControllerOperation(
 				new Templates.Operation(
-				 HttpMethod: httpMethod,
+				 HttpMethod: CSharpNaming.ToTitleCaseIdentifier(httpMethod, []),
 				 Summary: operation.Summary,
 				 Description: operation.Description,
 				 Name: CSharpNaming.ToTitleCaseIdentifier(operationId, options.ReservedIdentifiers("ControllerBase", controllerClassName)),
@@ -125,14 +124,15 @@ class OperationVisitor : OpenApiDocumentVisitor<OperationVisitor.Argument>
 			Maximum: param.Schema?.TryGetAnnotation<MaximumKeyword>()?.Value
 		));
 	}
-	public override void Visit(OpenApiResponse response, Argument argument)
+	public override void Visit(OpenApiResponse response, int? statusCode, Argument argument)
 	{
-		var responseKey = response.GetLastContextPart();
-		int? statusCode = int.TryParse(responseKey, out var s) ? s : null;
-		if (!statusCode.HasValue || !HttpStatusCodes.StatusCodeNames.TryGetValue(statusCode.Value, out var statusCodeName))
+		string statusCodeName;
+		if (!statusCode.HasValue)
 			statusCodeName = "other status code";
-		if (statusCodeName == responseKey)
+		else if (!HttpStatusCodes.StatusCodeNames.TryGetValue(statusCode.Value, out statusCodeName))
 			statusCodeName = $"status code {statusCode}";
+		if (argument.Builder?.Operation is not OpenApiOperation op)
+			throw new ArgumentException("Could not find operation in argument; be sure to visit a whole OpenAPI doc", nameof(argument));
 		var content = response.Content;
 		var contentCount = content?.Count ?? 0;
 
@@ -166,11 +166,9 @@ class OperationVisitor : OpenApiDocumentVisitor<OperationVisitor.Argument>
 		);
 
 		if (statusCode.HasValue)
-			argument.Builder?.StatusResponses.Add(statusCode.Value, result);
-		else if (responseKey == "default" && argument.Builder != null)
-			argument.Builder.DefaultResponse = result;
+			argument.Builder.StatusResponses.Add(statusCode.Value, result);
 		else
-			argument.Diagnostic.Diagnostics.Add(new UnknownResponseStatus(documentRegistry.ResolveLocation(new NodeMetadata(response.Id)), responseKey));
+			argument.Builder.DefaultResponse = result;
 	}
 	//public override void Visit(OpenApiRequestBody requestBody, Argument argument)
 	//{
@@ -254,9 +252,4 @@ class OperationVisitor : OpenApiDocumentVisitor<OperationVisitor.Argument>
 							  select new Templates.OperationSecuritySchemeRequirement(scheme.SchemeName, scheme.ScopeNames.ToArray())).ToArray())
 						 );
 	}
-}
-
-public record UnknownResponseStatus(Location Location, string ResponseStatus) : DiagnosticBase(Location)
-{
-	public override IReadOnlyList<string> GetTextArguments() => [ResponseStatus];
 }

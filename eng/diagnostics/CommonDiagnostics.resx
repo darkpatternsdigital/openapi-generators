@@ -181,8 +181,8 @@
     <value>Could not parse the '{0}' keyword; ensure it is the correct format</value>
     <comment/>
   </data>
-  <data name="PrincipleStudios.OpenApi.Transformations.Specifications.OpenApi3_0.UnhandledExceptionDiagnostic" xml:space="preserve">
-    <value>Unhandled exception during parsing of an OpenAPI 3.0 document: [{0}] {1}</value>
+  <data name="PrincipleStudios.OpenApi.Transformations.Diagnostics.UnhandledExceptionDiagnostic" xml:space="preserve">
+    <value>Unhandled exception occurred: [{0}] {1}</value>
     <comment/>
   </data>
   <data name="PrincipleStudios.OpenApi.Transformations.Specifications.OpenApi3_0.TypeKeywordMismatch" xml:space="preserve">
@@ -195,6 +195,10 @@
   </data>
   <data name="PrincipleStudios.OpenApi.Transformations.Specifications.UnableToParseDiagnostic" xml:space="preserve">
     <value>Unable to parse the document; unknown document type</value>
+    <comment/>
+  </data>
+  <data name="PrincipleStudios.OpenApi.Transformations.UnableToGroupOperation" xml:space="preserve">
+    <value>Unable to group operations: {0}</value>
     <comment/>
   </data>
 </root>

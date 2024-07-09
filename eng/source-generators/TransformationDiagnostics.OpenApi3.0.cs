@@ -5,14 +5,6 @@ namespace PrincipleStudios.OpenApiCodegen;
 
 public partial class TransformationDiagnostics
 {
-	[TransformationDiagnostic("PrincipleStudios.OpenApi.Transformations.Specifications.OpenApi3_0.UnhandledExceptionDiagnostic")]
-	public static readonly DiagnosticDescriptor OpenApi30UnhandledExceptionDiagnostic =
-		new DiagnosticDescriptor(id: "PS_OPENAPI_3_0_UNK",
-								title: "Unhandled exception during parsing of an OpenAPI 3.0 document",
-								messageFormat: PrincipleStudios_OpenApi_Transformations_Specifications_OpenApi3_0_UnhandledExceptionDiagnostic,
-								category: "PrincipleStudios.OpenApiCodegen",
-								DiagnosticSeverity.Error,
-								isEnabledByDefault: true);
 	[TransformationDiagnostic("PrincipleStudios.OpenApi.Transformations.Specifications.OpenApi3_0.TypeKeywordMismatch")]
 	public static readonly DiagnosticDescriptor OpenApi30TypeKeywordMismatch =
 		new DiagnosticDescriptor(id: "PS_OPENAPI_3_0_001",

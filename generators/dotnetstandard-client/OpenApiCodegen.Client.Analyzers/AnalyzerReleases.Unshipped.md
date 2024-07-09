@@ -15,7 +15,7 @@ PS_JSON_2020_12_VAL_002 | PrincipleStudios.OpenApiCodegen | Error | Transformati
 PS_JSON_2020_12_VAL_003 | PrincipleStudios.OpenApiCodegen | Error | TransformationDiagnostics
 PS_OPENAPI_3_0_001 | PrincipleStudios.OpenApiCodegen | Error | TransformationDiagnostics
 PS_OPENAPI_3_0_002 | PrincipleStudios.OpenApiCodegen | Error | TransformationDiagnostics
-PS_OPENAPI_3_0_UNK | PrincipleStudios.OpenApiCodegen | Error | TransformationDiagnostics
+PS_UNK | PrincipleStudios.OpenApiCodegen | Error | TransformationDiagnostics
 PS_PARSE_002 | PrincipleStudios.OpenApiCodegen | Error | TransformationDiagnostics
 PS_PARSE_003 | PrincipleStudios.OpenApiCodegen | Error | TransformationDiagnostics
 PS_PARSE_004 | PrincipleStudios.OpenApiCodegen | Error | TransformationDiagnostics

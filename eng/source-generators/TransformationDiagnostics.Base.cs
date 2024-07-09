@@ -69,4 +69,20 @@ public partial class TransformationDiagnostics
 								category: "PrincipleStudios.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
+	[TransformationDiagnostic("PrincipleStudios.OpenApi.Transformations.Diagnostics.UnhandledExceptionDiagnostic")]
+	public static readonly DiagnosticDescriptor UnhandledExceptionDiagnostic =
+		new DiagnosticDescriptor(id: "PS_UNK",
+								title: "Unhandled exception",
+								messageFormat: PrincipleStudios_OpenApi_Transformations_Diagnostics_UnhandledExceptionDiagnostic,
+								category: "PrincipleStudios.OpenApiCodegen",
+								DiagnosticSeverity.Error,
+								isEnabledByDefault: true);
+	[TransformationDiagnostic("PrincipleStudios.OpenApi.Transformations.UnableToGroupOperation")]
+	public static readonly DiagnosticDescriptor UnableToGroupOperationDiagnostic =
+		new DiagnosticDescriptor(id: "PS_TRANSFORM_001",
+								title: "Unable to group operations: {0}",
+								messageFormat: PrincipleStudios_OpenApi_Transformations_UnableToGroupOperation,
+								category: "PrincipleStudios.OpenApiCodegen",
+								DiagnosticSeverity.Error,
+								isEnabledByDefault: true);
 }

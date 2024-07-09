@@ -100,7 +100,7 @@ public class DocumentRegistry(DocumentRegistryOptions registryOptions)
 		while (stack.Count > 0)
 		{
 			var next = stack.Pop();
-			if (entry.Parsed.ContainsKey(next.Metadata.Id.Fragment)) return;
+			if (entry.Parsed.ContainsKey(next.Metadata.Id.Fragment)) continue;
 			entry.Parsed[next.Metadata.Id.Fragment] = next;
 			foreach (var n in next.GetNestedNodes()) stack.Push(n);
 		}
@@ -118,6 +118,19 @@ public class DocumentRegistry(DocumentRegistryOptions registryOptions)
 		}
 		node = entry.Parsed.TryGetValue(nodeUri.Fragment, out var result) ? result as T : null;
 		return node != null;
+	}
+
+	public bool TryGetAllNodes(Uri documentUri, [NotNullWhen(true)] out IEnumerable<IJsonDocumentNode>? nodes)
+	{
+		var entry = entries
+			.FirstOrDefault(doc => doc.Document.BaseUri == documentUri);
+		if (entry == null)
+		{
+			nodes = null;
+			return false;
+		}
+		nodes = entry.Parsed.Values;
+		return true;
 	}
 
 	public bool TryGetDocument(Uri uri, [NotNullWhen(true)] out IDocumentReference? doc)
@@ -220,20 +233,19 @@ public class DocumentRegistry(DocumentRegistryOptions registryOptions)
 		return InternalAddDocument(document);
 	}
 
-	public DiagnosableResult<JsonSchema> ResolveSchema(ResolvableNode resolved)
+	public JsonSchema? ResolveSchema(NodeMetadata nodeMetadata, IJsonSchemaDialect dialect)
 	{
-		return JsonSchemaParser.Deserialize(resolved, new(
-			Dialect: FindDialectAt(resolved),
-			Registry: this
-		));
-	}
-
-	private IJsonSchemaDialect FindDialectAt(ResolvableNode node)
-	{
-		// TODO: allow $dialect at the node to specify an alternate dialect
-		if (TryGetDocument(node.Id, out var doc))
-			return doc.Dialect;
-		throw new InvalidOperationException(string.Format(Errors.DialectNotFound, node.Id.OriginalString));
+		if (!TryGetNode<JsonSchema>(nodeMetadata.Id, out var result))
+		{
+			var deserialized = JsonSchemaParser.Deserialize(
+				ResolveMetadataNode(nodeMetadata),
+				new JsonSchemaParserOptions(this, dialect)
+			).Fold<JsonSchema?>(s => s, _ => null);
+			if (deserialized != null)
+				Register(deserialized);
+			result = deserialized;
+		}
+		return result;
 	}
 
 	public Location ResolveLocation(ResolvableNode node) => ResolveLocation(node.Metadata);

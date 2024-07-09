@@ -44,12 +44,12 @@ class ControllerOperationVisitor : Transformations.Abstractions.OpenApiDocumentV
 		public OpenApiOperation Operation { get; }
 	}
 
-	public ControllerOperationVisitor(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, CSharpServerSchemaOptions options, string controllerClassName, OpenApiDocument document)
+	public ControllerOperationVisitor(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, CSharpServerSchemaOptions options, string controllerClassName)
 	{
 		this.documentRegistry = documentRegistry;
 		this.schemaRegistry = schemaRegistry;
 		this.options = options;
-		this.inlineSchemas = new CSharpInlineSchemas(options, [document]);
+		this.inlineSchemas = new CSharpInlineSchemas(options, documentRegistry);
 		this.controllerClassName = controllerClassName;
 	}
 

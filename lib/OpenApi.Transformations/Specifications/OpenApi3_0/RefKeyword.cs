@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
+using Microsoft.OpenApi.Readers;
 using PrincipleStudios.OpenApi.Transformations.Diagnostics;
 using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords;
 
@@ -32,16 +33,7 @@ public class RefKeyword(string keyword, Uri reference, Uri absoluteReference) : 
 
 	public void FixupInPlace(JsonSchema schema, IJsonSchemaModifier modifier, JsonSchemaParserOptions options)
 	{
-		if (!options.Registry.TryGetNode<JsonSchema>(absoluteReference, out var result))
-		{
-			var deserialized = JsonSchemaParser.Deserialize(
-				options.Registry.ResolveMetadataNode(absoluteReference, schema.Metadata),
-				options
-			).Fold<JsonSchema?>(s => s, _ => null);
-			if (deserialized != null)
-				options.Registry.Register(deserialized);
-			result = deserialized;
-		}
+		var result = options.Registry.ResolveSchema(new(absoluteReference, schema.Metadata), options.Dialect);
 		if (result is JsonSchema newResult)
 		{
 			if (newResult.BoolValue is bool v)

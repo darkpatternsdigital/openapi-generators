@@ -38,7 +38,7 @@ public class CSharpSchemaTransformerShould
 		Assert.NotNull(document);
 		Assert.NotNull(schema);
 
-		var target = ConstructTarget(LoadOptions(), document);
+		var target = ConstructTarget(LoadOptions(), registry);
 
 		var actual = target.ProduceSourceEntry(schema!);
 
@@ -61,6 +61,6 @@ public class CSharpSchemaTransformerShould
 		return (registry, document, schemaResult.Fold<JsonSchema?>(v => v, _ => null));
 	}
 
-	private CSharpInlineSchemas ConstructTarget(CSharpSchemaOptions options, OpenApiDocument document) => new(options, [document]);
+	private CSharpInlineSchemas ConstructTarget(CSharpSchemaOptions options, DocumentRegistry documentRegistry) => new(options, documentRegistry);
 
 }

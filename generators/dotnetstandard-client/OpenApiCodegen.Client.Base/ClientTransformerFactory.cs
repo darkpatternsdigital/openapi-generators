@@ -20,7 +20,7 @@ namespace PrincipleStudios.OpenApi.CSharp
 			);
 
 			var controllerTransformer = new CSharpClientTransformer(schemaRegistry, documentRegistry, document, documentNamespace ?? "", options, handlebarsFactory, header);
-			var schemaSourceProvider = new CSharpSchemaSourceProvider(documentRegistry, schemaRegistry, documentNamespace ?? "", options, handlebarsFactory, header, [document]);
+			var schemaSourceProvider = new CSharpSchemaSourceProvider(documentRegistry, schemaRegistry, documentNamespace ?? "", options, handlebarsFactory, header);
 
 			result = new CompositeOpenApiSourceProvider(
 				controllerTransformer,

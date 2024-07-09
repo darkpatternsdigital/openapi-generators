@@ -40,7 +40,7 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 		private static DiagnosticBase[] GetDocumentDiagnostics(string name)
 		{
 			var registry = DocumentLoader.CreateRegistry();
-			var docResult = GetOpenApiDocument(name);
+			var docResult = GetOpenApiDocument(name, registry);
 			Assert.NotNull(docResult.Document);
 			var options = LoadOptions();
 

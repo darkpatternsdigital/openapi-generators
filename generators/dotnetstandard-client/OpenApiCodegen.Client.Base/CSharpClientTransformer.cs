@@ -38,7 +38,7 @@ public class CSharpClientTransformer : ISourceProvider
 		var className = CSharpNaming.ToClassName("operations", options.ReservedIdentifiers());
 
 		var resultOperations = new List<Operation>();
-		var visitor = new OperationVisitor(documentRegistry, schemaRegistry, options, controllerClassName: className, document: document);
+		var visitor = new OperationVisitor(documentRegistry, schemaRegistry, options, controllerClassName: className);
 		visitor.Visit(document, new OperationVisitor.Argument(diagnostic, resultOperations.Add));
 
 		resultOperations = (from operation in resultOperations

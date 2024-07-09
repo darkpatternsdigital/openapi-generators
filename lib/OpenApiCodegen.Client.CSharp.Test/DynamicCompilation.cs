@@ -39,7 +39,7 @@ namespace PrincipleStudios.OpenApiCodegen.Client.CSharp
 		public static byte[] GetGeneratedLibrary(string documentName, Action<CSharpSchemaOptions>? configureOptions = null)
 		{
 			var registry = DocumentLoader.CreateRegistry();
-			var docResult = GetOpenApiDocument(documentName);
+			var docResult = GetOpenApiDocument(documentName, registry);
 			Assert.NotNull(docResult.Document);
 			var document = docResult.Document;
 			var options = LoadOptions();

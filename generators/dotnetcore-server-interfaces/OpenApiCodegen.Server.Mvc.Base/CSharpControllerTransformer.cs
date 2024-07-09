@@ -40,7 +40,7 @@ namespace PrincipleStudios.OpenApi.CSharp
 			var className = CSharpNaming.ToClassName(groupName + " base", options.ReservedIdentifiers());
 
 			var resultOperations = new List<ControllerOperation>();
-			var visitor = new ControllerOperationVisitor(documentRegistry, schemaRegistry, options, controllerClassName: className, document);
+			var visitor = new ControllerOperationVisitor(documentRegistry, schemaRegistry, options, controllerClassName: className);
 			foreach (var (operation, method, path) in operations)
 				visitor.Visit(operation, method, new ControllerOperationVisitor.Argument(diagnostic, resultOperations.Add, CurrentPath: path));
 

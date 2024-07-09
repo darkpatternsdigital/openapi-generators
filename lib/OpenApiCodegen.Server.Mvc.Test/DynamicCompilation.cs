@@ -45,7 +45,7 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 		public static byte[] GetGeneratedLibrary(string documentName)
 		{
 			var registry = DocumentLoader.CreateRegistry();
-			var docResult = GetOpenApiDocument(documentName);
+			var docResult = GetOpenApiDocument(documentName, registry);
 			Assert.NotNull(docResult.Document);
 			var options = LoadOptions();
 

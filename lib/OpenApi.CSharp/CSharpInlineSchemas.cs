@@ -22,7 +22,7 @@ public record CSharpInlineDefinition(string Text, bool Nullable = false, bool Is
 		Nullable ? this : new(Text + "?", Nullable: true, IsEnumerable: IsEnumerable);
 }
 
-public class CSharpInlineSchemas(CSharpSchemaOptions options, ICollection<IReferenceableDocument> documents)
+public class CSharpInlineSchemas(CSharpSchemaOptions options, DocumentRegistry documentRegistry)
 {
 	public static readonly CSharpInlineDefinition AnyObject = new("object", Nullable: true);
 
@@ -189,19 +189,17 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, ICollection<IRefer
 	private record JsonDocumentNodeContext(IReadOnlyList<string> Steps, IJsonDocumentNode Element);
 	private JsonDocumentNodeContext[] GetNodesTo(Uri uri)
 	{
-		var document = documents.FirstOrDefault(d => d.Id == uri);
-		if (document == null)
-			// TODO - should be able to look this up from the doument registry instead
-			// However, the document registry doesn't know the _type_ of the document
+		if (!documentRegistry.TryGetAllNodes(uri, out var nodes))
+			// Document was not fully registered with the registry
 			return Array.Empty<JsonDocumentNodeContext>();
 
 		var fragment = Normalize(uri.Fragment);
-		var relevantNodes = (from n in document.GetNestedNodes(recursive: true)
+		var relevantNodes = (from n in nodes
 							 let id = Id(n)
 							 where id == fragment || fragment.StartsWith(id + "/")
 							 group n by id into similar
 							 orderby similar.Key.Length
-							 select similar.First()).Prepend(document).ToArray();
+							 select similar.First()).ToArray();
 		var ids = relevantNodes.Select(Id).ToArray();
 		var steps = ids
 			.Select((id, index) => index == 0 ? id : id.Substring(ids[index - 1].Length))

@@ -3,14 +3,14 @@ using System;
 using PrincipleStudios.OpenApi.Transformations.DocumentTypes;
 using PrincipleStudios.OpenApi.Transformations.Specifications;
 using PrincipleStudios.OpenApi.Transformations.Abstractions;
+using PrincipleStudios.OpenApi.Transformations;
 
 namespace PrincipleStudios.OpenApiCodegen.TestUtils
 {
 	public static class DocumentHelpers
 	{
-		public static ParseResult<OpenApi.Transformations.Abstractions.OpenApiDocument> GetOpenApiDocument(string name)
+		public static ParseResult<OpenApi.Transformations.Abstractions.OpenApiDocument> GetOpenApiDocument(string name, DocumentRegistry registry)
 		{
-			var registry = DocumentLoader.CreateRegistry();
 			var documentReference = GetDocumentReference(registry, name);
 			var parseResult = CommonParsers.DefaultParsers.Parse(documentReference, registry);
 			if (parseResult == null)
@@ -22,7 +22,8 @@ namespace PrincipleStudios.OpenApiCodegen.TestUtils
 		[Obsolete("Use GetOpenApiDocument instead")]
 		public static Microsoft.OpenApi.Models.OpenApiDocument GetMsDocument(string name)
 		{
-			var doc = GetOpenApiDocument(name);
+			var registry = DocumentLoader.CreateRegistry();
+			var doc = GetOpenApiDocument(name, registry);
 
 			using var documentStream = DocumentLoader.GetEmbeddedDocumentStream(doc.Document!.Id);
 			var reader = new OpenApiStreamReader();

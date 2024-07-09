@@ -1,6 +1,7 @@
 ﻿using PrincipleStudios.OpenApi.Transformations.DocumentTypes;
 using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords;
 using PrincipleStudios.OpenApi.Transformations.Specifications.OpenApi3_0;
+using PrincipleStudios.OpenApiCodegen.TestUtils;
 using System.Linq;
 using Xunit;
 using static PrincipleStudios.OpenApiCodegen.TestUtils.DocumentHelpers;
@@ -25,7 +26,8 @@ public class OpenApi3_0ParserShould
 	[Theory]
 	public void Loads_all_yaml(string yamlName)
 	{
-		var result = GetOpenApiDocument(yamlName);
+		var registry = DocumentLoader.CreateRegistry();
+		var result = GetOpenApiDocument(yamlName, registry);
 
 		Assert.Empty(result.Diagnostics);
 		Assert.NotNull(result.Document);
@@ -34,7 +36,8 @@ public class OpenApi3_0ParserShould
 	[Fact]
 	public void Loads_petstore_yaml()
 	{
-		var result = GetOpenApiDocument("petstore.yaml");
+		var registry = DocumentLoader.CreateRegistry();
+		var result = GetOpenApiDocument("petstore.yaml", registry);
 
 		Assert.Empty(result.Diagnostics);
 		Assert.NotNull(result.Document);
@@ -132,7 +135,8 @@ public class OpenApi3_0ParserShould
 	[Fact]
 	public void Reports_diagnostics_for_bad_yaml()
 	{
-		var result = GetOpenApiDocument("bad.yaml");
+		var registry = DocumentLoader.CreateRegistry();
+		var result = GetOpenApiDocument("bad.yaml", registry);
 		Assert.Contains(result.Diagnostics, (d) => d is CouldNotFindTargetNodeDiagnostic && d.Location.Range?.Start.Line == 75);
 		Assert.Contains(result.Diagnostics, (d) => d is UnableToParseKeyword parseError && parseError.Keyword == "required" && d.Location.Range?.Start.Line == 26);
 	}

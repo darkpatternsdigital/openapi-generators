@@ -26,11 +26,11 @@ public class CSharpSchemaSourceProvider : SchemaSourceProvider
 	private readonly HandlebarsFactory handlebarsFactory;
 	private readonly PartialHeader header;
 
-	public CSharpSchemaSourceProvider(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, string baseNamespace, CSharpSchemaOptions options, HandlebarsFactory handlebarsFactory, Templates.PartialHeader header, ICollection<IReferenceableDocument> documents) : base(schemaRegistry)
+	public CSharpSchemaSourceProvider(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, string baseNamespace, CSharpSchemaOptions options, HandlebarsFactory handlebarsFactory, Templates.PartialHeader header) : base(schemaRegistry)
 	{
 		this.documentRegistry = documentRegistry;
 		this.schemaRegistry = schemaRegistry;
-		this.inlineSchemas = new CSharpInlineSchemas(options, documents);
+		this.inlineSchemas = new CSharpInlineSchemas(options, documentRegistry);
 		this.baseNamespace = baseNamespace;
 		this.options = options;
 		this.handlebarsFactory = handlebarsFactory;

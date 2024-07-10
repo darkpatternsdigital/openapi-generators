@@ -50,20 +50,21 @@ namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript
 					return 3;
 				}
 
-				var openApiDocument = LoadOpenApiDocument(inputPath);
-				if (openApiDocument == null)
+				if (parseResult.Document == null)
 					return 2;
 
-				var transformer = openApiDocument.BuildTypeScriptOperationSourceProvider(GetVersionInfo(), options);
+				var transformer = parseResult.Document.BuildTypeScriptOperationSourceProvider(registry, GetVersionInfo(), options);
 
 				var diagnostic = new OpenApiTransformDiagnostic();
 				var entries = transformer.GetSources(diagnostic).ToArray();
-				foreach (var error in diagnostic.Errors)
+				foreach (var error in diagnostic.Diagnostics)
 				{
 #pragma warning disable CA2241 // CommandLineApplication does not follow standard format string format
 					commandLineApplication.Error.WriteLine(
 						"{subcategory}{errorCode}: {helpKeyword} {file}({lineNumber},{columnNumber}-{endLineNumber},{endColumnNumber}) {message}",
-						null, "PSOPENAPI000", null, inputPath, 0, 0, 0, 0, error.Message);
+						null, "PSOPENAPI000", null, error.Location.RetrievalUri.LocalPath, error.Location.Range?.Start.Line ?? 0, error.Location.Range?.Start.Column ?? 0, error.Location.Range?.End.Line ?? 0, error.Location.Range?.End.Column ?? 0,
+						string.Format(CommonDiagnostics.ResourceManager.GetString(error.GetType().FullName!)!, error.GetTextArguments())
+					);
 #pragma warning restore CA2241
 				}
 				if (clean && System.IO.Directory.Exists(outputPath))

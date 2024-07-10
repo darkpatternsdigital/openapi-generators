@@ -1,70 +1,64 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using PrincipleStudios.OpenApi.Transformations.Abstractions;
+using PrincipleStudios.OpenApi.Transformations.Diagnostics;
 using PrincipleStudios.OpenApiCodegen;
 using System;
 using System.Collections.Generic;
 
-namespace PrincipleStudios.OpenApi.Transformations
+namespace PrincipleStudios.OpenApi.Transformations;
+
+public record OperationDetail(OpenApiPath Path, string Method, OpenApiOperation Operation);
+public class OperationSourceTransformer(DocumentRegistry documentRegistry, OpenApiDocument document, IOpenApiOperationTransformer operationTransformer) : ISourceProvider
 {
-	[Obsolete("TODO: Refactor")]
-	public class OperationSourceTransformer : ISourceProvider
+	private readonly OpenApiDocument document = document;
+	private readonly IOpenApiOperationTransformer operationTransformer = operationTransformer;
+	private static readonly OperationVisitor visitor = new();
+
+	public IEnumerable<SourceEntry> GetSources(OpenApiTransformDiagnostic diagnostic)
 	{
-		private readonly OpenApiDocument document;
-		private readonly IOpenApiOperationTransformer operationTransformer;
-		private static readonly OperationVisitor visitor = new();
-
-		public OperationSourceTransformer(OpenApiDocument document, IOpenApiOperationTransformer operationTransformer)
+		foreach (var (path, method, operation) in GetOperations(diagnostic))
 		{
-			this.document = document;
-			this.operationTransformer = operationTransformer;
+			yield return operationTransformer.TransformOperation(path, method, operation, diagnostic);
+		}
+	}
+
+	public List<OperationDetail> GetOperations(OpenApiTransformDiagnostic diagnostic)
+	{
+		var operations = new List<OperationDetail>();
+		visitor.Visit(document, new OperationVisitor.Argument(documentRegistry, (path, method, operation) =>
+		{
+			operations.Add(new(path, method, operation));
+		}, diagnostic));
+		return operations;
+	}
+
+	class OperationVisitor : OpenApiDocumentVisitor<OperationVisitor.Argument>
+	{
+		public record Argument(DocumentRegistry DocumentRegistry, RegisterOperationEntry RegisterSourceEntry, OpenApiTransformDiagnostic Diagnostic, OpenApiPath? Path = null);
+		public delegate void RegisterOperationEntry(OpenApiPath path, string method, OpenApiOperation operation);
+
+		public override void Visit(OpenApiPath path, Argument argument)
+		{
+			base.Visit(path, argument with { Path = path });
 		}
 
-		public IEnumerable<SourceEntry> GetSources(OpenApiTransformDiagnostic diagnostic)
+		public override void Visit(OpenApiOperation operation, string method, Argument argument)
 		{
-			List<(OpenApiOperation operation, OpenApiContext context)> operations = GetOperations(diagnostic);
+			if (argument.Path is null)
+				throw new ArgumentException("Cannot visit operation without path. Did you visit a full document?", nameof(argument));
 
-			foreach (var (operation, context) in operations)
+			try
 			{
-				yield return operationTransformer.TransformOperation(operation, context, diagnostic);
+				argument.RegisterSourceEntry(argument.Path, method, operation);
 			}
-		}
-
-		public List<(OpenApiOperation operation, OpenApiContext context)> GetOperations(OpenApiTransformDiagnostic diagnostic)
-		{
-			var operations = new List<(OpenApiOperation operation, OpenApiContext context)>();
-			visitor.VisitAny(document, OpenApiContext.From(document), new OperationVisitor.Argument((operation, context) =>
-			{
-				operations.Add((operation, context));
-			}, diagnostic));
-			return operations;
-		}
-
-		class OperationVisitor : OpenApiDotNetDocumentVisitor<OperationVisitor.Argument>
-		{
-			public record Argument(RegisterOperationEntry RegisterSourceEntry, OpenApiTransformDiagnostic Diagnostic);
-			public delegate void RegisterOperationEntry(OpenApiOperation operation, OpenApiContext context);
-
-			public override void Visit(OpenApiOperation operation, OpenApiContext context, Argument argument)
-			{
-				try
-				{
-					argument.RegisterSourceEntry(operation, context);
-				}
 #pragma warning disable CA1031 // Do not catch general exception types
-				catch (Exception ex)
+			catch (Exception ex)
 #pragma warning restore CA1031 // Do not catch general exception types
-				{
-					argument.Diagnostic.Errors.Add(new(context, $"Unhandled exception: {ex.Message}"));
-				}
+			{
+				argument.Diagnostic.Diagnostics.Add(new UnhandledExceptionDiagnostic(ex, argument.DocumentRegistry.ResolveLocation(operation.Metadata)));
 			}
-
-			public override void Visit(OpenApiExternalDocs ignored, OpenApiContext context, Argument argument) { }
-			public override void Visit(OpenApiServer ignored, OpenApiContext context, Argument argument) { }
-			public override void Visit(OpenApiComponents ignored, OpenApiContext context, Argument argument) { }
-			public override void Visit(OpenApiInfo ignored, OpenApiContext context, Argument argument) { }
-			public override void Visit(OpenApiSecurityRequirement ignored, OpenApiContext context, Argument argument) { }
-			public override void Visit(OpenApiTag ignored, OpenApiContext context, Argument argument) { }
-
-
 		}
+
+		public override void Visit(OpenApiInfo ignored, Argument argument) { }
+		public override void Visit(OpenApiSecurityRequirement ignored, Argument argument) { }
 	}
 }

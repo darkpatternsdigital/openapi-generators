@@ -143,7 +143,7 @@ class ControllerOperationVisitor : Transformations.Abstractions.OpenApiDocumentV
 					  let dataType = inlineSchemas.ToInlineDataType(entry.Schema)
 					  select new OperationResponseContentOption(
 						  MediaType: entry.Key,
-						  ResponseMethodName: CSharpNaming.ToTitleCaseIdentifier($"{(contentCount > 1 ? entry.Key : "")} {statusCodeName}", options.ReservedIdentifiers()),
+						  ResponseMethodName: CSharpNaming.ToMethodName($"{(contentCount > 1 ? entry.Key : "")} {statusCodeName}", options.ReservedIdentifiers()),
 						  DataType: dataType?.Text
 					  )).ToArray(),
 			Headers: (from entry in response.Headers

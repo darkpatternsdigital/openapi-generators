@@ -1,13 +1,12 @@
 ﻿using System;
-using Microsoft.OpenApi.Models;
+using PrincipleStudios.OpenApi.Transformations.Abstractions;
 using PrincipleStudios.OpenApiCodegen;
 
 namespace PrincipleStudios.OpenApi.Transformations
 {
-	[Obsolete("TODO: Refactor")]
 	public interface IOpenApiOperationTransformer
 	{
-		SourceEntry TransformOperation(OpenApiOperation operation, OpenApiContext context, OpenApiTransformDiagnostic diagnostic);
+		SourceEntry TransformOperation(OpenApiPath path, string method, OpenApiOperation operation, OpenApiTransformDiagnostic diagnostic);
 	}
 
 }

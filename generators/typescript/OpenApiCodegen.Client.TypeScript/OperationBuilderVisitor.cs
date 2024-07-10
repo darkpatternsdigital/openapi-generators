@@ -1,24 +1,28 @@
-﻿using Microsoft.OpenApi.Models;
-using PrincipleStudios.OpenApi.Transformations;
+﻿using PrincipleStudios.OpenApi.Transformations;
+using PrincipleStudios.OpenApi.Transformations.Abstractions;
+using PrincipleStudios.OpenApi.Transformations.Specifications;
+using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Applicator;
+using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Validation;
 using PrincipleStudios.OpenApi.TypeScript;
-using PrincipleStudios.OpenApi.TypeScript.Templates;
 using PrincipleStudios.OpenApiCodegen.Client.TypeScript.Templates;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript
 {
 
-	class OperationBuilderVisitor : OpenApiDotNetDocumentVisitor<OperationBuilderVisitor.Argument>
+	class OperationBuilderVisitor : OpenApiDocumentVisitor<OperationBuilderVisitor.Argument>
 	{
 		private const string formMimeType = "application/x-www-form-urlencoded";
-		private readonly ISchemaSourceResolver<InlineDataType> typeScriptSchemaResolver;
+		private readonly TypeScriptInlineSchemas inlineSchemas;
 		private readonly TypeScriptSchemaOptions options;
 
-		public record Argument(OpenApiTransformDiagnostic Diagnostic, OperationBuilder Builder);
+		public record Argument(
+			OpenApiTransformDiagnostic Diagnostic,
+			OperationBuilder Builder,
+			OpenApiPath? CurrentPath = null
+		);
 
 		public class OperationBuilder
 		{
@@ -36,35 +40,36 @@ namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript
 			public OpenApiOperation Operation { get; }
 		}
 
-		public OperationBuilderVisitor(ISchemaSourceResolver<InlineDataType> typeScriptSchemaResolver, TypeScriptSchemaOptions options)
+		public OperationBuilderVisitor(DocumentRegistry registry, TypeScriptSchemaOptions options)
 		{
-			this.typeScriptSchemaResolver = typeScriptSchemaResolver;
+			this.inlineSchemas = new TypeScriptInlineSchemas(options, registry);
 			this.options = options;
 		}
 
-		public override void Visit(OpenApiOperation operation, OpenApiContext context, Argument argument)
+		public override void Visit(OpenApiPath path, Argument argument)
 		{
-			var httpMethod = context.GetLastKeyFor(operation);
-			if (httpMethod == null)
-				throw new ArgumentException("Expected HTTP method from context", nameof(context));
-			var path = context.Where(c => c.Element is OpenApiPathItem).Last().Key;
-			if (path == null)
-				throw new ArgumentException("Context is not initialized properly - key expected for path items", nameof(context));
-
-			base.Visit(operation, context, argument);
+			base.Visit(path, argument with { CurrentPath = path });
 		}
 
-		public override void Visit(OpenApiParameter param, OpenApiContext context, Argument argument)
+		public override void Visit(OpenApiOperation operation, string httpMethod, Argument argument)
 		{
-			var dataType = typeScriptSchemaResolver.ToInlineDataType(param.Schema)();
+			if (argument.CurrentPath is not OpenApiPath)
+				throw new ArgumentException("Could not find path in argument; be sure to visit a whole OpenAPI doc", nameof(argument));
+
+			base.Visit(operation, httpMethod, argument);
+		}
+
+		public override void Visit(OpenApiParameter param, Argument argument)
+		{
+			var dataType = inlineSchemas.ToInlineDataType(param.Schema);
 			argument.Builder?.SharedParameters.Add(new Templates.OperationParameter(
 				RawName: param.Name,
 				RawNameWithCurly: $"{{{param.Name}}}",
 				ParamName: TypeScriptNaming.ToParameterName(param.Name, options.ReservedIdentifiers()),
 				Description: param.Description,
-				DataType: dataType.text,
-				DataTypeEnumerable: dataType.isEnumerable,
-				DataTypeNullable: dataType.nullable,
+				DataType: dataType.Text,
+				DataTypeEnumerable: dataType.IsEnumerable,
+				DataTypeNullable: dataType.Nullable,
 				IsPathParam: param.In == ParameterLocation.Path,
 				IsQueryParam: param.In == ParameterLocation.Query,
 				IsHeaderParam: param.In == ParameterLocation.Header,
@@ -72,27 +77,28 @@ namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript
 				IsBodyParam: false,
 				IsFormParam: false,
 				Required: param.Required,
-				Pattern: param.Schema.Pattern,
-				MinLength: param.Schema.MinLength,
-				MaxLength: param.Schema.MaxLength,
-				Minimum: param.Schema.Minimum,
-				Maximum: param.Schema.Maximum
+				Pattern: param.Schema?.TryGetAnnotation<PatternKeyword>()?.Pattern,
+				MinLength: param.Schema?.TryGetAnnotation<MinLengthKeyword>()?.Value,
+				MaxLength: param.Schema?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
+				Minimum: param.Schema?.TryGetAnnotation<MinimumKeyword>()?.Value,
+				Maximum: param.Schema?.TryGetAnnotation<MaximumKeyword>()?.Value
 			));
 		}
 
 		internal Operation ToOperationTemplate(OpenApiOperation operation, string httpMethod, string path, OperationBuilder builder)
 		{
 			var sharedParameters = builder.SharedParameters.ToArray();
+			var operationId = operation.OperationId ?? $"{httpMethod} {path}";
 			return (
 				new Templates.Operation(
 					HttpMethod: httpMethod,
 					Summary: operation.Summary,
 					Description: operation.Description,
-					Name: TypeScriptNaming.ToMethodName(operation.OperationId, options.ReservedIdentifiers()),
+					Name: TypeScriptNaming.ToMethodName(operationId, options.ReservedIdentifiers()),
 					Path: path,
-					AllowNoBody: operation.RequestBody == null || !operation.RequestBody.Required || !operation.RequestBody.Content.Any(),
-					HasFormRequest: operation.RequestBody?.Content.Any(kvp => kvp.Key == formMimeType) ?? false,
-					Imports: typeScriptSchemaResolver.GetImportStatements(GetSchemas(), Enumerable.Empty<OpenApiSchema>(), "./operation/").ToArray(),
+					AllowNoBody: operation.RequestBody is not { Required: true, Content.Count: > 1, },
+					HasFormRequest: operation.RequestBody?.Content?.Any(kvp => kvp.Key == formMimeType) ?? false,
+					Imports: inlineSchemas.GetImportStatements(GetSchemas(), Enumerable.Empty<JsonSchema>(), "./operation/").ToArray(),
 					SharedParams: sharedParameters,
 					RequestBodies: builder.RequestBodies.ToArray(),
 					Responses: new Templates.OperationResponses(
@@ -103,122 +109,126 @@ namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript
 					HasQueryParams: operation.Parameters.Any(p => p.In == ParameterLocation.Query)
 				));
 
-			IEnumerable<OpenApiSchema> GetSchemas()
+			IEnumerable<JsonSchema> GetSchemas()
 			{
 				return from set in new[]
 						{
-						from resp in operation.Responses.Values
-						from body in resp.Content.Values
+						from resp in GetResponses()
+						from body in resp.Content?.Values ?? Enumerable.Empty<OpenApiMediaTypeObject>()
 						select body.Schema,
 						from p in operation.Parameters
 						select p.Schema,
-						from mediaType in operation.RequestBody?.Content.Values ?? Enumerable.Empty<OpenApiMediaType>()
+						from mediaType in operation.RequestBody?.Content?.Values ?? Enumerable.Empty<OpenApiMediaTypeObject>()
 						select mediaType.Schema
 					}
 					   from schema in set
 					   select schema;
 
 			}
+			IEnumerable<OpenApiResponse> GetResponses()
+			{
+				if (operation.Responses == null) return Enumerable.Empty<OpenApiResponse>();
+				var result = operation.Responses.StatusCodeResponses.Values;
+				if (operation.Responses.Default != null)
+					result = result.Append(operation.Responses.Default);
+				return result;
+			}
 		}
 
-		public override void Visit(OpenApiResponse response, OpenApiContext context, Argument argument)
+		public override void Visit(OpenApiResponse response, int? statusCode, Argument argument)
 		{
-			var responseKey = context.GetLastKeyFor(response);
-			int? statusCode = int.TryParse(responseKey, out var s) ? s : null;
-			if (!statusCode.HasValue || !HttpStatusCodes.StatusCodeNames.TryGetValue(statusCode.Value, out var statusCodeName))
+			string? statusCodeName;
+			if (!statusCode.HasValue)
 				statusCodeName = "other status code";
-			if (statusCodeName == responseKey)
+			else if (!HttpStatusCodes.StatusCodeNames.TryGetValue(statusCode.Value, out statusCodeName))
 				statusCodeName = $"status code {statusCode}";
+			var content = response.Content;
+			var contentCount = content?.Count ?? 0;
 
 			var result = new OperationResponse(
 				Description: response.Description,
-				Content: (from entry in response.Content.DefaultIfEmpty(new(string.Empty, new OpenApiMediaType()))
+				Content: (from entry in (from c in content ?? Enumerable.Empty<KeyValuePair<string, OpenApiMediaTypeObject>>()
+										 select (c.Key, c.Value.Schema)).DefaultIfEmpty((Key: "", Schema: null))
 						  where entry.Key is { Length: 0 } || options.AllowedMimeTypes.Contains(entry.Key)
-						  let entryContext = context.Append(nameof(response.Content), entry.Key, entry.Value)
-						  let dataType = entry.Value.Schema != null ? typeScriptSchemaResolver.ToInlineDataType(entry.Value.Schema)() : null
+						  let dataType = inlineSchemas.ToInlineDataType(entry.Schema)
 						  select new OperationResponseContentOption(
 							  MediaType: entry.Key,
-							  ResponseMethodName: TypeScriptNaming.ToTitleCaseIdentifier($"{(response.Content.Count > 1 ? entry.Key : "")} {statusCodeName}", options.ReservedIdentifiers()),
-							  DataType: dataType?.text
+							  ResponseMethodName: TypeScriptNaming.ToTitleCaseIdentifier($"{(contentCount > 1 ? entry.Key : "")} {statusCodeName}", options.ReservedIdentifiers()),
+							  DataType: dataType.Text
 						  )).ToArray(),
 				Headers: (from entry in response.Headers
-						  let entryContext = context.Append(nameof(response.Headers), entry.Key, entry.Value)
-						  let required = entry.Value.Required
-						  let dataType = typeScriptSchemaResolver.ToInlineDataType(entry.Value.Schema)()
+						  let required = entry.Required
+						  let dataType = inlineSchemas.ToInlineDataType(entry.Schema) ?? TypeScriptInlineSchemas.AnyObject
 						  select new Templates.OperationResponseHeader(
-							  RawName: entry.Key,
-							  ParamName: TypeScriptNaming.ToParameterName("header " + entry.Key, options.ReservedIdentifiers()),
-							  Description: entry.Value.Description,
-							  DataType: dataType.text,
-							  DataTypeNullable: dataType.nullable,
-							  Required: entry.Value.Required,
-							  Pattern: entry.Value.Schema.Pattern,
-							  MinLength: entry.Value.Schema.MinLength,
-							  MaxLength: entry.Value.Schema.MaxLength,
-							  Minimum: entry.Value.Schema.Minimum,
-							  Maximum: entry.Value.Schema.Maximum
+							  RawName: entry.Name,
+							  ParamName: TypeScriptNaming.ToParameterName("header " + entry.Name, options.ReservedIdentifiers()),
+							  Description: entry.Description,
+							  DataType: dataType.Text,
+							  DataTypeNullable: dataType.Nullable,
+							  Required: entry.Required,
+							  Pattern: entry.Schema?.TryGetAnnotation<PatternKeyword>()?.Pattern,
+							  MinLength: entry.Schema?.TryGetAnnotation<MinLengthKeyword>()?.Value,
+							  MaxLength: entry.Schema?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
+							  Minimum: entry.Schema?.TryGetAnnotation<MinimumKeyword>()?.Value,
+							  Maximum: entry.Schema?.TryGetAnnotation<MaximumKeyword>()?.Value
 						  )).ToArray()
 			);
 
 			if (statusCode.HasValue)
 				argument.Builder?.StatusResponses.Add(statusCode.Value, result);
-			else if (responseKey == "default" && argument.Builder != null)
-				argument.Builder.DefaultResponse = result;
 			else
-				argument.Diagnostic.Errors.Add(new OpenApiTransformError(context, $"Unknown response status: {responseKey}"));
+				argument.Builder.DefaultResponse = result;
 		}
-		//public override void Visit(OpenApiRequestBody requestBody, OpenApiContext context, Argument argument)
-		//{
-		//}
-		public override void Visit(OpenApiMediaType mediaType, OpenApiContext context, Argument argument)
+
+		public override void Visit(OpenApiMediaTypeObject mediaType, Argument argument)
 		{
 			// All media type visitations should be for request bodies
-			var mimeType = context.GetLastKeyFor(mediaType)!;
+			var mimeType = mediaType.GetLastContextPart();
 			if (!options.AllowedMimeTypes.Contains(mimeType))
 				return;
 
 			var isForm = mimeType == formMimeType;
 
-			var singleContentType = argument.Builder?.Operation.RequestBody.Content.Count <= 1;
+			var singleContentType = argument.Builder?.Operation.RequestBody?.Content?.Count is not > 1;
 
 			argument.Builder?.RequestBodies.Add(OperationRequestBody(mimeType, isForm, isForm ? GetFormParams() : GetStandardParams()));
 
 			IEnumerable<OperationParameter> GetFormParams() =>
-				from param in mediaType.Schema.Properties
-				let required = mediaType.Schema.Required.Contains(param.Key)
-				let dataType = typeScriptSchemaResolver.ToInlineDataType(param.Value)()
+				from param in mediaType.Schema?.TryGetAnnotation<PropertiesKeyword>()?.Properties
+				let required = mediaType.Schema?.TryGetAnnotation<RequiredKeyword>()?.RequiredProperties.Contains(param.Key) ?? false
+				let dataType = inlineSchemas.ToInlineDataType(param.Value)
 				select new Templates.OperationParameter(
 					RawName: param.Key,
 					RawNameWithCurly: $"{{{param.Key}}}",
 					ParamName: TypeScriptNaming.ToParameterName(param.Key, options.ReservedIdentifiers()),
 					Description: null,
-					DataType: dataType.text,
-					DataTypeEnumerable: dataType.isEnumerable,
-					DataTypeNullable: dataType.nullable,
+					DataType: dataType.Text,
+					DataTypeEnumerable: dataType.IsEnumerable,
+					DataTypeNullable: dataType.Nullable,
 					IsPathParam: false,
 					IsQueryParam: false,
 					IsHeaderParam: false,
 					IsCookieParam: false,
 					IsBodyParam: false,
 					IsFormParam: true,
-					Required: mediaType.Schema.Required.Contains(param.Key),
-					Pattern: param.Value.Pattern,
-					MinLength: param.Value.MinLength,
-					MaxLength: param.Value.MaxLength,
-					Minimum: param.Value.Minimum,
-					Maximum: param.Value.Maximum
+					Required: required,
+					Pattern: param.Value?.TryGetAnnotation<PatternKeyword>()?.Pattern,
+					MinLength: param.Value?.TryGetAnnotation<MinLengthKeyword>()?.Value,
+					MaxLength: param.Value?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
+					Minimum: param.Value?.TryGetAnnotation<MinimumKeyword>()?.Value,
+					Maximum: param.Value?.TryGetAnnotation<MaximumKeyword>()?.Value
 				);
 			IEnumerable<OperationParameter> GetStandardParams() =>
 				from ct in new[] { mediaType }
-				let dataType = typeScriptSchemaResolver.ToInlineDataType(ct.Schema)()
+				let dataType = inlineSchemas.ToInlineDataType(ct.Schema)
 				select new Templates.OperationParameter(
 				   RawName: null,
 				   RawNameWithCurly: null,
 				   ParamName: TypeScriptNaming.ToParameterName("body", options.ReservedIdentifiers()),
 				   Description: null,
-				   DataType: dataType.text,
-				   DataTypeEnumerable: dataType.isEnumerable,
-				   DataTypeNullable: dataType.nullable,
+				   DataType: dataType.Text,
+				   DataTypeEnumerable: dataType.IsEnumerable,
+				   DataTypeNullable: dataType.Nullable,
 				   IsPathParam: false,
 				   IsQueryParam: false,
 				   IsHeaderParam: false,
@@ -226,11 +236,11 @@ namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript
 				   IsBodyParam: true,
 				   IsFormParam: false,
 				   Required: true,
-				   Pattern: mediaType.Schema.Pattern,
-				   MinLength: mediaType.Schema.MinLength,
-				   MaxLength: mediaType.Schema.MaxLength,
-				   Minimum: mediaType.Schema.Minimum,
-				   Maximum: mediaType.Schema.Maximum
+				   Pattern: mediaType.Schema?.TryGetAnnotation<PatternKeyword>()?.Pattern,
+				   MinLength: mediaType.Schema?.TryGetAnnotation<MinLengthKeyword>()?.Value,
+				   MaxLength: mediaType.Schema?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
+				   Minimum: mediaType.Schema?.TryGetAnnotation<MinimumKeyword>()?.Value,
+				   Maximum: mediaType.Schema?.TryGetAnnotation<MaximumKeyword>()?.Value
 			   );
 		}
 
@@ -243,11 +253,11 @@ namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript
 			 );
 		}
 
-		public override void Visit(OpenApiSecurityRequirement securityRequirement, OpenApiContext context, Argument argument)
+		public override void Visit(OpenApiSecurityRequirement securityRequirement, Argument argument)
 		{
 			argument.Builder?.SecurityRequirements.Add(new OperationSecurityRequirement(
-								 (from scheme in securityRequirement
-								  select new Templates.OperationSecuritySchemeRequirement(scheme.Key.Reference.Id, scheme.Value.ToArray())).ToArray())
+								 (from scheme in securityRequirement.SchemeRequirements
+								  select new Templates.OperationSecuritySchemeRequirement(scheme.SchemeName, scheme.ScopeNames.ToArray())).ToArray())
 							 );
 		}
 	}

@@ -43,8 +43,8 @@ public class OneOfYamlShould
 	}
 	public static IEnumerable<object[]> ModelsWithDiscriminator()
 	{
-		yield return new object[] { new { petType = "dog", bark = true, breed = "Shiba Inu" } };
-		yield return new object[] { new { petType = "cat", hunts = false, age = 12 } };
+		yield return new object[] { new { petType = "Dog", bark = true, breed = "Shiba Inu" } };
+		yield return new object[] { new { petType = "Cat", hunts = false, age = 12 } };
 	}
 
 	[Fact]
@@ -60,7 +60,7 @@ public class OneOfYamlShould
 	[Fact]
 	public async Task Be_able_to_catch_type_errors_with_discriminator()
 	{
-		var body = new { petType = "cat", bark = true, breed = "Shiba Inu" };
+		var body = new { petType = "Cat", bark = true, breed = "Shiba Inu" };
 
 		var result = await commonDirectory.CheckModel("one-of.yaml", "SpecifiedPet", body);
 

@@ -1,5 +1,7 @@
 ﻿using PrincipleStudios.OpenApi.Transformations;
+using PrincipleStudios.OpenApi.Transformations.Diagnostics;
 using PrincipleStudios.OpenApi.Transformations.Specifications;
+using PrincipleStudios.OpenApiCodegen.TestUtils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,22 +21,25 @@ public class DiagnosticsReportingShould
 	{
 		var diagnostic = GetDocumentDiagnostics("bad.yaml");
 		Assert.True(
-			diagnostic.Errors.Any(err => err.Message.Contains("Unresolved external reference")),
-			"Diagnostic did not report the actual issue: the reference to Pet was unresolved."
+			diagnostic.OfType<CouldNotFindTargetNodeDiagnostic>().Any()
 		);
 	}
 
-	private static OpenApiTransformDiagnostic GetDocumentDiagnostics(string name)
+	private static IEnumerable<DiagnosticBase> GetDocumentDiagnostics(string name)
 	{
-		var document = GetMsDocument(name);
+		var registry = DocumentLoader.CreateRegistry();
+		var docResult = GetOpenApiDocument(name, registry);
+		if (docResult.Document == null) return docResult.Diagnostics;
+		Assert.NotNull(docResult.Document);
+		var document = docResult.Document;
 
 		var options = LoadOptions();
 
-		var transformer = document.BuildTypeScriptOperationSourceProvider("", options);
+		var transformer = document.BuildTypeScriptOperationSourceProvider(registry, "", options);
 		OpenApiTransformDiagnostic diagnostic = new();
 
 		transformer.GetSources(diagnostic).ToArray(); // force all sources to load to get diagnostics
-		return diagnostic;
+		return docResult.Diagnostics.Concat(diagnostic.Diagnostics);
 	}
 
 }

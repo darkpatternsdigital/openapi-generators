@@ -13,8 +13,8 @@ namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript.Templates
 
 	public record Operation(
 		string HttpMethod,
-		string Summary,
-		string Description,
+		string? Summary,
+		string? Description,
 		string Name,
 		string Path,
 		bool AllowNoBody,
@@ -45,7 +45,7 @@ namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript.Templates
 		bool IsBodyParam,
 		bool IsFormParam,
 		bool Required,
-		string Pattern,
+		string? Pattern,
 		int? MinLength,
 		int? MaxLength,
 		decimal? Minimum,
@@ -89,7 +89,7 @@ namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript.Templates
 		string DataType,
 		bool DataTypeNullable,
 		bool Required,
-		string Pattern,
+		string? Pattern,
 		int? MinLength,
 		int? MaxLength,
 		decimal? Minimum,

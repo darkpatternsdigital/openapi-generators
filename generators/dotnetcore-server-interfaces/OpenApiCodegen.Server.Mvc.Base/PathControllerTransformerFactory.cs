@@ -18,8 +18,7 @@ namespace PrincipleStudios.OpenApi.CSharp
 				InfoEmail: document.Info.Contact?.Email,
 				CodeGeneratorVersionInfo: versionInfo
 			);
-			SchemaSourceProvider schemaProvider = new CSharpSchemaSourceProvider(documentRegistry, schemaRegistry, documentNamespace ?? "", options, handlebarsFactory, header);
-			// ISchemaSourceResolver<InlineDataType> schemaResolver = new CSharpSchemaSourceResolver(documentNamespace ?? "", options, handlebarsFactory, versionInfo);
+			var schemaProvider = new CSharpSchemaSourceProvider(documentRegistry, schemaRegistry, documentNamespace ?? "", options, handlebarsFactory, header);
 			var controllerTransformer = new CSharpControllerTransformer(documentRegistry, schemaRegistry, document, documentNamespace ?? "", options, versionInfo, handlebarsFactory);
 
 			var operationGrouping =

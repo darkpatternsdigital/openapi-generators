@@ -1,5 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
-using PrincipleStudios.OpenApi.Transformations;
+﻿using PrincipleStudios.OpenApi.Transformations;
+using PrincipleStudios.OpenApi.Transformations.Abstractions;
 using PrincipleStudios.OpenApi.TypeScript;
 using System;
 using System.Collections.Generic;
@@ -10,20 +10,27 @@ namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript
 	public static class OperationTransformerFactory
 	{
 
-		[Obsolete("TODO: Refactor")]
-		public static ISourceProvider BuildTypeScriptOperationSourceProvider(this OpenApiDocument document, string versionInfo, TypeScriptSchemaOptions options)
+		public static ISourceProvider BuildTypeScriptOperationSourceProvider(this OpenApiDocument document, DocumentRegistry documentRegistry, string versionInfo, TypeScriptSchemaOptions options)
 		{
 			ISourceProvider? result;
 			var handlebarsFactory = new HandlebarsFactory(OperationHandlebarsTemplateProcess.CreateHandlebars);
-			ISchemaSourceResolver<InlineDataType> schemaResolver = new TypeScriptSchemaSourceResolver(options, handlebarsFactory, versionInfo);
-			var operationTransformer = new TypeScriptOperationTransformer(schemaResolver, document, options, versionInfo, handlebarsFactory);
+			var schemaRegistry = new SchemaRegistry();
+			var header = new OpenApi.TypeScript.Templates.PartialHeader(
+				AppName: document.Info.Title,
+				AppDescription: document.Info.Description,
+				Version: document.Info.Version,
+				InfoEmail: document.Info.Contact?.Email,
+				CodeGeneratorVersionInfo: versionInfo
+			);
+			var schemaProvider = new TypeScriptSchemaSourceProvider(documentRegistry, schemaRegistry, options, handlebarsFactory, header);
+			var operationTransformer = new TypeScriptOperationTransformer(documentRegistry, schemaRegistry, document, options, versionInfo, handlebarsFactory);
 
-			var operationsSourceProvider = new OperationSourceTransformer(document, operationTransformer);
+			var operationsSourceProvider = new OperationSourceTransformer(documentRegistry, document, operationTransformer);
 
 			result = new CompositeOpenApiSourceProvider(
 				operationsSourceProvider,
 				new AllOperationsBarrelTransformer(operationsSourceProvider, operationTransformer),
-				schemaResolver
+				schemaProvider
 			);
 			return result;
 		}
@@ -43,7 +50,7 @@ namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript
 
 		public IEnumerable<SourceEntry> GetSources(OpenApiTransformDiagnostic diagnostic)
 		{
-			yield return operationTransformer.TransformBarrelFileHelper(operationsSourceProvider.GetOperations(diagnostic).Select(op => op.operation), diagnostic);
+			yield return operationTransformer.TransformBarrelFileHelper(operationsSourceProvider.GetOperations(diagnostic), diagnostic);
 		}
 	}
 }

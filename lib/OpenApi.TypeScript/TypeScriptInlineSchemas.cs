@@ -40,6 +40,7 @@ public class TypeScriptInlineSchemas(TypeScriptSchemaOptions options, DocumentRe
 			{ OneOf.Count: > 0 } => true,
 			{ Type: "string", Enum.Count: > 0 } => true,
 			{ Type: "array" } or { Items: JsonSchema _ } => false,
+			// TODO: why is this testing for "object"?
 			{ Type: string type, Format: var format, Properties.Count: 0, Enum.Count: 0 } => options.Find(type, format) == "object",
 			{ Type: "object", Format: null } => true,
 			{ Properties.Count: > 0 } => true,

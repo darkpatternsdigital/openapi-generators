@@ -63,6 +63,7 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, DocumentRegistry d
 			{ OneOf.Count: > 0 } => true,
 			{ Type: "string", Enum.Count: > 0 } => true,
 			{ Type: "array" } or { Items: JsonSchema } => false,
+			// TODO: why is this testing for "object"?
 			{ Type: string type, Format: var format, Properties.Count: 0, Enum.Count: 0 } => options.Find(type, format) == "object",
 			{ Type: "object", Format: null } => true,
 			{ Properties.Count: > 0 } => true,

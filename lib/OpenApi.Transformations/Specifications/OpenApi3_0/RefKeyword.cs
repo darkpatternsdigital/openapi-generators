@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
-using Microsoft.OpenApi.Readers;
 using PrincipleStudios.OpenApi.Transformations.Diagnostics;
 using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords;
 

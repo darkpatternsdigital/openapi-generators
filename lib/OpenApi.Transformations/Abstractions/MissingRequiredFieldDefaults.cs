@@ -1,9 +1,5 @@
-﻿using Json.Pointer;
-using Microsoft.OpenApi.Models;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.Json.Nodes;
 
 namespace PrincipleStudios.OpenApi.Transformations.Abstractions;

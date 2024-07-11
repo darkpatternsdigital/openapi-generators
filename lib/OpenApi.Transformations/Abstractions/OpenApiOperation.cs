@@ -1,5 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
+﻿using PrincipleStudios.OpenApi.Transformations.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Nodes;

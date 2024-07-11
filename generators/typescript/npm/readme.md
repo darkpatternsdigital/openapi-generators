@@ -1,8 +1,7 @@
 # OpenAPI Codegen for a TypeScript-friendly Open API clients
 
-Uses [Microsoft.OpenApi.Readers][1] along with custom templates in order to
-generate generalized TypeScript objects for creating clients of many shapes.
-Delivered via an npm package.
+Use an OpenAPI specification to generate generalized TypeScript objects for
+creating clients of many shapes. Delivered via an npm package.
 
 ```sh
 npm i -D @principlestudios/openapi-codegen-typescript
@@ -22,5 +21,3 @@ part of your CI process with only the OpenAPI spec checked in, or download the
 spec as part of the CI process.
 
 Written in C#.
-
-[1]: https://www.nuget.org/packages/Microsoft.OpenApi.Readers

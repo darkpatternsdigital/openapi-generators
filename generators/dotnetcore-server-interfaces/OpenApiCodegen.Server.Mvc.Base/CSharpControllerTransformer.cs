@@ -4,10 +4,6 @@ using PrincipleStudios.OpenApi.Transformations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PrincipleStudios.OpenApi.CSharp;
-using Microsoft.OpenApi.Any;
 using PrincipleStudios.OpenApiCodegen;
 
 namespace PrincipleStudios.OpenApi.CSharp

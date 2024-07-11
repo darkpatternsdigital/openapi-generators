@@ -1,12 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Readers;
 using PrincipleStudios.OpenApi.TypeScript;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript
 {

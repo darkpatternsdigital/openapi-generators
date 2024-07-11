@@ -1,8 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
-using PrincipleStudios.OpenApiCodegen;
-using System;
+﻿using PrincipleStudios.OpenApiCodegen;
 using System.Collections.Generic;
-using System.Text;
 
 namespace PrincipleStudios.OpenApi.Transformations
 {

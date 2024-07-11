@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Configuration;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Readers;
 using PrincipleStudios.OpenApi.Transformations;
 using PrincipleStudios.OpenApi.Transformations.Diagnostics;
 using PrincipleStudios.OpenApi.Transformations.DocumentTypes;
@@ -135,34 +133,5 @@ namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript
 				?? throw new InvalidOperationException("Could not construct options");
 			return result;
 		}
-
-		private static OpenApiDocument? LoadOpenApiDocument(string inputPath)
-		{
-			try
-			{
-				var openapiTextContent = System.IO.File.ReadAllText(inputPath);
-				var reader = new OpenApiStringReader();
-				var document = reader.Read(openapiTextContent, out var openApiDiagnostic);
-				if (openApiDiagnostic.Errors.Any())
-				{
-					Console.WriteLine($"Errors while parsing OpenApi spec ({inputPath}):");
-					foreach (var error in openApiDiagnostic.Errors)
-					{
-						Console.Error.WriteLine($"{inputPath}(1): error PSOPENAPI000: {error.Pointer}: {error.Message}");
-					}
-				}
-
-				return document;
-			}
-#pragma warning disable CA1031 // Do not catch general exception types
-			catch (Exception ex)
-#pragma warning restore CA1031 // Do not catch general exception types
-			{
-				Console.Error.WriteLine($"Unable to parse OpenApi spec ({inputPath}): {ex.Message}");
-
-				return null;
-			}
-		}
-
 	}
 }

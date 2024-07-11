@@ -2,14 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using HandlebarsDotNet;
 using Json.Pointer;
-using Microsoft.OpenApi.Expressions;
 using PrincipleStudios.OpenApi.Transformations;
 using PrincipleStudios.OpenApi.Transformations.Abstractions;
 using PrincipleStudios.OpenApi.Transformations.Specifications;
-using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft04;
-using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Applicator;
 using PrincipleStudios.OpenApi.Transformations.Specifications.OpenApi3_0;
 
 namespace PrincipleStudios.OpenApi.CSharp;

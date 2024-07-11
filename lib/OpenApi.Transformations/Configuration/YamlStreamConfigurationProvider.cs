@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
-using SharpYaml;
 using System;
 using System.IO;
+using YamlDotNet.Core;
 
 namespace PrincipleStudios.OpenApi.Transformations.Configuration
 {

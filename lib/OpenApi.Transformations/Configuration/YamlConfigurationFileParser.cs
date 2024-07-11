@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
-using SharpYaml.Serialization;
+using YamlDotNet.RepresentationModel;
 
 namespace PrincipleStudios.OpenApi.Transformations.Configuration
 {
@@ -121,7 +121,7 @@ namespace PrincipleStudios.OpenApi.Transformations.Configuration
 
 		private static bool IsNullValue(YamlScalarNode yamlValue)
 		{
-			return yamlValue.Style == SharpYaml.ScalarStyle.Plain
+			return yamlValue.Style == YamlDotNet.Core.ScalarStyle.Plain
 				&& (
 					yamlValue.Value == "~"
 					|| yamlValue.Value == "null"

@@ -23,7 +23,7 @@ public class HeadersYamlShould
 		var result = await commonDirectory.ConvertRequest("headers.yaml", "getInfo", new { xData = headerData });
 
 		var token = AssertRequestSuccess(result, "GET", "/info");
-		Assert.Equal("foobar", token["headers"]?["X-Data"]?.ToObject<string>());
+		Assert.Equal("foobar", token?["headers"]?["X-Data"]?.GetValue<string>());
 	}
 
 }

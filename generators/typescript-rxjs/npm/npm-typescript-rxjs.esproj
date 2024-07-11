@@ -15,6 +15,7 @@
 
     <ItemGroup>
         <CompileOutputs Include="@(Compile->'$(ProjectDir)/lib/%(filename).js');@(Compile->'$(ProjectDir)/lib/%(filename).d.ts')" />
+        <CompileOutputs Include="tsconfig.tsbuildinfo" />
     </ItemGroup>
 
     <ItemGroup>

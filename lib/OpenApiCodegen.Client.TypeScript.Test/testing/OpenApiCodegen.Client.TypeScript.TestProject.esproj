@@ -21,6 +21,11 @@
 		<Schemas Update="$(SolutionRoot)schemas/*">
 			<DestinationFolder>$([MSBuild]::NormalizeDirectory('$(ProjectDir)', '%(Schemas.filename)%(Schemas.extension)'))</DestinationFolder>
 		</Schemas>
+		<SchemaGenerationScripts Include="node_modules/@principlestudios/openapi-codegen-typescript/bin/**/*" />
+		<SchemaGenerationScripts Include="node_modules/@principlestudios/openapi-codegen-typescript/dotnet/**/*" />
+		<SchemaFolderOutputs Include="$([MSBuild]::NormalizePath('%(Schemas.DestinationFolder)', '.gitignore'))" />
+		<SchemaFolderVerificationOutputs Include="dist/tsconfig.tsbuildinfo" />
+		<Clean Include="dist/**/*" />
 	</ItemGroup>
 
 	<Target Name="CleanSchemaFolders" BeforeTargets="CoreClean">
@@ -30,14 +35,16 @@
 	<Target Name="GenerateSchemaFolders"
 	        DependsOnTargets="PnpmInstall"
 	        BeforeTargets="Generate"
-	        Inputs="@(Schemas)"
-	        Outputs="$([MSBuild]::NormalizePath('%(Schemas.DestinationFolder)', '.gitignore'))">
+	        Inputs="@(Schemas);@(SchemaGenerationScripts)"
+	        Outputs="@(SchemaFolderOutputs)">
 		<MSBuild Projects="@(ProjectReference)" Targets="Build" />
 		<Exec WorkingDirectory="$(ProjectDir)"
 			Command="pnpm openapi-codegen-typescript &quot;%(Schemas.Identity)&quot; &quot;$([MSBuild]::NormalizeDirectory('%(Schemas.DestinationFolder)').Replace('\', '/'))&quot; -c" />
 	</Target>
 
-	<Target Name="VerifyGenerateSchemaFolders" AfterTargets="GenerateSchemaFolders">
+	<Target Name="VerifyGenerateSchemaFolders" AfterTargets="GenerateSchemaFolders"
+	        Inputs="@(SchemaFolderOutputs)"
+	        Outputs="@(SchemaFolderVerificationOutputs)">
 		<Exec WorkingDirectory="$(ProjectDir)"
 			Command="pnpm tsc -b tsconfig.json" />
 	</Target>

@@ -32,13 +32,19 @@ sides.
 Generators currently available:
 
 * ![PrincipleStudios.OpenApiCodegen.Server.Mvc NuGet](https://img.shields.io/nuget/v/PrincipleStudios.OpenApiCodegen.Server.Mvc)
-  [.NET Core Server Interfaces](./generators/dotnetcore-server-interfaces), for the modern C# MVC server approach.
+  [.NET Core Server MVC Interfaces](./generators/dotnetcore-server-interfaces), for the modern C# MVC server approach.
 * ![PrincipleStudios.OpenApiCodegen.Client NuGet](https://img.shields.io/nuget/v/PrincipleStudios.OpenApiCodegen.Client)
   [.NET Standard Client](./generators/dotnetstandard-client), for the modern C# approach for a client.
+* ![PrincipleStudios.OpenApiCodegen.Json.Extensions NuGet](https://img.shields.io/nuget/v/PrincipleStudios.OpenApiCodegen.Client)
+  [OpenAPI Codegen Extensions](./lib/OpenApiCodegen.Json.Extensions/), a set of System.Text.Json-compatible extensions supporting Optional parameters and enum serialization.
 * ![@principlestudios/openapi-codegen-typescript at npm](https://img.shields.io/npm/v/@principlestudios/openapi-codegen-typescript)
   [TypeScript](./generators/typescript), for a TypeScript client that is agnostic about how you fetch data.
+* ![@principlestudios/openapi-codegen-typescript-fetch at npm](https://img.shields.io/npm/v/@principlestudios/openapi-codegen-typescript-fetch)
+  [TypeScript Fetch](./generators/typescript-fetch), for a TypeScript client that leverages the fetch API.
 * ![@principlestudios/openapi-codegen-typescript-rxjs at npm](https://img.shields.io/npm/v/@principlestudios/openapi-codegen-typescript-rxjs)
   [TypeScript RXJS](./generators/typescript-rxjs), for a TypeScript client that leverages RxJS.
+* ![@principlestudios/openapi-codegen-typescript-msw at npm](https://img.shields.io/npm/v/@principlestudios/openapi-codegen-typescript-msw)
+  [TypeScript MSW](./generators/typescript-msw), for setting up MSW in a strongly-typed way to mock an API.
 
 
 [1]: https://editor.swagger.io/

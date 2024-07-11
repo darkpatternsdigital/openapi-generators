@@ -1,6 +1,8 @@
 # OpenAPI Codegen for .NET Core Server Interfaces
 
-See the Readme in /generators/dotnetcore-server-interfaces/PrincipleStudios.OpenApiCodegen.Server.Mvc for usage details.
+See the [README in
+./generators/dotnetcore-server-interfaces/OpenApiCodegen.Server.Mvc](./generators/dotnetcore-server-interfaces/OpenApiCodegen.Server.Mvc)
+for usage details.
 
 ## Working with this source code
 
@@ -28,7 +30,3 @@ Consider:
 
         dotnet build examples\dotnetcore-server-interfaces\ServerInterfacesExample\ServerInterfacesExample.csproj -bl:..\binlogs\server-examples.binlog --no-incremental -p:UseProjectReferences=true; start ..\binlogs\server-examples.binlog
         dotnet build examples\dotnetcore-server-interfaces\ServerInterfacesExample.Oauth\ServerInterfacesExample.Oauth.csproj -p:UseProjectReferences=true --no-incremental -bl:..\binlogs\server-examples-oauth.binlog --no-incremental -p:UseProjectReferences=true; start ..\binlogs\server-examples-oauth.binlog
-
-
-[1]: https://github.com/microsoft/OpenAPI.NET
-[2]: https://docs.microsoft.com/en-us/nuget/consume-packages/package-references-in-project-files

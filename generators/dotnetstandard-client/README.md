@@ -1,6 +1,7 @@
 # OpenAPI Codegen for .NET Standard HttpClient
 
-See the Readme in /generators/dotnetcore-server-interfaces/OpenApiCodegen.Server.Mvc for usage details.
+See [the README in ./OpenApiCodegen.Client](./OpenApiCodegen.Client) for usage
+details.
 
 ## Testing locally
 

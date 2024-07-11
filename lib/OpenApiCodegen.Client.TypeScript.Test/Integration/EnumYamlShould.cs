@@ -1,14 +1,7 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using PrincipleStudios.OpenApiCodegen.Client.TypeScript.Utils;
+﻿using PrincipleStudios.OpenApiCodegen.Client.TypeScript.Utils;
 using static PrincipleStudios.OpenApiCodegen.Client.TypeScript.Utils.GenerationUtilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using FluentAssertions.Json;
 
 namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript.Integration;
 

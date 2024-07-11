@@ -4,10 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using Newtonsoft.Json;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
+using System.Text.Json.Nodes;
 
 namespace PrincipleStudios.OpenApi.TypeScript
 {
@@ -93,26 +90,26 @@ namespace PrincipleStudios.OpenApi.TypeScript
 
 		public static IDictionary<string, object?> ToDictionary<T>(T model)
 		{
-			var result = model == null ? JValue.CreateNull() : JToken.FromObject(model);
+			var result = model == null ? null : System.Text.Json.JsonSerializer.SerializeToNode(model);
 
 			return (IDictionary<string, object?>)FromElement(result)!;
 		}
 
-		private static object? FromElement(JToken result)
+		private static object? FromElement(JsonNode? result)
 		{
 			return result switch
 			{
-				{ Type: JTokenType.Undefined } => null,
-				{ Type: JTokenType.Null } => null,
-				{ Type: JTokenType.Boolean } => result.ToObject<bool>(),
-				{ Type: JTokenType.Float } => result.ToObject<double>(),
-				{ Type: JTokenType.String } => result.ToObject<string>(),
-				JArray array => (from item in array
-								 select FromElement(item)).ToArray(),
-				JObject obj => (from prop in obj.Properties()
-								let Value = FromElement(prop.Value)
-								where Value != null
-								select (prop.Name, Value)).ToDictionary(kvp => kvp.Name, kvp => kvp.Value),
+				null => null,
+				JsonValue n when n.TryGetValue<bool>(out var v) => v,
+				JsonValue n when n.TryGetValue<decimal>(out var v) => v,
+				JsonValue n when n.TryGetValue<string>(out var v) => v,
+				JsonValue n when n.TryGetValue<int>(out var v) => v,
+				JsonArray array => (from item in array
+									select FromElement(item)).ToArray(),
+				JsonObject obj => (from prop in obj
+								   let Value = FromElement(prop.Value)
+								   where Value != null
+								   select (prop.Key, Value)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value),
 				_ => throw new InvalidOperationException(),
 			};
 		}

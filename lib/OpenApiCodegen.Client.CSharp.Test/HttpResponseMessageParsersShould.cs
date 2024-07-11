@@ -1,5 +1,4 @@
-﻿using FluentAssertions.Json;
-using Microsoft.CodeAnalysis.CSharp.Scripting;
+﻿using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using PrincipleStudios.OpenApiCodegen.Json.Extensions;
 using System;

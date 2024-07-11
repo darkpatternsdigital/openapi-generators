@@ -1,5 +1,4 @@
-﻿using FluentAssertions.Json;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +11,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 using Microsoft.AspNetCore.TestHost;
+using System.Text.Json.Nodes;
+using Json.More;
+using PrincipleStudios.OpenApiCodegen.TestUtils;
 
 namespace PrincipleStudios.OpenApiCodegen.Server.Mvc.TestApp;
 
@@ -36,7 +38,7 @@ internal class Utilities
 			Assert.NotNull(message.Content);
 			Assert.Equal("application/json", message.Content.Headers.ContentType?.MediaType);
 			var actualBody = await message.Content.ReadAsStringAsync();
-			CompareJson(actualBody, jsonBody);
+			Assert.True(JsonCompare.CompareJson(actualBody, jsonBody));
 		};
 	}
 
@@ -89,13 +91,6 @@ internal class Utilities
 			await testDefinition.AssertResponseMessage(responseMessage);
 
 		Assert.Equal(1, assertionCompleted);
-	}
-
-	internal static void CompareJson(string actualJson, object? expected)
-	{
-		Newtonsoft.Json.Linq.JToken.Parse(actualJson).Should().BeEquivalentTo(
-			expected == null ? Newtonsoft.Json.Linq.JValue.CreateNull() : Newtonsoft.Json.Linq.JToken.FromObject(expected)
-		);
 	}
 }
 

@@ -1,8 +1,8 @@
-﻿using FluentAssertions.Json;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using PrincipleStudios.OpenApi.CSharp;
+using PrincipleStudios.OpenApiCodegen.TestUtils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -228,8 +228,6 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 
 	private void CompareJson(string actualJson, object expected)
 	{
-		Newtonsoft.Json.Linq.JToken.Parse(actualJson).Should().BeEquivalentTo(
-			Newtonsoft.Json.Linq.JToken.FromObject(expected)
-		);
+		Assert.True(JsonCompare.CompareJson(actualJson, expected));
 	}
 }

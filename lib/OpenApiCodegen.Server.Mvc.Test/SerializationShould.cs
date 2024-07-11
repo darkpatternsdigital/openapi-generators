@@ -1,7 +1,7 @@
-﻿using FluentAssertions.Json;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
+using PrincipleStudios.OpenApiCodegen.TestUtils;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -89,10 +89,10 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 		[InlineData("new PS.Controller.SpecifiedPet(Dog: new PS.Controller.Dog(Bark: true, Breed: \"Shiba Inu\"))", "{ \"petType\": \"Dog\", \"bark\": true, \"breed\": \"Shiba Inu\" }")]
 		[InlineData("new PS.Controller.SpecifiedPet(Cat: new PS.Controller.Cat(Hunts: false, Age: 12))", "{ \"petType\": \"Cat\", \"hunts\": false, \"age\": 12 }")]
 		public Task SerializeAOneOfObject(string csharpScript, string json) =>
-			SerializeAsync(
+			SerializeJsonAsync(
 				"one-of.yaml",
 				csharpScript,
-				Newtonsoft.Json.Linq.JToken.Parse(json)
+				json
 			);
 
 		[Theory]
@@ -101,13 +101,16 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 		[InlineData("PS.Controller.SpecifiedPet", "{ \"petType\": \"Dog\", \"bark\": true, \"breed\": \"Shiba Inu\" }")]
 		[InlineData("PS.Controller.SpecifiedPet", "{ \"petType\": \"Cat\", \"hunts\": false, \"age\": 12 }")]
 		public Task DeserializeAOneOfObject(string csharpType, string json) =>
-			DeserializeAsync(
+			DeserializeJsonAsync(
 				"one-of.yaml",
-				Newtonsoft.Json.Linq.JToken.Parse(json),
+				json,
 				csharpType
 			);
 
-		private async Task SerializeAsync(string documentName, string csharpInitialization, object comparisonObject)
+		private Task SerializeAsync(string documentName, string csharpInitialization, object comparisonObject) =>
+			SerializeJsonAsync(documentName, csharpInitialization, System.Text.Json.JsonSerializer.Serialize(comparisonObject));
+
+		private async Task SerializeJsonAsync(string documentName, string csharpInitialization, string comparisonJson)
 		{
 			var libBytes = DynamicCompilation.GetGeneratedLibrary(documentName);
 
@@ -120,14 +123,13 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 
 			var result = (string)await CSharpScript.EvaluateAsync($"System.Text.Json.JsonSerializer.Serialize({csharpInitialization})", scriptOptions);
 
-			Newtonsoft.Json.Linq.JToken.Parse(result).Should().BeEquivalentTo(
-				comparisonObject is Newtonsoft.Json.Linq.JToken token
-					? token
-					: Newtonsoft.Json.Linq.JToken.FromObject(comparisonObject)
-			);
+			Assert.True(JsonCompare.CompareJsonStrings(result, comparisonJson));
 		}
 
-		private async Task DeserializeAsync(string documentName, object targetObject, string typeName)
+		private Task DeserializeAsync(string documentName, object targetObect, string typeName) =>
+			DeserializeJsonAsync(documentName, System.Text.Json.JsonSerializer.Serialize(targetObect), typeName);
+
+		private async Task DeserializeJsonAsync(string documentName, string targetJson, string typeName)
 		{
 			var libBytes = DynamicCompilation.GetGeneratedLibrary(documentName);
 
@@ -138,8 +140,7 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 				.AddReferences(DynamicCompilation.SystemTextCompilationRefPaths.Select(r => MetadataReference.CreateFromFile(r)).ToArray())
 				.AddReferences(MetadataReference.CreateFromFile(fullPath));
 
-			var original = Newtonsoft.Json.Linq.JToken.FromObject(targetObject);
-			var originalJson = original.ToString(Newtonsoft.Json.Formatting.Indented).Replace("\"", "\"\"");
+			var originalJson = targetJson.Replace("\"", "\"\"");
 
 			var script = @$"
                 System.Text.Json.JsonSerializer.Serialize(
@@ -150,11 +151,7 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 
 			var result = (string)await CSharpScript.EvaluateAsync(script, scriptOptions);
 
-			Newtonsoft.Json.Linq.JToken.Parse(result).Should().BeEquivalentTo(
-				targetObject is Newtonsoft.Json.Linq.JToken token
-					? token
-					: Newtonsoft.Json.Linq.JToken.FromObject(targetObject)
-			);
+			Assert.True(JsonCompare.CompareJsonStrings(result, targetJson));
 		}
 	}
 }

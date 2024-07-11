@@ -1,11 +1,7 @@
-﻿using FluentAssertions.Json;
-using PrincipleStudios.OpenApiCodegen.Json.Extensions;
-using System;
+﻿using PrincipleStudios.OpenApiCodegen.Json.Extensions;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace PrincipleStudios.OpenApiCodegen.Server.Mvc

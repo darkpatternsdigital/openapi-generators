@@ -1,15 +1,9 @@
 using Xunit;
 using PrincipleStudios.OpenApi.Transformations;
-using System.Linq;
 using PrincipleStudios.OpenApi.TypeScript;
 using static PrincipleStudios.OpenApiCodegen.TestUtils.DocumentHelpers;
-using System.IO;
-using System.Collections.Generic;
 using System;
 using PrincipleStudios.OpenApi.Transformations.DocumentTypes;
-using Json.Pointer;
-using System.Text.Json;
-using FluentAssertions;
 using PrincipleStudios.OpenApiCodegen.TestUtils;
 using PrincipleStudios.OpenApi.Transformations.Abstractions;
 using PrincipleStudios.OpenApi.Transformations.Specifications;

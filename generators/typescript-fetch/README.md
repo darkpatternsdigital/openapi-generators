@@ -4,12 +4,15 @@ Provides an adapter layer method for
 [@principlestudios/openapi-codegen-typescript][1] to integrate with fetch.
 
 ```sh
+npm i @principlestudios/openapi-codegen-typescript
 npm i -D @principlestudios/openapi-codegen-typescript-fetch
 ```
 
-You must also have `dotnet` 8.0 runtime installed on your machine.
+You must also have .NET 8.0 runtime installed on your machine.
 
-This will provide a corresponding bin to generate the typescript files.
+This will provide a corresponding bin to generate the typescript files. (See the
+[@principlestudios/openapi-codegen-typescript][1] package for command line usage
+details.)
 
 ```sh
 openapi-codegen-typescript api.yaml api-generated/ -c
@@ -26,11 +29,20 @@ export default toFetchApi(operations, fetch);
 
 This API will use the type safety from OpenAPI along with `fetch`.
 
-Optionally, a third parameter may be passed to `toFetchApi` to prefix all URLs; do not include the trailing `/`. For instance, if the API is located at `/api/example`, but the OpenAPI endpoint is just `/example`, use `toFetchApi(operations, fetch, '/api')`.
-
 ## Use with `node-fetch`
 
-To use with `node-fetch`, the prefix specified must be a fully-qualified URL. For instance, if the API is located at `https://server/api/example`, but the OpenAPI endpoint is just `/example`, use `toFetchApi(operations, fetch, 'https://server/api')`. In addition, if you do not have the "DOM" lib specified in your tsconfig.json, make the following changes:
+To use with `node-fetch`, a fully-qualified URL must be provided.  See the following example:
+
+```typescript
+import fetch from 'node-fetch';
+import operations from './api-generated/operations';
+
+const baseDomain = 'http://localhost/';
+const fetchImpl: FetchImplementation<unknown> = (url, params) => {
+	return fetch(new URL(url, baseDomain), params);
+};
+const fetchApi = toFetchApi(operations, fetchImpl);
+```
 
 1. Ensure you have a compatible version of `node-fetch` installed.
 2. Add a `types.d.ts` file (or other `.d.ts` file to be picked up by TypeScript in your Node sections) to your project with the following global type declarations:

@@ -91,15 +91,11 @@ types:
     default: boolean
   string:
     formats:
-      #byte: byte[]
       binary: Blob
     default: string
   number:
     default: number
   integer:
-    formats:
-      int64: BigInt
-      uint64: BigInt
     default: number
   object:
     formats:

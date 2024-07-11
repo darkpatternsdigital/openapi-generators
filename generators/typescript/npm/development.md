@@ -19,5 +19,3 @@ To update Jest snapshots: (pay attention to slash types, it's important)
 To package:
 
     npm pack
-
-[1]: https://github.com/microsoft/OpenAPI.NET

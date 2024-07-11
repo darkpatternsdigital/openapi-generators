@@ -77,7 +77,6 @@ public abstract class OpenApiDocumentVisitor<TArgument> : IOpenApiDocumentVisito
 
 	public virtual void Visit(OpenApiSecurityRequirement securityRequirement, TArgument argument)
 	{
-		// TODO
 	}
 
 	public virtual void VisitUnknown(IReferenceableDocumentNode node, TArgument argument)

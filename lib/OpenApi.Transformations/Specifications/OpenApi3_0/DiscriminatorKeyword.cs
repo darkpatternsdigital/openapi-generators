@@ -8,6 +8,7 @@ using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords;
 
 namespace PrincipleStudios.OpenApi.Transformations.Specifications.OpenApi3_0;
 
+/// <see href="https://spec.openapis.org/oas/v3.0.3#composition-and-inheritance-polymorphism">OpenAPI 3.0 discriminator</see>
 public class DiscriminatorKeyword(string keyword, string propertyName, IReadOnlyDictionary<string, Uri>? mapping) : IJsonSchemaAnnotation
 {
 	private const string propertyNameField = "propertyName";

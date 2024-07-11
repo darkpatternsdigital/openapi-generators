@@ -173,7 +173,7 @@ types:
       byte: byte[]
       binary: global::System.IO.Stream
       date-time: global::System.DateTimeOffset
-      # date: string # TODO - use DateOnly in .NET 6
+      date: global::System.DateOnly
       uuid: global::System.Guid
       guid: global::System.Guid
     default: string

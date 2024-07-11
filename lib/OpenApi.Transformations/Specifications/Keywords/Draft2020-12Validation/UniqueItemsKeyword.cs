@@ -1,5 +1,4 @@
-
-using System;
+using Json.More;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Nodes;
@@ -28,17 +27,16 @@ public class UniqueItemsKeyword(string keyword, bool mustBeUnique) : IJsonSchema
 	{
 		if (nodeMetadata.Node is not JsonArray array) yield break;
 
-		// TODO: .NET 9 has JsonNode.DeepEquals
-		var set = new HashSet<string>();
+		var set = new HashSet<JsonNode?>();
 		foreach (var (node, index) in array.Select((node, i) => (node, i)))
 		{
-			var text = node?.ToJsonString() ?? "null";
-			if (set.Contains(text))
+			// TODO: .NET 9 has JsonNode.DeepEquals
+			if (set.Any(prev => prev.IsEquivalentTo(node)))
 			{
 				yield return new UniqueItemsKeywordNotUnique(evaluationContext.DocumentRegistry.ResolveLocation(nodeMetadata.Navigate(index)));
 				continue;
 			}
-			set.Add(text);
+			set.Add(node);
 		}
 	}
 }

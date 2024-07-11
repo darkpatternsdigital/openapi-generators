@@ -28,10 +28,6 @@ public static class DocumentResolverFactory
 		};
 	}
 
-	public static readonly DocumentResolver RelativeFromCurrentDocument =
-		// TODO
-		(_, _) => null;
-
 	public static (IDocumentReference, DocumentRegistry) FromInitialDocumentInMemory(Uri uri, string documentContents, DocumentRegistryOptions resolverOptions)
 	{
 		using var sr = new StringReader(documentContents);

@@ -34,7 +34,6 @@ public static class CommonParsers
 				var schemas = result.Document.GetNestedNodes(recursive: true).OfType<JsonSchema>().Where(s => !s.IsFixupComplete).ToArray();
 				foreach (var schema in schemas)
 				{
-					// TODO: there may be some edge cases where the fixup does not catch
 					schema.FixupInPlace(options);
 				}
 			} while (result.Document.GetNestedNodes(recursive: true).OfType<JsonSchema>().Where(s => !s.IsFixupComplete).Any());

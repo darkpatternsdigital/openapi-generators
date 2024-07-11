@@ -36,7 +36,6 @@ public class PropertiesKeyword(string keyword, IReadOnlyDictionary<string, JsonS
 
 	public string Keyword => keyword;
 
-	// TODO: an array of schemas is supported for each property in a later version of this keyword
 	public IReadOnlyDictionary<string, JsonSchema> Properties => properties;
 
 	public IEnumerable<JsonSchema> GetReferencedSchemas() => Properties.Values;

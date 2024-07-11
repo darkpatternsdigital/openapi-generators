@@ -299,8 +299,7 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 			case "cookie": return ParameterLocation.Cookie;
 			case null:
 			default:
-				// TODO: probably log diagnostics
-				return ParameterLocation.Query;
+				throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiParameter)));
 		}
 	}
 

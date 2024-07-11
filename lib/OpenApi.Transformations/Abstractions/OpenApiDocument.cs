@@ -24,7 +24,6 @@ public record OpenApiDocument(
 
 	// We don't use the following internally (yet?) directly, so we probably won't map them... at least for now
 	// components
-	// security
 	// tags
 	// externalDocs
 

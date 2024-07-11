@@ -36,8 +36,6 @@ public class TypeScriptSchemaTransformerShould
 		var schemaUri = new Uri(schemaUriString);
 		var docRef = GetDocumentByUri(schemaUri);
 
-		// TODO - use json schema instead
-
 		var (registry, document, schema) = GetSchema(docRef, schemaUri);
 		Assert.NotNull(document);
 		Assert.NotNull(schema);

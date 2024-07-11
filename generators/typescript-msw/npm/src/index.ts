@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-// TODO: this likely needs to be rewritten to support newer msw anyway
 import type {
 	AdapterRequestArgs,
 	HttpMethod,

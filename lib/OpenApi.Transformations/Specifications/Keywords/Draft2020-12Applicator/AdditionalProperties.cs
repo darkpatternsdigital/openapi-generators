@@ -24,10 +24,10 @@ public class AdditionalPropertiesKeyword(string keyword, JsonSchema schema) : IJ
 
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchema context, EvaluationContext evaluationContext)
 	{
-		if (nodeMetadata.Node is not JsonObject array)
+		if (nodeMetadata.Node is not JsonObject obj)
 			yield break;
 
-		// TODO - leverage patternProperties and properties
-		// TODO - compare given schema against all properties that do not satisfy `properties` or `patternProperties`
+		// TODO - leverage patternProperties (but do not apply to OpenAPI 3.0, which means forking this keyword)
+		// TODO - compare given schema against all properties that do not satisfy `properties`
 	}
 }

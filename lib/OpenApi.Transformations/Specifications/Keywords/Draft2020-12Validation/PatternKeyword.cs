@@ -30,7 +30,7 @@ public class PatternKeyword(string keyword, string pattern) : IJsonSchemaAnnotat
 	{
 		if (nodeMetadata.Node is not JsonValue value || !value.TryGetValue<string>(out var s))
 		{
-			// TODO: pattern applied to non-string?
+			// Patterns applied to non-strings 
 			yield break;
 		}
 

@@ -96,7 +96,7 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 					Description: operation.Description,
 					Name: TypeScriptNaming.ToMethodName(operationId, options.ReservedIdentifiers()),
 					Path: path,
-					AllowNoBody: operation.RequestBody is not { Required: true, Content.Count: > 1, },
+					AllowNoBody: operation.RequestBody is not { Required: true, Content.Count: > 0, },
 					HasFormRequest: operation.RequestBody?.Content?.Any(kvp => kvp.Key == formMimeType) ?? false,
 					Imports: inlineSchemas.GetImportStatements(GetSchemas(), Enumerable.Empty<JsonSchema>(), "./operation/").ToArray(),
 					SharedParams: sharedParameters,

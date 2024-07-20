@@ -7,7 +7,7 @@ import type {
 	RequestConversions,
 	HttpMethod,
 	AdapterResponseArgs,
-} from '@darkpatterns/openapi-codegen-typescript';
+} from '@darkpatternsdigital/openapi-codegen-typescript';
 
 const applicationJson = 'application/json';
 

@@ -1,4 +1,4 @@
-import { toMswHandler } from '@darkpatterns/openapi-codegen-typescript-msw';
+import { toMswHandler } from '@darkpatternsdigital/openapi-codegen-typescript-msw';
 import { setupServer } from 'msw/node';
 import { lastValueFrom } from 'rxjs';
 import { request as ajax } from 'universal-rxjs-ajax';

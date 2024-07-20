@@ -34,7 +34,7 @@ public class TsNodeWithCommonDirectoryShould
 	public async Task Be_able_to_import_common_npm_package()
 	{
 		var result = await commonDirectory.TsNode(@"
-            import type { HttpHeaders } from '@darkpatterns/openapi-codegen-typescript';
+            import type { HttpHeaders } from '@darkpatternsdigital/openapi-codegen-typescript';
             const headers: HttpHeaders = {};
             console.log(JSON.stringify(headers));
         ");

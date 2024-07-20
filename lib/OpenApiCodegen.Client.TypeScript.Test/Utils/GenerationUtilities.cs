@@ -15,7 +15,7 @@ internal static class GenerationUtilities
 		await commonDirectory.PrepareOpenApiDirectory(documentName);
 
 		var result = await commonDirectory.TsNode($@"
-            import {{ AdapterRequestArgs }} from '@darkpatterns/openapi-codegen-typescript';
+            import {{ AdapterRequestArgs }} from '@darkpatternsdigital/openapi-codegen-typescript';
             import {{ conversion }} from './{documentName}/operations/{operationName}';
             const request: AdapterRequestArgs = conversion.request({JsonSerializer.Serialize(parameters)});
             console.log(JSON.stringify(request));
@@ -28,7 +28,7 @@ internal static class GenerationUtilities
 		await commonDirectory.PrepareOpenApiDirectory(documentName);
 
 		var result = await commonDirectory.TsNode($@"
-            import {{ AdapterRequestArgs }} from '@darkpatterns/openapi-codegen-typescript';
+            import {{ AdapterRequestArgs }} from '@darkpatternsdigital/openapi-codegen-typescript';
             import {{ conversion }} from './{documentName}/operations/{operationName}';
             const request: AdapterRequestArgs = conversion.request({JsonSerializer.Serialize(parameters)}, {JsonSerializer.Serialize(body)}, {JsonSerializer.Serialize(contentType)});
             console.log(JSON.stringify(request));
@@ -55,7 +55,7 @@ internal static class GenerationUtilities
 		await commonDirectory.PrepareOpenApiDirectory(documentName);
 
 		var result = await commonDirectory.TsNode($@"
-            import {{ AdapterResponseArgs }} from '@darkpatterns/openapi-codegen-typescript';
+            import {{ AdapterResponseArgs }} from '@darkpatternsdigital/openapi-codegen-typescript';
             import {{ conversion, Responses }} from './{documentName}/operations/{operationName}';
             const responseBody: Responses['data'] = {(body.HasValue ? JsonSerializer.Serialize(body.Value) : "undefined")};
             const response: AdapterResponseArgs = {{

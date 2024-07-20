@@ -17,7 +17,7 @@
 		"outDir": "../../artifacts/generators/typescript-fetch/",
 		"rootDir": ".",
 		"paths": {
-			"@darkpatterns/openapi-codegen-typescript-fetch": ["./src"]
+			"@darkpatternsdigital/openapi-codegen-typescript-fetch": ["./src"]
 		}
 	},
 	"references": [

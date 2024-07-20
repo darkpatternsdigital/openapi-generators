@@ -21,8 +21,8 @@
 		<Schemas Update="$(SolutionRoot)schemas/*">
 			<DestinationFolder>$([MSBuild]::NormalizeDirectory('$(ProjectDir)', '%(Schemas.filename)%(Schemas.extension)'))</DestinationFolder>
 		</Schemas>
-		<SchemaGenerationScripts Include="node_modules/@darkpatterns/openapi-codegen-typescript/bin/**/*" />
-		<SchemaGenerationScripts Include="node_modules/@darkpatterns/openapi-codegen-typescript/dotnet/**/*" />
+		<SchemaGenerationScripts Include="node_modules/@darkpatternsdigital/openapi-codegen-typescript/bin/**/*" />
+		<SchemaGenerationScripts Include="node_modules/@darkpatternsdigital/openapi-codegen-typescript/dotnet/**/*" />
 		<SchemaFolderOutputs Include="$([MSBuild]::NormalizePath('%(Schemas.DestinationFolder)', '.gitignore'))" />
 		<SchemaFolderVerificationOutputs Include="dist/tsconfig.tsbuildinfo" />
 		<Clean Include="dist/**/*" />

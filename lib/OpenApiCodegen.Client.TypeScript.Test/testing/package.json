@@ -3,6 +3,6 @@
   "version": "0.8.0",
   "private": true,
   "devDependencies": {
-    "@darkpatterns/openapi-codegen-typescript": "workspace:*"
+    "@darkpatternsdigital/openapi-codegen-typescript": "workspace:*"
   }
 }

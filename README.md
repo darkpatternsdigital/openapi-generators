@@ -37,13 +37,13 @@ Generators currently available:
   [.NET Standard Client](./generators/dotnetstandard-client), for the modern C# approach for a client.
 * ![DarkPatterns.OpenApiCodegen.Json.Extensions NuGet](https://img.shields.io/nuget/v/DarkPatterns.OpenApiCodegen.Client)
   [OpenAPI Codegen Extensions](./lib/OpenApiCodegen.Json.Extensions/), a set of System.Text.Json-compatible extensions supporting Optional parameters and enum serialization.
-* ![@darkpatterns/openapi-codegen-typescript at npm](https://img.shields.io/npm/v/@darkpatterns/openapi-codegen-typescript)
+* ![@darkpatternsdigital/openapi-codegen-typescript at npm](https://img.shields.io/npm/v/@darkpatternsdigital/openapi-codegen-typescript)
   [TypeScript](./generators/typescript), for a TypeScript client that is agnostic about how you fetch data.
-* ![@darkpatterns/openapi-codegen-typescript-fetch at npm](https://img.shields.io/npm/v/@darkpatterns/openapi-codegen-typescript-fetch)
+* ![@darkpatternsdigital/openapi-codegen-typescript-fetch at npm](https://img.shields.io/npm/v/@darkpatternsdigital/openapi-codegen-typescript-fetch)
   [TypeScript Fetch](./generators/typescript-fetch), for a TypeScript client that leverages the fetch API.
-* ![@darkpatterns/openapi-codegen-typescript-rxjs at npm](https://img.shields.io/npm/v/@darkpatterns/openapi-codegen-typescript-rxjs)
+* ![@darkpatternsdigital/openapi-codegen-typescript-rxjs at npm](https://img.shields.io/npm/v/@darkpatternsdigital/openapi-codegen-typescript-rxjs)
   [TypeScript RXJS](./generators/typescript-rxjs), for a TypeScript client that leverages RxJS.
-* ![@darkpatterns/openapi-codegen-typescript-msw at npm](https://img.shields.io/npm/v/@darkpatterns/openapi-codegen-typescript-msw)
+* ![@darkpatternsdigital/openapi-codegen-typescript-msw at npm](https://img.shields.io/npm/v/@darkpatternsdigital/openapi-codegen-typescript-msw)
   [TypeScript MSW](./generators/typescript-msw), for setting up MSW in a strongly-typed way to mock an API.
 
 

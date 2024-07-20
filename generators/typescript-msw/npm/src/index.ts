@@ -9,7 +9,7 @@ import type {
 	RequestConversion,
 	StandardResponse,
 	TransformCallType,
-} from '@darkpatterns/openapi-codegen-typescript';
+} from '@darkpatternsdigital/openapi-codegen-typescript';
 import type {
 	HttpHandler,
 	DefaultRequestMultipartBody,

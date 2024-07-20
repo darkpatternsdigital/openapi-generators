@@ -1,5 +1,5 @@
 {
-    "name": "@darkpatterns/openapi-codegen-typescript",
+    "name": "@darkpatternsdigital/openapi-codegen-typescript",
     "version": "0.8.0",
     "description": "A typescript client code generator for principled development",
     "scripts": {

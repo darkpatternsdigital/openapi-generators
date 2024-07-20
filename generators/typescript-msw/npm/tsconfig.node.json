@@ -17,7 +17,7 @@
 		"rootDir": ".",
 		"outDir": "../../../artifacts/generators/typescript-msw/npm",
 		"paths": {
-			"@darkpatterns/openapi-codegen-typescript-msw": ["./src"]
+			"@darkpatternsdigital/openapi-codegen-typescript-msw": ["./src"]
 		}
 	},
 	"exclude": ["./lib"]

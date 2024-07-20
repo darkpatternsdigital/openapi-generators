@@ -1,5 +1,5 @@
 {
-  "name": "@darkpatterns/openapi-codegen-typescript-msw",
+  "name": "@darkpatternsdigital/openapi-codegen-typescript-msw",
   "version": "0.7.0",
   "description": "A typescript code generator for principled development to assist with testing using MSW",
   "scripts": {
@@ -30,7 +30,7 @@
   "dependencies": {},
   "peerDependencies": {
     "msw": "^2.3.1",
-    "@darkpatterns/openapi-codegen-typescript": "workspace:^"
+    "@darkpatternsdigital/openapi-codegen-typescript": "workspace:^"
   },
   "devDependencies": {
     "@types/node-fetch": "^2.6.11",

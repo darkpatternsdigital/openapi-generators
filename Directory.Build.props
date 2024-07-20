@@ -47,14 +47,14 @@
 	<Import Project="Directory.Build.local.props" Condition="exists('$(MSBuildThisFileDirectory)Directory.Build.local.props')" />
 
 	<PropertyGroup>
-		<Authors>Principle Studios, Matt DeKrey, Tony Mishler, Chris Lees</Authors>
+		<Authors>Dark Patterns Digital, Principle Studios, Matt DeKrey, Tony Mishler, Chris Lees</Authors>
 		<PackageProjectUrl>https://github.com/darkpatternsdigital/openapi-generators</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/darkpatternsdigital/openapi-generators.git</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<RepositoryBranch>main</RepositoryBranch>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<PackageIcon>logo_black_small.png</PackageIcon>
-		<Copyright>2023 Matt DeKrey &amp; Principle Studios</Copyright>
+		<Copyright>2024 Matt DeKrey; Dark Patterns Digital, LCA; &amp; Principle Studios</Copyright>
 	</PropertyGroup>
 
 	<ItemGroup>

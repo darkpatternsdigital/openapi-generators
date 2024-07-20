@@ -10,7 +10,7 @@
         "test": "vitest",
         "prepack": "npm run build"
     },
-    "author": "Matt DeKrey & Principle Studios",
+    "author": "Matt DeKrey; Dark Patterns Digital, LCA; & Principle Studios",
     "license": "BSD-2-Clause",
     "homepage": "https://github.com/darkpatternsdigital/openapi-generators",
     "files": [

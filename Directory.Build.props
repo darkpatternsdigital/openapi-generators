@@ -33,15 +33,15 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<OpenApiJsonExtensionsVersion>0.16.0</OpenApiJsonExtensionsVersion>
-		<OpenApiMvcServerVersion>0.16.1</OpenApiMvcServerVersion>
-		<OpenApiCSharpClientVersion>0.16.0</OpenApiCSharpClientVersion>
-		<OpenApiTypeScriptClientVersion>0.9.0</OpenApiTypeScriptClientVersion>
-		<OpenApiTypeScriptRxjsClientVersion>0.7.0</OpenApiTypeScriptRxjsClientVersion>
-		<OpenApiTypeScriptMswVersion>0.7.0</OpenApiTypeScriptMswVersion>
-		<OpenApiTypeScriptFetchVersion>0.7.1</OpenApiTypeScriptFetchVersion>
+		<OpenApiJsonExtensionsVersion>0.17.0</OpenApiJsonExtensionsVersion>
+		<OpenApiMvcServerVersion>0.17.0</OpenApiMvcServerVersion>
+		<OpenApiCSharpClientVersion>0.17.0</OpenApiCSharpClientVersion>
+		<OpenApiTypeScriptClientVersion>0.10.0</OpenApiTypeScriptClientVersion>
+		<OpenApiTypeScriptRxjsClientVersion>0.8.0</OpenApiTypeScriptRxjsClientVersion>
+		<OpenApiTypeScriptMswVersion>0.8.0</OpenApiTypeScriptMswVersion>
+		<OpenApiTypeScriptFetchVersion>0.8.0</OpenApiTypeScriptFetchVersion>
 		<!-- Should be incremented anytime one of the internal libraries changes -->
-		<SharedAnalyzerLibrariesVersion>0.6.0</SharedAnalyzerLibrariesVersion>
+		<SharedAnalyzerLibrariesVersion>0.7.0</SharedAnalyzerLibrariesVersion>
 	</PropertyGroup>
 
 	<Import Project="Directory.Build.local.props" Condition="exists('$(MSBuildThisFileDirectory)Directory.Build.local.props')" />

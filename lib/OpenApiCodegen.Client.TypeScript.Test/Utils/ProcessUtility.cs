@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript.Utils;
+namespace DarkPatterns.OpenApiCodegen.Client.TypeScript.Utils;
 
 public static class ProcessUtility
 {

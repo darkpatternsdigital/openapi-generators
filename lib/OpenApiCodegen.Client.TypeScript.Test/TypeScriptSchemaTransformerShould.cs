@@ -1,15 +1,15 @@
 using Xunit;
-using PrincipleStudios.OpenApi.Transformations;
-using PrincipleStudios.OpenApi.TypeScript;
-using static PrincipleStudios.OpenApiCodegen.TestUtils.DocumentHelpers;
+using DarkPatterns.OpenApi.Transformations;
+using DarkPatterns.OpenApi.TypeScript;
+using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
 using System;
-using PrincipleStudios.OpenApi.Transformations.DocumentTypes;
-using PrincipleStudios.OpenApiCodegen.TestUtils;
-using PrincipleStudios.OpenApi.Transformations.Abstractions;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApi.Transformations.DocumentTypes;
+using DarkPatterns.OpenApiCodegen.TestUtils;
+using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Transformations.Specifications;
 using System.Text.Json.Nodes;
 
-namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript;
+namespace DarkPatterns.OpenApiCodegen.Client.TypeScript;
 using static OptionsHelpers;
 
 public class TypeScriptSchemaTransformerShould

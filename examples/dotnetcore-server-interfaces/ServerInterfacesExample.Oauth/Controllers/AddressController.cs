@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace PrincipleStudios.ServerInterfacesExample.Oauth.Controllers
+namespace DarkPatterns.ServerInterfacesExample.Oauth.Controllers
 {
 	public class AddressController : AddressControllerBase
 	{

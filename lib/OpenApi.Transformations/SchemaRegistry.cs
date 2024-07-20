@@ -1,9 +1,9 @@
 
 using System;
 using System.Collections.Generic;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApi.Transformations.Specifications;
 
-namespace PrincipleStudios.OpenApi.Transformations;
+namespace DarkPatterns.OpenApi.Transformations;
 
 public interface ISchemaRegistry
 {

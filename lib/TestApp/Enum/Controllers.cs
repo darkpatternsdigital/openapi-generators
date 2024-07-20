@@ -1,8 +1,8 @@
-﻿using static PrincipleStudios.OpenApiCodegen.Server.Mvc.TestApp.ControllerExtensions.InformationControllerBase;
-using static PrincipleStudios.OpenApiCodegen.Server.Mvc.TestApp.Enum.RockPaperScissorsQueryControllerBase;
+﻿using static DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ControllerExtensions.InformationControllerBase;
+using static DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Enum.RockPaperScissorsQueryControllerBase;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace PrincipleStudios.OpenApiCodegen.Server.Mvc.TestApp.Enum
+namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Enum
 {
 	public class RockPaperScissorsController : RockPaperScissorsControllerBase
 	{

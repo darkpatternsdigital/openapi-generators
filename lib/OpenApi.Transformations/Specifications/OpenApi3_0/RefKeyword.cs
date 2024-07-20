@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
-using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.Specifications.Keywords;
 
-namespace PrincipleStudios.OpenApi.Transformations.Specifications.OpenApi3_0;
+namespace DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0;
 
 public class RefKeyword(string keyword, Uri reference, Uri absoluteReference) : IJsonSchemaFixupAnnotation
 {

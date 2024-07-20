@@ -1,12 +1,12 @@
-﻿using PrincipleStudios.OpenApi.Transformations.DocumentTypes;
-using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords;
-using PrincipleStudios.OpenApi.Transformations.Specifications.OpenApi3_0;
-using PrincipleStudios.OpenApiCodegen.TestUtils;
+﻿using DarkPatterns.OpenApi.Transformations.DocumentTypes;
+using DarkPatterns.OpenApi.Transformations.Specifications.Keywords;
+using DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0;
+using DarkPatterns.OpenApiCodegen.TestUtils;
 using System.Linq;
 using Xunit;
-using static PrincipleStudios.OpenApiCodegen.TestUtils.DocumentHelpers;
+using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
 
-namespace PrincipleStudios.OpenApi.Transformations;
+namespace DarkPatterns.OpenApi.Transformations;
 
 public class OpenApi3_0ParserShould
 {

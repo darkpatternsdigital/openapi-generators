@@ -1,13 +1,13 @@
 ﻿using Json.More;
 using Json.Pointer;
-using PrincipleStudios.OpenApi.Transformations.Abstractions;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Nodes;
 
-namespace PrincipleStudios.OpenApi.Transformations.Specifications.OpenApi3_1;
+namespace DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_1;
 
 public class OpenApi3_1DocumentFactory
 {

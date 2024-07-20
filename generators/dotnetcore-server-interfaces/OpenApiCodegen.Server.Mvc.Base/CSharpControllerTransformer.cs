@@ -1,12 +1,12 @@
-﻿using PrincipleStudios.OpenApi.CSharp.Templates;
-using PrincipleStudios.OpenApi.Transformations.Abstractions;
-using PrincipleStudios.OpenApi.Transformations;
+﻿using DarkPatterns.OpenApi.CSharp.Templates;
+using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Transformations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using PrincipleStudios.OpenApiCodegen;
+using DarkPatterns.OpenApiCodegen;
 
-namespace PrincipleStudios.OpenApi.CSharp
+namespace DarkPatterns.OpenApi.CSharp
 {
 	public class CSharpControllerTransformer : IOpenApiOperationControllerTransformer
 	{

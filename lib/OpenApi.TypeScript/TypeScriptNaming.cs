@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace PrincipleStudios.OpenApi.TypeScript
+namespace DarkPatterns.OpenApi.TypeScript
 {
 	public static class TypeScriptNaming
 	{

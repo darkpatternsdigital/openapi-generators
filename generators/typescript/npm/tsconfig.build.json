@@ -6,7 +6,7 @@
 		"rootDir": "./src",
 		"composite": true,
 		"paths": {
-			"@principlestudios/openapi-codegen-typescript": ["./src"]
+			"@darkpatterns/openapi-codegen-typescript": ["./src"]
 		}
 	},
 	"extends": "./tsconfig.json",

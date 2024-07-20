@@ -1,13 +1,13 @@
-﻿using PrincipleStudios.OpenApiCodegen.Json.Extensions;
+﻿using DarkPatterns.OpenApiCodegen.Json.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PrincipleStudios.ServerInterfacesExample.Controllers
+namespace DarkPatterns.ServerInterfacesExample.Controllers
 {
-	public class PetsController : PrincipleStudios.ServerInterfacesExample.Controllers.PetsControllerBase
+	public class PetsController : DarkPatterns.ServerInterfacesExample.Controllers.PetsControllerBase
 	{
 
 		protected override async Task<AddPetActionResult> AddPet(NewPet addPetBody)

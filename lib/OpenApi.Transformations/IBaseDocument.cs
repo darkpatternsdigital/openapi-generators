@@ -1,6 +1,6 @@
 using System;
 
-namespace PrincipleStudios.OpenApi.Transformations;
+namespace DarkPatterns.OpenApi.Transformations;
 
 public interface IBaseDocument
 {

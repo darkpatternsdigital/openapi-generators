@@ -1,8 +1,8 @@
-﻿using PrincipleStudios.OpenApi.Transformations.Specifications;
-using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords;
+﻿using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApi.Transformations.Specifications.Keywords;
 using System.Text.Json.Nodes;
 
-namespace PrincipleStudios.OpenApi.Transformations;
+namespace DarkPatterns.OpenApi.Transformations;
 
 public static class SharedOpenApiExtensions
 {

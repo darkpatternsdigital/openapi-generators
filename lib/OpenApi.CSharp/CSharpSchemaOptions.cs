@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PrincipleStudios.OpenApi.CSharp
+namespace DarkPatterns.OpenApi.CSharp
 {
 	public class CSharpSchemaOptions
 	{

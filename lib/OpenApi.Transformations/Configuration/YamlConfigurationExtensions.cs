@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.FileProviders;
-using PrincipleStudios.OpenApi.Transformations.Configuration;
+using DarkPatterns.OpenApi.Transformations.Configuration;
 
 namespace Microsoft.Extensions.Configuration
 {

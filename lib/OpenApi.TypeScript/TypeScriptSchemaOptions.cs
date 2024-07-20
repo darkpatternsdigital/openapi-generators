@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace PrincipleStudios.OpenApi.TypeScript
+namespace DarkPatterns.OpenApi.TypeScript
 {
 	public class TypeScriptSchemaOptions
 	{

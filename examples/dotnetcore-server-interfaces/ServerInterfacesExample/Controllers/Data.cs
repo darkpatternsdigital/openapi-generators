@@ -1,4 +1,4 @@
-﻿namespace PrincipleStudios.ServerInterfacesExample.Controllers
+﻿namespace DarkPatterns.ServerInterfacesExample.Controllers
 {
 	internal static class Data
 	{

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript
+namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 {
 	public static class SolutionConfiguration
 	{

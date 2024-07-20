@@ -13,7 +13,7 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace PrincipleStudios.ServerInterfacesExample.Oauth
+namespace DarkPatterns.ServerInterfacesExample.Oauth
 {
 	public class Startup
 	{

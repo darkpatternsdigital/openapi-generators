@@ -6,7 +6,7 @@ using System.Globalization;
 using System.Collections.Generic;
 using System.Text;
 
-namespace PrincipleStudios.OpenApiCodegen.Json.Extensions;
+namespace DarkPatterns.OpenApiCodegen.Json.Extensions;
 
 internal class JsonStringEnumMemberConverterHelper<TEnum>
 	where TEnum : struct, Enum
@@ -92,7 +92,7 @@ internal class JsonStringEnumMemberConverterHelper<TEnum>
 #if NETSTANDARD2_0
 				string[] flagValues = enumString.Split(s_Split, StringSplitOptions.None);
 #else
-					string[] flagValues = enumString.Split(", ");
+				string[] flagValues = enumString.Split(", ");
 #endif
 				foreach (string flagValue in flagValues)
 				{

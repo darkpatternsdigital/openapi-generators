@@ -1,5 +1,5 @@
 {
-  "name": "@principlestudios/openapi-codegen-typescript-rxjs",
+  "name": "@darkpatterns/openapi-codegen-typescript-rxjs",
   "version": "0.7.0",
   "description": "A typescript client code generator for principled development using RxJS",
   "scripts": {
@@ -15,14 +15,14 @@
   },
   "author": "Matt DeKrey",
   "license": "BSD-2-Clause",
-  "homepage": "https://github.com/PrincipleStudios/principle-studios-openapi-generators",
+  "homepage": "https://github.com/darkpatternsdigital/openapi-generators",
   "files": [
     "lib/*",
     "readme.md"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/PrincipleStudios/principle-studios-openapi-generators.git",
+    "url": "https://github.com/darkpatternsdigital/openapi-generators.git",
     "directory": "generators/typescript-rxjs"
   },
   "main": "lib/index.js",
@@ -31,10 +31,10 @@
     "rxjs": "^7.8.1"
   },
   "peerDependencies": {
-    "@principlestudios/openapi-codegen-typescript": "workspace:^"
+    "@darkpatterns/openapi-codegen-typescript": "workspace:^"
   },
   "devDependencies": {
-    "@principlestudios/openapi-codegen-typescript-msw": "workspace:*",
+    "@darkpatterns/openapi-codegen-typescript-msw": "workspace:*",
     "msw": "^2.3.1",
     "universal-rxjs-ajax": "^3.0.0"
   }

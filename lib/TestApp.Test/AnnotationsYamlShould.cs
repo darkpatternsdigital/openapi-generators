@@ -4,7 +4,7 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace PrincipleStudios.OpenApiCodegen.Server.Mvc.TestApp;
+namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp;
 
 using static Utilities;
 

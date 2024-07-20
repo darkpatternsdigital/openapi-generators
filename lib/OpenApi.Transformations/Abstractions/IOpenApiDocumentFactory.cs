@@ -1,10 +1,10 @@
-﻿using PrincipleStudios.OpenApi.Transformations.DocumentTypes;
+﻿using DarkPatterns.OpenApi.Transformations.DocumentTypes;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Nodes;
 
-namespace PrincipleStudios.OpenApi.Transformations.Abstractions;
+namespace DarkPatterns.OpenApi.Transformations.Abstractions;
 
 public interface IOpenApiDocumentFactory
 {

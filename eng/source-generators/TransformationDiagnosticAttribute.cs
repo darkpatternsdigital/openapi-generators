@@ -1,6 +1,6 @@
 using System;
 
-namespace PrincipleStudios.OpenApiCodegen;
+namespace DarkPatterns.OpenApiCodegen;
 
 [AttributeUsage(AttributeTargets.Field)]
 public class TransformationDiagnosticAttribute(string fullTypeName) : Attribute

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using PrincipleStudios.ClientInterfacesExample.Clients.Petstore;
-using PrincipleStudios.OpenApiCodegen.Json.Extensions;
+using DarkPatterns.ClientInterfacesExample.Clients.Petstore;
+using DarkPatterns.OpenApiCodegen.Json.Extensions;
 
-namespace PrincipleStudios.ClientInterfacesExample
+namespace DarkPatterns.ClientInterfacesExample
 {
 	public class Program
 	{

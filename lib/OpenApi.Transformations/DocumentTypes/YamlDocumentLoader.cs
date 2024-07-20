@@ -1,7 +1,7 @@
 ﻿using Json.Pointer;
-using PrincipleStudios.OpenApi.Transformations;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApi.Transformations;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -15,7 +15,7 @@ using Yaml2JsonNode;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
 
-namespace PrincipleStudios.OpenApi.Transformations.DocumentTypes;
+namespace DarkPatterns.OpenApi.Transformations.DocumentTypes;
 
 public class YamlDocumentLoader : IDocumentTypeLoader
 {

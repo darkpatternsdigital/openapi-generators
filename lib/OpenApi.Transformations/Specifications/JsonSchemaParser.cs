@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Nodes;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
-using PrincipleStudios.OpenApi.Transformations.DocumentTypes;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.DocumentTypes;
 
-namespace PrincipleStudios.OpenApi.Transformations.Specifications;
+namespace DarkPatterns.OpenApi.Transformations.Specifications;
 
 public static class JsonSchemaParser
 {

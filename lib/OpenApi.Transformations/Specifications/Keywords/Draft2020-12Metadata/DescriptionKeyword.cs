@@ -1,9 +1,9 @@
 
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
 
-namespace PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Metadata;
+namespace DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Metadata;
 
 public class DescriptionKeyword(string keyword, string description) : IJsonSchemaAnnotation
 {

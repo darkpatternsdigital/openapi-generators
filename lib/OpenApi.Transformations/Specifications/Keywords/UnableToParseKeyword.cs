@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
 
-namespace PrincipleStudios.OpenApi.Transformations.Specifications.Keywords;
+namespace DarkPatterns.OpenApi.Transformations.Specifications.Keywords;
 
 public record UnableToParseKeyword(string Keyword, Location Location) : DiagnosticBase(Location)
 {

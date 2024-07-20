@@ -1,7 +1,7 @@
 ﻿using HandlebarsDotNet;
 using System;
 
-namespace PrincipleStudios.OpenApi.TypeScript
+namespace DarkPatterns.OpenApi.TypeScript
 {
 	public class HandlebarsFactory
 	{

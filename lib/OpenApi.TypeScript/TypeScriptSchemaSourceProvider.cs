@@ -3,16 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using PrincipleStudios.OpenApi.Transformations;
-using PrincipleStudios.OpenApi.Transformations.Abstractions;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
-using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Applicator;
-using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Metadata;
-using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Validation;
-using PrincipleStudios.OpenApi.TypeScript.Templates;
-using PrincipleStudios.OpenApiCodegen;
+using DarkPatterns.OpenApi.Transformations;
+using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Applicator;
+using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Metadata;
+using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Validation;
+using DarkPatterns.OpenApi.TypeScript.Templates;
+using DarkPatterns.OpenApiCodegen;
 
-namespace PrincipleStudios.OpenApi.TypeScript;
+namespace DarkPatterns.OpenApi.TypeScript;
 
 public class TypeScriptSchemaSourceProvider : SchemaSourceProvider
 {

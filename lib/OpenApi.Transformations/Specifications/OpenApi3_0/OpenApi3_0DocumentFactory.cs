@@ -1,16 +1,16 @@
-using PrincipleStudios.OpenApi.Transformations.Abstractions;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
-using PrincipleStudios.OpenApi.Transformations.DocumentTypes;
-using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords;
+using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.DocumentTypes;
+using DarkPatterns.OpenApi.Transformations.Specifications.Keywords;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Draft04 = PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft04;
+using Draft04 = DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft04;
 
-namespace PrincipleStudios.OpenApi.Transformations.Specifications.OpenApi3_0;
+namespace DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0;
 
 #pragma warning disable CA1822 // Mark members as static
 

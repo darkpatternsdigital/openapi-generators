@@ -1,11 +1,11 @@
-﻿using PrincipleStudios.OpenApi.Transformations.Abstractions;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
-using PrincipleStudios.OpenApi.Transformations.DocumentTypes;
+﻿using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.DocumentTypes;
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
 
-namespace PrincipleStudios.OpenApi.Transformations.Specifications.OpenApi3_1;
+namespace DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_1;
 
 internal class OpenApi3_1Parser : SchemaValidatingParser<OpenApiDocument>
 {

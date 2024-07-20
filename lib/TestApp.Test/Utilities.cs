@@ -13,9 +13,9 @@ using Xunit;
 using Microsoft.AspNetCore.TestHost;
 using System.Text.Json.Nodes;
 using Json.More;
-using PrincipleStudios.OpenApiCodegen.TestUtils;
+using DarkPatterns.OpenApiCodegen.TestUtils;
 
-namespace PrincipleStudios.OpenApiCodegen.Server.Mvc.TestApp;
+namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp;
 
 internal class Utilities
 {

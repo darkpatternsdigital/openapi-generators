@@ -10,7 +10,7 @@ using static System.Linq.Expressions.Expression;
 using System.Reflection;
 using System.Text;
 
-namespace PrincipleStudios.OpenApiCodegen;
+namespace DarkPatterns.OpenApiCodegen;
 
 using ReportDiagnostic = Action<Diagnostic>;
 using AddSourceText = Action<string, SourceText>;
@@ -22,10 +22,10 @@ public abstract class BaseGenerator :
 	ISourceGenerator
 #endif
 {
-	private static readonly DiagnosticDescriptor OpenApiConversionError = new DiagnosticDescriptor(id: "PS_PARSE_UNK",
+	private static readonly DiagnosticDescriptor OpenApiConversionError = new DiagnosticDescriptor(id: "DPD_PARSE_UNK",
 																								title: "A conversion error was encountered",
 																								messageFormat: "A conversion error was encountered: {0}",
-																								category: "PrincipleStudios.OpenApiCodegen",
+																								category: "DarkPatterns.OpenApiCodegen",
 																								DiagnosticSeverity.Error,
 																								isEnabledByDefault: true);
 
@@ -161,7 +161,7 @@ public abstract class BaseGenerator :
 	private void GenerateSources(AdditionalTextWithOptions additionalText, CompilerApis apis)
 	{
 		IEnumerable<string> metadataKeys = getMetadataKeys();
-		// result is of type PrincipleStudios.OpenApiCodegen.GenerationResult
+		// result is of type DarkPatterns.OpenApiCodegen.GenerationResult
 		dynamic result = generate(
 			additionalText.Path,
 			additionalText.TextContents,
@@ -171,7 +171,7 @@ public abstract class BaseGenerator :
 		);
 		foreach (var entry in result.Sources)
 		{
-			apis.AddSource($"PS_{entry.Key}", SourceText.From(entry.SourceText, Encoding.UTF8));
+			apis.AddSource($"DPD_{entry.Key}", SourceText.From(entry.SourceText, Encoding.UTF8));
 		}
 		foreach (var diagnostic in result.Diagnostics)
 		{

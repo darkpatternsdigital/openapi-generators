@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Nodes;
 
-namespace PrincipleStudios.OpenApi.TypeScript;
+namespace DarkPatterns.OpenApi.TypeScript;
 
 public static class PrimitiveToJsonValue
 {

@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript.Utils;
+namespace DarkPatterns.OpenApiCodegen.Client.TypeScript.Utils;
 
 public class CommonDirectoryFixture : IDisposable
 {

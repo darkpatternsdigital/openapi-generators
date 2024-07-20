@@ -1,6 +1,6 @@
-﻿using PrincipleStudios.OpenApi.Transformations.Diagnostics;
+﻿using DarkPatterns.OpenApi.Transformations.Diagnostics;
 
-namespace PrincipleStudios.OpenApi.Transformations.DocumentTypes;
+namespace DarkPatterns.OpenApi.Transformations.DocumentTypes;
 
 public record UnableToParseSchema(Location Location) : DiagnosticBase(Location)
 {

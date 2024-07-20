@@ -4,7 +4,7 @@ const { join } = require('path');
 
 const dllPath = join(
 	__dirname,
-	'../dotnet/PrincipleStudios.OpenApiCodegen.Client.TypeScript.dll',
+	'../dotnet/DarkPatterns.OpenApiCodegen.Client.TypeScript.dll',
 );
 
 const [, , ...args] = process.argv;

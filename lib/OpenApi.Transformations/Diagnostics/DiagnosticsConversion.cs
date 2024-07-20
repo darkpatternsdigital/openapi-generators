@@ -1,7 +1,7 @@
 using System;
-using PrincipleStudios.OpenApiCodegen;
+using DarkPatterns.OpenApiCodegen;
 
-namespace PrincipleStudios.OpenApi.Transformations.Diagnostics;
+namespace DarkPatterns.OpenApi.Transformations.Diagnostics;
 
 public static class DiagnosticsConversion
 {

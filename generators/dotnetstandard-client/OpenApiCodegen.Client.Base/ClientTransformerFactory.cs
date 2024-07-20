@@ -1,8 +1,8 @@
-﻿using PrincipleStudios.OpenApi.Transformations;
-using PrincipleStudios.OpenApi.Transformations.Abstractions;
+﻿using DarkPatterns.OpenApi.Transformations;
+using DarkPatterns.OpenApi.Transformations.Abstractions;
 using System.Linq;
 
-namespace PrincipleStudios.OpenApi.CSharp
+namespace DarkPatterns.OpenApi.CSharp
 {
 	public static class ClientTransformerFactory
 	{

@@ -1,15 +1,15 @@
 ﻿using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Configuration;
-using PrincipleStudios.OpenApi.Transformations;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
-using PrincipleStudios.OpenApi.Transformations.DocumentTypes;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
-using PrincipleStudios.OpenApi.TypeScript;
+using DarkPatterns.OpenApi.Transformations;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.DocumentTypes;
+using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApi.TypeScript;
 using System;
 using System.IO;
 using System.Linq;
 
-namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript
+namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 {
 	class Program
 	{
@@ -60,7 +60,7 @@ namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript
 #pragma warning disable CA2241 // CommandLineApplication does not follow standard format string format
 					commandLineApplication.Error.WriteLine(
 						"{subcategory}{errorCode}: {helpKeyword} {file}({lineNumber},{columnNumber}-{endLineNumber},{endColumnNumber}) {message}",
-						null, "PSOPENAPI000", null, error.Location.RetrievalUri.LocalPath, error.Location.Range?.Start.Line ?? 0, error.Location.Range?.Start.Column ?? 0, error.Location.Range?.End.Line ?? 0, error.Location.Range?.End.Column ?? 0,
+						null, "DPDOPENAPI000", null, error.Location.RetrievalUri.LocalPath, error.Location.Range?.Start.Line ?? 0, error.Location.Range?.Start.Column ?? 0, error.Location.Range?.End.Line ?? 0, error.Location.Range?.End.Column ?? 0,
 						string.Format(CommonDiagnostics.ResourceManager.GetString(error.GetType().FullName!)!, error.GetTextArguments())
 					);
 #pragma warning restore CA2241

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PrincipleStudios.OpenApiCodegen.Json.Extensions;
+using DarkPatterns.OpenApiCodegen.Json.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace PrincipleStudios.OpenApiCodegen.Server.Mvc.TestApp;
+namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp;
 
 using static Utilities;
 

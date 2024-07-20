@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
 
-namespace PrincipleStudios.OpenApi.Transformations.Abstractions;
+namespace DarkPatterns.OpenApi.Transformations.Abstractions;
 
 
 /// <summary>

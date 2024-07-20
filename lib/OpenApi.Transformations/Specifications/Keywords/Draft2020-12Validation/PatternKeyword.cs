@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
 
-namespace PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Validation;
+namespace DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Validation;
 
 /// <see href="https://json-schema.org/draft/2020-12/json-schema-validation#name-pattern">Draft 2020-12 pattern keyword</see>
 public class PatternKeyword(string keyword, string pattern) : IJsonSchemaAnnotation
@@ -30,7 +30,7 @@ public class PatternKeyword(string keyword, string pattern) : IJsonSchemaAnnotat
 	{
 		if (nodeMetadata.Node is not JsonValue value || !value.TryGetValue<string>(out var s))
 		{
-			// Patterns applied to non-strings 
+			// Patterns applied to non-strings
 			yield break;
 		}
 

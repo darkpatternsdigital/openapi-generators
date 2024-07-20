@@ -1,12 +1,12 @@
 ﻿using HandlebarsDotNet;
-using PrincipleStudios.OpenApi.TypeScript.Templates;
+using DarkPatterns.OpenApi.TypeScript.Templates;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json.Nodes;
 
-namespace PrincipleStudios.OpenApi.TypeScript
+namespace DarkPatterns.OpenApi.TypeScript
 {
 	public static class HandlebarsTemplateProcess
 	{

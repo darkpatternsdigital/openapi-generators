@@ -5,7 +5,7 @@ using System.Linq;
 using Microsoft.Extensions.Configuration;
 using YamlDotNet.RepresentationModel;
 
-namespace PrincipleStudios.OpenApi.Transformations.Configuration
+namespace DarkPatterns.OpenApi.Transformations.Configuration
 {
 	internal class YamlConfigurationFileParser
 	{

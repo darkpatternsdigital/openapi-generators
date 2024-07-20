@@ -1,6 +1,6 @@
-﻿using static PrincipleStudios.OpenApiCodegen.Server.Mvc.TestApp.Enum.RockPaperScissorsControllerBase;
+﻿using static DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Enum.RockPaperScissorsControllerBase;
 
-namespace PrincipleStudios.OpenApiCodegen.Server.Mvc.TestApp.OneOf;
+namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf;
 
 public class PetController : PetControllerBase
 {

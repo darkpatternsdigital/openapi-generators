@@ -7,13 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using PrincipleStudios.OpenApi.CSharp;
-using PrincipleStudios.OpenApi.Transformations;
-using static PrincipleStudios.OpenApiCodegen.Client.CSharp.OptionsHelpers;
-using static PrincipleStudios.OpenApiCodegen.TestUtils.DocumentHelpers;
-using PrincipleStudios.OpenApiCodegen.TestUtils;
+using DarkPatterns.OpenApi.CSharp;
+using DarkPatterns.OpenApi.Transformations;
+using static DarkPatterns.OpenApiCodegen.Client.CSharp.OptionsHelpers;
+using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
+using DarkPatterns.OpenApiCodegen.TestUtils;
 
-namespace PrincipleStudios.OpenApiCodegen.Client.CSharp
+namespace DarkPatterns.OpenApiCodegen.Client.CSharp
 {
 	internal class DynamicCompilation
 	{
@@ -33,7 +33,7 @@ namespace PrincipleStudios.OpenApiCodegen.Client.CSharp
 				typeof(Uri).Assembly.Location,
 				typeof(System.Web.HttpUtility).Assembly.Location,
 				typeof(System.Collections.Specialized.NameValueCollection).Assembly.Location,
-				typeof(PrincipleStudios.OpenApiCodegen.Json.Extensions.JsonStringEnumPropertyNameConverter).Assembly.Location,
+				typeof(DarkPatterns.OpenApiCodegen.Json.Extensions.JsonStringEnumPropertyNameConverter).Assembly.Location,
 		};
 
 		public static byte[] GetGeneratedLibrary(string documentName, Action<CSharpSchemaOptions>? configureOptions = null)
@@ -45,7 +45,7 @@ namespace PrincipleStudios.OpenApiCodegen.Client.CSharp
 			var options = LoadOptions();
 			configureOptions?.Invoke(options);
 
-			var transformer = document.BuildCSharpClientSourceProvider(registry, "", "PS.Controller", options);
+			var transformer = document.BuildCSharpClientSourceProvider(registry, "", "DPD.Controller", options);
 			OpenApiTransformDiagnostic diagnostic = new();
 
 			var entries = transformer.GetSources(diagnostic).ToArray();

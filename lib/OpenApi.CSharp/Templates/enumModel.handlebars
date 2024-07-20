@@ -9,7 +9,7 @@ namespace {{this.PackageName}}
     /// {{linewrap Description "
     /// "}}
     /// </summary>{{/if}}
-    {{#if Model.IsString}}[global::System.Text.Json.Serialization.JsonConverter(typeof(global::PrincipleStudios.OpenApiCodegen.Json.Extensions.JsonStringEnumPropertyNameConverter))]
+    {{#if Model.IsString}}[global::System.Text.Json.Serialization.JsonConverter(typeof(global::DarkPatterns.OpenApiCodegen.Json.Extensions.JsonStringEnumPropertyNameConverter))]
     [global::System.ComponentModel.TypeConverter("{{../this.PackageName}}.{{ClassName}}TypeConverter")]
     {{/if}}
     public enum {{ClassName}}

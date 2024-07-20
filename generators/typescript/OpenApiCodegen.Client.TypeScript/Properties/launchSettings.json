@@ -1,6 +1,6 @@
 {
 	"profiles": {
-		"PrincipleStudios.OpenApiCodegen.Client.TypeScript": {
+		"DarkPatterns.OpenApiCodegen.Client.TypeScript": {
 			"commandName": "Project",
 			"commandLineArgs": "\"$(SolutionDir)schemas/local.yaml\" \"$(ProjectDir)demo/\" -c"
 		}

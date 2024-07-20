@@ -1,8 +1,8 @@
 ﻿using System;
-using PrincipleStudios.OpenApi.Transformations.Abstractions;
-using PrincipleStudios.OpenApiCodegen;
+using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApiCodegen;
 
-namespace PrincipleStudios.OpenApi.Transformations
+namespace DarkPatterns.OpenApi.Transformations
 {
 	public interface IOpenApiOperationTransformer
 	{

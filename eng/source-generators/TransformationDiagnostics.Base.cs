@@ -1,88 +1,88 @@
 using Microsoft.CodeAnalysis;
-using static PrincipleStudios.OpenApiCodegen.CommonDiagnostics;
+using static DarkPatterns.OpenApiCodegen.CommonDiagnostics;
 
-namespace PrincipleStudios.OpenApiCodegen;
+namespace DarkPatterns.OpenApiCodegen;
 
 public partial class TransformationDiagnostics
 {
-	[TransformationDiagnostic("PrincipleStudios.OpenApi.Transformations.InvalidRetrievalUri")]
+	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.InvalidRetrievalUri")]
 	public static readonly DiagnosticDescriptor InvalidRetrievalUriDiagnostic =
-		new DiagnosticDescriptor(id: "PS_PARSE_002",
+		new DiagnosticDescriptor(id: "DPD_PARSE_002",
 								title: "An invalid URI was provided to retrieve a document",
-								messageFormat: PrincipleStudios_OpenApi_Transformations_InvalidRetrievalUri,
-								category: "PrincipleStudios.OpenApiCodegen",
+								messageFormat: DarkPatterns_OpenApi_Transformations_InvalidRetrievalUri,
+								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("PrincipleStudios.OpenApi.Transformations.Specifications.UnableToParseDiagnostic")]
+	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.Specifications.UnableToParseDiagnostic")]
 	public static readonly DiagnosticDescriptor UnableToParseDiagnostic =
-		new DiagnosticDescriptor(id: "PS_PARSE_003",
+		new DiagnosticDescriptor(id: "DPD_PARSE_003",
 								title: "Could not identify the document type",
-								messageFormat: PrincipleStudios_OpenApi_Transformations_Specifications_UnableToParseDiagnostic,
-								category: "PrincipleStudios.OpenApiCodegen",
+								messageFormat: DarkPatterns_OpenApi_Transformations_Specifications_UnableToParseDiagnostic,
+								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("PrincipleStudios.OpenApi.Transformations.InvalidDocumentBaseUri")]
+	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.InvalidDocumentBaseUri")]
 	public static readonly DiagnosticDescriptor InvalidDocumentBaseUriDiagostic =
-		new DiagnosticDescriptor(id: "PS_PARSE_004",
+		new DiagnosticDescriptor(id: "DPD_PARSE_004",
 								title: "An invalid base URI was provided by a document",
-								messageFormat: PrincipleStudios_OpenApi_Transformations_InvalidDocumentBaseUri,
-								category: "PrincipleStudios.OpenApiCodegen",
+								messageFormat: DarkPatterns_OpenApi_Transformations_InvalidDocumentBaseUri,
+								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("PrincipleStudios.OpenApi.Transformations.InvalidFragmentDiagnostic")]
+	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.InvalidFragmentDiagnostic")]
 	public static readonly DiagnosticDescriptor InvalidFragmentDiagostic =
-		new DiagnosticDescriptor(id: "PS_PARSE_005",
+		new DiagnosticDescriptor(id: "DPD_PARSE_005",
 								title: "The fragment provided was not a valid JSON pointer",
-								messageFormat: PrincipleStudios_OpenApi_Transformations_InvalidFragmentDiagnostic,
-								category: "PrincipleStudios.OpenApiCodegen",
+								messageFormat: DarkPatterns_OpenApi_Transformations_InvalidFragmentDiagnostic,
+								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("PrincipleStudios.OpenApi.Transformations.InvalidRefDiagnostic")]
+	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.InvalidRefDiagnostic")]
 	public static readonly DiagnosticDescriptor InvalidRefDiagnostic =
-		new DiagnosticDescriptor(id: "PS_PARSE_006",
+		new DiagnosticDescriptor(id: "DPD_PARSE_006",
 								title: "Invalid URI provided for ref",
-								messageFormat: PrincipleStudios_OpenApi_Transformations_InvalidRefDiagnostic,
-								category: "PrincipleStudios.OpenApiCodegen",
+								messageFormat: DarkPatterns_OpenApi_Transformations_InvalidRefDiagnostic,
+								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("PrincipleStudios.OpenApi.Transformations.CouldNotFindTargetNodeDiagnostic")]
+	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.CouldNotFindTargetNodeDiagnostic")]
 	public static readonly DiagnosticDescriptor CouldNotFindTargetNodeDiagnostic =
-		new DiagnosticDescriptor(id: "PS_PARSE_007",
+		new DiagnosticDescriptor(id: "DPD_PARSE_007",
 								title: "Target node did not exist in given document",
-								messageFormat: PrincipleStudios_OpenApi_Transformations_CouldNotFindTargetNodeDiagnostic,
-								category: "PrincipleStudios.OpenApiCodegen",
+								messageFormat: DarkPatterns_OpenApi_Transformations_CouldNotFindTargetNodeDiagnostic,
+								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("PrincipleStudios.OpenApi.Transformations.UnknownAnchorDiagnostic")]
+	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.UnknownAnchorDiagnostic")]
 	public static readonly DiagnosticDescriptor UnknownAnchorDiagnostic =
-		new DiagnosticDescriptor(id: "PS_PARSE_008",
+		new DiagnosticDescriptor(id: "DPD_PARSE_008",
 								title: "Unknown anchor provided in ref",
-								messageFormat: PrincipleStudios_OpenApi_Transformations_UnknownAnchorDiagnostic,
-								category: "PrincipleStudios.OpenApiCodegen",
+								messageFormat: DarkPatterns_OpenApi_Transformations_UnknownAnchorDiagnostic,
+								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("PrincipleStudios.OpenApi.Transformations.ResolveDocumentDiagnostic")]
+	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.ResolveDocumentDiagnostic")]
 	public static readonly DiagnosticDescriptor ResolveDocumentDiagnostic =
-		new DiagnosticDescriptor(id: "PS_PARSE_009",
+		new DiagnosticDescriptor(id: "DPD_PARSE_009",
 								title: "Could not retrieve the specified document",
-								messageFormat: PrincipleStudios_OpenApi_Transformations_ResolveDocumentDiagnostic,
-								category: "PrincipleStudios.OpenApiCodegen",
+								messageFormat: DarkPatterns_OpenApi_Transformations_ResolveDocumentDiagnostic,
+								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("PrincipleStudios.OpenApi.Transformations.Diagnostics.UnhandledExceptionDiagnostic")]
+	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.Diagnostics.UnhandledExceptionDiagnostic")]
 	public static readonly DiagnosticDescriptor UnhandledExceptionDiagnostic =
-		new DiagnosticDescriptor(id: "PS_UNK",
+		new DiagnosticDescriptor(id: "DPD_UNK",
 								title: "Unhandled exception",
-								messageFormat: PrincipleStudios_OpenApi_Transformations_Diagnostics_UnhandledExceptionDiagnostic,
-								category: "PrincipleStudios.OpenApiCodegen",
+								messageFormat: DarkPatterns_OpenApi_Transformations_Diagnostics_UnhandledExceptionDiagnostic,
+								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("PrincipleStudios.OpenApi.Transformations.UnableToGroupOperation")]
+	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.UnableToGroupOperation")]
 	public static readonly DiagnosticDescriptor UnableToGroupOperationDiagnostic =
-		new DiagnosticDescriptor(id: "PS_TRANSFORM_001",
+		new DiagnosticDescriptor(id: "DPD_TRANSFORM_001",
 								title: "Unable to group operations: {0}",
-								messageFormat: PrincipleStudios_OpenApi_Transformations_UnableToGroupOperation,
-								category: "PrincipleStudios.OpenApiCodegen",
+								messageFormat: DarkPatterns_OpenApi_Transformations_UnableToGroupOperation,
+								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
 }

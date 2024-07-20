@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PrincipleStudios.OpenApiCodegen.Server.Mvc.TestApp.AllOf;
+namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.AllOf;
 
 public class ContactController : ContactControllerBase
 {

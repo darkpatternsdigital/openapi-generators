@@ -4,9 +4,9 @@ using Xunit;
 using Microsoft.CodeAnalysis;
 using System.IO;
 using System.Text.Json.Nodes;
-using PrincipleStudios.OpenApiCodegen.TestUtils;
+using DarkPatterns.OpenApiCodegen.TestUtils;
 
-namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript.Utils;
+namespace DarkPatterns.OpenApiCodegen.Client.TypeScript.Utils;
 
 internal static class GenerationUtilities
 {
@@ -15,7 +15,7 @@ internal static class GenerationUtilities
 		await commonDirectory.PrepareOpenApiDirectory(documentName);
 
 		var result = await commonDirectory.TsNode($@"
-            import {{ AdapterRequestArgs }} from '@principlestudios/openapi-codegen-typescript';
+            import {{ AdapterRequestArgs }} from '@darkpatterns/openapi-codegen-typescript';
             import {{ conversion }} from './{documentName}/operations/{operationName}';
             const request: AdapterRequestArgs = conversion.request({JsonSerializer.Serialize(parameters)});
             console.log(JSON.stringify(request));
@@ -28,7 +28,7 @@ internal static class GenerationUtilities
 		await commonDirectory.PrepareOpenApiDirectory(documentName);
 
 		var result = await commonDirectory.TsNode($@"
-            import {{ AdapterRequestArgs }} from '@principlestudios/openapi-codegen-typescript';
+            import {{ AdapterRequestArgs }} from '@darkpatterns/openapi-codegen-typescript';
             import {{ conversion }} from './{documentName}/operations/{operationName}';
             const request: AdapterRequestArgs = conversion.request({JsonSerializer.Serialize(parameters)}, {JsonSerializer.Serialize(body)}, {JsonSerializer.Serialize(contentType)});
             console.log(JSON.stringify(request));
@@ -55,7 +55,7 @@ internal static class GenerationUtilities
 		await commonDirectory.PrepareOpenApiDirectory(documentName);
 
 		var result = await commonDirectory.TsNode($@"
-            import {{ AdapterResponseArgs }} from '@principlestudios/openapi-codegen-typescript';
+            import {{ AdapterResponseArgs }} from '@darkpatterns/openapi-codegen-typescript';
             import {{ conversion, Responses }} from './{documentName}/operations/{operationName}';
             const responseBody: Responses['data'] = {(body.HasValue ? JsonSerializer.Serialize(body.Value) : "undefined")};
             const response: AdapterResponseArgs = {{

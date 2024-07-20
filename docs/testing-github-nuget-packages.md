@@ -13,7 +13,7 @@
         <?xml version="1.0" encoding="utf-8"?>
         <configuration>
           <packageSources>
-            <add key="github-ps" value="https://nuget.pkg.github.com/PrincipleStudios/index.json" />
+            <add key="github-ps" value="https://nuget.pkg.github.com/darkpatternsdigital/index.json" />
           </packageSources>
           <packageSourceCredentials>
             <github-ps>
@@ -23,8 +23,8 @@
           </packageSourceCredentials>
         </configuration>
 
-3. Update your project file to reference the versions from GitHub. The version will be what the released version number will be, but with a suffix indicating a prerelease including the sha of the hash that was used to build the code. (See [PrincipleStudios.OpenApiCodegen.Server.Mvc](https://github.com/PrincipleStudios/principle-studios-openapi-generators/packages/1228089) for example.)
+3. Update your project file to reference the versions from GitHub. The version will be what the released version number will be, but with a suffix indicating a prerelease including the sha of the hash that was used to build the code.
 
-        <PackageReference Include="PrincipleStudios.OpenApiCodegen.Server.Mvc" Version="--version-number--" PrivateAssets="All" />
+        <PackageReference Include="DarkPatterns.OpenApiCodegen.Server.Mvc" Version="--version-number--" PrivateAssets="All" />
 
 4. Restore your project. If you've done everything correctly, it should build using the test version of the package!

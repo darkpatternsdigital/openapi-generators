@@ -67,7 +67,7 @@ globalReservedIdentifiers:
   - 'Record'
   - 'Array'
   - 'Error'
-  # The following are reserved for @principlestudios/openapi-codegen-typescript
+  # The following are reserved for @darkpatterns/openapi-codegen-typescript
   - HttpHeaders
   - HttpQuery
   - throwIfNullOrUndefined

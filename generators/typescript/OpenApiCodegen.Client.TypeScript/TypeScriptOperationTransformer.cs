@@ -1,12 +1,12 @@
-﻿using PrincipleStudios.OpenApi.Transformations;
-using PrincipleStudios.OpenApi.Transformations.Abstractions;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
-using PrincipleStudios.OpenApi.TypeScript;
-using PrincipleStudios.OpenApi.TypeScript.Templates;
+﻿using DarkPatterns.OpenApi.Transformations;
+using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApi.TypeScript;
+using DarkPatterns.OpenApi.TypeScript.Templates;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript
+namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 {
 	public class TypeScriptOperationTransformer : IOpenApiOperationTransformer
 	{

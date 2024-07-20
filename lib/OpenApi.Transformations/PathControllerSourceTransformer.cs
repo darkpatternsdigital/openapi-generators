@@ -1,6 +1,6 @@
-﻿using PrincipleStudios.OpenApi.Transformations.Abstractions;
+﻿using DarkPatterns.OpenApi.Transformations.Abstractions;
 
-namespace PrincipleStudios.OpenApi.Transformations
+namespace DarkPatterns.OpenApi.Transformations
 {
 	public class PathControllerSourceTransformer : OperationGroupingSourceTransformer
 	{

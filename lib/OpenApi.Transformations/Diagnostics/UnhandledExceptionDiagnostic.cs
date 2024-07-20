@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace PrincipleStudios.OpenApi.Transformations.Diagnostics;
+namespace DarkPatterns.OpenApi.Transformations.Diagnostics;
 
 public record UnhandledExceptionDiagnostic(Exception Exception, Location Location) : DiagnosticBase(Location)
 {

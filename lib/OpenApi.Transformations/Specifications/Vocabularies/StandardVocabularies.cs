@@ -1,11 +1,11 @@
 
 using System;
-using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords;
-using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Applicator;
-using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Metadata;
-using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Validation;
+using DarkPatterns.OpenApi.Transformations.Specifications.Keywords;
+using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Applicator;
+using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Metadata;
+using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Validation;
 
-namespace PrincipleStudios.OpenApi.Transformations.Specifications.Vocabularies;
+namespace DarkPatterns.OpenApi.Transformations.Specifications.Vocabularies;
 
 public static class StandardVocabularies
 {

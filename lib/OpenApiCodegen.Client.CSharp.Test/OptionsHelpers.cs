@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
-using PrincipleStudios.OpenApi.CSharp;
+using DarkPatterns.OpenApi.CSharp;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace PrincipleStudios.OpenApiCodegen.Client.CSharp
+namespace DarkPatterns.OpenApiCodegen.Client.CSharp
 {
 	public static class OptionsHelpers
 	{

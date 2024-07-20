@@ -1,17 +1,17 @@
 ﻿using Json.Pointer;
-using PrincipleStudios.OpenApi.CSharp;
-using PrincipleStudios.OpenApi.Transformations;
-using PrincipleStudios.OpenApi.Transformations.Abstractions;
-using PrincipleStudios.OpenApi.Transformations.DocumentTypes;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
-using PrincipleStudios.OpenApiCodegen.TestUtils;
+using DarkPatterns.OpenApi.CSharp;
+using DarkPatterns.OpenApi.Transformations;
+using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Transformations.DocumentTypes;
+using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApiCodegen.TestUtils;
 using System;
 using System.IO;
 using System.Text.Json.Nodes;
 using Xunit;
-using static PrincipleStudios.OpenApiCodegen.TestUtils.DocumentHelpers;
+using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
 
-namespace PrincipleStudios.OpenApiCodegen.Client.CSharp;
+namespace DarkPatterns.OpenApiCodegen.Client.CSharp;
 using static OptionsHelpers;
 
 public class CSharpSchemaTransformerShould

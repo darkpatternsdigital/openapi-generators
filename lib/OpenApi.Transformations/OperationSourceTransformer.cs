@@ -1,10 +1,10 @@
-﻿using PrincipleStudios.OpenApi.Transformations.Abstractions;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
-using PrincipleStudios.OpenApiCodegen;
+﻿using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApiCodegen;
 using System;
 using System.Collections.Generic;
 
-namespace PrincipleStudios.OpenApi.Transformations;
+namespace DarkPatterns.OpenApi.Transformations;
 
 public record OperationDetail(OpenApiPath Path, string Method, OpenApiOperation Operation);
 public class OperationSourceTransformer(DocumentRegistry documentRegistry, OpenApiDocument document, IOpenApiOperationTransformer operationTransformer) : ISourceProvider

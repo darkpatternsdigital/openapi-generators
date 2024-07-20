@@ -1,40 +1,40 @@
 using Microsoft.CodeAnalysis;
-using static PrincipleStudios.OpenApiCodegen.CommonDiagnostics;
+using static DarkPatterns.OpenApiCodegen.CommonDiagnostics;
 
-namespace PrincipleStudios.OpenApiCodegen;
+namespace DarkPatterns.OpenApiCodegen;
 
 public partial class TransformationDiagnostics
 {
-	[TransformationDiagnostic("PrincipleStudios.OpenApi.Transformations.DocumentTypes.UnableToParseSchema")]
+	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.DocumentTypes.UnableToParseSchema")]
 	public static readonly DiagnosticDescriptor UnableToParseSchemaDiagnostic =
-		new DiagnosticDescriptor(id: "PS_JSON_001",
+		new DiagnosticDescriptor(id: "DPD_JSON_001",
 								title: "Unable to parse schema; it must be either an object or a boolean value",
-								messageFormat: PrincipleStudios_OpenApi_Transformations_DocumentTypes_UnableToParseSchema,
-								category: "PrincipleStudios.OpenApiCodegen",
+								messageFormat: DarkPatterns_OpenApi_Transformations_DocumentTypes_UnableToParseSchema,
+								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("PrincipleStudios.OpenApi.Transformations.Specifications.FalseJsonSchemasFailDiagnostic")]
+	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.Specifications.FalseJsonSchemasFailDiagnostic")]
 	public static readonly DiagnosticDescriptor FalseJsonSchemasFailDiagnostic =
-		new DiagnosticDescriptor(id: "PS_JSON_002",
+		new DiagnosticDescriptor(id: "DPD_JSON_002",
 								title: "Unable to match against a 'false' schema",
-								messageFormat: PrincipleStudios_OpenApi_Transformations_Specifications_FalseJsonSchemasFailDiagnostic,
-								category: "PrincipleStudios.OpenApiCodegen",
+								messageFormat: DarkPatterns_OpenApi_Transformations_Specifications_FalseJsonSchemasFailDiagnostic,
+								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("PrincipleStudios.OpenApi.Transformations.DocumentTypes.YamlLoadDiagnostic")]
+	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.DocumentTypes.YamlLoadDiagnostic")]
 	public static readonly DiagnosticDescriptor YamlLoadDiagnosticDiagnostic =
-		new DiagnosticDescriptor(id: "PS_JSON_003",
+		new DiagnosticDescriptor(id: "DPD_JSON_003",
 								title: "Unable to parse document",
-								messageFormat: PrincipleStudios_OpenApi_Transformations_DocumentTypes_YamlLoadDiagnostic,
-								category: "PrincipleStudios.OpenApiCodegen",
+								messageFormat: DarkPatterns_OpenApi_Transformations_DocumentTypes_YamlLoadDiagnostic,
+								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.UnableToParseKeyword")]
+	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.Specifications.Keywords.UnableToParseKeyword")]
 	public static readonly DiagnosticDescriptor UnableToParseKeywordDiagnostic =
-		new DiagnosticDescriptor(id: "PS_JSON_004",
+		new DiagnosticDescriptor(id: "DPD_JSON_004",
 								title: "Could not parse the keyword",
-								messageFormat: PrincipleStudios_OpenApi_Transformations_Specifications_Keywords_UnableToParseKeyword,
-								category: "PrincipleStudios.OpenApiCodegen",
+								messageFormat: DarkPatterns_OpenApi_Transformations_Specifications_Keywords_UnableToParseKeyword,
+								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
 }

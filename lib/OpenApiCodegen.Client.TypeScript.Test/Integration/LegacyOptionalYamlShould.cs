@@ -1,5 +1,5 @@
-﻿using PrincipleStudios.OpenApiCodegen.Client.TypeScript.Utils;
-using static PrincipleStudios.OpenApiCodegen.Client.TypeScript.Utils.GenerationUtilities;
+﻿using DarkPatterns.OpenApiCodegen.Client.TypeScript.Utils;
+using static DarkPatterns.OpenApiCodegen.Client.TypeScript.Utils.GenerationUtilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript.Integration;
+namespace DarkPatterns.OpenApiCodegen.Client.TypeScript.Integration;
 
 [Collection(CommonDirectoryFixture.CollectionName)]
 public class LegacyOptionalYamlShould

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PrincipleStudios.OpenApi.Transformations
+namespace DarkPatterns.OpenApi.Transformations
 {
 	public static class HttpStatusCodes
 	{

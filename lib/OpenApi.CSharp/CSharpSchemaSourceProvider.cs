@@ -4,17 +4,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.Json.Nodes;
-using PrincipleStudios.OpenApi.CSharp.Templates;
-using PrincipleStudios.OpenApi.Transformations;
-using PrincipleStudios.OpenApi.Transformations.Abstractions;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
-using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Applicator;
-using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Metadata;
-using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Validation;
-using PrincipleStudios.OpenApi.Transformations.Specifications.OpenApi3_0;
-using PrincipleStudios.OpenApiCodegen;
+using DarkPatterns.OpenApi.CSharp.Templates;
+using DarkPatterns.OpenApi.Transformations;
+using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Applicator;
+using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Metadata;
+using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Validation;
+using DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0;
+using DarkPatterns.OpenApiCodegen;
 
-namespace PrincipleStudios.OpenApi.CSharp;
+namespace DarkPatterns.OpenApi.CSharp;
 
 public class CSharpSchemaSourceProvider : SchemaSourceProvider
 {

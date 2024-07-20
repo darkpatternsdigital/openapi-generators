@@ -1,9 +1,9 @@
 
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
 
-namespace PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft04;
+namespace DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft04;
 
 public class FormatKeyword(string keyword, string format) : IJsonSchemaAnnotation
 {

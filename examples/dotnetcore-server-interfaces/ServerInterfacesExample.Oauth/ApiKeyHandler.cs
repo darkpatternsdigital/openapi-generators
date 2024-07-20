@@ -7,7 +7,7 @@ using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
-namespace PrincipleStudios.ServerInterfacesExample.Oauth
+namespace DarkPatterns.ServerInterfacesExample.Oauth
 {
 #pragma warning disable CA1812 // Avoid uninstantiated internal classes - referenced by services
 	internal class ApiKeyHandler : AuthenticationHandler<ApiKeyOptions>

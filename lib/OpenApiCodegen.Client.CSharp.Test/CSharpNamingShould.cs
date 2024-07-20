@@ -1,13 +1,13 @@
-﻿using PrincipleStudios.OpenApi.CSharp;
+﻿using DarkPatterns.OpenApi.CSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using static PrincipleStudios.OpenApiCodegen.TestUtils.DocumentHelpers;
+using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
 
-namespace PrincipleStudios.OpenApiCodegen.Client.CSharp
+namespace DarkPatterns.OpenApiCodegen.Client.CSharp
 {
 	using static OptionsHelpers;
 	public class CSharpNamingShould
@@ -43,10 +43,10 @@ namespace PrincipleStudios.OpenApiCodegen.Client.CSharp
 		}
 
 		[MemberData(nameof(WindowsPaths))]
-		[InlineData("PrincipleStudios.Project", @"/users/user/source/project/", @"/users/user/source/project/controllers/api.yaml", null, "PrincipleStudios.Project.Controllers")]
-		[InlineData("PrincipleStudios.Project", @"/users/user/source/project/", @"/users/user/source/api.yaml", @"controllers/api.yaml", "PrincipleStudios.Project.Controllers")]
-		[InlineData("PrincipleStudios.Project", @"/users/user/source/project/", @"/users/user/source/project/api.yaml", null, "PrincipleStudios.Project")]
-		[InlineData("PrincipleStudios.Project", @"/users/user/source/project/", @"/users/user/source/api.yaml", @"api.yaml", "PrincipleStudios.Project")]
+		[InlineData("DarkPatterns.Project", @"/users/user/source/project/", @"/users/user/source/project/controllers/api.yaml", null, "DarkPatterns.Project.Controllers")]
+		[InlineData("DarkPatterns.Project", @"/users/user/source/project/", @"/users/user/source/api.yaml", @"controllers/api.yaml", "DarkPatterns.Project.Controllers")]
+		[InlineData("DarkPatterns.Project", @"/users/user/source/project/", @"/users/user/source/project/api.yaml", null, "DarkPatterns.Project")]
+		[InlineData("DarkPatterns.Project", @"/users/user/source/project/", @"/users/user/source/api.yaml", @"api.yaml", "DarkPatterns.Project")]
 		[InlineData("", @"/users/user/source/project/", @"/users/user/source/project/controllers/api.yaml", null, "Controllers")]
 		[InlineData("", @"/users/user/source/project/", @"/users/user/source/api.yaml", @"controllers/api.yaml", "Controllers")]
 		[InlineData("", @"/users/user/source/project/", @"/users/user/source/project/api.yaml", null, "")]
@@ -64,10 +64,10 @@ namespace PrincipleStudios.OpenApiCodegen.Client.CSharp
 			if (!System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
 				yield break;
 
-			yield return ["PrincipleStudios.Project", @"C:\users\user\source\project\", @"C:\users\user\source\project\controllers\api.yaml", null, "PrincipleStudios.Project.Controllers"];
-			yield return ["PrincipleStudios.Project", @"C:\users\user\source\project\", @"C:\users\user\source\api.yaml", @"controllers\api.yaml", "PrincipleStudios.Project.Controllers"];
-			yield return ["PrincipleStudios.Project", @"C:\users\user\source\project\", @"C:\users\user\source\project\api.yaml", null, "PrincipleStudios.Project"];
-			yield return ["PrincipleStudios.Project", @"C:\users\user\source\project\", @"C:\users\user\source\api.yaml", @"api.yaml", "PrincipleStudios.Project"];
+			yield return ["DarkPatterns.Project", @"C:\users\user\source\project\", @"C:\users\user\source\project\controllers\api.yaml", null, "DarkPatterns.Project.Controllers"];
+			yield return ["DarkPatterns.Project", @"C:\users\user\source\project\", @"C:\users\user\source\api.yaml", @"controllers\api.yaml", "DarkPatterns.Project.Controllers"];
+			yield return ["DarkPatterns.Project", @"C:\users\user\source\project\", @"C:\users\user\source\project\api.yaml", null, "DarkPatterns.Project"];
+			yield return ["DarkPatterns.Project", @"C:\users\user\source\project\", @"C:\users\user\source\api.yaml", @"api.yaml", "DarkPatterns.Project"];
 			yield return ["", @"C:\users\user\source\project\", @"C:\users\user\source\project\controllers\api.yaml", null, "Controllers"];
 			yield return ["", @"C:\users\user\source\project\", @"C:\users\user\source\api.yaml", @"controllers\api.yaml", "Controllers"];
 			yield return ["", @"C:\users\user\source\project\", @"C:\users\user\source\project\api.yaml", null, ""];

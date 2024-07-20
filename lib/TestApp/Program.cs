@@ -1,4 +1,4 @@
-﻿using PrincipleStudios.OpenApiCodegen.Server.Mvc.TestApp;
+﻿using DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp;
 
 Host.CreateDefaultBuilder(args)
 	.ConfigureWebHostDefaults(webBuilder =>

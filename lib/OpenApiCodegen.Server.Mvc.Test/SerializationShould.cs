@@ -1,13 +1,13 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
-using PrincipleStudios.OpenApiCodegen.TestUtils;
+using DarkPatterns.OpenApiCodegen.TestUtils;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
+namespace DarkPatterns.OpenApiCodegen.Server.Mvc
 {
 
 	public class SerializationShould : IClassFixture<TempDirectory>
@@ -23,7 +23,7 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 		public Task SerializeABasicClass() =>
 			SerializeAsync(
 				"petstore.yaml",
-				@"new PS.Controller.NewPet(Tag: PrincipleStudios.OpenApiCodegen.Json.Extensions.Optional.Create(""dog""), Name: ""Fido"")",
+				@"new DPD.Controller.NewPet(Tag: DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create(""dog""), Name: ""Fido"")",
 				new { tag = "dog", name = "Fido" }
 			);
 
@@ -31,7 +31,7 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 		public Task SerializeABasicClassWithOptionalValueOmitted() =>
 			SerializeAsync(
 				"petstore.yaml",
-				@"new PS.Controller.NewPet(Tag: PrincipleStudios.OpenApiCodegen.Json.Extensions.Optional<string>.None, Name: ""Fido"")",
+				@"new DPD.Controller.NewPet(Tag: DarkPatterns.OpenApiCodegen.Json.Extensions.Optional<string>.None, Name: ""Fido"")",
 				new { name = "Fido" }
 			);
 
@@ -39,7 +39,7 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 		public Task SerializeAnAllOfClass() =>
 			SerializeAsync(
 				"petstore.yaml",
-				@"new PS.Controller.Pet(Id: 1007L, Tag: PrincipleStudios.OpenApiCodegen.Json.Extensions.Optional.Create(""dog""), Name: ""Fido"")",
+				@"new DPD.Controller.Pet(Id: 1007L, Tag: DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create(""dog""), Name: ""Fido"")",
 				new { id = 1007L, tag = "dog", name = "Fido" }
 			);
 
@@ -47,7 +47,7 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 		public Task SerializeAnAllOfClassWithOptionalValueOmitted() =>
 			SerializeAsync(
 				"petstore.yaml",
-				@"new PS.Controller.Pet(Id: 1007L, Tag: PrincipleStudios.OpenApiCodegen.Json.Extensions.Optional<string>.None, Name: ""Fido"")",
+				@"new DPD.Controller.Pet(Id: 1007L, Tag: DarkPatterns.OpenApiCodegen.Json.Extensions.Optional<string>.None, Name: ""Fido"")",
 				new { id = 1007L, name = "Fido" }
 			);
 
@@ -55,7 +55,7 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 		public Task SerializeAnEnum() =>
 			SerializeAsync(
 				"enum.yaml",
-				@"PS.Controller.Option.Rock",
+				@"DPD.Controller.Option.Rock",
 				"rock"
 			);
 
@@ -64,7 +64,7 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 			DeserializeAsync(
 				"petstore.yaml",
 				new { tag = (string?)null, name = "Fido" },
-				"PS.Controller.NewPet"
+				"DPD.Controller.NewPet"
 			);
 
 		[Fact]
@@ -72,7 +72,7 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 			DeserializeAsync(
 				"petstore.yaml",
 				new { id = 1007L, tag = (string?)null, name = "Fido" },
-				"PS.Controller.Pet"
+				"DPD.Controller.Pet"
 			);
 
 		[Fact]
@@ -80,14 +80,14 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 			DeserializeAsync(
 				"enum.yaml",
 				"rock",
-				"PS.Controller.Option"
+				"DPD.Controller.Option"
 			);
 
 		[Theory]
-		[InlineData("new PS.Controller.Pet(Dog: new PS.Controller.Dog(Bark: true, Breed: \"Shiba Inu\"))", "{ \"bark\": true, \"breed\": \"Shiba Inu\" }")]
-		[InlineData("new PS.Controller.Pet(Cat: new PS.Controller.Cat(Hunts: false, Age: 12))", "{ \"hunts\": false, \"age\": 12 }")]
-		[InlineData("new PS.Controller.SpecifiedPet(Dog: new PS.Controller.Dog(Bark: true, Breed: \"Shiba Inu\"))", "{ \"petType\": \"Dog\", \"bark\": true, \"breed\": \"Shiba Inu\" }")]
-		[InlineData("new PS.Controller.SpecifiedPet(Cat: new PS.Controller.Cat(Hunts: false, Age: 12))", "{ \"petType\": \"Cat\", \"hunts\": false, \"age\": 12 }")]
+		[InlineData("new DPD.Controller.Pet(Dog: new DPD.Controller.Dog(Bark: true, Breed: \"Shiba Inu\"))", "{ \"bark\": true, \"breed\": \"Shiba Inu\" }")]
+		[InlineData("new DPD.Controller.Pet(Cat: new DPD.Controller.Cat(Hunts: false, Age: 12))", "{ \"hunts\": false, \"age\": 12 }")]
+		[InlineData("new DPD.Controller.SpecifiedPet(Dog: new DPD.Controller.Dog(Bark: true, Breed: \"Shiba Inu\"))", "{ \"petType\": \"Dog\", \"bark\": true, \"breed\": \"Shiba Inu\" }")]
+		[InlineData("new DPD.Controller.SpecifiedPet(Cat: new DPD.Controller.Cat(Hunts: false, Age: 12))", "{ \"petType\": \"Cat\", \"hunts\": false, \"age\": 12 }")]
 		public Task SerializeAOneOfObject(string csharpScript, string json) =>
 			SerializeJsonAsync(
 				"one-of.yaml",
@@ -96,10 +96,10 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 			);
 
 		[Theory]
-		[InlineData("PS.Controller.Pet", "{ \"bark\": true, \"breed\": \"Shiba Inu\" }")]
-		[InlineData("PS.Controller.Pet", "{ \"hunts\": false, \"age\": 12 }")]
-		[InlineData("PS.Controller.SpecifiedPet", "{ \"petType\": \"Dog\", \"bark\": true, \"breed\": \"Shiba Inu\" }")]
-		[InlineData("PS.Controller.SpecifiedPet", "{ \"petType\": \"Cat\", \"hunts\": false, \"age\": 12 }")]
+		[InlineData("DPD.Controller.Pet", "{ \"bark\": true, \"breed\": \"Shiba Inu\" }")]
+		[InlineData("DPD.Controller.Pet", "{ \"hunts\": false, \"age\": 12 }")]
+		[InlineData("DPD.Controller.SpecifiedPet", "{ \"petType\": \"Dog\", \"bark\": true, \"breed\": \"Shiba Inu\" }")]
+		[InlineData("DPD.Controller.SpecifiedPet", "{ \"petType\": \"Cat\", \"hunts\": false, \"age\": 12 }")]
 		public Task DeserializeAOneOfObject(string csharpType, string json) =>
 			DeserializeJsonAsync(
 				"one-of.yaml",

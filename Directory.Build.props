@@ -7,7 +7,7 @@
 
 		<SolutionRoot>$(MSBuildThisFileDirectory)</SolutionRoot>
 		<RepositoryEngineeringDir>$(SolutionRoot)eng/</RepositoryEngineeringDir>
-		<RootNamespacePrefix>PrincipleStudios</RootNamespacePrefix>
+		<RootNamespacePrefix>DarkPatterns</RootNamespacePrefix>
 		<AssemblyName Condition=" '$(AssemblyName)' == '' ">$(RootNamespacePrefix).$(MSBuildProjectName)</AssemblyName>
 		<RootNamespace>$(RootNamespacePrefix).$(MSBuildProjectName)</RootNamespace>
 		<PackageId>$(RootNamespacePrefix).$(MSBuildProjectName)</PackageId>
@@ -48,8 +48,8 @@
 
 	<PropertyGroup>
 		<Authors>Principle Studios, Matt DeKrey, Tony Mishler, Chris Lees</Authors>
-		<PackageProjectUrl>https://github.com/PrincipleStudios/principle-studios-openapi-generators</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/PrincipleStudios/principle-studios-openapi-generators.git</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/darkpatternsdigital/openapi-generators</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/darkpatternsdigital/openapi-generators.git</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<RepositoryBranch>main</RepositoryBranch>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>

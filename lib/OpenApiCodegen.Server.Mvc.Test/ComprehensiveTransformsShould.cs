@@ -1,15 +1,15 @@
 ﻿using Microsoft.Win32;
-using PrincipleStudios.OpenApi.CSharp;
-using PrincipleStudios.OpenApi.Transformations;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
-using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords;
-using PrincipleStudios.OpenApiCodegen.TestUtils;
+using DarkPatterns.OpenApi.CSharp;
+using DarkPatterns.OpenApi.Transformations;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.Specifications.Keywords;
+using DarkPatterns.OpenApiCodegen.TestUtils;
 using System.Linq;
 using Xunit;
-using static PrincipleStudios.OpenApiCodegen.Server.Mvc.OptionsHelpers;
-using static PrincipleStudios.OpenApiCodegen.TestUtils.DocumentHelpers;
+using static DarkPatterns.OpenApiCodegen.Server.Mvc.OptionsHelpers;
+using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
 
-namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
+namespace DarkPatterns.OpenApiCodegen.Server.Mvc
 {
 	public class ComprehensiveTransformsShould
 	{
@@ -44,7 +44,7 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 			Assert.NotNull(docResult.Document);
 			var options = LoadOptions();
 
-			var transformer = docResult.Document.BuildCSharpPathControllerSourceProvider(registry, "", "PS.Controller", options);
+			var transformer = docResult.Document.BuildCSharpPathControllerSourceProvider(registry, "", "DPD.Controller", options);
 			OpenApiTransformDiagnostic diagnostic = new();
 
 			try

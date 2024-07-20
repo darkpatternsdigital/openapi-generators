@@ -24,7 +24,7 @@ to date with your schema documentation.
 - .NET 8
 - Roslyn 3.11 or Roslyn 4.0+ (VS 2022 or later, or other up-to-date Roslyn
   installation.)
-- A reference to `PrincipleStudios.OpenApiCodegen.Json.Extensions`
+- A reference to `DarkPatterns.OpenApiCodegen.Json.Extensions`
 
 ## Other notes
 

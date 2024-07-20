@@ -1,4 +1,4 @@
-﻿using PrincipleStudios.OpenApiCodegen.Client.TypeScript.Utils;
+﻿using DarkPatterns.OpenApiCodegen.Client.TypeScript.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript.Integration;
+namespace DarkPatterns.OpenApiCodegen.Client.TypeScript.Integration;
 
 [Collection(CommonDirectoryFixture.CollectionName)]
 public class OneOfYamlShould

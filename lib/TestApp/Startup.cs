@@ -1,4 +1,4 @@
-﻿namespace PrincipleStudios.OpenApiCodegen.Server.Mvc.TestApp;
+﻿namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp;
 
 public class Startup
 {

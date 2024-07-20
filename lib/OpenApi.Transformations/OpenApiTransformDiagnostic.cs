@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
 
-namespace PrincipleStudios.OpenApi.Transformations
+namespace DarkPatterns.OpenApi.Transformations
 {
 	public class OpenApiTransformDiagnostic
 	{

@@ -1,4 +1,4 @@
-﻿namespace PrincipleStudios.OpenApiCodegen.Server.Mvc.TestApp.RegexEscape;
+﻿namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.RegexEscape;
 
 public class RegexEscapeRootController : TestApp.RegexEscape.ControllerBase
 {

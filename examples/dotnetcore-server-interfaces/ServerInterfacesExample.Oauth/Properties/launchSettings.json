@@ -15,7 +15,7 @@
 				"ASPNETCORE_ENVIRONMENT": "Development"
 			}
 		},
-		"PrincipleStudios.ServerInterfacesExample.Oauth": {
+		"DarkPatterns.ServerInterfacesExample.Oauth": {
 			"commandName": "Project",
 			"dotnetRunMessages": "true",
 			"launchBrowser": true,

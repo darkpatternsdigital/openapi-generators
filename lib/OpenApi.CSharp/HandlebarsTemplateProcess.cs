@@ -1,12 +1,12 @@
 ﻿using HandlebarsDotNet;
-using PrincipleStudios.OpenApi.CSharp.Templates;
+using DarkPatterns.OpenApi.CSharp.Templates;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json.Nodes;
 
-namespace PrincipleStudios.OpenApi.CSharp
+namespace DarkPatterns.OpenApi.CSharp
 {
 	public static class HandlebarsTemplateProcess
 	{

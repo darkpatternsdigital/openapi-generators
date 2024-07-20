@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using Json.Pointer;
-using PrincipleStudios.OpenApi.Transformations;
-using PrincipleStudios.OpenApi.Transformations.Abstractions;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
-using PrincipleStudios.OpenApi.Transformations.Specifications.OpenApi3_0;
+using DarkPatterns.OpenApi.Transformations;
+using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0;
 
-namespace PrincipleStudios.OpenApi.TypeScript;
+namespace DarkPatterns.OpenApi.TypeScript;
 
 public record TypeScriptImportReference(JsonSchema Schema, string Member, string File);
 

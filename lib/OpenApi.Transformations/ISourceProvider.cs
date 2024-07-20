@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using PrincipleStudios.OpenApiCodegen;
+using DarkPatterns.OpenApiCodegen;
 
-namespace PrincipleStudios.OpenApi.Transformations
+namespace DarkPatterns.OpenApi.Transformations
 {
 	public interface ISourceProvider
 	{

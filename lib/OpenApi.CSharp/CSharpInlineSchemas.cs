@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Json.Pointer;
-using PrincipleStudios.OpenApi.Transformations;
-using PrincipleStudios.OpenApi.Transformations.Abstractions;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
-using PrincipleStudios.OpenApi.Transformations.Specifications.OpenApi3_0;
+using DarkPatterns.OpenApi.Transformations;
+using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0;
 
-namespace PrincipleStudios.OpenApi.CSharp;
+namespace DarkPatterns.OpenApi.CSharp;
 
 
 public record CSharpInlineDefinition(string Text, bool Nullable = false, bool IsEnumerable = false)

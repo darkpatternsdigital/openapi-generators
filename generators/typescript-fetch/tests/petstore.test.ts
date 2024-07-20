@@ -1,7 +1,7 @@
 import {
 	toMswHandler,
 	toMswResponse,
-} from '@principlestudios/openapi-codegen-typescript-msw';
+} from '@darkpatterns/openapi-codegen-typescript-msw';
 import { setupServer } from 'msw/node';
 import fetch from 'node-fetch';
 import { describe, beforeAll, afterEach, afterAll, it, expect } from 'vitest';

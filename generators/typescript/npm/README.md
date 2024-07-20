@@ -4,7 +4,7 @@ Use an OpenAPI specification to generate generalized TypeScript objects for
 creating clients of many shapes. Delivered via an npm package.
 
 ```sh
-npm i @principlestudios/openapi-codegen-typescript
+npm i @darkpatterns/openapi-codegen-typescript
 ```
 
 You must also have the .NET 8.0 runtime installed on your machine.

@@ -1,10 +1,10 @@
 ﻿using Json.Pointer;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
-using PrincipleStudios.OpenApiCodegen;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApiCodegen;
 using System;
 
-namespace PrincipleStudios.OpenApi.Transformations.DocumentTypes;
+namespace DarkPatterns.OpenApi.Transformations.DocumentTypes;
 
 public interface IDocumentReference : IBaseDocument
 {

@@ -1,16 +1,16 @@
 ﻿using Json.Pointer;
-using PrincipleStudios.OpenApi.CSharp.Templates;
-using PrincipleStudios.OpenApi.Transformations;
-using PrincipleStudios.OpenApi.Transformations.Abstractions;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
-using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Applicator;
-using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Validation;
+using DarkPatterns.OpenApi.CSharp.Templates;
+using DarkPatterns.OpenApi.Transformations;
+using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Applicator;
+using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Validation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PrincipleStudios.OpenApi.CSharp;
+namespace DarkPatterns.OpenApi.CSharp;
 
 class OperationVisitor : OpenApiDocumentVisitor<OperationVisitor.Argument>
 {

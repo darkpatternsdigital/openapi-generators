@@ -1,10 +1,10 @@
 ﻿using System;
-using PrincipleStudios.OpenApi.Transformations.DocumentTypes;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
-using PrincipleStudios.OpenApi.Transformations.Abstractions;
-using PrincipleStudios.OpenApi.Transformations;
+using DarkPatterns.OpenApi.Transformations.DocumentTypes;
+using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Transformations;
 
-namespace PrincipleStudios.OpenApiCodegen.TestUtils
+namespace DarkPatterns.OpenApiCodegen.TestUtils
 {
 	public static class DocumentHelpers
 	{

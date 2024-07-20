@@ -1,8 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
-using PrincipleStudios.OpenApi.CSharp;
-using PrincipleStudios.OpenApiCodegen.TestUtils;
+using DarkPatterns.OpenApi.CSharp;
+using DarkPatterns.OpenApiCodegen.TestUtils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace PrincipleStudios.OpenApiCodegen.Client.CSharp;
+namespace DarkPatterns.OpenApiCodegen.Client.CSharp;
 
 public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 {
@@ -217,9 +217,9 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 			.AddReferences(DynamicCompilation.SystemTextCompilationRefPaths.Select(r => MetadataReference.CreateFromFile(r)).ToArray())
 			.AddReferences(MetadataReference.CreateFromFile(fullPath))
 			.WithImports(
-				"PS.Controller",
-				"PS.Controller.Operations",
-				"PrincipleStudios.OpenApiCodegen.Json.Extensions"
+				"DPD.Controller",
+				"DPD.Controller.Operations",
+				"DarkPatterns.OpenApiCodegen.Json.Extensions"
 			);
 
 		return (HttpRequestMessage)await CSharpScript.EvaluateAsync($"{operationAndParameters}", scriptOptions);

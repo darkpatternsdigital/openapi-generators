@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace PrincipleStudios.OpenApiCodegen.Json.Extensions;
+namespace DarkPatterns.OpenApiCodegen.Json.Extensions;
 
 public static class Optional
 {

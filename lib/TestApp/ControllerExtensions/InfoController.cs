@@ -1,6 +1,6 @@
-﻿using static PrincipleStudios.OpenApiCodegen.Server.Mvc.TestApp.AllOf.ContactControllerBase;
+﻿using static DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.AllOf.ContactControllerBase;
 
-namespace PrincipleStudios.OpenApiCodegen.Server.Mvc.TestApp.ControllerExtensions
+namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ControllerExtensions
 {
 	public class InfoController : ControllerExtensions.InformationControllerBase
 	{

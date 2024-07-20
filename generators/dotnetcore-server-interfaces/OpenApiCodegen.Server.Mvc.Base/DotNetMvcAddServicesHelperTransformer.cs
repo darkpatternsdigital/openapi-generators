@@ -1,8 +1,8 @@
-﻿using PrincipleStudios.OpenApi.Transformations;
-using PrincipleStudios.OpenApiCodegen;
+﻿using DarkPatterns.OpenApi.Transformations;
+using DarkPatterns.OpenApiCodegen;
 using System.Collections.Generic;
 
-namespace PrincipleStudios.OpenApi.CSharp
+namespace DarkPatterns.OpenApi.CSharp
 {
 	public class DotNetMvcAddServicesHelperTransformer : ISourceProvider
 	{

@@ -1,4 +1,4 @@
-﻿namespace PrincipleStudios.OpenApiCodegen.Server.Mvc.TestApp.NullableVsOptional;
+﻿namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.NullableVsOptional;
 
 public class ContrivedController : ContrivedControllerBase
 {

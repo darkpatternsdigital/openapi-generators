@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PrincipleStudios.OpenApi.TypeScript.Templates;
+namespace DarkPatterns.OpenApi.TypeScript.Templates;
 
 public record ModelBarrelFileTemplate(
 	PartialHeader Header,

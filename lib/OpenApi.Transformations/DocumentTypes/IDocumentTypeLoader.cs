@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApi.Transformations.Specifications;
 
-namespace PrincipleStudios.OpenApi.Transformations.DocumentTypes;
+namespace DarkPatterns.OpenApi.Transformations.DocumentTypes;
 
 public interface IDocumentTypeLoader
 {

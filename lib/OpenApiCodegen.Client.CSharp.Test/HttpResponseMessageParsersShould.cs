@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
-using PrincipleStudios.OpenApiCodegen.Json.Extensions;
+using DarkPatterns.OpenApiCodegen.Json.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace PrincipleStudios.OpenApiCodegen.Client.CSharp;
+namespace DarkPatterns.OpenApiCodegen.Client.CSharp;
 
 public class HttpResponseMessageParsersShould : IClassFixture<TempDirectory>
 {
@@ -238,13 +238,13 @@ public class HttpResponseMessageParsersShould : IClassFixture<TempDirectory>
 			.AddReferences(DynamicCompilation.SystemTextCompilationRefPaths.Select(r => Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(r)).ToArray())
 			.AddReferences(Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(fullPath))
 			.WithImports(
-				"PS.Controller",
-				"PS.Controller.Operations",
-				"PrincipleStudios.OpenApiCodegen.Json.Extensions"
+				"DPD.Controller",
+				"DPD.Controller.Operations",
+				"DarkPatterns.OpenApiCodegen.Json.Extensions"
 			);
 
 		return await CSharpScript.EvaluateAsync($@"
-            var parsed = await PS.Controller.Operations.{operation}(Message);
+            var parsed = await DPD.Controller.Operations.{operation}(Message);
 
             parsed is {parsedType} ? parsed : null
         ", scriptOptions, globals: new ResponseMessageGlobals(responseMessage));

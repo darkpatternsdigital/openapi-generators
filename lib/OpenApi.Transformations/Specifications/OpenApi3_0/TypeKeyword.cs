@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
-using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.Specifications.Keywords;
 
-namespace PrincipleStudios.OpenApi.Transformations.Specifications.OpenApi3_0;
+namespace DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0;
 
 // This follows OpenApi 3.0 TypeKeyword, not the actual standard at https://json-schema.org/draft/2020-12/json-schema-validation#name-type
 

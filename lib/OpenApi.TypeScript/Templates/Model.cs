@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PrincipleStudios.OpenApi.TypeScript.Templates
+namespace DarkPatterns.OpenApi.TypeScript.Templates
 {
 	public record ModelTemplate<TModel>(
 		PartialHeader Header,

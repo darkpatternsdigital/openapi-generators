@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using System.Collections.Generic;
 
-namespace PrincipleStudios.ServerInterfacesExample.Oauth
+namespace DarkPatterns.ServerInterfacesExample.Oauth
 {
 	internal class ApiKeyOptions : AuthenticationSchemeOptions
 	{

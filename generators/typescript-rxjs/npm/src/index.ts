@@ -10,7 +10,7 @@ import type {
 	AdapterRequestArgs,
 	RequestConversions,
 	HttpMethod,
-} from '@principlestudios/openapi-codegen-typescript';
+} from '@darkpatterns/openapi-codegen-typescript';
 import type { Observable } from 'rxjs';
 import { of } from 'rxjs';
 import type { AjaxConfig, AjaxError, AjaxResponse } from 'rxjs/ajax';

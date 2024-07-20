@@ -1,8 +1,8 @@
-using PrincipleStudios.OpenApi.CSharp;
+using DarkPatterns.OpenApi.CSharp;
 using System;
 using Xunit;
 
-namespace PrincipleStudios.OpenApiCodegen.Client.CSharp
+namespace DarkPatterns.OpenApiCodegen.Client.CSharp
 {
 	public class HandlebarsTemplateProcessShould
 	{

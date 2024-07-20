@@ -1,17 +1,17 @@
 # OpenAPI Codegen for a TypeScript-friendly Fetch client
 
 Provides an adapter layer method for
-[@principlestudios/openapi-codegen-typescript][1] to integrate with fetch.
+[@darkpatterns/openapi-codegen-typescript][1] to integrate with fetch.
 
 ```sh
-npm i @principlestudios/openapi-codegen-typescript
-npm i -D @principlestudios/openapi-codegen-typescript-fetch
+npm i @darkpatterns/openapi-codegen-typescript
+npm i -D @darkpatterns/openapi-codegen-typescript-fetch
 ```
 
 You must also have .NET 8.0 runtime installed on your machine.
 
 This will provide a corresponding bin to generate the typescript files. (See the
-[@principlestudios/openapi-codegen-typescript][1] package for command line usage
+[@darkpatterns/openapi-codegen-typescript][1] package for command line usage
 details.)
 
 ```sh
@@ -21,7 +21,7 @@ openapi-codegen-typescript api.yaml api-generated/ -c
 You can then create an API wrapper such as:
 
 ```ts
-import { toFetchApi } from '@principlestudios/openapi-codegen-typescript-fetch';
+import { toFetchApi } from '@darkpatterns/openapi-codegen-typescript-fetch';
 import operations from './api-generated/operations';
 
 export default toFetchApi(operations, fetch);
@@ -53,4 +53,4 @@ const fetchApi = toFetchApi(operations, fetchImpl);
     type Blob = NodeJS.ReadableStream;
     ```
 
-[1]: https://www.npmjs.com/package/@principlestudios/openapi-codegen-typescript
+[1]: https://www.npmjs.com/package/@darkpatterns/openapi-codegen-typescript

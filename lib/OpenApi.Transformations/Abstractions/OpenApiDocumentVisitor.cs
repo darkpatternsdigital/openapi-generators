@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using PrincipleStudios.OpenApi.Transformations.Abstractions;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Transformations.Specifications;
 
-namespace PrincipleStudios.OpenApi.Transformations.Abstractions;
+namespace DarkPatterns.OpenApi.Transformations.Abstractions;
 
 public abstract class OpenApiDocumentVisitor<TArgument> : IOpenApiDocumentVisitor<TArgument>
 {

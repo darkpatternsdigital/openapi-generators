@@ -1,6 +1,6 @@
-﻿using PrincipleStudios.OpenApiCodegen.Json.Extensions;
+﻿using DarkPatterns.OpenApiCodegen.Json.Extensions;
 
-namespace PrincipleStudios.OpenApiCodegen.Server.Mvc.TestApp.Form;
+namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Form;
 
 public class FormBasicController : BasicControllerBase
 {

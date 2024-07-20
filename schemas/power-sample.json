@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "description": "Tech demo for Principle Studios' engineering team",
     "contact": {
-      "email": "matt.dekrey@principlestudios.com"
+      "email": "matt.dekrey@darkpatterns.com"
     },
     "license": {
       "name": "Apache 2.0",
@@ -17,7 +17,7 @@
   },
   "servers": [
     {
-      "url": "https://demo.principlestudios.com/api/v1"
+      "url": "https://demo.darkpatterns.com/api/v1"
     }
   ],
   "paths": {

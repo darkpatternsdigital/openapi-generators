@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-namespace PrincipleStudios.OpenApi.Transformations;
+namespace DarkPatterns.OpenApi.Transformations;
 
 public abstract record Either<TLeft, TRight>
 {

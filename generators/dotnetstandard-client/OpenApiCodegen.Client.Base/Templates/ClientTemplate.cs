@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PrincipleStudios.OpenApi.CSharp.Templates
+namespace DarkPatterns.OpenApi.CSharp.Templates
 {
 	public record FullTemplate(
 		PartialHeader Header,

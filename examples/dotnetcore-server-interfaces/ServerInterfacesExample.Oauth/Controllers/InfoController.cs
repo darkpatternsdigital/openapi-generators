@@ -1,7 +1,7 @@
-﻿using PrincipleStudios.OpenApiCodegen.Json.Extensions;
+﻿using DarkPatterns.OpenApiCodegen.Json.Extensions;
 using System.Threading.Tasks;
 
-namespace PrincipleStudios.ServerInterfacesExample.Oauth.Controllers
+namespace DarkPatterns.ServerInterfacesExample.Oauth.Controllers
 {
 	public class InfoController : InfoControllerBase
 	{

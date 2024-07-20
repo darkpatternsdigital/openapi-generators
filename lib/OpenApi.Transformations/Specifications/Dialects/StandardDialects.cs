@@ -1,6 +1,6 @@
-using PrincipleStudios.OpenApi.Transformations.Specifications.Vocabularies;
+using DarkPatterns.OpenApi.Transformations.Specifications.Vocabularies;
 
-namespace PrincipleStudios.OpenApi.Transformations.Specifications.Dialects;
+namespace DarkPatterns.OpenApi.Transformations.Specifications.Dialects;
 
 public static class StandardDialects
 {

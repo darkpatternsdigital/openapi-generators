@@ -1,10 +1,10 @@
-﻿using PrincipleStudios.OpenApi.Transformations.Abstractions;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
-using PrincipleStudios.OpenApi.Transformations.DocumentTypes;
+﻿using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.DocumentTypes;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PrincipleStudios.OpenApi.Transformations.Specifications;
+namespace DarkPatterns.OpenApi.Transformations.Specifications;
 
 public static class CommonParsers
 {

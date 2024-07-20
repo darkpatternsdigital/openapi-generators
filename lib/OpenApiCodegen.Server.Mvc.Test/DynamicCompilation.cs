@@ -7,13 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using PrincipleStudios.OpenApi.CSharp;
-using PrincipleStudios.OpenApi.Transformations;
-using static PrincipleStudios.OpenApiCodegen.Server.Mvc.OptionsHelpers;
-using static PrincipleStudios.OpenApiCodegen.TestUtils.DocumentHelpers;
-using PrincipleStudios.OpenApiCodegen.TestUtils;
+using DarkPatterns.OpenApi.CSharp;
+using DarkPatterns.OpenApi.Transformations;
+using static DarkPatterns.OpenApiCodegen.Server.Mvc.OptionsHelpers;
+using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
+using DarkPatterns.OpenApiCodegen.TestUtils;
 
-namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
+namespace DarkPatterns.OpenApiCodegen.Server.Mvc
 {
 	internal class DynamicCompilation
 	{
@@ -39,7 +39,7 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 			typeof(Microsoft.AspNetCore.Http.IHeaderDictionary).Assembly.Location,
 			typeof(Microsoft.AspNetCore.Authorization.AuthorizeAttribute).Assembly.Location,
 
-			typeof(PrincipleStudios.OpenApiCodegen.Json.Extensions.JsonStringEnumPropertyNameConverter).Assembly.Location,
+			typeof(DarkPatterns.OpenApiCodegen.Json.Extensions.JsonStringEnumPropertyNameConverter).Assembly.Location,
 		};
 
 		public static byte[] GetGeneratedLibrary(string documentName)
@@ -49,7 +49,7 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 			Assert.NotNull(docResult.Document);
 			var options = LoadOptions();
 
-			var transformer = docResult.Document.BuildCSharpPathControllerSourceProvider(registry, "", "PS.Controller", options);
+			var transformer = docResult.Document.BuildCSharpPathControllerSourceProvider(registry, "", "DPD.Controller", options);
 			OpenApiTransformDiagnostic diagnostic = new();
 
 			var entries = transformer.GetSources(diagnostic).ToArray();

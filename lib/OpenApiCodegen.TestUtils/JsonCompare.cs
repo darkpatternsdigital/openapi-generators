@@ -2,7 +2,7 @@ using System.Linq;
 using System.Text.Json.Nodes;
 using Json.More;
 
-namespace PrincipleStudios.OpenApiCodegen.TestUtils;
+namespace DarkPatterns.OpenApiCodegen.TestUtils;
 
 public static class JsonCompare
 {

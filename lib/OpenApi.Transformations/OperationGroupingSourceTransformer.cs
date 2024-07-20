@@ -1,13 +1,13 @@
-﻿using PrincipleStudios.OpenApi.Transformations.Abstractions;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
-using PrincipleStudios.OpenApiCodegen;
+﻿using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApiCodegen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace PrincipleStudios.OpenApi.Transformations;
+namespace DarkPatterns.OpenApi.Transformations;
 
 public class OperationGroupingSourceTransformer : ISourceProvider
 {

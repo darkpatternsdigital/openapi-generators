@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApi.Transformations.Specifications;
 
-namespace PrincipleStudios.OpenApi.Transformations.Abstractions;
+namespace DarkPatterns.OpenApi.Transformations.Abstractions;
 
 public record OpenApiSecurityRequirement(
 	Uri Id,

@@ -1,16 +1,16 @@
 ﻿using Microsoft.Extensions.Configuration;
-using PrincipleStudios.OpenApi.Transformations;
-using PrincipleStudios.OpenApiCodegen;
+using DarkPatterns.OpenApi.Transformations;
+using DarkPatterns.OpenApiCodegen;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Linq;
-using PrincipleStudios.OpenApi.Transformations.DocumentTypes;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.DocumentTypes;
+using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
 
-namespace PrincipleStudios.OpenApi.CSharp;
+namespace DarkPatterns.OpenApi.CSharp;
 
 public class ClientGenerator : IOpenApiCodeGenerator
 {

@@ -1,4 +1,4 @@
-﻿namespace PrincipleStudios.OpenApiCodegen.Server.Mvc.TestApp.Headers;
+﻿namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Headers;
 
 public class InfoController : InfoControllerBase
 {

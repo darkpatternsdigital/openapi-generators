@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PrincipleStudios.OpenApi.Transformations.Specifications;
+namespace DarkPatterns.OpenApi.Transformations.Specifications;
 
 public static class JsonSchemaExtensions
 {

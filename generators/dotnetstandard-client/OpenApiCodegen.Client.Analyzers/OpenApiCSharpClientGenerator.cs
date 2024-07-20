@@ -12,28 +12,28 @@ using System.Text;
 #nullable disable warnings
 #endif
 
-namespace PrincipleStudios.OpenApiCodegen.Client
+namespace DarkPatterns.OpenApiCodegen.Client
 {
 	[Generator]
 	public sealed class OpenApiCSharpClientGenerator : BaseGenerator
 	{
 		private const string sourceItemGroupKey = "SourceItemGroup";
 		const string sourceGroup = "OpenApiClientInterface";
-		private static readonly DiagnosticDescriptor IncludeDependentDll = new DiagnosticDescriptor(id: "PSAPICLNT001",
-																								  title: "Include a reference to PrincipleStudios.OpenApiCodegen.Json.Extensions",
-																								  messageFormat: "Include a reference to PrincipleStudios.OpenApiCodegen.Json.Extensions",
-																								  category: "PrincipleStudios.OpenApiCodegen.Client",
+		private static readonly DiagnosticDescriptor IncludeDependentDll = new DiagnosticDescriptor(id: "DPDAPICLNT001",
+																								  title: "Include a reference to DarkPatterns.OpenApiCodegen.Json.Extensions",
+																								  messageFormat: "Include a reference to DarkPatterns.OpenApiCodegen.Json.Extensions",
+																								  category: "DarkPatterns.OpenApiCodegen.Client",
 																								  DiagnosticSeverity.Warning,
 																								  isEnabledByDefault: true);
 
-		public OpenApiCSharpClientGenerator() : base("PrincipleStudios.OpenApi.CSharp.ClientGenerator", "PrincipleStudios.OpenApiCodegen.Client.Base")
+		public OpenApiCSharpClientGenerator() : base("DarkPatterns.OpenApi.CSharp.ClientGenerator", "DarkPatterns.OpenApiCodegen.Client.Base")
 		{
 		}
 
 		protected override void ReportCompilationDiagnostics(Compilation compilation, CompilerApis apis)
 		{
 			// check that the users compilation references the expected library
-			if (!compilation.ReferencedAssemblyNames.Any(static ai => ai.Name.Equals("PrincipleStudios.OpenApiCodegen.Json.Extensions", StringComparison.OrdinalIgnoreCase)))
+			if (!compilation.ReferencedAssemblyNames.Any(static ai => ai.Name.Equals("DarkPatterns.OpenApiCodegen.Json.Extensions", StringComparison.OrdinalIgnoreCase)))
 			{
 				apis.ReportDiagnostic(Diagnostic.Create(IncludeDependentDll, Location.None));
 			}

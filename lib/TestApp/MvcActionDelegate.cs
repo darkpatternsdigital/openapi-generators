@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace PrincipleStudios.OpenApiCodegen.Server.Mvc.TestApp;
+namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp;
 
 public interface IHandleArbitraryRequest<T>
 {

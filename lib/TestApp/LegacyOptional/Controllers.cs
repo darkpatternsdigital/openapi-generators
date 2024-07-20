@@ -1,4 +1,4 @@
-﻿namespace PrincipleStudios.OpenApiCodegen.Server.Mvc.TestApp.LegacyOptional;
+﻿namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.LegacyOptional;
 
 public class ContrivedController : ContrivedControllerBase
 {

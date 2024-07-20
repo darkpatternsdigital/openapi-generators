@@ -1,4 +1,4 @@
-namespace PrincipleStudios.OpenApi.Transformations.Abstractions;
+namespace DarkPatterns.OpenApi.Transformations.Abstractions;
 
 public interface IOpenApiDocumentVisitor<TArgument>
 {

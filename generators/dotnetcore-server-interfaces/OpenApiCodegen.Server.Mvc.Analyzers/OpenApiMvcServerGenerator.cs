@@ -13,7 +13,7 @@ using System.Text;
 #nullable disable warnings
 #endif
 
-namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
+namespace DarkPatterns.OpenApiCodegen.Server.Mvc
 {
 	[Generator]
 	public sealed class OpenApiMvcServerGenerator : BaseGenerator
@@ -21,21 +21,21 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 		const string sourceGroup = "OpenApiServerInterface";
 
 		private const string sourceItemGroupKey = "SourceItemGroup";
-		private static readonly DiagnosticDescriptor IncludeDependentDll = new DiagnosticDescriptor(id: "PSAPICTRL001",
-																									title: "Include a reference to PrincipleStudios.OpenApiCodegen.Json.Extensions",
-																									messageFormat: "Include a reference to PrincipleStudios.OpenApiCodegen.Json.Extensions",
-																									category: "PrincipleStudios.OpenApiCodegen.Server.Mvc",
+		private static readonly DiagnosticDescriptor IncludeDependentDll = new DiagnosticDescriptor(id: "DPDAPICTRL001",
+																									title: "Include a reference to DarkPatterns.OpenApiCodegen.Json.Extensions",
+																									messageFormat: "Include a reference to DarkPatterns.OpenApiCodegen.Json.Extensions",
+																									category: "DarkPatterns.OpenApiCodegen.Server.Mvc",
 																									DiagnosticSeverity.Warning,
 																									isEnabledByDefault: true);
 
-		public OpenApiMvcServerGenerator() : base("PrincipleStudios.OpenApi.CSharp.MvcServerGenerator", "PrincipleStudios.OpenApiCodegen.Server.Mvc.Base")
+		public OpenApiMvcServerGenerator() : base("DarkPatterns.OpenApi.CSharp.MvcServerGenerator", "DarkPatterns.OpenApiCodegen.Server.Mvc.Base")
 		{
 		}
 
 		protected override void ReportCompilationDiagnostics(Compilation compilation, CompilerApis apis)
 		{
 			// check that the users compilation references the expected library
-			if (!compilation.ReferencedAssemblyNames.Any(static ai => ai.Name.Equals("PrincipleStudios.OpenApiCodegen.Json.Extensions", StringComparison.OrdinalIgnoreCase)))
+			if (!compilation.ReferencedAssemblyNames.Any(static ai => ai.Name.Equals("DarkPatterns.OpenApiCodegen.Json.Extensions", StringComparison.OrdinalIgnoreCase)))
 			{
 				apis.ReportDiagnostic(Diagnostic.Create(IncludeDependentDll, Location.None));
 			}

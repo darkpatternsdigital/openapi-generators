@@ -1,7 +1,7 @@
 {{>partial_header Header}}
 {{#with Operation}}
-import type { HttpHeaders, AdapterRequestArgs, AdapterResponseArgs, RequestConversion, StandardResponse, TransformRequest } from '@principlestudios/openapi-codegen-typescript';
-import { encodeURI, throwIfNullOrUndefined } from '@principlestudios/openapi-codegen-typescript';
+import type { HttpHeaders, AdapterRequestArgs, AdapterResponseArgs, RequestConversion, StandardResponse, TransformRequest } from '@darkpatterns/openapi-codegen-typescript';
+import { encodeURI, throwIfNullOrUndefined } from '@darkpatterns/openapi-codegen-typescript';
 {{#each Imports}}
 import {
 {{#each Members}}

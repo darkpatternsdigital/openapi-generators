@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
 
-namespace PrincipleStudios.OpenApi.Transformations.Specifications.Keywords;
+namespace DarkPatterns.OpenApi.Transformations.Specifications.Keywords;
 
 /// <summary>
 /// Holds a keyword that is provided but not specified by the dialect/vocabularies

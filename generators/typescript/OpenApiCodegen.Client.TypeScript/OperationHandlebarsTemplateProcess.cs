@@ -1,9 +1,9 @@
 ﻿using HandlebarsDotNet;
-using PrincipleStudios.OpenApi.TypeScript;
+using DarkPatterns.OpenApi.TypeScript;
 using System.IO;
 using System.Linq;
 
-namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript
+namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 {
 	public static class OperationHandlebarsTemplateProcess
 	{

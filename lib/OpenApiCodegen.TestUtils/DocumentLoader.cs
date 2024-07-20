@@ -1,10 +1,10 @@
-﻿using PrincipleStudios.OpenApi.Transformations.DocumentTypes;
-using PrincipleStudios.OpenApi.Transformations;
+﻿using DarkPatterns.OpenApi.Transformations.DocumentTypes;
+using DarkPatterns.OpenApi.Transformations;
 using System;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApi.Transformations.Specifications;
 using System.IO;
 
-namespace PrincipleStudios.OpenApiCodegen.TestUtils;
+namespace DarkPatterns.OpenApiCodegen.TestUtils;
 
 public class DocumentLoader
 {
@@ -35,7 +35,7 @@ public class DocumentLoader
 	{
 		if (baseUri is not { Scheme: "proj", Host: "embedded" })
 			throw new ArgumentException("Uri was not of the proper format", nameof(baseUri));
-		return typeof(DocumentHelpers).Assembly.GetManifestResourceStream($"PrincipleStudios.OpenApiCodegen.TestUtils.schemas.{baseUri.LocalPath.Substring(1)}");
+		return typeof(DocumentHelpers).Assembly.GetManifestResourceStream($"DarkPatterns.OpenApiCodegen.TestUtils.schemas.{baseUri.LocalPath.Substring(1)}");
 	}
 
 	public static DocumentRegistry CreateRegistry()

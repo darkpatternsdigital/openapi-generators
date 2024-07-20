@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace PrincipleStudios.OpenApi.Transformations.Configuration
+namespace DarkPatterns.OpenApi.Transformations.Configuration
 {
 	/// <summary>
 	/// A YAML stream based <see cref="StreamConfigurationSource"/>.

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
+namespace DarkPatterns.OpenApiCodegen.Server.Mvc
 {
 	public class TempDirectory : IDisposable
 	{
@@ -9,7 +9,7 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 		{
 			DirectoryPath = Path.Combine(
 				Path.GetTempPath(),
-				"PS-openapicodegen-tests",
+				"DPD-openapicodegen-tests",
 				DateTime.Now.ToString("yyyy-MM-dd-hhmmss-") + Path.GetRandomFileName()
 			);
 			Directory.CreateDirectory(DirectoryPath);

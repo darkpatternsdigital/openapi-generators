@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using YamlDotNet.Core;
 
-namespace PrincipleStudios.OpenApi.Transformations.Configuration
+namespace DarkPatterns.OpenApi.Transformations.Configuration
 {
 	/// <summary>
 	/// A YAML file based <see cref="FileConfigurationProvider"/>.

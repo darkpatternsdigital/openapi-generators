@@ -1,17 +1,17 @@
 # OpenAPI Codegen for TypeScript-friendly MSW testing
 
 Provides an adapter layer method for
-[@principlestudios/openapi-codegen-typescript][1] to integrate with msw.
+[@darkpatterns/openapi-codegen-typescript][1] to integrate with msw.
 
 ```sh
-npm i @principlestudios/openapi-codegen-typescript
-npm i -D @principlestudios/openapi-codegen-typescript-msw
+npm i @darkpatterns/openapi-codegen-typescript
+npm i -D @darkpatterns/openapi-codegen-typescript-msw
 ```
 
 You must also have the .NET 8.0 runtime installed on your machine.
 
 This will provide a corresponding bin to generate the typescript files. (See the
-[@principlestudios/openapi-codegen-typescript][1] package for command line usage
+[@darkpatterns/openapi-codegen-typescript][1] package for command line usage
 details.)
 
 ```sh
@@ -22,7 +22,7 @@ You can then create a mock MSW service to handle specific requests:
 
 ```ts
 import { setupServer } from 'msw/node';
-import { toMswHandler } from '@principlestudios/openapi-codegen-typescript-msw';
+import { toMswHandler } from '@darkpatterns/openapi-codegen-typescript-msw';
 import operations from './api-generated/operations';
 
 const baseDomain = 'http://localhost/';
@@ -37,4 +37,4 @@ const server = setupServer(
 
 This API will use the type safety from OpenAPI along with msw.
 
-[1]: https://www.npmjs.com/package/@principlestudios/openapi-codegen-typescript
+[1]: https://www.npmjs.com/package/@darkpatterns/openapi-codegen-typescript

@@ -1,10 +1,10 @@
-﻿using PrincipleStudios.OpenApiCodegen.Json.Extensions;
+﻿using DarkPatterns.OpenApiCodegen.Json.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using Xunit;
 
-namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
+namespace DarkPatterns.OpenApiCodegen.Server.Mvc
 {
 
 	public class OptionalShould
@@ -70,7 +70,7 @@ namespace PrincipleStudios.OpenApiCodegen.Server.Mvc
 		public record RecordHasOptional(
 			[property: System.Text.Json.Serialization.JsonPropertyName("optionalNullableInteger")]
 			[property: global::System.Text.Json.Serialization.JsonIgnore(Condition = global::System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
-			global::PrincipleStudios.OpenApiCodegen.Json.Extensions.Optional<int?>? OptionalNullableInteger
+			global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional<int?>? OptionalNullableInteger
 		);
 
 		[Fact]

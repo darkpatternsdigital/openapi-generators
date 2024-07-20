@@ -2,7 +2,7 @@
 using System;
 using System.Globalization;
 
-namespace PrincipleStudios.OpenApi.Transformations.Specifications;
+namespace DarkPatterns.OpenApi.Transformations.Specifications;
 
 public static class UriUtils
 {

@@ -1,4 +1,4 @@
-namespace PrincipleStudios.OpenApiCodegen.Server.Mvc.TestApp.ValidationMinMax;
+namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ValidationMinMax;
 
 public class ColorsController : ColorsControllerBase
 {

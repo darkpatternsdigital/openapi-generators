@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApi.Transformations.Specifications;
 
-namespace PrincipleStudios.OpenApi.Transformations.Diagnostics;
+namespace DarkPatterns.OpenApi.Transformations.Diagnostics;
 
 public abstract record DiagnosableResult<T>
 {

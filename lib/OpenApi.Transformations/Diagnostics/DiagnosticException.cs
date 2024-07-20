@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PrincipleStudios.OpenApi.Transformations.Diagnostics;
+namespace DarkPatterns.OpenApi.Transformations.Diagnostics;
 
 public class DiagnosticException : Exception
 {

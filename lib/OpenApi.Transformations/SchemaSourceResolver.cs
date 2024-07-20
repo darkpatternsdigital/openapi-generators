@@ -1,9 +1,9 @@
-﻿using PrincipleStudios.OpenApi.Transformations.Specifications;
-using PrincipleStudios.OpenApiCodegen;
+﻿using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApiCodegen;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PrincipleStudios.OpenApi.Transformations
+namespace DarkPatterns.OpenApi.Transformations
 {
 	public abstract class SchemaSourceProvider(ISchemaRegistry schemaRegistry) : ISourceProvider
 	{

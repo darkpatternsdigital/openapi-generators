@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
-using PrincipleStudios.OpenApi.TypeScript;
+using DarkPatterns.OpenApi.TypeScript;
 using System;
 
-namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript
+namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 {
 	public static class OptionsHelpers
 	{

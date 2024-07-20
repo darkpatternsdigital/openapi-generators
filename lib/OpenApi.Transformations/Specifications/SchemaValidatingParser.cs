@@ -1,10 +1,10 @@
-﻿using PrincipleStudios.OpenApi.Transformations.Abstractions;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
-using PrincipleStudios.OpenApi.Transformations.DocumentTypes;
+﻿using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.DocumentTypes;
 using System;
 using System.Collections.Generic;
 
-namespace PrincipleStudios.OpenApi.Transformations.Specifications;
+namespace DarkPatterns.OpenApi.Transformations.Specifications;
 
 public abstract class SchemaValidatingParser<TInterface> : IParser<TInterface>
 	where TInterface : class, IReferenceableDocumentNode

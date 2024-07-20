@@ -1,9 +1,9 @@
 
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
 
-namespace PrincipleStudios.OpenApi.Transformations.Specifications.OpenApi3_0;
+namespace DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0;
 
 /// OpenAPI 3.0 `items` schema
 public static class ItemsKeyword

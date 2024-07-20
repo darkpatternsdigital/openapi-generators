@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-namespace PrincipleStudios.OpenApiCodegen;
+namespace DarkPatterns.OpenApiCodegen;
 
 public record SourceEntry(string Key, string SourceText);
 

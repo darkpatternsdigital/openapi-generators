@@ -1,11 +1,11 @@
-﻿using PrincipleStudios.OpenApi.Transformations;
-using PrincipleStudios.OpenApi.Transformations.Abstractions;
-using PrincipleStudios.OpenApi.TypeScript;
+﻿using DarkPatterns.OpenApi.Transformations;
+using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.TypeScript;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript
+namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 {
 	public static class OperationTransformerFactory
 	{

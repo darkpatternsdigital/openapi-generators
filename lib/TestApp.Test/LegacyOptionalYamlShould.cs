@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace PrincipleStudios.OpenApiCodegen.Server.Mvc.TestApp;
+namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp;
 
 using static Utilities;
 

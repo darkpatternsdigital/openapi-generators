@@ -1,4 +1,4 @@
-﻿namespace PrincipleStudios.OpenApiCodegen.Server.Mvc.TestApp.OAuth;
+﻿namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OAuth;
 
 public class InfoController : InfoControllerBase
 {

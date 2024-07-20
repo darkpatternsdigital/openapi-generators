@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PrincipleStudios.OpenApiCodegen.Json.Extensions;
+namespace DarkPatterns.OpenApiCodegen.Json.Extensions;
 
 public static class OptionalExtensions
 {

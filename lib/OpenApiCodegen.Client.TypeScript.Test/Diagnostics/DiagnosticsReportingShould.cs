@@ -1,7 +1,7 @@
-﻿using PrincipleStudios.OpenApi.Transformations;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
-using PrincipleStudios.OpenApiCodegen.TestUtils;
+﻿using DarkPatterns.OpenApi.Transformations;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApiCodegen.TestUtils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +9,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace PrincipleStudios.OpenApiCodegen.Client.TypeScript.Diagnostics;
+namespace DarkPatterns.OpenApiCodegen.Client.TypeScript.Diagnostics;
 
 using static OptionsHelpers;
-using static PrincipleStudios.OpenApiCodegen.TestUtils.DocumentHelpers;
+using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
 
 public class DiagnosticsReportingShould
 {

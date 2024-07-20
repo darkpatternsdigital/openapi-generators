@@ -1,8 +1,8 @@
-using PrincipleStudios.OpenApi.CSharp;
+using DarkPatterns.OpenApi.CSharp;
 using System;
 using Xunit;
 
-namespace PrincipleStudios.OpenApiCodegen.Server.Mvc.Test
+namespace DarkPatterns.OpenApiCodegen.Server.Mvc.Test
 {
 	public class HandlebarsTemplateProcessShould
 	{

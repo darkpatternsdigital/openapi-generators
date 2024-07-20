@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using PrincipleStudios.OpenApi.Transformations;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
-using PrincipleStudios.OpenApiCodegen;
+using DarkPatterns.OpenApi.Transformations;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApiCodegen;
 
-namespace PrincipleStudios.OpenApiCodegen;
+namespace DarkPatterns.OpenApiCodegen;
 
 public class DiagnosticsShould
 {

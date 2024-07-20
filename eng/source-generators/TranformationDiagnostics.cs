@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
 
-namespace PrincipleStudios.OpenApiCodegen;
+namespace DarkPatterns.OpenApiCodegen;
 
 public partial class TransformationDiagnostics
 {

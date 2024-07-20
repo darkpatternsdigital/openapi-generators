@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System;
 using System.Text.Json.Nodes;
-using PrincipleStudios.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.Diagnostics;
 using System.Linq;
 
-namespace PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft04;
+namespace DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft04;
 
 public class ExclusiveMinimumKeyword(string keyword, bool isExclusive) : IJsonSchemaAnnotation
 {

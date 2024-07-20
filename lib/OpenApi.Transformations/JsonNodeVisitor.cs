@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Nodes;
 
-namespace PrincipleStudios.OpenApi.Transformations;
+namespace DarkPatterns.OpenApi.Transformations;
 
 public abstract class JsonNodeVisitor
 {

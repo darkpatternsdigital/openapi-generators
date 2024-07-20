@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using PrincipleStudios.OpenApi.Transformations.Specifications;
-using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft04;
-using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Applicator;
-using PrincipleStudios.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Validation;
+using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft04;
+using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Applicator;
+using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Validation;
 
-namespace PrincipleStudios.OpenApi.CSharp;
+namespace DarkPatterns.OpenApi.CSharp;
 using OpenApi3_0 = Transformations.Specifications.OpenApi3_0;
 
 public record CSharpTypeInfo(

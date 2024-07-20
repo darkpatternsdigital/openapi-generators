@@ -18,7 +18,7 @@
   "homepage": "https://github.com/darkpatternsdigital/openapi-generators",
   "files": [
     "lib/*",
-    "readme.md"
+    "README.md"
   ],
   "repository": {
     "type": "git",

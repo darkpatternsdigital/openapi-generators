@@ -17,7 +17,7 @@
         "dotnet/*",
         "bin/*.js",
         "lib/*",
-        "readme.md"
+        "README.md"
     ],
     "bin": {
         "openapi-codegen-typescript": "./bin/index.js"

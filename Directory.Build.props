@@ -33,9 +33,9 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<OpenApiJsonExtensionsVersion>0.17.0</OpenApiJsonExtensionsVersion>
-		<OpenApiMvcServerVersion>0.17.0</OpenApiMvcServerVersion>
-		<OpenApiCSharpClientVersion>0.17.0</OpenApiCSharpClientVersion>
+		<OpenApiJsonExtensionsVersion>0.17.1</OpenApiJsonExtensionsVersion>
+		<OpenApiMvcServerVersion>0.17.1</OpenApiMvcServerVersion>
+		<OpenApiCSharpClientVersion>0.17.1</OpenApiCSharpClientVersion>
 		<OpenApiTypeScriptClientVersion>0.10.0</OpenApiTypeScriptClientVersion>
 		<OpenApiTypeScriptRxjsClientVersion>0.8.0</OpenApiTypeScriptRxjsClientVersion>
 		<OpenApiTypeScriptMswVersion>0.8.0</OpenApiTypeScriptMswVersion>
@@ -53,12 +53,12 @@
 		<RepositoryType>git</RepositoryType>
 		<RepositoryBranch>main</RepositoryBranch>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
-		<PackageIcon>logo_black_small.png</PackageIcon>
+		<PackageIcon>dpd-logo.png</PackageIcon>
 		<Copyright>2024 Matt DeKrey; Dark Patterns Digital, LCA; &amp; Principle Studios</Copyright>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="$(MSBuildThisFileDirectory)assets\logo_black_small.png" Pack="true" PackagePath="\" Link="nuget/logo_black_small.png" />
+		<None Include="$(MSBuildThisFileDirectory)assets\dpd-logo.png" Pack="true" PackagePath="\" Link="nuget/dpd-logo.png" />
 		<None Condition="exists('$(ProjectDir)README.md')" Include="$(ProjectDir)README.md" Pack="true" PackagePath="\" Link="nuget/README.md" />
 	</ItemGroup>
 </Project>

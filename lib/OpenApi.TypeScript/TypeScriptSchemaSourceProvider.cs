@@ -33,6 +33,20 @@ public class TypeScriptSchemaSourceProvider : SchemaSourceProvider
 		this.header = header;
 	}
 
+	protected override IEnumerable<SourceEntry> GetAdditionalSources(OpenApiTransformDiagnostic diagnostic)
+	{
+		if (header == null) yield break;
+		var exportStatements = inlineSchemas.GetExportStatements(schemaRegistry.GetSchemas(), options, "./models/").ToArray();
+		if (exportStatements.Length > 0)
+			yield return new SourceEntry(
+				Key: "models/index.ts",
+				SourceText: HandlebarsTemplateProcess.ProcessModelBarrelFile(
+					new Templates.ModelBarrelFile(header, exportStatements),
+					handlebarsFactory.Handlebars
+				)
+			);
+	}
+
 	protected override SourceEntry? GetSourceEntry(JsonSchema entry, OpenApiTransformDiagnostic diagnostic)
 	{
 		if (!inlineSchemas.ProduceSourceEntry(entry)) return null;
@@ -193,19 +207,19 @@ public class TypeScriptSchemaSourceProvider : SchemaSourceProvider
 
 public static class TypeScriptInlineSchemasExtensions
 {
-	// public static IEnumerable<Templates.ExportStatement> GetExportStatements(this TypeScriptInlineSchemas inlineSchemas, IEnumerable<OpenApiSchema> schemasReferenced, TypeScriptSchemaOptions options, string path)
-	// {
-	// 	// FIXME: this is very hacked together; this accesses the "inline" data type to determine what should be exported
-	// 	return from entry in schemasReferenced
-	// 		   let t = inlineSchemas.ToInlineDataType(entry)()
-	// 		   from import in t.Imports
-	// 		   from refName in new[] { new Templates.ExportMember(import.Member, IsType: true) }.Concat(GetAdditionalModuleMembers(t, entry, options))
-	// 		   let fileName = import.File
-	// 		   group refName by fileName into imports
-	// 		   let nodePath = imports.Key.ToNodePath(path)
-	// 		   orderby nodePath
-	// 		   select new Templates.ExportStatement(imports.Distinct().OrderBy(a => a.MemberName).ToArray(), nodePath);
-	// }
+	public static IEnumerable<Templates.ExportStatement> GetExportStatements(this TypeScriptInlineSchemas inlineSchemas, IEnumerable<JsonSchema> schemasReferenced, TypeScriptSchemaOptions options, string path)
+	{
+		// FIXME: this is very hacked together; this accesses the "inline" data type to determine what should be exported
+		return from entry in schemasReferenced
+			   let t = inlineSchemas.ToInlineDataType(entry)
+			   from import in t.Imports
+			   from refName in new[] { new Templates.ExportMember(import.Member, IsType: true) }.Concat(GetAdditionalModuleMembers(t, TypeScriptTypeInfo.From(entry), options))
+			   let fileName = import.File
+			   group refName by fileName into imports
+			   let nodePath = imports.Key.ToNodePath(path)
+			   orderby nodePath
+			   select new Templates.ExportStatement(imports.Distinct().OrderBy(a => a.MemberName).ToArray(), nodePath);
+	}
 
 
 	public static IEnumerable<Templates.ImportStatement> GetImportStatements(this TypeScriptInlineSchemas inlineSchemas, IEnumerable<JsonSchema?> schemasReferenced, IEnumerable<JsonSchema?> excludedSchemas, string path)

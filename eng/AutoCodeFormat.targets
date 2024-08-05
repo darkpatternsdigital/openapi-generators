@@ -1,10 +1,12 @@
 <Project>
+	<ItemGroup>
+		<PackageReference Include="DarkPatterns.Build.Autoformat" Version="0.1.0" PrivateAssets="All" />
+	</ItemGroup>
+
 	<PropertyGroup>
-		<AnalysisMode>AllEnabledByDefault</AnalysisMode>
 		<CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-		<AnalysisLevel>latest-Recommended</AnalysisLevel>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<WarningsAsErrors />
 		<!--
@@ -53,9 +55,5 @@
 	</PropertyGroup>
 
 	<Target Name="PrepareLint" />
-
-	<Target Name="_FormatSourceFiles" DependsOnTargets="PrepareLint" BeforeTargets="BeforeBuild" Inputs="@(Compile)" Outputs="@(IntermediateAssembly)">
-		<Exec WorkingDirectory="$(ProjectDir)" Command="dotnet format $(ProjectPath) --no-restore" />
-	</Target>
 
 </Project>

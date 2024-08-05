@@ -1,12 +1,8 @@
-<Project Sdk="Microsoft.Build.NoTargets/3.7.0">
+<Project Sdk="DarkPatterns.Build.Pnpm/0.1.3">
     <PropertyGroup>
         <VersionPrefix>$(OpenApiTypeScriptRxjsClientVersion)</VersionPrefix>
         <PackPnpmOnBuild Condition=" $(Configuration) == 'Release' ">true</PackPnpmOnBuild>
-
-        <PnpmBuildScript>pnpm run build</PnpmBuildScript>
-        <PnpmTestScript>pnpm test</PnpmTestScript>
     </PropertyGroup>
-    <Import Project="$(RepositoryEngineeringDir)pnpm.targets" />
 
     <Target Name="GenerateForTests" BeforeTargets="VSTest_pnpm;PrepareLint">
         <MSBuild Projects="@(ProjectReference)" Targets="Build"/>
@@ -16,6 +12,8 @@
     <ItemGroup>
         <CompileOutputs Include="@(Compile->'$(ProjectDir)/lib/%(filename).js');@(Compile->'$(ProjectDir)/lib/%(filename).d.ts')" />
         <CompileOutputs Include="tsconfig.tsbuildinfo" />
+        <CompileConfig Include="tsconfig*.json" />
+        <CompileConfig Include="rollup.config*.json" />
     </ItemGroup>
 
     <ItemGroup>

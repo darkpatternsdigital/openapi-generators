@@ -7,6 +7,7 @@
 
 		<SolutionRoot>$(MSBuildThisFileDirectory)</SolutionRoot>
 		<RepositoryEngineeringDir>$(SolutionRoot)eng/</RepositoryEngineeringDir>
+		<UseArtifactsOutput>true</UseArtifactsOutput>
 		<RootNamespacePrefix>DarkPatterns</RootNamespacePrefix>
 		<AssemblyName Condition=" '$(AssemblyName)' == '' ">$(RootNamespacePrefix).$(MSBuildProjectName)</AssemblyName>
 		<RootNamespace>$(RootNamespacePrefix).$(MSBuildProjectName)</RootNamespace>
@@ -14,15 +15,6 @@
 
 		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-		<ArtifactsDir>$([MSBuild]::NormalizeDirectory('$(SolutionRoot)', 'artifacts'))</ArtifactsDir>
-		<ArtifactsBinDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'bin'))</ArtifactsBinDir>
-		<ArtifactsObjDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'obj'))</ArtifactsObjDir>
-		<PackageOutputPath>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'packages', '$(PlatformName)', '$(Configuration)'))</PackageOutputPath>
-		<BaseIntermediateOutputPath>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', '$(MSBuildProjectName)'))</BaseIntermediateOutputPath>
-		<MSBuildProjectExtensionsPath>$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
-		<BaseOutputPath>$([MSBuild]::NormalizeDirectory('$(ArtifactsBinDir)', '$(MSBuildProjectName)'))</BaseOutputPath>
-		<IntermediateOutputPath Condition="'$(PlatformName)' == 'AnyCPU'">$(BaseIntermediateOutputPath)$(Configuration)\</IntermediateOutputPath>
-		<IntermediateOutputPath Condition="'$(PlatformName)' != 'AnyCPU'">$(BaseIntermediateOutputPath)$(PlatformName)\$(Configuration)\</IntermediateOutputPath>
 
 		<SignAssembly>True</SignAssembly>
 		<AssemblyOriginatorKeyFile Condition="exists('$(SolutionRoot)OpenApiCodegen.snk')">$(SolutionRoot)OpenApiCodegen.snk</AssemblyOriginatorKeyFile>
@@ -31,6 +23,10 @@
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<WarningsAsErrors />
 	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="DarkPatterns.Build.Structure" Version="0.1.0" PrivateAssets="All" />
+	</ItemGroup>
 
 	<PropertyGroup>
 		<OpenApiJsonExtensionsVersion>0.17.1</OpenApiJsonExtensionsVersion>

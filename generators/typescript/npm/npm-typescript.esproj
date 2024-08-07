@@ -1,4 +1,4 @@
-<Project Sdk="DarkPatterns.Build.Pnpm/0.1.3">
+<Project Sdk="DarkPatterns.Build.Pnpm/0.1.4">
     <PropertyGroup>
         <VersionPrefix>$(OpenApiTypeScriptClientVersion)</VersionPrefix>
         <PackPnpmOnBuild Condition=" $(Configuration) == 'Release' ">true</PackPnpmOnBuild>
@@ -7,8 +7,6 @@
     <ItemGroup>
         <CompileOutputs Include="@(Compile->'$(ProjectDir)/lib/%(filename).js');@(Compile->'$(ProjectDir)/lib/%(filename).d.ts')" />
         <CompileOutputs Include="tsconfig.build.tsbuildinfo" />
-        <CompileConfig Include="tsconfig*.json" />
-        <CompileConfig Include="rollup.config*.json" />
     </ItemGroup>
 
     <ItemGroup>

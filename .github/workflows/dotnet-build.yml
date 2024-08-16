@@ -21,7 +21,7 @@ jobs:
       with:
         node-version: 20
         registry-url: ${{ github.ref != 'refs/heads/main' && 'https://npm.pkg.github.com/' || 'https://registry.npmjs.org/' }}
-        scope: '@darkpatterns'
+        scope: '@darkpatternsdigital'
     - uses: ./.github/workflows/parts/cache/
 
     - name: Decode the Signing Key
@@ -91,12 +91,6 @@ jobs:
       env:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
 
-    - name: Set publish NPM registry
-      if: ${{ github.ref == 'refs/heads/main' }}
-      run:  |
-        echo '@darkpatterns:registry=$NODE_REGISTRY' >> ~/.npmrc
-      env:
-        NODE_REGISTRY: ${{ github.ref != 'refs/heads/main' && 'https://npm.pkg.github.com/' || 'https://registry.npmjs.org/' }}
     - name: Publish npm packages
       working-directory: ./artifacts/package/release
       run:  |

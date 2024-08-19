@@ -4,10 +4,7 @@
 		"noEmit": false,
 		"declaration": true,
 		"rootDir": "./src",
-		"composite": true,
-		"paths": {
-			"@darkpatternsdigital/openapi-codegen-typescript": ["./src"]
-		}
+		"composite": true
 	},
 	"extends": "./tsconfig.json",
 	"include": ["./src"]

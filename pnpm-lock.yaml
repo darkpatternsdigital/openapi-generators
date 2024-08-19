@@ -8,9 +8,18 @@ importers:
 
   .:
     devDependencies:
+      '@darkpatternsdigital/openapi-codegen-typescript':
+        specifier: workspace:^
+        version: link:generators/typescript/npm
+      '@darkpatternsdigital/tsconfigs':
+        specifier: ../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.5.tgz
+        version: file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.5.tgz(typescript@5.4.5)
       '@types/eslint':
         specifier: ^8.56.10
         version: 8.56.10
+      '@types/node':
+        specifier: ^22.4.1
+        version: 22.4.1
       '@typescript-eslint/eslint-plugin':
         specifier: ^7.11.0
         version: 7.11.0(@typescript-eslint/parser@7.11.0)(eslint@8.57.0)(typescript@5.4.5)
@@ -37,7 +46,7 @@ importers:
         version: 4.3.2(typescript@5.4.5)
       vitest:
         specifier: ^1.6.0
-        version: 1.6.0
+        version: 1.6.0(@types/node@22.4.1)
 
   generators/typescript-fetch:
     dependencies:
@@ -644,6 +653,12 @@ packages:
     resolution: {integrity: sha512-FM6AOb3khNkNIXPnHFDYaHerSv8uN22C91z098AnGccVu+Pcdhi+pNUFDi0iLmPIsVE0JBD0KVS7mzUYt4nRzQ==}
     dependencies:
       undici-types: 5.26.5
+
+  /@types/node@22.4.1:
+    resolution: {integrity: sha512-1tbpb9325+gPnKK0dMm+/LMriX0vKxf6RnB0SZUqfyVkQ4fMgUSySqhxE/y8Jvs4NyF1yHzTfG9KlnkIODxPKg==}
+    dependencies:
+      undici-types: 6.19.6
+    dev: true
 
   /@types/statuses@2.0.5:
     resolution: {integrity: sha512-jmIUGWrAiwu3dZpxntxieC+1n/5c3mjrImkmOSQ2NC5uP6cYO4aAZDdSmRcI5C1oiTmqlZGHC+/NmJrKogbP5A==}
@@ -2805,6 +2820,10 @@ packages:
   /undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
 
+  /undici-types@6.19.6:
+    resolution: {integrity: sha512-e/vggGopEfTKSvj4ihnOLTsqhrKRN3LeO6qSN/GxohhuRv8qH9bNQ4B8W7e/vFL+0XTnmHPB4/kegunZGA4Org==}
+    dev: true
+
   /universal-rxjs-ajax@3.0.0(rxjs@7.8.1):
     resolution: {integrity: sha512-op2P4KRqlxKlMkO3X495+fc6TfG7jq33M57+nnq2+FbZ135ZfBrUUMBT4KnPr/MeK4Tti9RHEj3qUbLXI5xzNg==}
     peerDependencies:
@@ -2820,7 +2839,7 @@ packages:
       punycode: 2.3.1
     dev: true
 
-  /vite-node@1.6.0:
+  /vite-node@1.6.0(@types/node@22.4.1):
     resolution: {integrity: sha512-de6HJgzC+TFzOu0NTC4RAIsyf/DY/ibWDYQUcuEA84EMHhcefTUGkjFHKKEJhQN4A+6I0u++kr3l36ZF2d7XRw==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -2829,7 +2848,7 @@ packages:
       debug: 4.3.4
       pathe: 1.1.2
       picocolors: 1.0.0
-      vite: 5.2.12
+      vite: 5.2.12(@types/node@22.4.1)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -2857,7 +2876,7 @@ packages:
       - typescript
     dev: true
 
-  /vite@5.2.12:
+  /vite@5.2.12(@types/node@22.4.1):
     resolution: {integrity: sha512-/gC8GxzxMK5ntBwb48pR32GGhENnjtY30G4A0jemunsBkiEZFw60s8InGpN8gkhHEkjnRK1aSAxeQgwvFhUHAA==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -2885,6 +2904,7 @@ packages:
       terser:
         optional: true
     dependencies:
+      '@types/node': 22.4.1
       esbuild: 0.20.2
       postcss: 8.4.38
       rollup: 4.18.0
@@ -2892,7 +2912,7 @@ packages:
       fsevents: 2.3.3
     dev: true
 
-  /vitest@1.6.0:
+  /vitest@1.6.0(@types/node@22.4.1):
     resolution: {integrity: sha512-H5r/dN06swuFnzNFhq/dnz37bPXnq8xB2xB5JOVk8K09rUtoeNN+LHWkoQ0A/i3hvbUKKcCei9KpbxqHMLhLLA==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -2917,6 +2937,7 @@ packages:
       jsdom:
         optional: true
     dependencies:
+      '@types/node': 22.4.1
       '@vitest/expect': 1.6.0
       '@vitest/runner': 1.6.0
       '@vitest/snapshot': 1.6.0
@@ -2934,8 +2955,8 @@ packages:
       strip-literal: 2.1.0
       tinybench: 2.8.0
       tinypool: 0.8.4
-      vite: 5.2.12
-      vite-node: 1.6.0
+      vite: 5.2.12(@types/node@22.4.1)
+      vite-node: 1.6.0(@types/node@22.4.1)
       why-is-node-running: 2.2.2
     transitivePeerDependencies:
       - less
@@ -3053,4 +3074,15 @@ packages:
   /yocto-queue@1.0.0:
     resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
     engines: {node: '>=12.20'}
+    dev: true
+
+  file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.5.tgz(typescript@5.4.5):
+    resolution: {integrity: sha512-1c8mXC42f0XUam3SXCtChi4hLyCSPfYB4kw3E4SjoM4lyUNnD2Sb1bVEtVu6TeKA4J2HB2wuISCItSjSfWz4EQ==, tarball: file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.5.tgz}
+    id: file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.5.tgz
+    name: '@darkpatternsdigital/tsconfigs'
+    version: 0.1.0-local.5
+    peerDependencies:
+      typescript: '*'
+    dependencies:
+      typescript: 5.4.5
     dev: true

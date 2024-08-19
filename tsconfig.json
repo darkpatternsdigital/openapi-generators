@@ -1,4 +1,5 @@
 {
+	"extends": "@darkpatternsdigital/tsconfigs/monorepo",
 	"references": [
 		{
 			"path": "./generators/typescript/npm/tsconfig.build.json"
@@ -16,5 +17,5 @@
 			"path": "./lib/OpenApiCodegen.Client.TypeScript.Test/testing"
 		}
 	],
-	"exclude": ["./artifacts", "./examples", "./lib", "./generators"]
+	"exclude": ["./artifacts", "./generators"]
 }

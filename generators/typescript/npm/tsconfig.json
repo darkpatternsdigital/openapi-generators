@@ -1,24 +1,14 @@
 {
+	"extends": "@darkpatternsdigital/tsconfigs/node-commonjs",
 	"compilerOptions": {
-		"target": "es5",
 		"lib": ["esnext", "DOM"],
-		"allowJs": true,
-		"skipLibCheck": true,
-		"esModuleInterop": true,
-		"strict": true,
-		"forceConsistentCasingInFileNames": true,
-		"module": "commonjs",
-		"moduleResolution": "node",
-		"resolveJsonModule": true,
-		"isolatedModules": true,
-		"noEmit": false,
-		"composite": true,
-		"declaration": true,
+		"preserveSymlinks": false,
 		"outDir": "../../../artifacts/generators/typescript/npm/",
 		"rootDir": ".",
 		"paths": {
 			"~/*": ["./*"]
-		}
+		},
+		"types": ["vitest/globals"]
 	},
 	"references": [
 		{

@@ -12,8 +12,8 @@ importers:
         specifier: workspace:^
         version: link:generators/typescript/npm
       '@darkpatternsdigital/tsconfigs':
-        specifier: ../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.5.tgz
-        version: file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.5.tgz(typescript@5.4.5)
+        specifier: ../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.7.tgz
+        version: file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.7.tgz(typescript@5.4.5)
       '@types/eslint':
         specifier: ^8.56.10
         version: 8.56.10
@@ -3079,11 +3079,11 @@ packages:
     engines: {node: '>=12.20'}
     dev: true
 
-  file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.5.tgz(typescript@5.4.5):
-    resolution: {integrity: sha512-1c8mXC42f0XUam3SXCtChi4hLyCSPfYB4kw3E4SjoM4lyUNnD2Sb1bVEtVu6TeKA4J2HB2wuISCItSjSfWz4EQ==, tarball: file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.5.tgz}
-    id: file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.5.tgz
+  file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.7.tgz(typescript@5.4.5):
+    resolution: {integrity: sha512-ogNuVswvWwjQ/ITW+Bm3vCZESwgsvPQvkms2vvyEPMwbaBh9bIpgZrDfnVra5jXpAhooVZkz+dQ0QuWAMrlR1A==, tarball: file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.7.tgz}
+    id: file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.7.tgz
     name: '@darkpatternsdigital/tsconfigs'
-    version: 0.1.0-local.5
+    version: 0.1.0-local.7
     peerDependencies:
       typescript: '*'
     dependencies:

@@ -1,11 +1,9 @@
 {
+	"extends": "@darkpatternsdigital/tsconfigs/node-commonjs",
 	"compilerOptions": {
+		"lib": ["esnext", "DOM"],
 		"outDir": "./lib",
-		"noEmit": false,
-		"declaration": true,
-		"rootDir": "./src",
-		"composite": true
+		"rootDir": "./src"
 	},
-	"extends": "./tsconfig.json",
 	"include": ["./src"]
 }

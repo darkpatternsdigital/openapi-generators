@@ -18,7 +18,7 @@
   "license": "BSD-2-Clause",
   "devDependencies": {
     "@darkpatternsdigital/openapi-codegen-typescript": "workspace:^",
-    "@darkpatternsdigital/tsconfigs": "../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.5.tgz",
+    "@darkpatternsdigital/tsconfigs": "../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.7.tgz",
     "@types/eslint": "^8.56.10",
     "@types/node": "^22.4.1",
     "@typescript-eslint/eslint-plugin": "^7.11.0",

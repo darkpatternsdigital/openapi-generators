@@ -1,21 +1,10 @@
 {
+	"extends": "@darkpatternsdigital/tsconfigs/node-commonjs",
 	"compilerOptions": {
-		"target": "es6",
 		"lib": ["esnext", "DOM"],
-		"allowJs": true,
-		"skipLibCheck": true,
-		"esModuleInterop": true,
-		"strict": true,
-		"forceConsistentCasingInFileNames": true,
-		"module": "commonjs",
-		"moduleResolution": "node",
-		"resolveJsonModule": true,
-		"isolatedModules": true,
-		"noEmit": false,
-		"composite": true,
-		"declaration": true,
 		"rootDir": ".",
-		"outDir": "../../../artifacts/generators/typescript-msw/npm"
+		"outDir": "../../../artifacts/generators/typescript-msw/npm",
+		"types": ["vitest/globals", "node"]
 	},
 	"exclude": ["./lib"],
 	"references": [

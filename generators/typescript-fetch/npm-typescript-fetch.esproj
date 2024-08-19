@@ -14,9 +14,17 @@
         <ProjectReference Include="$(SolutionRoot)generators\typescript-msw\npm\npm-typescript-msw.esproj" SpecificVersion="true" />
     </ItemGroup>
 
-    <Target Name="GenerateForTests" BeforeTargets="VSTest_pnpm;PrepareLint">
-        <MSBuild Projects="@(ProjectReference)" Targets="Build"/>
-        <Exec WorkingDirectory="$(ProjectDir)" Command="pnpm run pretsc:check" />
+    <Target Name="Generation" BeforeTargets="NodeBuild" />
+
+    <ItemGroup>
+        <TestedSchema Include="no-refs" />
+        <TestedSchema Include="petstore" />
+        <TestedSchema Include="headers" />
+        <TestedSchema Include="multi-path-variables" />
+    </ItemGroup>
+
+    <Target Name="GenerateFromSchema" BeforeTargets="Generation">
+        <Exec Command="pnpm openapi-codegen-typescript -o ./openapi-codegen-options.yaml ../../schemas/%(TestedSchema.Identity).yaml tests/%(TestedSchema.Identity)/" />
     </Target>
 
 </Project>

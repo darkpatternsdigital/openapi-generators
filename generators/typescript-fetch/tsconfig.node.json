@@ -15,14 +15,6 @@
 		"composite": true,
 		"declaration": true,
 		"outDir": "../../artifacts/generators/typescript-fetch/",
-		"rootDir": ".",
-		"paths": {
-			"@darkpatternsdigital/openapi-codegen-typescript-fetch": ["./src"]
-		}
-	},
-	"references": [
-		{
-			"path": "../typescript-msw/npm/tsconfig.json"
-		}
-	]
+		"rootDir": "."
+	}
 }

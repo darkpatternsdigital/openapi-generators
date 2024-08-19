@@ -17,8 +17,14 @@
         <RemoveDir Directories="$(ProjectDir)dotnet" />
     </Target>
 
-    <Target Name="GenerateForTests" DependsOnTargets="NodeBuild" BeforeTargets="VSTest_pnpm;PrepareLint">
-        <Exec WorkingDirectory="$(ProjectDir)" Command="pnpm run pretsc:check" />
+    <ItemGroup>
+        <TestedSchema Include="no-refs" />
+        <TestedSchema Include="petstore" />
+        <TestedSchema Include="headers" />
+    </ItemGroup>
+
+    <Target Name="GenerateFromSchema" AfterTargets="NodeBuild">
+        <Exec Command="pnpm node bin/index.js ../../../schemas/%(TestedSchema.Identity).yaml tests/%(TestedSchema.Identity)/" />
     </Target>
 
     <Target Name="_CopyProjectReferencesToNpmPackage" BeforeTargets="NodeBuild">

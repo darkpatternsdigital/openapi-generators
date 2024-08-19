@@ -17,5 +17,10 @@
 		"rootDir": ".",
 		"outDir": "../../../artifacts/generators/typescript-msw/npm"
 	},
-	"exclude": ["./lib"]
+	"exclude": ["./lib"],
+	"references": [
+		{
+			"path": "./tsconfig.json"
+		}
+	]
 }

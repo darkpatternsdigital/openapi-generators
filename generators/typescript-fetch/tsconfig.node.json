@@ -16,5 +16,10 @@
 		"declaration": true,
 		"outDir": "../../artifacts/generators/typescript-fetch/",
 		"rootDir": "."
-	}
+	},
+	"references": [
+		{
+			"path": "./tsconfig.json"
+		}
+	]
 }

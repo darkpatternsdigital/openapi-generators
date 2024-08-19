@@ -6,13 +6,5 @@
 		"rootDir": "./src"
 	},
 	"extends": "./tsconfig.node.json",
-	"include": ["./src"],
-	"references": [
-		{
-			"path": "./tsconfig.node.json"
-		},
-		{
-			"path": "../../typescript-msw/npm/tsconfig.json"
-		}
-	]
+	"include": ["./src"]
 }

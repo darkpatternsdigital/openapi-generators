@@ -4,11 +4,7 @@
     "description": "A typescript client code generator for principled development",
     "scripts": {
         "build": "tsc -b tsconfig.build.json",
-        "pretsc:check": "pnpm build && node bin/index.js ../../../schemas/no-refs.yaml tests/no-refs/ && node bin/index.js ../../../schemas/petstore.yaml tests/petstore/ && node bin/index.js ../../../schemas/headers.yaml tests/headers/",
-        "tsc:check": "tsc",
-        "pretest": "npm run tsc:check",
-        "test": "vitest",
-        "prepack": "npm run build"
+        "test": "vitest"
     },
     "author": "Matt DeKrey; Dark Patterns Digital, LCA; & Principle Studios",
     "license": "BSD-2-Clause",

@@ -16,5 +16,10 @@
 		"declaration": true,
 		"rootDir": ".",
 		"outDir": "../../../artifacts/generators/typescript-rxjs/npm"
-	}
+	},
+	"references": [
+		{
+			"path": "./tsconfig.json"
+		}
+	]
 }

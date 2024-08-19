@@ -1,16 +1,16 @@
 {
 	"references": [
 		{
-			"path": "./generators/typescript/npm"
+			"path": "./generators/typescript/npm/tsconfig.build.json"
 		},
 		{
-			"path": "./generators/typescript-fetch"
+			"path": "./generators/typescript-fetch/tsconfig.node.json"
 		},
 		{
-			"path": "./generators/typescript-msw/npm"
+			"path": "./generators/typescript-msw/npm/tsconfig.node.json"
 		},
 		{
-			"path": "./generators/typescript-rxjs/npm"
+			"path": "./generators/typescript-rxjs/npm/tsconfig.node.json"
 		},
 		{
 			"path": "./lib/OpenApiCodegen.Client.TypeScript.Test/testing"

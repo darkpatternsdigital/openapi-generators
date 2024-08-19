@@ -6,9 +6,5 @@
 	},
 	"extends": "./tsconfig.node.json",
 	"include": ["./src"],
-	"references": [
-		{
-			"path": "./tsconfig.node.json"
-		}
-	]
+	"references": []
 }

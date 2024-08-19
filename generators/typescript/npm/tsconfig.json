@@ -17,8 +17,7 @@
 		"outDir": "../../../artifacts/generators/typescript/npm/",
 		"rootDir": ".",
 		"paths": {
-			"~/*": ["./*"],
-			"@darkpatternsdigital/openapi-codegen-typescript": ["./src"]
+			"~/*": ["./*"]
 		}
 	},
 	"references": [

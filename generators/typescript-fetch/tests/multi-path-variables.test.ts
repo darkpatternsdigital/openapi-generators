@@ -8,9 +8,10 @@ import operations from './generated/multi-path-variables/operations';
 
 const baseDomain = 'http://localhost/';
 const fetchImpl: FetchImplementation<unknown> = (url, params) =>
-	fetch(new URL(url, baseDomain).href, params) as unknown as ReturnType<
-		FetchImplementation<unknown>
-	>;
+	fetch(
+		new URL(url, baseDomain).href,
+		params as fetch.RequestInit,
+	) as unknown as ReturnType<FetchImplementation<unknown>>;
 const fetchApi = toFetchApi(operations, fetchImpl);
 const getPhotoMeta = toMswHandler(operations.getPhotoMeta, {
 	baseDomain,

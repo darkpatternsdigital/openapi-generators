@@ -33,7 +33,6 @@ function fetchRequest<
 		body: TBody[any] | null = null,
 		mimeType: string | null = null,
 	): Promise<TResponse> {
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const requestOpts: AdapterRequestArgs = conversion.request(
 			params,
 			body as TBody[any],
@@ -83,9 +82,7 @@ function applyTransform<TMethods extends RequestConversions>(
 }
 const fetchTemp = applyTransform(allOperations, fetchRequest);
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function testPipe() {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const response: LookupResponses = await fetchLookupRecord(
 		{},
 		{
@@ -94,7 +91,7 @@ async function testPipe() {
 		},
 		'application/json',
 	);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 	const response2: LookupResponses = await fetchTemp.lookupRecord(
 		{},
 		{

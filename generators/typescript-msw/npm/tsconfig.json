@@ -2,8 +2,14 @@
 	"extends": "@darkpatternsdigital/tsconfigs/node-commonjs",
 	"compilerOptions": {
 		"lib": ["esnext", "DOM"],
-		"outDir": "./lib",
-		"rootDir": "./src"
+		"rootDir": ".",
+		"outDir": "../../../artifacts/generators/typescript-msw/npm",
+		"types": ["vitest/globals", "node"]
 	},
-	"include": ["./src"]
+	"exclude": ["./lib"],
+	"references": [
+		{
+			"path": "./tsconfig.build.json"
+		}
+	]
 }

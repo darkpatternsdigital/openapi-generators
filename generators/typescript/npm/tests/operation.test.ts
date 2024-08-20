@@ -37,8 +37,8 @@ lookupRecord.request satisfies TransformRequest<
 >;
 lookupRecord satisfies RequestConversion<
 	any,
-	Object,
-	Object,
+	object,
+	object,
 	LookupRecordRequestBodies,
 	LookupResponses,
 	'body'

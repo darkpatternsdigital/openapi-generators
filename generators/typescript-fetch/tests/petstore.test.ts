@@ -12,9 +12,10 @@ import operations from './generated/petstore/operations';
 
 const baseDomain = 'http://localhost/';
 const fetchImpl: FetchImplementation<unknown> = (url, params) => {
-	return fetch(new URL(url, baseDomain), params) as unknown as ReturnType<
-		FetchImplementation<unknown>
-	>;
+	return fetch(
+		new URL(url, baseDomain),
+		params as fetch.RequestInit,
+	) as unknown as ReturnType<FetchImplementation<unknown>>;
 };
 const fetchApi = toFetchApi(operations, fetchImpl);
 const findPets = toMswHandler(operations.findPets, { baseDomain });

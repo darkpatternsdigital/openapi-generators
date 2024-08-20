@@ -11,9 +11,7 @@ import type {
 
 const applicationJson = 'application/json';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyObject = any;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRequestBodies = any;
 type EmptyObject = Record<never, never>;
 type AnyRequestConversion = RequestConversion<
@@ -29,7 +27,7 @@ type IfKeyless<T, TTrue, TFalse> = EmptyObject extends T ? TTrue : TFalse;
 type FetchRequest = {
 	method: HttpMethod;
 	headers: Record<string, string> | undefined;
-	// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+
 	body: FormData | string;
 };
 

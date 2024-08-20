@@ -5,13 +5,13 @@
 			"path": "./generators/typescript/npm/tsconfig.json"
 		},
 		{
-			"path": "./generators/typescript-fetch/tsconfig.node.json"
+			"path": "./generators/typescript-fetch/tsconfig.json"
 		},
 		{
-			"path": "./generators/typescript-msw/npm/tsconfig.node.json"
+			"path": "./generators/typescript-msw/npm/tsconfig.json"
 		},
 		{
-			"path": "./generators/typescript-rxjs/npm/tsconfig.node.json"
+			"path": "./generators/typescript-rxjs/npm/tsconfig.json"
 		},
 		{
 			"path": "./lib/OpenApiCodegen.Client.TypeScript.Test/testing"

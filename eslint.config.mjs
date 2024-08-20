@@ -7,14 +7,6 @@ import { tseslint } from '@darkpatternsdigital/eslint-config/types';
 export default tseslint.config(
 	includeIgnoreFile(fileURLToPath(import.meta.resolve('./.gitignore'))),
 	...dpeslint,
-	// {
-	//     languageOptions: {
-	//         parserOptions: {
-	//             projectService: false,
-	//             project: ['**/tsconfig.json', '**/tsconfig.*.json'],
-	//         }
-	//     }
-	// },
 	{
 		files: ['**/*.{ts,tsx}'],
 
@@ -68,48 +60,6 @@ export default tseslint.config(
 				{
 					selector: ['objectLiteralProperty', 'import'],
 					format: null,
-				},
-			],
-
-			'import/order': [
-				'error',
-				{
-					pathGroupsExcludedImportTypes: ['react'],
-					'newlines-between': 'never',
-
-					alphabetize: {
-						order: 'asc',
-						caseInsensitive: true,
-					},
-
-					groups: [
-						'external',
-						'builtin',
-						'internal',
-						'parent',
-						'sibling',
-						'index',
-						'object',
-						'unknown',
-					],
-
-					pathGroups: [
-						{
-							pattern: 'react**',
-							group: 'external',
-							position: 'before',
-						},
-						{
-							pattern: '@!(/)*/**',
-							group: 'external',
-							position: 'before',
-						},
-						{
-							pattern: '@/**',
-							group: 'internal',
-							position: 'before',
-						},
-					],
 				},
 			],
 		},

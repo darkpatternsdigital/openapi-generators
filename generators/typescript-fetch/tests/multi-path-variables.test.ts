@@ -1,7 +1,7 @@
-import { toMswHandler } from '@darkpatternsdigital/openapi-codegen-typescript-msw';
 import { setupServer } from 'msw/node';
 import fetch from 'node-fetch';
 import { describe, beforeAll, afterEach, afterAll, it, expect } from 'vitest';
+import { toMswHandler } from '@darkpatternsdigital/openapi-codegen-typescript-msw';
 import { toFetchApi, toFetchOperation } from '../src';
 import type { FetchImplementation } from '../src';
 import operations from './generated/multi-path-variables/operations';

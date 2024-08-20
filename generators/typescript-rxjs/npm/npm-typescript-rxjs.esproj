@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <Target Name="GenerateFromSchema" BeforeTargets="Generation">
-        <Exec Command="pnpm openapi-codegen-typescript -o ./openapi-codegen-options.yaml ../../../schemas/%(TestedSchema.Identity).yaml tests/%(TestedSchema.Identity)/" />
+        <Exec Command="pnpm openapi-codegen-typescript -o ./openapi-codegen-options.yaml ../../../schemas/%(TestedSchema.Identity).yaml tests/generated/%(TestedSchema.Identity)/" />
     </Target>
 
 </Project>

@@ -1,6 +1,6 @@
-import allOperations from './no-refs/operations';
-import type { Responses as LookupResponses } from './no-refs/operations/lookupRecord';
-import { conversion as lookupRecord } from './no-refs/operations/lookupRecord';
+import allOperations from './generated/no-refs/operations';
+import type { Responses as LookupResponses } from './generated/no-refs/operations/lookupRecord';
+import { conversion as lookupRecord } from './generated/no-refs/operations/lookupRecord';
 import type {
 	AdapterRequestArgs,
 	AdapterResponseArgs,

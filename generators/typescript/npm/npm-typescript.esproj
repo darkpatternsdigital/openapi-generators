@@ -24,7 +24,7 @@
     </ItemGroup>
 
     <Target Name="GenerateFromSchema" AfterTargets="NodeBuild">
-        <Exec Command="pnpm node bin/index.js ../../../schemas/%(TestedSchema.Identity).yaml tests/%(TestedSchema.Identity)/" />
+        <Exec Command="pnpm node bin/index.js ../../../schemas/%(TestedSchema.Identity).yaml tests/generated/%(TestedSchema.Identity)/" />
     </Target>
 
     <Target Name="_CopyProjectReferencesToNpmPackage" BeforeTargets="NodeBuild">

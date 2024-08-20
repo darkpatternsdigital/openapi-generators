@@ -9,3 +9,7 @@ node_modules/
 artifacts/
 .idea/
 **/*.tsbuildinfo
+**/generated/**/*
+*/dev-dist/**/*
+Server/wwwroot/assets/**/*
+lib/OpenApiCodegen.Client.TypeScript.Test/testing

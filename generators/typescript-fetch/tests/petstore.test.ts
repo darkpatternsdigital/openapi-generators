@@ -7,8 +7,8 @@ import fetch from 'node-fetch';
 import { describe, beforeAll, afterEach, afterAll, it, expect } from 'vitest';
 import { toFetchApi, toFetchOperation } from '../src';
 import type { FetchImplementation } from '../src';
-import type { NewPet } from './petstore/models';
-import operations from './petstore/operations';
+import type { NewPet } from './generated/petstore/models';
+import operations from './generated/petstore/operations';
 
 const baseDomain = 'http://localhost/';
 const fetchImpl: FetchImplementation<unknown> = (url, params) => {

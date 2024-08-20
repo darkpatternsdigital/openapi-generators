@@ -1,4 +1,4 @@
-import type { StructuredResponses } from './no-refs/operations/lookupRecord';
+import type { StructuredResponses } from './generated/no-refs/operations/lookupRecord';
 import type { StandardResponse } from '~/src/types';
 
 type DestructureMime<

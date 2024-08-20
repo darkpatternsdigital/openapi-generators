@@ -14,6 +14,9 @@ importers:
       '@darkpatternsdigital/openapi-codegen-typescript':
         specifier: workspace:^
         version: link:generators/typescript/npm
+      '@darkpatternsdigital/prettier-config':
+        specifier: ../quickstart-tools/artifacts/package/debug/darkpatternsdigital-prettier-config-0.1.0-local.8.tgz
+        version: file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-prettier-config-0.1.0-local.8.tgz(prettier@3.2.5)
       '@darkpatternsdigital/tsconfigs':
         specifier: ../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.8.tgz
         version: file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.8.tgz(typescript@5.4.5)
@@ -3084,6 +3087,17 @@ packages:
       - eslint-import-resolver-webpack
       - supports-color
       - typescript
+    dev: true
+
+  file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-prettier-config-0.1.0-local.8.tgz(prettier@3.2.5):
+    resolution: {integrity: sha512-7oNTrTms/FAc8Rj3MIi34OHJV82ioOeGwkLNde0tN0DHFCjr+TURQ+cD6NaYQ5MngycNDh3BTkjRCWI0QakZbg==, tarball: file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-prettier-config-0.1.0-local.8.tgz}
+    id: file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-prettier-config-0.1.0-local.8.tgz
+    name: '@darkpatternsdigital/prettier-config'
+    version: 0.1.0-local.8
+    peerDependencies:
+      prettier: '>=3'
+    dependencies:
+      prettier: 3.2.5
     dev: true
 
   file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.8.tgz(typescript@5.4.5):

@@ -19,6 +19,7 @@
   "devDependencies": {
     "@darkpatternsdigital/openapi-codegen-typescript": "workspace:^",
 		"@darkpatternsdigital/eslint-config": "../quickstart-tools/artifacts/package/debug/darkpatternsdigital-eslint-config-0.1.0-local.8.tgz",
+		"@darkpatternsdigital/prettier-config": "../quickstart-tools/artifacts/package/debug/darkpatternsdigital-prettier-config-0.1.0-local.8.tgz",
     "@darkpatternsdigital/tsconfigs": "../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.8.tgz",
     "@eslint/compat": "^1.1.1",
     "@types/node": "^22.4.1",

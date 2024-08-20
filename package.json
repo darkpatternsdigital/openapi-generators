@@ -7,8 +7,8 @@
     "test": "dotnet test",
     "lint": "pnpm run typecheck && pnpm run eslint:check && pnpm run prettier:check",
     "lint:fix": "pnpm run typecheck && pnpm run eslint:fix && pnpm run prettier:fix",
-    "eslint:check": "eslint \"**/*.{cjs,mjs,js,mts,cts,ts,tsx}\"",
-    "eslint:fix": "eslint \"**/*.{cjs,mjs,js,mts,cts,ts,tsx}\" --fix",
+    "eslint:check": "eslint .",
+    "eslint:fix": "eslint . --fix",
     "prettier:check": "prettier --list-different \"**/*.{cjs,mjs,js,mts,cts,ts,tsx,yaml,json}\"",
     "prettier:fix": "prettier --write \"**/*.{cjs,mjs,js,mts,cts,ts,tsx,yaml,json}\"",
     "typecheck": "tsc -b"

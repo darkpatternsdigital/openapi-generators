@@ -1,5 +1,5 @@
 {
-	"extends": "@darkpatternsdigital/tsconfigs/node-commonjs",
+	"extends": "@darkpatternsdigital/tsconfigs/configs/tsconfig.node-cjs.json",
 	"compilerOptions": {
 		"lib": ["esnext", "DOM"],
 		"preserveSymlinks": false,

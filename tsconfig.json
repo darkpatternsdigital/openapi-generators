@@ -1,5 +1,5 @@
 {
-	"extends": "@darkpatternsdigital/tsconfigs/monorepo",
+	"extends": "@darkpatternsdigital/tsconfigs/configs/tsconfig.monorepo.json",
 	"references": [
 		{
 			"path": "./generators/typescript/npm/tsconfig.json"

@@ -9,17 +9,17 @@ importers:
   .:
     devDependencies:
       '@darkpatternsdigital/eslint-config':
-        specifier: ../quickstart-tools/artifacts/package/debug/darkpatternsdigital-eslint-config-0.1.0-local.8.tgz
-        version: file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-eslint-config-0.1.0-local.8.tgz(@typescript-eslint/parser@8.1.0)(eslint@9.9.0)(typescript@5.4.5)
+        specifier: 0.1.0
+        version: 0.1.0(@typescript-eslint/parser@8.1.0)(eslint@9.9.0)(typescript@5.4.5)
       '@darkpatternsdigital/openapi-codegen-typescript':
         specifier: workspace:^
         version: link:generators/typescript/npm
       '@darkpatternsdigital/prettier-config':
-        specifier: ../quickstart-tools/artifacts/package/debug/darkpatternsdigital-prettier-config-0.1.0-local.8.tgz
-        version: file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-prettier-config-0.1.0-local.8.tgz(prettier@3.2.5)
+        specifier: 0.1.0
+        version: 0.1.0(prettier@3.2.5)
       '@darkpatternsdigital/tsconfigs':
-        specifier: ../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.8.tgz
-        version: file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.8.tgz(typescript@5.4.5)
+        specifier: 0.1.0
+        version: 0.1.0(typescript@5.4.5)
       '@eslint/compat':
         specifier: ^1.1.1
         version: 1.1.1
@@ -123,6 +123,43 @@ packages:
     resolution: {integrity: sha512-yn7BklA5acgcBr+7w064fGV+SGIFySjCKpqjcWgBAIfrAkY+4GQTJJHQMeT3V/sgz23VTEVV8TtOmkvJAhFVfg==}
     dependencies:
       statuses: 2.0.1
+
+  /@darkpatternsdigital/eslint-config@0.1.0(@typescript-eslint/parser@8.1.0)(eslint@9.9.0)(typescript@5.4.5):
+    resolution: {integrity: sha512-na/IBNnj5+aiLTHzEPDungBMtr5PBjmpwaZghRr3hUz9GlJ58f8Xut7lJj12urGmR5ll6cwip65aKLhVccf/Ug==}
+    peerDependencies:
+      eslint: '>=9'
+    dependencies:
+      '@eslint/js': 9.9.0
+      '@types/eslint__js': 8.42.3
+      eslint: 9.9.0
+      eslint-config-prettier: 9.1.0(eslint@9.9.0)
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@8.1.0)(eslint@9.9.0)
+      typescript-eslint: 8.1.0(eslint@9.9.0)(typescript@5.4.5)
+    optionalDependencies:
+      '@typescript-eslint/utils': 8.1.0(eslint@9.9.0)(typescript@5.4.5)
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - eslint-import-resolver-typescript
+      - eslint-import-resolver-webpack
+      - supports-color
+      - typescript
+    dev: true
+
+  /@darkpatternsdigital/prettier-config@0.1.0(prettier@3.2.5):
+    resolution: {integrity: sha512-jKluf2N17nxwH+kw1qcOc2ej+xhXSHU41hCSPsWjktp/4wqjJkwgHktTwX0eTW2/UwicohFrwjkItry9UdNrnQ==}
+    peerDependencies:
+      prettier: '>=3'
+    dependencies:
+      prettier: 3.2.5
+    dev: true
+
+  /@darkpatternsdigital/tsconfigs@0.1.0(typescript@5.4.5):
+    resolution: {integrity: sha512-5JGwHmVMc9yLAYhx7+n3B9166Fn7njVZYD0fFvcvNqxBWbAfW3wr7UwLGOPNbVq1o9u/zLoCMP0IbIZuQqMOWw==}
+    peerDependencies:
+      typescript: '*'
+    dependencies:
+      typescript: 5.4.5
+    dev: true
 
   /@esbuild/aix-ppc64@0.20.2:
     resolution: {integrity: sha512-D+EBOJHXdNZcLJRBkhENNG8Wji2kgc9AZ9KiPr1JuZjsNtyHzrsfLRrY0tk2H2aoFu6RANO1y1iPPUCDYWkb5g==}
@@ -3063,50 +3100,4 @@ packages:
   /yocto-queue@1.0.0:
     resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
     engines: {node: '>=12.20'}
-    dev: true
-
-  file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-eslint-config-0.1.0-local.8.tgz(@typescript-eslint/parser@8.1.0)(eslint@9.9.0)(typescript@5.4.5):
-    resolution: {integrity: sha512-uHdNMIvtmvq4MZzsenLbzMzQ7nNv8JXX8AvD3RNGQnIeoh9EFI/9erS+NpywZee4IZdch1X2bVfMXlic04BQFg==, tarball: file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-eslint-config-0.1.0-local.8.tgz}
-    id: file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-eslint-config-0.1.0-local.8.tgz
-    name: '@darkpatternsdigital/eslint-config'
-    version: 0.1.0-local.8
-    peerDependencies:
-      eslint: '>=9'
-    dependencies:
-      '@eslint/js': 9.9.0
-      '@types/eslint__js': 8.42.3
-      eslint: 9.9.0
-      eslint-config-prettier: 9.1.0(eslint@9.9.0)
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@8.1.0)(eslint@9.9.0)
-      typescript-eslint: 8.1.0(eslint@9.9.0)(typescript@5.4.5)
-    optionalDependencies:
-      '@typescript-eslint/utils': 8.1.0(eslint@9.9.0)(typescript@5.4.5)
-    transitivePeerDependencies:
-      - '@typescript-eslint/parser'
-      - eslint-import-resolver-typescript
-      - eslint-import-resolver-webpack
-      - supports-color
-      - typescript
-    dev: true
-
-  file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-prettier-config-0.1.0-local.8.tgz(prettier@3.2.5):
-    resolution: {integrity: sha512-7oNTrTms/FAc8Rj3MIi34OHJV82ioOeGwkLNde0tN0DHFCjr+TURQ+cD6NaYQ5MngycNDh3BTkjRCWI0QakZbg==, tarball: file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-prettier-config-0.1.0-local.8.tgz}
-    id: file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-prettier-config-0.1.0-local.8.tgz
-    name: '@darkpatternsdigital/prettier-config'
-    version: 0.1.0-local.8
-    peerDependencies:
-      prettier: '>=3'
-    dependencies:
-      prettier: 3.2.5
-    dev: true
-
-  file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.8.tgz(typescript@5.4.5):
-    resolution: {integrity: sha512-iedMefun8dU6F+OdxekwI9yLxkzT9zLq0lLt74eF51buPJbMhWYw0HWhesIPBoXH7M7/rCPYOrI8pAWSdG3+fg==, tarball: file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.8.tgz}
-    id: file:../quickstart-tools/artifacts/package/debug/darkpatternsdigital-tsconfigs-0.1.0-local.8.tgz
-    name: '@darkpatternsdigital/tsconfigs'
-    version: 0.1.0-local.8
-    peerDependencies:
-      typescript: '*'
-    dependencies:
-      typescript: 5.4.5
     dev: true

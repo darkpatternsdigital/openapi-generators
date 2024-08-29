@@ -14,7 +14,7 @@
         <ProjectReference Include="$(SolutionRoot)generators\typescript-msw\npm\npm-typescript-msw.esproj" SpecificVersion="true" />
     </ItemGroup>
 
-    <Target Name="Generation" BeforeTargets="NodeBuild" />
+    <Target Name="Generation" BeforeTargets="NodeBuild;PrepareLint" />
 
     <ItemGroup>
         <TestedSchema Include="no-refs" />

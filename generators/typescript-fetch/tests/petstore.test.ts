@@ -1,18 +1,21 @@
+import { setupServer } from 'msw/node';
+import fetch from 'node-fetch';
+import { describe, beforeAll, afterEach, afterAll, it, expect } from 'vitest';
 import {
 	toMswHandler,
 	toMswResponse,
 } from '@darkpatternsdigital/openapi-codegen-typescript-msw';
-import { setupServer } from 'msw/node';
-import fetch from 'node-fetch';
-import { describe, beforeAll, afterEach, afterAll, it, expect } from 'vitest';
 import { toFetchApi, toFetchOperation } from '../src';
 import type { FetchImplementation } from '../src';
-import type { NewPet } from './petstore/models';
-import operations from './petstore/operations';
+import type { NewPet } from './generated/petstore/models';
+import operations from './generated/petstore/operations';
 
 const baseDomain = 'http://localhost/';
 const fetchImpl: FetchImplementation<unknown> = (url, params) => {
-	return fetch(new URL(url, baseDomain), params);
+	return fetch(
+		new URL(url, baseDomain),
+		params as fetch.RequestInit,
+	) as unknown as ReturnType<FetchImplementation<unknown>>;
 };
 const fetchApi = toFetchApi(operations, fetchImpl);
 const findPets = toMswHandler(operations.findPets, { baseDomain });

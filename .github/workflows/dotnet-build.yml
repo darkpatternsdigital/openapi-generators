@@ -16,12 +16,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Setup Node
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20
-        registry-url: ${{ github.ref != 'refs/heads/main' && 'https://npm.pkg.github.com/' || 'https://registry.npmjs.org/' }}
-        scope: '@darkpatterns'
     - uses: ./.github/workflows/parts/cache/
 
     - name: Decode the Signing Key
@@ -81,24 +75,24 @@ jobs:
     # PUBLISH
     - name: Publish NuGet packages to GitHub registry if new version number
       if: ${{ github.ref != 'refs/heads/main' }}
-      run: dotnet nuget push ./artifacts/packages/Release/*.nupkg -k ${GITHUB_TOKEN} -s https://nuget.pkg.github.com/$GITHUB_REPOSITORY_OWNER/index.json --skip-duplicate --no-symbols
+      run: dotnet nuget push ./artifacts/package/release/*.nupkg -k ${GITHUB_TOKEN} -s https://nuget.pkg.github.com/$GITHUB_REPOSITORY_OWNER/index.json --skip-duplicate --no-symbols
       continue-on-error: true # Dependabot and other outside contributors can't push to our GitHub packages
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Publish NuGet packages to NuGet registry if new version number
       if: ${{ github.ref == 'refs/heads/main' }}
-      run: dotnet nuget push ./artifacts/packages/Release/*.nupkg -k ${NUGET_API_KEY} -s https://api.nuget.org/v3/index.json --skip-duplicate --no-symbols
+      run: dotnet nuget push ./artifacts/package/release/*.nupkg -k ${NUGET_API_KEY} -s https://api.nuget.org/v3/index.json --skip-duplicate --no-symbols
       env:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
 
     - name: Set publish NPM registry
       if: ${{ github.ref == 'refs/heads/main' }}
       run:  |
-        echo '@darkpatterns:registry=$NODE_REGISTRY' >> ~/.npmrc
+        echo '@darkpatternsdigital:registry=$NODE_REGISTRY' >> ~/.npmrc
       env:
         NODE_REGISTRY: ${{ github.ref != 'refs/heads/main' && 'https://npm.pkg.github.com/' || 'https://registry.npmjs.org/' }}
     - name: Publish npm packages
-      working-directory: ./artifacts/packages/Release
+      working-directory: ./artifacts/package/release
       run:  |
         find . -type f -regex ".*\.tgz" -exec npm publish "{}" --access public \;
       continue-on-error: true # Dependabot and other outside contributors can't push to our GitHub packages

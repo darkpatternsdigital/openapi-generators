@@ -1,7 +1,10 @@
-/* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
+import type { Observable } from 'rxjs';
+import { of } from 'rxjs';
+import type { AjaxConfig, AjaxError, AjaxResponse } from 'rxjs/ajax';
+import { ajax } from 'rxjs/ajax';
+import { catchError, map } from 'rxjs/operators';
 import type {
 	RequestBodies,
 	RequestConversion,
@@ -11,11 +14,6 @@ import type {
 	RequestConversions,
 	HttpMethod,
 } from '@darkpatternsdigital/openapi-codegen-typescript';
-import type { Observable } from 'rxjs';
-import { of } from 'rxjs';
-import type { AjaxConfig, AjaxError, AjaxResponse } from 'rxjs/ajax';
-import { ajax } from 'rxjs/ajax';
-import { catchError, map } from 'rxjs/operators';
 
 export const toUrl = (prefix: string, requestOpts: AdapterRequestArgs) =>
 	new URL(requestOpts.path, prefix).toString();

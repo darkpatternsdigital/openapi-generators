@@ -9,3 +9,13 @@ node_modules/
 artifacts/
 .idea/
 **/*.tsbuildinfo
+**/generated/**/*
+*/dev-dist/**/*
+Server/wwwroot/assets/**/*
+lib/OpenApiCodegen.Client.TypeScript.Test/testing/*.yaml/
+lib/OpenApiCodegen.Client.TypeScript.Test/testing/dist/
+generators/typescript/npm/dotnet/
+generators/typescript/npm/lib/
+generators/typescript-fetch/lib/
+generators/typescript-msw/npm/lib/
+generators/typescript-rxjs/npm/lib/

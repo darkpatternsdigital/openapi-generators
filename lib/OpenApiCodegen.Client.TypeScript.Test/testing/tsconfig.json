@@ -5,6 +5,7 @@
 		"moduleResolution": "node",
 		"noEmit": false,
 		"composite": true,
-		"outDir": "./dist"
+		"outDir": "./dist",
+		"allowJs": true
 	}
 }

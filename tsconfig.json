@@ -1,20 +1,20 @@
 {
+	"extends": "@darkpatternsdigital/tsconfigs/configs/tsconfig.monorepo.json",
 	"references": [
 		{
-			"path": "./generators/typescript/npm"
+			"path": "./generators/typescript/npm/tsconfig.json"
 		},
 		{
-			"path": "./generators/typescript-fetch"
+			"path": "./generators/typescript-fetch/tsconfig.json"
 		},
 		{
-			"path": "./generators/typescript-msw/npm"
+			"path": "./generators/typescript-msw/npm/tsconfig.json"
 		},
 		{
-			"path": "./generators/typescript-rxjs/npm"
+			"path": "./generators/typescript-rxjs/npm/tsconfig.json"
 		},
 		{
 			"path": "./lib/OpenApiCodegen.Client.TypeScript.Test/testing"
 		}
-	],
-	"exclude": ["./artifacts", "./examples", "./lib", "./generators"]
+	]
 }

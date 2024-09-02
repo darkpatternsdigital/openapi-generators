@@ -1,12 +1,12 @@
-import { toMswHandler } from '@darkpatternsdigital/openapi-codegen-typescript-msw';
 import { setupServer } from 'msw/node';
 import { lastValueFrom } from 'rxjs';
 import { request as ajax } from 'universal-rxjs-ajax';
 import { describe, beforeAll, afterEach, afterAll, it, expect } from 'vitest';
+import { toMswHandler } from '@darkpatternsdigital/openapi-codegen-typescript-msw';
 import { toRxjsApi } from '../src';
-import operations from './petstore/operations';
-import { conversion as addPetConversion } from './petstore/operations/addPet';
-import { conversion as findPetsConversion } from './petstore/operations/findPets';
+import operations from './generated/petstore/operations';
+import { conversion as addPetConversion } from './generated/petstore/operations/addPet';
+import { conversion as findPetsConversion } from './generated/petstore/operations/findPets';
 
 const baseDomain = 'http://localhost/';
 const findPets = toMswHandler(findPetsConversion, { baseDomain });

@@ -1,14 +1,17 @@
-import { toMswHandler } from '@darkpatternsdigital/openapi-codegen-typescript-msw';
 import { setupServer } from 'msw/node';
 import fetch from 'node-fetch';
 import { describe, beforeAll, afterEach, afterAll, it, expect } from 'vitest';
+import { toMswHandler } from '@darkpatternsdigital/openapi-codegen-typescript-msw';
 import { toFetchApi, toFetchOperation } from '../src';
 import type { FetchImplementation } from '../src';
-import operations from './multi-path-variables/operations';
+import operations from './generated/multi-path-variables/operations';
 
 const baseDomain = 'http://localhost/';
 const fetchImpl: FetchImplementation<unknown> = (url, params) =>
-	fetch(new URL(url, baseDomain).href, params);
+	fetch(
+		new URL(url, baseDomain).href,
+		params as fetch.RequestInit,
+	) as unknown as ReturnType<FetchImplementation<unknown>>;
 const fetchApi = toFetchApi(operations, fetchImpl);
 const getPhotoMeta = toMswHandler(operations.getPhotoMeta, {
 	baseDomain,

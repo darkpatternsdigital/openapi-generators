@@ -1,25 +1,28 @@
-<Project Sdk="Microsoft.Build.NoTargets/3.7.0">
+<Project Sdk="DarkPatterns.Build.Pnpm/0.1.14">
     <PropertyGroup>
         <VersionPrefix>$(OpenApiTypeScriptMswVersion)</VersionPrefix>
         <PackPnpmOnBuild Condition=" $(Configuration) == 'Release' ">true</PackPnpmOnBuild>
-
-        <PnpmBuildScript>pnpm run build</PnpmBuildScript>
-        <PnpmTestScript>pnpm test</PnpmTestScript>
     </PropertyGroup>
-    <Import Project="$(RepositoryEngineeringDir)pnpm.targets" />
-
-    <Target Name="GenerateForTests" BeforeTargets="VSTest_pnpm;PrepareLint">
-        <MSBuild Projects="@(ProjectReference)" Targets="Build"/>
-        <Exec WorkingDirectory="$(ProjectDir)" Command="pnpm run pretsc:check" />
-    </Target>
 
     <ItemGroup>
         <CompileOutputs Include="@(Compile->'$(ProjectDir)/lib/%(filename).js');@(Compile->'$(ProjectDir)/lib/%(filename).d.ts')" />
-        <CompileOutputs Include="tsconfig.tsbuildinfo" />
+        <CompileOutputs Include="tsconfig.build.tsbuildinfo" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="$(SolutionRoot)generators\typescript\npm\npm-typescript.esproj" SpecificVersion="true" />
     </ItemGroup>
+
+    <Target Name="Generation" BeforeTargets="NodeBuild;PrepareLint" />
+
+    <ItemGroup>
+        <TestedSchema Include="no-refs" />
+        <TestedSchema Include="petstore" />
+        <TestedSchema Include="headers" />
+    </ItemGroup>
+
+    <Target Name="GenerateFromSchema" BeforeTargets="Generation" DependsOnTargets="ResolveReferences">
+        <Exec Command="pnpm openapi-codegen-typescript -o ./openapi-codegen-options.yaml ../../../schemas/%(TestedSchema.Identity).yaml tests/generated/%(TestedSchema.Identity)/" />
+    </Target>
 
 </Project>

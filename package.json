@@ -7,8 +7,8 @@
     "test": "dotnet test",
     "lint": "pnpm run typecheck && pnpm run eslint:check && pnpm run prettier:check",
     "lint:fix": "pnpm run typecheck && pnpm run eslint:fix && pnpm run prettier:fix",
-    "eslint:check": "eslint \"**/*.{cjs,mjs,js,mts,cts,ts,tsx}\"",
-    "eslint:fix": "eslint \"**/*.{cjs,mjs,js,mts,cts,ts,tsx}\" --fix",
+    "eslint:check": "eslint .",
+    "eslint:fix": "eslint . --fix",
     "prettier:check": "prettier --list-different \"**/*.{cjs,mjs,js,mts,cts,ts,tsx,yaml,json}\"",
     "prettier:fix": "prettier --write \"**/*.{cjs,mjs,js,mts,cts,ts,tsx,yaml,json}\"",
     "typecheck": "tsc -b"
@@ -17,15 +17,25 @@
   "author": "",
   "license": "BSD-2-Clause",
   "devDependencies": {
-    "@types/eslint": "^8.56.10",
-    "@typescript-eslint/eslint-plugin": "^7.11.0",
-    "@typescript-eslint/parser": "^7.11.0",
-    "eslint": "^8.56.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-import": "^2.29.1",
+    "@darkpatternsdigital/openapi-codegen-typescript": "workspace:^",
+		"@darkpatternsdigital/eslint-config": "0.1.0",
+		"@darkpatternsdigital/prettier-config": "0.1.0",
+    "@darkpatternsdigital/tsconfigs": "0.1.0",
+    "@eslint/compat": "^1.1.1",
+    "@types/node": "^22.4.1",
+		"eslint": "^9.9.0",
     "prettier": "^3.2.5",
     "typescript": "^5.4.5",
+    "undici-types": "^6.19.6",
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^1.6.0"
-  }
+  },
+  "packageManager": "pnpm@8.15.9+sha512.499434c9d8fdd1a2794ebf4552b3b25c0a633abcee5bb15e7b5de90f32f47b513aca98cd5cfd001c31f0db454bc3804edccd578501e4ca293a6816166bbd9f81",
+	"pnpm": {
+		"peerDependencyRules": {
+			"allowedVersions": {
+				"eslint-plugin-import@2.29.1>eslint": ">=9"
+			}
+		}
+	}
 }

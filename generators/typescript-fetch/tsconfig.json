@@ -1,16 +1,16 @@
 {
+	"extends": "@darkpatternsdigital/tsconfigs/configs/tsconfig.node-cjs.json",
 	"compilerOptions": {
-		"outDir": "./lib",
-		"noEmit": false,
-		"declaration": true,
-		"rootDir": "./src",
-		"composite": true
+		"lib": ["esnext", "DOM"],
+		"rootDir": ".",
+		"outDir": "../../artifacts/generators/typescript-fetch/",
+		"types": ["node"]
 	},
-	"extends": "./tsconfig.node.json",
-	"include": ["./src", "./types.d.ts"],
+	"exclude": ["./lib"],
+	"include": ["."],
 	"references": [
 		{
-			"path": "./tsconfig.node.json"
+			"path": "./tsconfig.build.json"
 		}
 	]
 }

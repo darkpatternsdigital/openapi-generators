@@ -1,15 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/naming-convention */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-import type {
-	AdapterRequestArgs,
-	HttpMethod,
-	RequestBodies,
-	RequestConversion,
-	StandardResponse,
-	TransformCallType,
-} from '@darkpatternsdigital/openapi-codegen-typescript';
 import type {
 	HttpHandler,
 	DefaultRequestMultipartBody,
@@ -19,6 +7,14 @@ import type {
 } from 'msw';
 import { http, HttpResponse } from 'msw';
 import type { ResponseResolverInfo } from 'msw/lib/core/handlers/RequestHandler';
+import type {
+	AdapterRequestArgs,
+	HttpMethod,
+	RequestBodies,
+	RequestConversion,
+	StandardResponse,
+	TransformCallType,
+} from '@darkpatternsdigital/openapi-codegen-typescript';
 
 function deepEqual(x: unknown, y: unknown): boolean {
 	const tx = typeof x,

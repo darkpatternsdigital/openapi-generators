@@ -20,18 +20,8 @@ runs:
 
     # PNPM install and cache
     - uses: pnpm/action-setup@v2
+    - name: Setup Node
+      uses: actions/setup-node@v4
       with:
-        version: 8
-
-    - name: Get pnpm store directory
-      id: pnpm-cache-dir
-      shell: pwsh
-      run: echo "dir=$(pnpm store path --silent)" >> ${env:GITHUB_OUTPUT}
-    - uses: actions/cache@v3
-      name: Setup pnpm cache
-      id: pnpm-cache # use this to check for `cache-hit` ==> if: steps.pnpm-cache.outputs.cache-hit != 'true'
-      with:
-        path: ${{ steps.pnpm-cache-dir.outputs.dir }}
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-        restore-keys: |
-          ${{ runner.os }}-pnpm-store-
+        node-version: 20
+        cache: pnpm

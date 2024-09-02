@@ -1,11 +1,11 @@
 import { describe, it } from 'vitest';
-import type allOperations from './no-refs/operations';
-import { conversion as getPhoto } from './no-refs/operations/getPhoto';
+import type allOperations from './generated/no-refs/operations';
+import { conversion as getPhoto } from './generated/no-refs/operations/getPhoto';
 import type {
 	RequestBodies as LookupRecordRequestBodies,
 	Responses as LookupResponses,
-} from './no-refs/operations/lookupRecord';
-import { conversion as lookupRecord } from './no-refs/operations/lookupRecord';
+} from './generated/no-refs/operations/lookupRecord';
+import { conversion as lookupRecord } from './generated/no-refs/operations/lookupRecord';
 import type { AdapterRequestArgs } from '~/src/inputs-outputs';
 import type {
 	RequestConversion,
@@ -37,8 +37,8 @@ lookupRecord.request satisfies TransformRequest<
 >;
 lookupRecord satisfies RequestConversion<
 	any,
-	Object,
-	Object,
+	object,
+	object,
 	LookupRecordRequestBodies,
 	LookupResponses,
 	'body'

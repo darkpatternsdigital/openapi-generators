@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const { join } = require('path');
+const nodePath = require('path');
 
-const dllPath = join(
+const dllPath = nodePath.join(
 	__dirname,
 	'../dotnet/DarkPatterns.OpenApiCodegen.Client.TypeScript.dll',
 );

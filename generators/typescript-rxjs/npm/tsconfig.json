@@ -1,18 +1,15 @@
 {
+	"extends": "@darkpatternsdigital/tsconfigs/configs/tsconfig.node-cjs.json",
 	"compilerOptions": {
-		"outDir": "./lib",
-		"noEmit": false,
-		"declaration": true,
-		"rootDir": "./src"
+		"lib": ["esnext", "DOM"],
+		"rootDir": ".",
+		"outDir": "../../../artifacts/generators/typescript-rxjs/npm",
+		"types": ["vitest/globals", "node"]
 	},
-	"extends": "./tsconfig.node.json",
-	"include": ["./src"],
+	"exclude": ["./lib"],
 	"references": [
 		{
-			"path": "./tsconfig.node.json"
-		},
-		{
-			"path": "../../typescript-msw/npm/tsconfig.json"
+			"path": "./tsconfig.build.json"
 		}
 	]
 }

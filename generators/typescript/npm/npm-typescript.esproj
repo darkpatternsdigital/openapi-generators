@@ -1,12 +1,8 @@
-<Project Sdk="Microsoft.Build.NoTargets/3.7.0">
+<Project Sdk="DarkPatterns.Build.Pnpm/0.1.14">
     <PropertyGroup>
         <VersionPrefix>$(OpenApiTypeScriptClientVersion)</VersionPrefix>
         <PackPnpmOnBuild Condition=" $(Configuration) == 'Release' ">true</PackPnpmOnBuild>
-
-        <PnpmBuildScript>pnpm run build</PnpmBuildScript>
-        <PnpmTestScript>pnpm test</PnpmTestScript>
     </PropertyGroup>
-    <Import Project="$(RepositoryEngineeringDir)pnpm.targets" />
 
     <ItemGroup>
         <CompileOutputs Include="@(Compile->'$(ProjectDir)/lib/%(filename).js');@(Compile->'$(ProjectDir)/lib/%(filename).d.ts')" />
@@ -21,11 +17,17 @@
         <RemoveDir Directories="$(ProjectDir)dotnet" />
     </Target>
 
-    <Target Name="GenerateForTests" DependsOnTargets="NodeBuild" BeforeTargets="VSTest_pnpm;PrepareLint">
-        <Exec WorkingDirectory="$(ProjectDir)" Command="pnpm run pretsc:check" />
+    <ItemGroup>
+        <TestedSchema Include="no-refs" />
+        <TestedSchema Include="petstore" />
+        <TestedSchema Include="headers" />
+    </ItemGroup>
+
+    <Target Name="GenerateFromSchema" DependsOnTargets="NodeBuild" BeforeTargets="VSTest_pnpm;PrepareLint">
+        <Exec Command="pnpm node bin/index.js ../../../schemas/%(TestedSchema.Identity).yaml tests/generated/%(TestedSchema.Identity)/" />
     </Target>
 
-    <Target Name="_CopyProjectReferencesToNpmPackage" BeforeTargets="NodeBuild">
+    <Target Name="_CopyProjectReferencesToNpmPackage" DependsOnTargets="ResolveReferences" BeforeTargets="NodeBuild">
         <MSBuild Projects="@(ProjectReference)" Targets="Build"/>
         <MSBuild Projects="@(ProjectReference)"
                 Targets="PublishItemsOutputGroup">

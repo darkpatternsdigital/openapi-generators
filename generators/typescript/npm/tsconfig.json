@@ -1,25 +1,14 @@
 {
+	"extends": "@darkpatternsdigital/tsconfigs/configs/tsconfig.node-cjs.json",
 	"compilerOptions": {
-		"target": "es5",
 		"lib": ["esnext", "DOM"],
-		"allowJs": true,
-		"skipLibCheck": true,
-		"esModuleInterop": true,
-		"strict": true,
-		"forceConsistentCasingInFileNames": true,
-		"module": "commonjs",
-		"moduleResolution": "node",
-		"resolveJsonModule": true,
-		"isolatedModules": true,
-		"noEmit": false,
-		"composite": true,
-		"declaration": true,
+		"preserveSymlinks": false,
 		"outDir": "../../../artifacts/generators/typescript/npm/",
 		"rootDir": ".",
 		"paths": {
-			"~/*": ["./*"],
-			"@darkpatternsdigital/openapi-codegen-typescript": ["./src"]
-		}
+			"~/*": ["./*"]
+		},
+		"types": ["node", "vitest/globals"]
 	},
 	"references": [
 		{

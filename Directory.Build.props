@@ -33,9 +33,9 @@
 		<OpenApiMvcServerVersion>0.17.1</OpenApiMvcServerVersion>
 		<OpenApiCSharpClientVersion>0.17.1</OpenApiCSharpClientVersion>
 		<OpenApiTypeScriptClientVersion>0.10.0</OpenApiTypeScriptClientVersion>
-		<OpenApiTypeScriptRxjsClientVersion>0.8.0</OpenApiTypeScriptRxjsClientVersion>
-		<OpenApiTypeScriptMswVersion>0.8.0</OpenApiTypeScriptMswVersion>
-		<OpenApiTypeScriptFetchVersion>0.8.0</OpenApiTypeScriptFetchVersion>
+		<OpenApiTypeScriptRxjsClientVersion>0.8.1</OpenApiTypeScriptRxjsClientVersion>
+		<OpenApiTypeScriptMswVersion>0.8.1</OpenApiTypeScriptMswVersion>
+		<OpenApiTypeScriptFetchVersion>0.8.1</OpenApiTypeScriptFetchVersion>
 		<!-- Should be incremented anytime one of the internal libraries changes -->
 		<SharedAnalyzerLibrariesVersion>0.7.0</SharedAnalyzerLibrariesVersion>
 	</PropertyGroup>

@@ -1,4 +1,4 @@
-﻿<Project Sdk="DarkPatterns.Build.Pnpm/0.1.13">
+﻿<Project Sdk="DarkPatterns.Build.Pnpm/0.1.14">
 	<PropertyGroup>
 		<VersionPrefix>$(OpenApiTypeScriptClientVersion)</VersionPrefix>
 		<PackPnpmOnBuild Condition=" $(Configuration) == 'Release' ">false</PackPnpmOnBuild>
@@ -32,7 +32,6 @@
 	        BeforeTargets="Generate"
 	        Inputs="@(Schemas);@(SchemaGenerationScripts)"
 	        Outputs="@(SchemaFolderOutputs)">
-		<MSBuild Projects="@(ProjectReference)" Targets="Build" />
 		<Exec WorkingDirectory="$(ProjectDir)"
 			Command="pnpm openapi-codegen-typescript &quot;%(Schemas.Identity)&quot; &quot;$([MSBuild]::NormalizeDirectory('%(Schemas.DestinationFolder)').Replace('\', '/'))&quot; -c" />
 	</Target>

@@ -3,7 +3,7 @@ WORKDIR /src
 
 COPY ./global.json ./
 COPY ./Directory.Build.props ./
-COPY ./artifacts/packages/release/ ./artifacts/packages/release/
+COPY ./artifacts/package/release/ ./artifacts/package/release/
 COPY ./examples/dotnetcore-server-interfaces/dotnetcore-server-interfaces.sln .
 COPY ./examples/dotnetcore-server-interfaces/ServerInterfacesExample/ServerInterfacesExample.csproj ./ServerInterfacesExample/
 COPY ./examples/dotnetcore-server-interfaces/ServerInterfacesExample.Oauth/ServerInterfacesExample.Oauth.csproj ./ServerInterfacesExample.Oauth/

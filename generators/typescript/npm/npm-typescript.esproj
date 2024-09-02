@@ -23,11 +23,11 @@
         <TestedSchema Include="headers" />
     </ItemGroup>
 
-    <Target Name="GenerateFromSchema" AfterTargets="NodeBuild">
+    <Target Name="GenerateFromSchema" DependsOnTargets="NodeBuild" BeforeTargets="VSTest_pnpm;PrepareLint">
         <Exec Command="pnpm node bin/index.js ../../../schemas/%(TestedSchema.Identity).yaml tests/generated/%(TestedSchema.Identity)/" />
     </Target>
 
-    <Target Name="_CopyProjectReferencesToNpmPackage" BeforeTargets="NodeBuild">
+    <Target Name="_CopyProjectReferencesToNpmPackage" DependsOnTargets="ResolveReferences" BeforeTargets="NodeBuild">
         <MSBuild Projects="@(ProjectReference)" Targets="Build"/>
         <MSBuild Projects="@(ProjectReference)"
                 Targets="PublishItemsOutputGroup">

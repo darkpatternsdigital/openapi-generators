@@ -1,6 +1,6 @@
 {
   "name": "@darkpatternsdigital/openapi-codegen-typescript-rxjs",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "A typescript client code generator for principled development using RxJS",
   "scripts": {
     "build": "tsc -b tsconfig.json",

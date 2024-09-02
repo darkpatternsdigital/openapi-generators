@@ -1,4 +1,4 @@
-﻿<Project Sdk="DarkPatterns.Build.Pnpm/0.1.11">
+﻿<Project Sdk="DarkPatterns.Build.Pnpm/0.1.13">
 	<PropertyGroup>
 		<VersionPrefix>$(OpenApiTypeScriptClientVersion)</VersionPrefix>
 		<PackPnpmOnBuild Condition=" $(Configuration) == 'Release' ">false</PackPnpmOnBuild>
@@ -28,7 +28,7 @@
 	</Target>
 
 	<Target Name="GenerateSchemaFolders"
-	        DependsOnTargets="PnpmInstall"
+	        DependsOnTargets="PnpmInstall;ResolveReferences"
 	        BeforeTargets="Generate"
 	        Inputs="@(Schemas);@(SchemaGenerationScripts)"
 	        Outputs="@(SchemaFolderOutputs)">

@@ -1,4 +1,4 @@
-<Project Sdk="DarkPatterns.Build.Pnpm/0.1.11">
+<Project Sdk="DarkPatterns.Build.Pnpm/0.1.13">
     <PropertyGroup>
         <VersionPrefix>$(OpenApiTypeScriptFetchVersion)</VersionPrefix>
         <PackPnpmOnBuild Condition=" $(Configuration) == 'Release' ">true</PackPnpmOnBuild>

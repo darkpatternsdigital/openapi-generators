@@ -34,7 +34,7 @@ public class ClientGenerator : IOpenApiCodeGenerator
 
 	public GenerationResult Generate(AdditionalTextInfo entrypoint, IEnumerable<AdditionalTextInfo> other)
 	{
-		var options = LoadOptionsFromMetadata(entrypoint.Metadata);
+		var options = LoadOptionsFromMetadata(entrypoint.Metadata, other);
 		var (baseDocument, registry) = LoadDocument(entrypoint, options, other);
 		var parseResult = CommonParsers.DefaultParsers.Parse(baseDocument, registry);
 		var parsedDiagnostics = parseResult.Diagnostics.Select(DiagnosticsConversion.ToDiagnosticInfo).ToArray();
@@ -70,20 +70,13 @@ public class ClientGenerator : IOpenApiCodeGenerator
 
 	private static ISourceProvider CreateSourceProvider(Transformations.Abstractions.OpenApiDocument document, DocumentRegistry registry, CSharpSchemaOptions options, IReadOnlyDictionary<string, string?> opt)
 	{
-		var documentNamespace = opt[propNamespace];
-		if (string.IsNullOrEmpty(documentNamespace))
-			documentNamespace = GetStandardNamespace(opt, options);
-
-		return document.BuildCSharpClientSourceProvider(registry, GetVersionInfo(), documentNamespace, options);
+		return document.BuildCSharpClientSourceProvider(registry, GetVersionInfo(), options);
 	}
 
-	private static CSharpSchemaOptions LoadOptionsFromMetadata(IReadOnlyDictionary<string, string?> additionalTextMetadata)
+	private static CSharpSchemaOptions LoadOptionsFromMetadata(IReadOnlyDictionary<string, string?> entrypointMetadata, IEnumerable<AdditionalTextInfo> additionalSchemas)
 	{
-		return LoadOptions(additionalTextMetadata[propConfig]);
-	}
-
-	private static CSharpSchemaOptions LoadOptions(string? optionsFiles)
-	{
+		var fullNamespace = entrypointMetadata[propNamespace];
+		var optionsFiles = entrypointMetadata[propConfig];
 		using var defaultJsonStream = CSharpSchemaOptions.GetDefaultOptionsJson();
 		var builder = new ConfigurationBuilder();
 		builder.AddYamlStream(defaultJsonStream);
@@ -100,6 +93,14 @@ public class ClientGenerator : IOpenApiCodeGenerator
 		var result = builder.Build().Get<CSharpSchemaOptions>();
 		// TODO - generate diagnostic instead of throwing exception
 		if (result == null) throw new InvalidOperationException("Could not build schema options");
+
+		result.DefaultNamespace = fullNamespace ?? GetStandardNamespace(entrypointMetadata, result);
+		foreach (var entry in additionalSchemas)
+		{
+			var ns = GetStandardNamespace(entry.Metadata, result);
+			// if (result.DefaultNamespace != ns)
+			// 	result.NamespacesBySchema[ToInternalUri(entry)] = ns;
+		}
 		return result;
 	}
 
@@ -108,12 +109,12 @@ public class ClientGenerator : IOpenApiCodeGenerator
 		return $"{typeof(CSharpClientTransformer).FullName} v{typeof(CSharpClientTransformer).Assembly.GetName().Version}";
 	}
 
-	private static string? GetStandardNamespace(IReadOnlyDictionary<string, string?> opt, CSharpSchemaOptions options)
+	private static string GetStandardNamespace(IReadOnlyDictionary<string, string?> metadata, CSharpSchemaOptions options)
 	{
-		var identity = opt["identity"];
-		var link = opt["link"];
-		opt.TryGetValue("build_property.projectdir", out var projectDir);
-		opt.TryGetValue("build_property.rootnamespace", out var rootNamespace);
+		var identity = metadata["identity"];
+		var link = metadata["link"];
+		metadata.TryGetValue("build_property.projectdir", out var projectDir);
+		metadata.TryGetValue("build_property.rootnamespace", out var rootNamespace);
 
 		return CSharpNaming.ToNamespace(rootNamespace, projectDir, identity, link, options.ReservedIdentifiers());
 	}

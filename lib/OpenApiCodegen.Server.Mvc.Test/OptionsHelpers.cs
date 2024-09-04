@@ -16,6 +16,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc
 			configureBuilder?.Invoke(builder);
 			var result = builder.Build().Get<CSharpServerSchemaOptions>();
 			if (result == null) throw new InvalidOperationException("Could not load default test");
+			result.DefaultNamespace = "DPD.Controller";
 			return result;
 		}
 	}

@@ -16,6 +16,7 @@ namespace DarkPatterns.OpenApiCodegen.Client.CSharp
 			configureBuilder?.Invoke(builder);
 			var result = builder.Build().Get<CSharpSchemaOptions>()
 					?? throw new InvalidOperationException("Could not construct options");
+			result.DefaultNamespace = "DPD.Controller";
 			return result;
 		}
 	}

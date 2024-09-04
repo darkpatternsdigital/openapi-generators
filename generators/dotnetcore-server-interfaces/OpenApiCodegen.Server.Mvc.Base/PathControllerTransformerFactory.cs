@@ -6,7 +6,7 @@ namespace DarkPatterns.OpenApi.CSharp
 {
 	public static class PathControllerTransformerFactory
 	{
-		public static ISourceProvider BuildCSharpPathControllerSourceProvider(this OpenApiDocument document, DocumentRegistry documentRegistry, string versionInfo, string? documentNamespace, CSharpServerSchemaOptions options)
+		public static ISourceProvider BuildCSharpPathControllerSourceProvider(this OpenApiDocument document, DocumentRegistry documentRegistry, string versionInfo, CSharpServerSchemaOptions options)
 		{
 			ISourceProvider? result;
 			var handlebarsFactory = new HandlebarsFactory(ControllerHandlebarsTemplateProcess.CreateHandlebars);
@@ -18,8 +18,8 @@ namespace DarkPatterns.OpenApi.CSharp
 				InfoEmail: document.Info.Contact?.Email,
 				CodeGeneratorVersionInfo: versionInfo
 			);
-			var schemaProvider = new CSharpSchemaSourceProvider(documentRegistry, schemaRegistry, documentNamespace ?? "", options, handlebarsFactory, header);
-			var controllerTransformer = new CSharpControllerTransformer(documentRegistry, schemaRegistry, document, documentNamespace ?? "", options, versionInfo, handlebarsFactory);
+			var schemaProvider = new CSharpSchemaSourceProvider(documentRegistry, schemaRegistry, options, handlebarsFactory, header);
+			var controllerTransformer = new CSharpControllerTransformer(documentRegistry, schemaRegistry, document, options, versionInfo, handlebarsFactory);
 
 			var operationGrouping =
 				new PathControllerSourceTransformer(documentRegistry, schemaRegistry, document, controllerTransformer, (operation, path) =>

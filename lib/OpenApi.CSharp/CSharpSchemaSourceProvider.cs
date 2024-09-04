@@ -21,17 +21,15 @@ public class CSharpSchemaSourceProvider : SchemaSourceProvider
 	private readonly DocumentRegistry documentRegistry;
 	private readonly ISchemaRegistry schemaRegistry;
 	private readonly CSharpInlineSchemas inlineSchemas;
-	private readonly string baseNamespace;
 	private readonly CSharpSchemaOptions options;
 	private readonly HandlebarsFactory handlebarsFactory;
 	private readonly PartialHeader header;
 
-	public CSharpSchemaSourceProvider(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, string baseNamespace, CSharpSchemaOptions options, HandlebarsFactory handlebarsFactory, Templates.PartialHeader header) : base(schemaRegistry)
+	public CSharpSchemaSourceProvider(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, CSharpSchemaOptions options, HandlebarsFactory handlebarsFactory, Templates.PartialHeader header) : base(schemaRegistry)
 	{
 		this.documentRegistry = documentRegistry;
 		this.schemaRegistry = schemaRegistry;
 		this.inlineSchemas = new CSharpInlineSchemas(options, documentRegistry);
-		this.baseNamespace = baseNamespace;
 		this.options = options;
 		this.handlebarsFactory = handlebarsFactory;
 		this.header = header;
@@ -40,7 +38,7 @@ public class CSharpSchemaSourceProvider : SchemaSourceProvider
 	protected override SourceEntry? GetSourceEntry(JsonSchema entry, OpenApiTransformDiagnostic diagnostic)
 	{
 		if (!inlineSchemas.ProduceSourceEntry(entry)) return null;
-		var targetNamespace = baseNamespace;
+		var targetNamespace = options.GetNamespace(entry.Metadata.Id);
 		var className = GetClassName(entry);
 
 		Templates.Model? model = GetModel(entry, diagnostic, className);

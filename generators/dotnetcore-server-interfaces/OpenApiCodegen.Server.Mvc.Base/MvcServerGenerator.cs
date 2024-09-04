@@ -45,7 +45,7 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 		if (!parseResult.HasDocument || parseResult.Document == null)
 			return new GenerationResult(Array.Empty<OpenApiCodegen.SourceEntry>(), parsedDiagnostics);
 
-		var sourceProvider = CreateSourceProvider(parseResult.Document, registry, options, entrypoint.Metadata);
+		var sourceProvider = CreateSourceProvider(parseResult.Document, registry, options);
 		var openApiDiagnostic = new OpenApiTransformDiagnostic();
 
 		try
@@ -72,22 +72,15 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 #pragma warning restore CA1031 // Do not catch general exception types
 	}
 
-	private static ISourceProvider CreateSourceProvider(OpenApiDocument document, DocumentRegistry registry, CSharpServerSchemaOptions options, IReadOnlyDictionary<string, string?> opt)
+	private static ISourceProvider CreateSourceProvider(OpenApiDocument document, DocumentRegistry registry, CSharpServerSchemaOptions options)
 	{
-		var documentNamespace = opt[propNamespace];
-		if (string.IsNullOrEmpty(documentNamespace))
-			documentNamespace = GetStandardNamespace(opt, options);
-
-		return document.BuildCSharpPathControllerSourceProvider(registry, GetVersionInfo(), documentNamespace, options);
+		return document.BuildCSharpPathControllerSourceProvider(registry, GetVersionInfo(), options);
 	}
 
-	private static CSharpServerSchemaOptions LoadOptionsFromMetadata(IReadOnlyDictionary<string, string?> additionalTextMetadata, IEnumerable<AdditionalTextInfo> additionalSchemas)
+	private static CSharpServerSchemaOptions LoadOptionsFromMetadata(IReadOnlyDictionary<string, string?> entrypointMetadata, IEnumerable<AdditionalTextInfo> additionalSchemas)
 	{
-		return LoadOptions(additionalTextMetadata[propConfig], additionalTextMetadata[propPathPrefix]);
-	}
-
-	private static CSharpServerSchemaOptions LoadOptions(string? optionsFiles, string? pathPrefix)
-	{
+		var optionsFiles = entrypointMetadata[propConfig];
+		var pathPrefix = entrypointMetadata[propPathPrefix];
 		using var defaultJsonStream = CSharpSchemaOptions.GetDefaultOptionsJson();
 		var builder = new ConfigurationBuilder();
 		builder.AddYamlStream(defaultJsonStream);
@@ -108,6 +101,14 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 		if (pathPrefix != null)
 			result.PathPrefix = pathPrefix;
 
+		result.DefaultNamespace = GetStandardNamespace(entrypointMetadata, result);
+		foreach (var entry in additionalSchemas)
+		{
+			var ns = GetStandardNamespace(entry.Metadata, result);
+			if (result.DefaultNamespace != ns)
+				result.NamespacesBySchema[ToInternalUri(entry)] = ns;
+		}
+
 		return result;
 	}
 
@@ -116,12 +117,14 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 		return $"{typeof(CSharpControllerTransformer).FullName} v{typeof(CSharpControllerTransformer).Assembly.GetName().Version}";
 	}
 
-	private static string? GetStandardNamespace(IReadOnlyDictionary<string, string?> opt, CSharpSchemaOptions options)
+	private static string GetStandardNamespace(IReadOnlyDictionary<string, string?> metadata, CSharpSchemaOptions options)
 	{
-		var identity = opt[propIdentity];
-		var link = opt[propLink];
-		opt.TryGetValue("build_property.projectdir", out var projectDir);
-		opt.TryGetValue("build_property.rootnamespace", out var rootNamespace);
+		var fullNamespace = metadata[propNamespace];
+		if (fullNamespace != null) return fullNamespace;
+		var identity = metadata[propIdentity];
+		var link = metadata[propLink];
+		metadata.TryGetValue("build_property.projectdir", out var projectDir);
+		metadata.TryGetValue("build_property.rootnamespace", out var rootNamespace);
 
 		return CSharpNaming.ToNamespace(rootNamespace, projectDir, identity, link, options.ReservedIdentifiers());
 	}

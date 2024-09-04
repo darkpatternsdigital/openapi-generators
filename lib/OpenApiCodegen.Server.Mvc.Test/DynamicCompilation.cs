@@ -49,7 +49,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc
 			Assert.NotNull(docResult.Document);
 			var options = LoadOptions();
 
-			var transformer = docResult.Document.BuildCSharpPathControllerSourceProvider(registry, "", "DPD.Controller", options);
+			var transformer = docResult.Document.BuildCSharpPathControllerSourceProvider(registry, "", options);
 			OpenApiTransformDiagnostic diagnostic = new();
 
 			var entries = transformer.GetSources(diagnostic).ToArray();

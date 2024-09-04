@@ -12,6 +12,8 @@ namespace DarkPatterns.OpenApi.CSharp
 		public string MapType { get; set; } = "global::System.Collections.Generic.Dictionary<string, {}>";
 		public string ArrayType { get; set; } = "global::System.Collections.Generic.IEnumerable<{}>";
 		public string FallbackType { get; set; } = "object";
+		public string DefaultNamespace { get; set; } = "";
+		public Dictionary<Uri, string> NamespacesBySchema { get; set; } = new();
 		public Dictionary<string, OpenApiTypeFormats> Types { get; } = new();
 
 		internal string Find(string type, string? format)
@@ -44,6 +46,12 @@ namespace DarkPatterns.OpenApi.CSharp
 			).Concat(
 				extraReserved
 			);
+
+		internal string GetNamespace(Uri schemaId)
+		{
+			if (NamespacesBySchema.TryGetValue(schemaId, out var result)) return result;
+			return DefaultNamespace;
+		}
 	}
 
 	public class OpenApiTypeFormats

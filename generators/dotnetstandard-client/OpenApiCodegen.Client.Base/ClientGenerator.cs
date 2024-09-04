@@ -27,16 +27,21 @@ public class ClientGenerator : IOpenApiCodeGenerator
 	};
 	public IEnumerable<string> MetadataKeys => metadataKeys;
 
-	public GenerationResult Generate(string documentPath, string documentContents, IReadOnlyDictionary<string, string?> additionalTextMetadata)
+	public AdditionalTextInfo ToFileInfo(string documentPath, string documentContents, IReadOnlyDictionary<string, string?> additionalTextMetadata)
 	{
-		var options = LoadOptionsFromMetadata(additionalTextMetadata);
-		var (baseDocument, registry) = LoadDocument(documentPath, documentContents, options);
+		return new(Path: documentPath, Contents: documentContents, Metadata: additionalTextMetadata);
+	}
+
+	public GenerationResult Generate(AdditionalTextInfo entrypoint, IEnumerable<AdditionalTextInfo> other)
+	{
+		var options = LoadOptionsFromMetadata(entrypoint.Metadata);
+		var (baseDocument, registry) = LoadDocument(entrypoint, options, other);
 		var parseResult = CommonParsers.DefaultParsers.Parse(baseDocument, registry);
 		var parsedDiagnostics = parseResult.Diagnostics.Select(DiagnosticsConversion.ToDiagnosticInfo).ToArray();
 		if (!parseResult.HasDocument || parseResult.Document == null)
 			return new GenerationResult(Array.Empty<OpenApiCodegen.SourceEntry>(), parsedDiagnostics);
 
-		var sourceProvider = CreateSourceProvider(parseResult.Document, registry, options, additionalTextMetadata);
+		var sourceProvider = CreateSourceProvider(parseResult.Document, registry, options, entrypoint.Metadata);
 		var openApiDiagnostic = new OpenApiTransformDiagnostic();
 
 		try
@@ -113,20 +118,23 @@ public class ClientGenerator : IOpenApiCodeGenerator
 		return CSharpNaming.ToNamespace(rootNamespace, projectDir, identity, link, options.ReservedIdentifiers());
 	}
 
-	private static Uri ToInternalUri(string documentPath) =>
-		new Uri(new Uri(documentPath).AbsoluteUri);
+	private static Uri ToInternalUri(AdditionalTextInfo document) =>
+		new Uri(new Uri(document.Path).AbsoluteUri);
 
-	private static (IDocumentReference, DocumentRegistry) LoadDocument(string documentPath, string documentContents, CSharpSchemaOptions options)
+	private static (IDocumentReference, DocumentRegistry) LoadDocument(AdditionalTextInfo document, CSharpSchemaOptions options, IEnumerable<AdditionalTextInfo> additionalSchemas)
 	{
 		return DocumentResolverFactory.FromInitialDocumentInMemory(
-			ToInternalUri(documentPath),
-			documentContents,
-			ToResolverOptions(options)
+			ToInternalUri(document),
+			document.Contents,
+			ToResolverOptions(options, additionalSchemas)
 		);
 	}
 
-	private static DocumentRegistryOptions ToResolverOptions(CSharpSchemaOptions options) =>
-		new DocumentRegistryOptions([
+	private static DocumentRegistryOptions ToResolverOptions(CSharpSchemaOptions options, IEnumerable<AdditionalTextInfo> additionalSchemas) =>
+		new DocumentRegistryOptions(
+			additionalSchemas
+				.Select(doc => DocumentResolverFactory.LoadAs(ToInternalUri(doc), doc.Contents))
+				.ToArray()
 		// TODO: use the `options` to determine how to resolve additional documents
-		]);
+		);
 }

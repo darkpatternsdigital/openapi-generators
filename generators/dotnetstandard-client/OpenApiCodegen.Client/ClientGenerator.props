@@ -17,13 +17,16 @@
 
 	<Target Name="_InjectAdditionalFilesForOpenApiSchemaClient" BeforeTargets="GenerateMSBuildEditorConfigFileShouldRun">
 		<ItemGroup>
-			<OpenApiSchemaClient>
-				<WorkingOutputPath Condition=" '%(OpenApiSchemaClient.Link)' != '' ">$([System.Text.RegularExpressions.Regex]::Replace(%(OpenApiSchemaClient.Link), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__'))</WorkingOutputPath>
-			</OpenApiSchemaClient>
 			<AdditionalFiles Include="@(OpenApiSchemaClient)">
 				<SourceItemGroup>OpenApiClientInterface</SourceItemGroup>
 			</AdditionalFiles>
-			<AdditionalFiles Condition=" '%(AdditionalFiles.SourceItemGroup)' == 'OpenApiClientInterface' ">
+			<AdditionalFiles Include="@(JsonDocumentRegistry)">
+				<SourceItemGroup>JsonDocumentRegistry</SourceItemGroup>
+			</AdditionalFiles>
+			<AdditionalFiles Condition=" '%(AdditionalFiles.SourceItemGroup)' == 'OpenApiClientInterface' or '%(AdditionalFiles.SourceItemGroup)' == 'JsonDocumentRegistry' ">
+				<WorkingOutputPath Condition=" '%(AdditionalFiles.Link)' != '' ">$([System.Text.RegularExpressions.Regex]::Replace(%(OpenApiSchemaMvcServer.Link), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__'))</WorkingOutputPath>
+			</AdditionalFiles>
+			<AdditionalFiles Condition=" '%(AdditionalFiles.SourceItemGroup)' == 'OpenApiClientInterface' or '%(AdditionalFiles.SourceItemGroup)' == 'JsonDocumentRegistry' ">
 				<WorkingOutputPath Condition=" '%(AdditionalFiles.WorkingOutputPath)' == '' ">$([System.Text.RegularExpressions.Regex]::Replace(%(AdditionalFiles.Identity), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__'))</WorkingOutputPath>
 				<Namespace Condition=" '%(AdditionalFiles.Namespace)' == '' ">$(RootNamespace)$([System.Text.RegularExpressions.Regex]::Replace($([System.Text.RegularExpressions.Regex]::Replace('/$([System.IO.Path]::GetDirectoryName('%(AdditionalFiles.WorkingOutputPath)'))', '[/\\]', '.')), '\.$', ''))</Namespace>
 			</AdditionalFiles>

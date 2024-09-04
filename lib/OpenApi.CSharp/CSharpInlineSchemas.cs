@@ -37,7 +37,7 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, DocumentRegistry d
 				new(options.ToArrayType(ToInlineDataType(items).Text), IsEnumerable: true),
 			// Generates a source file, so therefore it must have a class name
 			_ when ProduceSourceEntry(schema) =>
-				new(GetClassName(schema)),
+				new($"global::{options.GetNamespace(schema.Metadata.Id)}.{GetClassName(schema)}"),
 			// Specifically-mapped type
 			{ Type: string type, Format: var format } =>
 				new(options.Find(type, format)),

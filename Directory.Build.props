@@ -30,8 +30,8 @@
 
 	<PropertyGroup>
 		<OpenApiJsonExtensionsVersion>0.17.1</OpenApiJsonExtensionsVersion>
-		<OpenApiMvcServerVersion>0.17.1</OpenApiMvcServerVersion>
-		<OpenApiCSharpClientVersion>0.17.1</OpenApiCSharpClientVersion>
+		<OpenApiMvcServerVersion>0.18.0</OpenApiMvcServerVersion>
+		<OpenApiCSharpClientVersion>0.18.0</OpenApiCSharpClientVersion>
 		<OpenApiTypeScriptClientVersion>0.10.0</OpenApiTypeScriptClientVersion>
 		<OpenApiTypeScriptRxjsClientVersion>0.8.1</OpenApiTypeScriptRxjsClientVersion>
 		<OpenApiTypeScriptMswVersion>0.8.1</OpenApiTypeScriptMswVersion>

@@ -19,7 +19,7 @@ namespace DarkPatterns.OpenApiCodegen.Client
 	{
 		private const string sourceItemGroupKey = "SourceItemGroup";
 		const string sourceGroup = "OpenApiClientInterface";
-		const string sharedSourceGroup = "JsonDocumentRegistry";
+		const string sharedSourceGroup = "JsonSchemaDocument";
 		private static readonly DiagnosticDescriptor IncludeDependentDll = new DiagnosticDescriptor(id: "DPDAPICLNT001",
 																								  title: "Include a reference to DarkPatterns.OpenApiCodegen.Json.Extensions",
 																								  messageFormat: "Include a reference to DarkPatterns.OpenApiCodegen.Json.Extensions",

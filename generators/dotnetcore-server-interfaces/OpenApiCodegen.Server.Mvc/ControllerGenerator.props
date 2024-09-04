@@ -14,6 +14,7 @@
 		<AvailableItemName Include="OpenApiSchemaCSharpServerOptions" DisplayName="C# Options for Open API Code Generation (OpenApiCodeGen)" />
 		<AvailableItemName Include="OpenApiSchemaMvcServer" DisplayName="Open API Schema MVC Server (OpenApiCodeGen)" />
 		<Watch Include="@(OpenApiSchemaMvcServer)" Condition=" '@(OpenApiSchemaMvcServer)' != '' " />
+		<Watch Include="@(JsonSchemaDocument)" Condition=" '@(OpenApiSchemaMvcServer)' != '' " />
 	</ItemGroup>
 
 	<Target Name="_InjectAdditionalFilesForOpenApiSchemaMvcServer" BeforeTargets="GenerateMSBuildEditorConfigFileShouldRun">
@@ -21,13 +22,13 @@
 			<AdditionalFiles Include="@(OpenApiSchemaMvcServer)">
 				<SourceItemGroup>OpenApiServerInterface</SourceItemGroup>
 			</AdditionalFiles>
-			<AdditionalFiles Include="@(JsonDocumentRegistry)">
-				<SourceItemGroup>JsonDocumentRegistry</SourceItemGroup>
+			<AdditionalFiles Include="@(JsonSchemaDocument)">
+				<SourceItemGroup>JsonSchemaDocument</SourceItemGroup>
 			</AdditionalFiles>
-			<AdditionalFiles Condition=" '%(AdditionalFiles.SourceItemGroup)' == 'OpenApiServerInterface' or '%(AdditionalFiles.SourceItemGroup)' == 'JsonDocumentRegistry' ">
+			<AdditionalFiles Condition=" '%(AdditionalFiles.SourceItemGroup)' == 'OpenApiServerInterface' or '%(AdditionalFiles.SourceItemGroup)' == 'JsonSchemaDocument' ">
 				<WorkingOutputPath Condition=" '%(AdditionalFiles.Link)' != '' ">$([System.Text.RegularExpressions.Regex]::Replace(%(AdditionalFiles.Link), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__'))</WorkingOutputPath>
 			</AdditionalFiles>
-			<AdditionalFiles Condition=" '%(AdditionalFiles.SourceItemGroup)' == 'OpenApiServerInterface' or '%(AdditionalFiles.SourceItemGroup)' == 'JsonDocumentRegistry' ">
+			<AdditionalFiles Condition=" '%(AdditionalFiles.SourceItemGroup)' == 'OpenApiServerInterface' or '%(AdditionalFiles.SourceItemGroup)' == 'JsonSchemaDocument' ">
 				<WorkingOutputPath Condition=" '%(AdditionalFiles.WorkingOutputPath)' == '' ">$([System.Text.RegularExpressions.Regex]::Replace(%(AdditionalFiles.Identity), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__'))</WorkingOutputPath>
 				<Namespace Condition=" '%(AdditionalFiles.Namespace)' == '' ">$(RootNamespace)$([System.Text.RegularExpressions.Regex]::Replace($([System.Text.RegularExpressions.Regex]::Replace('/$([System.IO.Path]::GetDirectoryName('%(AdditionalFiles.WorkingOutputPath)'))', '[/\\]', '.')), '\.$', ''))</Namespace>
 				<Configuration Condition=" '%(AdditionalFiles.Configuration)' == '' ">@(OpenApiSchemaCSharpServerOptions->'%(FullPath)')</Configuration>

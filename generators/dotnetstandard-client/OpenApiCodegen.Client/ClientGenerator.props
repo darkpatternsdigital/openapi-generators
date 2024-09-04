@@ -12,7 +12,9 @@
 
 		<AvailableItemName Include="OpenApiSchemaCSharpClientOptions" DisplayName="C# Options for Open API Code Generation (OpenApiCodeGen)" />
 		<AvailableItemName Include="OpenApiSchemaClient" DisplayName="Open API Schema Client (OpenApiCodeGen)" />
+		<AvailableItemName Include="JsonSchemaDocument" DisplayName="Additional JSON Document used with JSON schemas" />
 		<Watch Include="@(OpenApiSchemaClient);@(OpenApiSchemaCSharpOptions)" Condition=" '@(OpenApiSchemaClient)' != '' " />
+		<Watch Include="@(JsonSchemaDocument)" Condition=" '@(OpenApiSchemaMvcServer)' != '' " />
 	</ItemGroup>
 
 	<Target Name="_InjectAdditionalFilesForOpenApiSchemaClient" BeforeTargets="GenerateMSBuildEditorConfigFileShouldRun">
@@ -20,13 +22,13 @@
 			<AdditionalFiles Include="@(OpenApiSchemaClient)">
 				<SourceItemGroup>OpenApiClientInterface</SourceItemGroup>
 			</AdditionalFiles>
-			<AdditionalFiles Include="@(JsonDocumentRegistry)">
-				<SourceItemGroup>JsonDocumentRegistry</SourceItemGroup>
+			<AdditionalFiles Include="@(JsonSchemaDocument)">
+				<SourceItemGroup>JsonSchemaDocument</SourceItemGroup>
 			</AdditionalFiles>
-			<AdditionalFiles Condition=" '%(AdditionalFiles.SourceItemGroup)' == 'OpenApiClientInterface' or '%(AdditionalFiles.SourceItemGroup)' == 'JsonDocumentRegistry' ">
+			<AdditionalFiles Condition=" '%(AdditionalFiles.SourceItemGroup)' == 'OpenApiClientInterface' or '%(AdditionalFiles.SourceItemGroup)' == 'JsonSchemaDocument' ">
 				<WorkingOutputPath Condition=" '%(AdditionalFiles.Link)' != '' ">$([System.Text.RegularExpressions.Regex]::Replace(%(OpenApiSchemaMvcServer.Link), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__'))</WorkingOutputPath>
 			</AdditionalFiles>
-			<AdditionalFiles Condition=" '%(AdditionalFiles.SourceItemGroup)' == 'OpenApiClientInterface' or '%(AdditionalFiles.SourceItemGroup)' == 'JsonDocumentRegistry' ">
+			<AdditionalFiles Condition=" '%(AdditionalFiles.SourceItemGroup)' == 'OpenApiClientInterface' or '%(AdditionalFiles.SourceItemGroup)' == 'JsonSchemaDocument' ">
 				<WorkingOutputPath Condition=" '%(AdditionalFiles.WorkingOutputPath)' == '' ">$([System.Text.RegularExpressions.Regex]::Replace(%(AdditionalFiles.Identity), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__'))</WorkingOutputPath>
 				<Namespace Condition=" '%(AdditionalFiles.Namespace)' == '' ">$(RootNamespace)$([System.Text.RegularExpressions.Regex]::Replace($([System.Text.RegularExpressions.Regex]::Replace('/$([System.IO.Path]::GetDirectoryName('%(AdditionalFiles.WorkingOutputPath)'))', '[/\\]', '.')), '\.$', ''))</Namespace>
 			</AdditionalFiles>

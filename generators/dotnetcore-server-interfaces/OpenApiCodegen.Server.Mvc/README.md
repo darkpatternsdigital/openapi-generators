@@ -16,6 +16,11 @@ You can also directly add a reference within the `.csproj` file as follows:
 
 This integrates during the build phase, so you can be sure your classes are up to date with your schema documentation.
 
+
+Additional yaml files referenced via `$ref` in your OpenAPI documents should be
+specified as the build action `JsonSchemaDocument` to be included in watch mode
+and to control the Namespace.
+
 Requirements:
 
 - System.Text.Json

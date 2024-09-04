@@ -98,8 +98,8 @@ public class ClientGenerator : IOpenApiCodeGenerator
 		foreach (var entry in additionalSchemas)
 		{
 			var ns = GetStandardNamespace(entry.Metadata, result);
-			// if (result.DefaultNamespace != ns)
-			// 	result.NamespacesBySchema[ToInternalUri(entry)] = ns;
+			if (result.DefaultNamespace != ns)
+				result.NamespacesBySchema[ToInternalUri(entry)] = ns;
 		}
 		return result;
 	}

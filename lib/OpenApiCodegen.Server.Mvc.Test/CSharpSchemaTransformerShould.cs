@@ -51,8 +51,8 @@ public class CSharpInlineSchemasShould
 	}
 
 	[Theory]
-	[InlineData("FindPetsByStatusStatusItem", "petstore3.json", "/paths/~1pet~1findByStatus/get/parameters/0/schema/items")]
-	[InlineData("DifficultQueryStringEnumEnum", "enum.yaml", "/paths/~1difficult-enum/get/parameters/0/schema")]
+	[InlineData("global::DPD.Controller.FindPetsByStatusStatusItem", "petstore3.json", "/paths/~1pet~1findByStatus/get/parameters/0/schema/items")]
+	[InlineData("global::DPD.Controller.DifficultQueryStringEnumEnum", "enum.yaml", "/paths/~1difficult-enum/get/parameters/0/schema")]
 	public void Determine_a_name_for_schema_by_path(string expectedName, string documentName, string path)
 	{
 		var docResult = GetDocumentReference(documentName);

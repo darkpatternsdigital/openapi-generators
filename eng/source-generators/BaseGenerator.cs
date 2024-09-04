@@ -127,7 +127,8 @@ public abstract class BaseGenerator :
 		// Build an incremental "watcher"
 		var allAdditionalTexts = context.AdditionalTextsProvider.Combine(context.AnalyzerConfigOptionsProvider)
 			.Select(static (tuple, cancellation) => GetOptions(tuple.Left, tuple.Right))
-			.Where(static (tuple) => tuple.TextContents != null);
+			.Where(static (tuple) => tuple.TextContents != null)
+			.Where(IsRelevantFile);
 		// TODO: the incremental watcher could include only the additional texts actually needed
 		var additionalTexts = allAdditionalTexts
 			.Where(IsEntrypointFile)
@@ -144,12 +145,13 @@ public abstract class BaseGenerator :
 		ReportCompilationDiagnostics(context.Compilation, context);
 
 		var allAdditionalTexts = context.AdditionalFiles.Select(file => GetOptions(file, context.AnalyzerConfigOptions))
-			.Where(static (tuple) => tuple.TextContents != null);
+			.Where(static (tuple) => tuple.TextContents != null)
+			.Where(IsRelevantFile);
 		var additionalTexts = allAdditionalTexts
 			.Where(IsEntrypointFile);
 		foreach (var additionalText in additionalTexts)
 		{
-			GenerateSources(additionalText, additionalTexts, context);
+			GenerateSources(additionalText, allAdditionalTexts, context);
 		}
 	}
 

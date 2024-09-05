@@ -71,6 +71,8 @@ the defaults. For example:
 ```yaml
 extensions:
   controllerName: dotnet-mvc-server-controller
+  typeNameOverride: dotnet-type-name
+  namespaceOverride: dotnet-type-namespace
 mapType: global::System.Collections.Generic.Dictionary<string, {}>
 arrayType: global::System.Collections.Generic.IEnumerable<{}>
 types:
@@ -86,6 +88,13 @@ overrideNames:
 - `extensions.controllerName` specifies the extension (for example,
   `x-dotnet-mvc-server-controller`) used to override the generated controller
   name. This may be specified on either the operation or the path level.
+- `extensions.typeNameOverride` specifies the extension (for example,
+  `x-dotnet-type-name`) used to override the generated type name. This may be
+  specified on any JSON schema that will be emitted as its own class, enum, etc.
+- `extensions.namespaceOverride` specifies the extension (for example,
+  `x-dotnet-type-namespace`) used to override the generated type namespace. This
+  may be specified on any JSON schema that will be emitted as its own class,
+  enum, etc.
 - `mapType` specifies the type to use for JSON maps, which occur when when
   `additionalProperties` is specified. `{}` is used as a placeholder for the
   type.
@@ -105,3 +114,19 @@ overrideNames:
     ```
 - `overrideNames` is a dictionary of schema URIs to the namespace-qualified C#
   type name to use for the generated class. (Note: this feature is still experimental and may change or be removed in a later relaese.)
+
+### Schema extensions
+
+Extensions in OpenAPI documents are additional properties, starting with `x-`
+that can go nearly anywhere in an OpenAPI 3.0 document. The following extensions
+are available:
+
+- `x-dotnet-mvc-server-controller` overrides the name of the controller class
+  generated for paths and operations. This extension may be specified either at
+  the path or operation level.
+- `x-dotnet-type-namespace` overrides the namespace for a single schema. This is
+  a higher-priority than settings within the csproj but lower priority than
+  individual schema name overrides in the options file.
+- `x-dotnet-type-name` overrides the type name for a single schema. This is
+  a higher-priority than settings within the csproj but lower priority than
+  individual schema name overrides in the options file.

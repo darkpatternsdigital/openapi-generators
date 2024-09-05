@@ -37,7 +37,7 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, DocumentRegistry d
 				new(options.ToArrayType(ToInlineDataType(items).Text), IsEnumerable: true),
 			// Generates a source file, so therefore it must have a class name
 			_ when ProduceSourceEntry(schema) =>
-				new($"global::{options.GetNamespace(schema.Metadata.Id)}.{GetClassName(schema)}"),
+				new($"global::{options.GetNamespace(schema)}.{GetClassName(schema)}"),
 			// Specifically-mapped type
 			{ Type: string type, Format: var format } =>
 				new(options.Find(type, format)),
@@ -75,7 +75,7 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, DocumentRegistry d
 
 	private string GetClassName(JsonSchema schema)
 	{
-		return options.ToClassName(schema.Metadata.Id, UriToClassIdentifier(schema.Metadata.Id));
+		return options.ToClassName(schema, UriToClassIdentifier(schema.Metadata.Id));
 	}
 
 	private static readonly Regex HttpSuccessRegex = new Regex("2[0-9]{2}");

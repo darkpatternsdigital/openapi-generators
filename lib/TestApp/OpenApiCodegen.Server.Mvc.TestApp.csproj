@@ -14,6 +14,7 @@
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\all-of.yaml" Link="AllOf\all-of.yaml" PathPrefix="/all-of" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\enum.yaml" Link="Enum\enum.yaml" PathPrefix="/enum" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\controller-extension.yaml" Link="ControllerExtensions\controller-extension.yaml" PathPrefix="/controller-extensions" />
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\csharp-name-override.yaml" Link="CSharpNameOverride\csharp-name-override.yaml" PathPrefix="/csharp-name-override" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\validation-min-max.yaml" Link="ValidationMinMax\validation-min-max.yaml" PathPrefix="/validation-min-max" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\regex-escape.yaml" Link="RegexEscape\regex-escape.yaml" PathPrefix="/regex-escape" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\headers.yaml" Link="Headers\headers.yaml" PathPrefix="/headers" />

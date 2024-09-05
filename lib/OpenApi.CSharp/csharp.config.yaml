@@ -1,4 +1,7 @@
-﻿globalReservedIdentifiers:
+﻿extensions:
+  namespaceOverride: dotnet-type-namespace
+  typeNameOverride: dotnet-type-name
+globalReservedIdentifiers:
   - 'string'
   - 'bool'
   - 'double'

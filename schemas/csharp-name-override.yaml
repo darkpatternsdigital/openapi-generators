@@ -1,0 +1,28 @@
+openapi: "3.0.3"
+info:
+  version: 1.0.0
+  title: CSharp Name Override example
+  description: A sample API that demonstrates how names and namespaces can be overridden
+components:
+  schemas:
+    Node:
+      x-dotnet-type-name: TreeNode
+      type: object
+      required:
+        - children
+      properties:
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Node'
+paths:
+  /tree:
+    post:
+      operationId: getTree
+      responses:
+        '200':
+          description: A tree
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Node'

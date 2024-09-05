@@ -38,7 +38,7 @@ public class CSharpSchemaSourceProvider : SchemaSourceProvider
 	protected override SourceEntry? GetSourceEntry(JsonSchema entry, OpenApiTransformDiagnostic diagnostic)
 	{
 		if (!inlineSchemas.ProduceSourceEntry(entry)) return null;
-		var targetNamespace = options.GetNamespace(entry.Metadata.Id);
+		var targetNamespace = options.GetNamespace(entry);
 		var className = GetClassName(entry);
 
 		Templates.Model? model = GetModel(entry, diagnostic, className);
@@ -97,11 +97,8 @@ public class CSharpSchemaSourceProvider : SchemaSourceProvider
 		return null;
 	}
 
-	private string GetClassName(JsonSchema schema)
-	{
-		var context = schema.Metadata.Id;
-		return CSharpNaming.ToClassName(inlineSchemas.UriToClassIdentifier(context), options.ReservedIdentifiers());
-	}
+	private string GetClassName(JsonSchema schema) =>
+		options.ToClassName(schema, inlineSchemas.UriToClassIdentifier(schema.Metadata.Id));
 
 	record ObjectModel(Func<IReadOnlyDictionary<string, JsonSchema>> Properties, Func<IEnumerable<string>> Required, bool LegacyOptionalBehavior);
 

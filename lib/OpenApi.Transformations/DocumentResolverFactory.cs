@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using DarkPatterns.OpenApi.Transformations.Diagnostics;
 using DarkPatterns.OpenApi.Transformations.DocumentTypes;
+using DarkPatterns.OpenApiCodegen;
 
 namespace DarkPatterns.OpenApi.Transformations;
 
@@ -14,6 +15,16 @@ public record DocumentRegistryOptions(
 public static class DocumentResolverFactory
 {
 	private static readonly YamlDocumentLoader docLoader = new YamlDocumentLoader();
+
+	public static DocumentResolver LoadAs(Uri uri, string documentContents)
+	{
+		return (baseUri, _) =>
+		{
+			if (baseUri != uri) return null;
+			using var sr = new StringReader(documentContents);
+			return docLoader.LoadDocument(uri, sr, null);
+		};
+	}
 
 	public static DocumentResolver RelativeFrom(IDocumentReference documentReference)
 	{

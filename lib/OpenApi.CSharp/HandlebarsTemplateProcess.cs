@@ -47,6 +47,7 @@ namespace DarkPatterns.OpenApi.CSharp
 		public static string ProcessModel(
 			PartialHeader header,
 			string packageName,
+			Uri schemaId,
 			Model model,
 			IHandlebars? handlebars = null
 		)
@@ -68,7 +69,7 @@ namespace DarkPatterns.OpenApi.CSharp
 			IDictionary<string, object?> ToTemplate<TModel>(TModel m)
 				where TModel : Model
 			{
-				return ToDictionary<ModelTemplate<TModel>>(new(Header: header, PackageName: packageName, Model: m));
+				return ToDictionary<ModelTemplate<TModel>>(new(Header: header, PackageName: packageName, SourceSchemaId: schemaId.OriginalString, Model: m));
 			}
 		}
 

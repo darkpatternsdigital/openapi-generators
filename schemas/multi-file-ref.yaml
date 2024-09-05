@@ -1,0 +1,16 @@
+openapi: "3.0.3"
+info:
+  version: 1.0.0
+  title: Multi File Ref Demo
+  description: A sample API that uses references from other files
+paths:
+  /random:
+    get:
+      operationId: getRandom
+      responses:
+        '200':
+          $ref: 'multi-file-ref-responses.yaml#/components/responses/Number'
+        '400':
+          $ref: 'multi-file-ref-responses.yaml#/components/responses/BadRequest'
+        default:
+          $ref: 'multi-file-ref-responses.yaml#/components/responses/Unknown'

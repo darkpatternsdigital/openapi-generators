@@ -13,17 +13,15 @@ namespace DarkPatterns.OpenApi.CSharp
 		private readonly DocumentRegistry documentRegistry;
 		private readonly ISchemaRegistry schemaRegistry;
 		private readonly OpenApiDocument document;
-		private readonly string baseNamespace;
 		private readonly CSharpServerSchemaOptions options;
 		private readonly string versionInfo;
 		private readonly HandlebarsFactory handlebarsFactory;
 
-		public CSharpControllerTransformer(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, OpenApiDocument document, string baseNamespace, CSharpServerSchemaOptions options, string versionInfo, HandlebarsFactory handlebarsFactory)
+		public CSharpControllerTransformer(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, OpenApiDocument document, CSharpServerSchemaOptions options, string versionInfo, HandlebarsFactory handlebarsFactory)
 		{
 			this.documentRegistry = documentRegistry;
 			this.schemaRegistry = schemaRegistry;
 			this.document = document;
-			this.baseNamespace = baseNamespace;
 			this.options = options;
 			this.versionInfo = versionInfo;
 			this.handlebarsFactory = handlebarsFactory;
@@ -32,6 +30,7 @@ namespace DarkPatterns.OpenApi.CSharp
 		public SourceEntry TransformController(string groupName, OperationGroupData groupData, OpenApiTransformDiagnostic diagnostic)
 		{
 			var (summary, description, operations) = groupData;
+			var baseNamespace = options.DefaultNamespace;
 
 			var className = CSharpNaming.ToClassName(groupName + " base", options.ReservedIdentifiers());
 
@@ -72,6 +71,7 @@ namespace DarkPatterns.OpenApi.CSharp
 
 		internal SourceEntry TransformAddServicesHelper(IEnumerable<string> groups, OpenApiTransformDiagnostic diagnostic)
 		{
+			var baseNamespace = options.DefaultNamespace;
 			return new SourceEntry(
 				Key: $"{baseNamespace}.AddServicesExtensions.cs",
 				SourceText: handlebarsFactory.Handlebars.ProcessAddServices(new Templates.AddServicesModel(

@@ -6,7 +6,7 @@ namespace DarkPatterns.OpenApi.CSharp
 {
 	public static class ClientTransformerFactory
 	{
-		public static ISourceProvider BuildCSharpClientSourceProvider(this OpenApiDocument document, DocumentRegistry documentRegistry, string versionInfo, string? documentNamespace, CSharpSchemaOptions options)
+		public static ISourceProvider BuildCSharpClientSourceProvider(this OpenApiDocument document, DocumentRegistry documentRegistry, string versionInfo, CSharpSchemaOptions options)
 		{
 			ISourceProvider? result;
 			var handlebarsFactory = new HandlebarsFactory(ControllerHandlebarsTemplateProcess.CreateHandlebars);
@@ -19,8 +19,8 @@ namespace DarkPatterns.OpenApi.CSharp
 				CodeGeneratorVersionInfo: versionInfo
 			);
 
-			var controllerTransformer = new CSharpClientTransformer(schemaRegistry, documentRegistry, document, documentNamespace ?? "", options, handlebarsFactory, header);
-			var schemaSourceProvider = new CSharpSchemaSourceProvider(documentRegistry, schemaRegistry, documentNamespace ?? "", options, handlebarsFactory, header);
+			var controllerTransformer = new CSharpClientTransformer(schemaRegistry, documentRegistry, document, options, handlebarsFactory, header);
+			var schemaSourceProvider = new CSharpSchemaSourceProvider(documentRegistry, schemaRegistry, options, handlebarsFactory, header);
 
 			result = new CompositeOpenApiSourceProvider(
 				controllerTransformer,

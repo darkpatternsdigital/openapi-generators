@@ -16,7 +16,11 @@ You can also directly add a reference within the `.csproj` file as follows:
 
 This integrates during the build phase, so you can be sure your classes are up to date with your schema documentation.
 
-Requirements:
+Additional yaml files referenced via `$ref` in your OpenAPI documents should be
+specified as the build action `JsonSchemaDocument` to be included in watch mode
+and to control the Namespace.
+
+## Requirements
 
 - System.Text.Json
 - C# 11+
@@ -44,6 +48,9 @@ Additional settings may be added within the `.csproj`. For example:
   path of the schema file
 - `Configuration` - Additional configuration settings specific to this schema.
   See the configuration yaml documentation below.
+- `PathPrefix` - Prefixes the paths of the generated paths with the given path.
+- `SchemaId` - Specifies the "retrieval URI" used when resolving relative paths
+  to external files. Otherwise, the absolute file-scheme URL will be used.
 
 In addition, adding the following to an ItemGroup in the csproj (or adding the
 yaml file with the build action `OpenApiSchemaCSharpServerOptions` via Visual
@@ -61,7 +68,10 @@ commonly, only one or two parameters are needed. Missing keys are merged with
 the defaults. For example:
 
 ```yaml
-controllerNameExtension: dotnet-mvc-server-controller
+extensions:
+  controllerName: dotnet-mvc-server-controller
+  typeNameOverride: dotnet-type-name
+  namespaceOverride: dotnet-type-namespace
 mapType: global::System.Collections.Generic.Dictionary<string, {}>
 arrayType: global::System.Collections.Generic.IEnumerable<{}>
 types:
@@ -70,11 +80,20 @@ types:
       float: float
       double: double
     default: double
+overrideNames:
+  proj://darkpatterns-openapi/multi-file-ref-types.yaml#/BadRequest: My.Common.BadRequest
 ```
 
-- `controllerNameExtension` specifies the extension (for example,
+- `extensions.controllerName` specifies the extension (for example,
   `x-dotnet-mvc-server-controller`) used to override the generated controller
   name. This may be specified on either the operation or the path level.
+- `extensions.typeNameOverride` specifies the extension (for example,
+  `x-dotnet-type-name`) used to override the generated type name. This may be
+  specified on any JSON schema that will be emitted as its own class, enum, etc.
+- `extensions.namespaceOverride` specifies the extension (for example,
+  `x-dotnet-type-namespace`) used to override the generated type namespace. This
+  may be specified on any JSON schema that will be emitted as its own class,
+  enum, etc.
 - `mapType` specifies the type to use for JSON maps, which occur when when
   `additionalProperties` is specified. `{}` is used as a placeholder for the
   type.
@@ -92,3 +111,21 @@ types:
     type: number
     format: float
     ```
+- `overrideNames` is a dictionary of schema URIs to the namespace-qualified C#
+  type name to use for the generated class. (Note: this feature is still experimental and may change or be removed in a later relaese.)
+
+### Schema extensions
+
+Extensions in OpenAPI documents are additional properties, starting with `x-`
+that can go nearly anywhere in an OpenAPI 3.0 document. The following extensions
+are available:
+
+- `x-dotnet-mvc-server-controller` overrides the name of the controller class
+  generated for paths and operations. This extension may be specified either at
+  the path or operation level.
+- `x-dotnet-type-namespace` overrides the namespace for a single schema. This is
+  a higher-priority than settings within the csproj but lower priority than
+  individual schema name overrides in the options file.
+- `x-dotnet-type-name` overrides the type name for a single schema. This is
+  a higher-priority than settings within the csproj but lower priority than
+  individual schema name overrides in the options file.

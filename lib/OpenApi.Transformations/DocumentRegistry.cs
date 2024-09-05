@@ -207,15 +207,17 @@ public class DocumentRegistry(DocumentRegistryOptions registryOptions)
 
 	private DocumentRegistryEntry InternalResolveDocumentEntry(Uri uri, IDocumentReference? relativeDocument)
 	{
-		var docUri = uri.IsAbsoluteUri ? uri
-			: relativeDocument != null ? new Uri(relativeDocument.BaseUri, uri)
+		Uri[] uris = uri.IsAbsoluteUri ? [uri]
+			: relativeDocument != null && relativeDocument.BaseUri != relativeDocument.RetrievalUri ? [new Uri(relativeDocument.BaseUri, uri), new Uri(relativeDocument.RetrievalUri, uri)]
+			: relativeDocument != null ? [new Uri(relativeDocument.BaseUri, uri)]
 			// Throw an exception here because this is a problem with the usage of this class, not data
 			: throw new InvalidOperationException(Errors.ReceivedRelativeUriWithoutDocument);
 
-		// .NET's Uri type doesn't include the Fragment in equality, so we don't need to check until we fetch
-		var document = entries.FirstOrDefault(e => e.Document.BaseUri == docUri)
-			?? InternalFetch(relativeDocument, docUri);
-		return document;
+		foreach (var docUri in uris)
+			// .NET's Uri type doesn't include the Fragment in equality, so we don't need to check until we fetch
+			if (entries.FirstOrDefault(e => e.Document.BaseUri == docUri || e.Document.RetrievalUri == docUri) is var document and not null)
+				return document;
+		return InternalFetch(relativeDocument, uris.First());
 	}
 
 	private DocumentRegistryEntry InternalFetch(IDocumentReference? relativeDocument, Uri docUri)
@@ -282,7 +284,8 @@ public static class JsonDocumentUtils
 
 
 	public static Uri GetBaseUri(this JsonNode? jsonNode, Uri retrievalUri, IJsonSchemaDialect dialect) =>
-		jsonNode is JsonObject obj && obj.TryGetPropertyValue(dialect.IdField, out var id) && id?.GetValue<string>() is string baseId
+		jsonNode is JsonObject obj && dialect.IdField is string field
+		&& obj.TryGetPropertyValue(field, out var id) && id?.GetValue<string>() is string baseId
 			? new Uri(retrievalUri, baseId)
 			: retrievalUri;
 

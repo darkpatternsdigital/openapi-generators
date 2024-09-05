@@ -97,7 +97,7 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 		OpenApiDialect =
 			new JsonSchemaDialect(
 				jsonSchemaDialect,
-				"id",
+				null,
 				[
 					Vocabulary,
 					// should be all of "https://spec.openapis.org/oas/3.0/schema/2021-09-28"

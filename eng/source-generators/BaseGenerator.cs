@@ -22,6 +22,8 @@ public abstract class BaseGenerator :
 	ISourceGenerator
 #endif
 {
+	private const string additionalTextInfoAssemblyName = "DarkPatterns.OpenApiCodegen.0.8.0";
+	private const string additionalTextInfoTypeName = "DarkPatterns.OpenApiCodegen.AdditionalTextInfo";
 	private static readonly DiagnosticDescriptor OpenApiConversionError = new DiagnosticDescriptor(id: "DPD_PARSE_UNK",
 																								title: "A conversion error was encountered",
 																								messageFormat: "A conversion error was encountered: {0}",
@@ -32,7 +34,8 @@ public abstract class BaseGenerator :
 	private static readonly object lockHandle = new object();
 
 	private readonly Func<IEnumerable<string>> getMetadataKeys;
-	private readonly Func<string, string, IReadOnlyDictionary<string, string?>, object> generate;
+	private readonly Func<string, string, IReadOnlyDictionary<string, string?>, object> toAdditionalTextType;
+	private readonly Func<object, object[], object> generate;
 
 	protected BaseGenerator(string generatorTypeName, string assemblyName)
 	{
@@ -48,19 +51,30 @@ public abstract class BaseGenerator :
 		// See https://github.com/dotnet/runtime/issues/11895, https://github.com/dotnet/runtime/issues/12668
 		var generatorType = GetEmbeddedAssemblyByName(assemblyName)?.GetType(generatorTypeName, throwOnError: false)
 			?? throw new InvalidOperationException($"Could not find generator {generatorTypeName}");
+		var additionalTextType = GetEmbeddedAssemblyByName(additionalTextInfoAssemblyName)?.GetType(additionalTextInfoTypeName, throwOnError: false)
+			?? throw new InvalidOperationException($"Could not find type {additionalTextInfoTypeName} in {additionalTextInfoAssemblyName}");
 
 		var generator = Activator.CreateInstance(generatorType);
-
-		var generateMethod = generatorType.GetMethod("Generate")!;
 		var generatorExpression = Constant(generator);
-		var compilerApisParameter = Parameter(typeof(CompilerApis));
+
+		var toAdditionalTextTypeMethod = generatorType.GetMethod("ToFileInfo")!;
 		var pathParameter = Parameter(typeof(string));
 		var textParameter = Parameter(typeof(string));
 		var dictionaryParameter = Parameter(typeof(IReadOnlyDictionary<string, string?>));
 		getMetadataKeys = Lambda<Func<IEnumerable<string>>>(Property(generatorExpression, "MetadataKeys")).Compile();
-		generate = Lambda<Func<string, string, IReadOnlyDictionary<string, string?>, object>>(
-			Convert(Call(generatorExpression, generateMethod, pathParameter, textParameter, dictionaryParameter), typeof(object))
+		toAdditionalTextType = Lambda<Func<string, string, IReadOnlyDictionary<string, string?>, object>>(
+			Convert(Call(generatorExpression, toAdditionalTextTypeMethod, pathParameter, textParameter, dictionaryParameter), typeof(object))
 			, pathParameter, textParameter, dictionaryParameter).Compile();
+
+		var generateMethod = generatorType.GetMethod("Generate")!;
+		var ofTypeMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.OfType))!.MakeGenericMethod(generateMethod.GetParameters()[1].ParameterType.GetGenericArguments())!;
+		var entrypointParameter = Parameter(typeof(object));
+		var otherFilesParameter = Parameter(typeof(object[]));
+		generate = Lambda<Func<object, object[], object>>(
+			Convert(Call(generatorExpression, generateMethod,
+				Convert(entrypointParameter, generateMethod.GetParameters()[0].ParameterType),
+				Call(null, ofTypeMethod, otherFilesParameter)), typeof(object))
+			, entrypointParameter, otherFilesParameter).Compile();
 
 		Assembly? ResolveAssembly(object sender, ResolveEventArgs ev)
 		{
@@ -101,6 +115,8 @@ public abstract class BaseGenerator :
 	}
 
 #if ROSLYN4_0_OR_GREATER
+	record IncrementalData(AdditionalTextWithOptions Entrypoint, IEnumerable<AdditionalTextWithOptions> OtherKnownSchemas);
+
 	public virtual void Initialize(IncrementalGeneratorInitializationContext context)
 	{
 		context.RegisterImplementationSourceOutput(context.CompilationProvider, (context, compilation) =>
@@ -108,13 +124,19 @@ public abstract class BaseGenerator :
 			ReportCompilationDiagnostics(compilation, context);
 		});
 
-		var additionalTexts = context.AdditionalTextsProvider.Combine(context.AnalyzerConfigOptionsProvider)
-			.Select(static (tuple, _) => GetOptions(tuple.Left, tuple.Right))
+		// Build an incremental "watcher"
+		var allAdditionalTexts = context.AdditionalTextsProvider.Combine(context.AnalyzerConfigOptionsProvider)
+			.Select(static (tuple, cancellation) => GetOptions(tuple.Left, tuple.Right))
 			.Where(static (tuple) => tuple.TextContents != null)
 			.Where(IsRelevantFile);
+		// TODO: the incremental watcher could include only the additional texts actually needed
+		var additionalTexts = allAdditionalTexts
+			.Where(IsEntrypointFile)
+			.Combine(allAdditionalTexts.Collect())
+			.Select(static (tuple, cancellation) => new IncrementalData(tuple.Left, tuple.Right.ToArray()));
 		context.RegisterSourceOutput(additionalTexts, (context, tuple) =>
 		{
-			GenerateSources(tuple, context);
+			GenerateSources(tuple.Entrypoint, tuple.OtherKnownSchemas, context);
 		});
 	}
 #else
@@ -122,12 +144,14 @@ public abstract class BaseGenerator :
 	{
 		ReportCompilationDiagnostics(context.Compilation, context);
 
-		var additionalTexts = context.AdditionalFiles.Select(file => GetOptions(file, context.AnalyzerConfigOptions))
+		var allAdditionalTexts = context.AdditionalFiles.Select(file => GetOptions(file, context.AnalyzerConfigOptions))
 			.Where(static (tuple) => tuple.TextContents != null)
 			.Where(IsRelevantFile);
+		var additionalTexts = allAdditionalTexts
+			.Where(IsEntrypointFile);
 		foreach (var additionalText in additionalTexts)
 		{
-			GenerateSources(additionalText, context);
+			GenerateSources(additionalText, allAdditionalTexts, context);
 		}
 	}
 
@@ -157,17 +181,15 @@ public abstract class BaseGenerator :
 	}
 
 	protected abstract void ReportCompilationDiagnostics(Compilation compilation, CompilerApis apis);
+	protected abstract bool IsEntrypointFile(AdditionalTextWithOptions additionalText);
 	protected abstract bool IsRelevantFile(AdditionalTextWithOptions additionalText);
-	private void GenerateSources(AdditionalTextWithOptions additionalText, CompilerApis apis)
+	private void GenerateSources(AdditionalTextWithOptions additionalText, IEnumerable<AdditionalTextWithOptions> otherAdditionalText, CompilerApis apis)
 	{
 		IEnumerable<string> metadataKeys = getMetadataKeys();
 		// result is of type DarkPatterns.OpenApiCodegen.GenerationResult
 		dynamic result = generate(
-			additionalText.Path,
-			additionalText.TextContents,
-			new ReadOnlyDictionary<string, string?>(
-				metadataKeys.ToDictionary(key => key, additionalText.ConfigOptions.GetAdditionalFilesMetadata)
-			)
+			ToAdditionalFileType(additionalText, metadataKeys),
+			otherAdditionalText.Select(f => ToAdditionalFileType(f, metadataKeys)).ToArray()
 		);
 		foreach (var entry in result.Sources)
 		{
@@ -206,6 +228,17 @@ public abstract class BaseGenerator :
 					)
 				);
 		}
+	}
+
+	object ToAdditionalFileType(AdditionalTextWithOptions additionalText, IEnumerable<string> metadataKeys)
+	{
+		return toAdditionalTextType(
+					additionalText.Path,
+					additionalText.TextContents,
+					new ReadOnlyDictionary<string, string?>(
+						metadataKeys.ToDictionary(key => key, additionalText.ConfigOptions.GetAdditionalFilesMetadata)
+					)
+				);
 	}
 
 

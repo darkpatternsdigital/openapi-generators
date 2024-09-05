@@ -37,7 +37,7 @@ namespace DarkPatterns.OpenApi.CSharp
 				string s => char.ToLower(s[0]) + s.Substring(1)
 			};
 
-		public static string? ToNamespace(string? rootNamespace, string? projectDir, string? identity, string? link, IEnumerable<string> reservedIdentifiers)
+		public static string ToNamespace(string? rootNamespace, string? projectDir, string? identity, string? link, IEnumerable<string> reservedIdentifiers)
 		{
 			var prefix = rootNamespace is { Length: > 0 } ? Enumerable.Repeat(rootNamespace, 1) : Enumerable.Empty<string>();
 

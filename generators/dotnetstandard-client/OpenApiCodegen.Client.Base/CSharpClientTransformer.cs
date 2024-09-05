@@ -14,17 +14,15 @@ public class CSharpClientTransformer : ISourceProvider
 	private readonly ISchemaRegistry schemaRegistry;
 	private readonly DocumentRegistry documentRegistry;
 	private readonly OpenApiDocument document;
-	private readonly string baseNamespace;
 	private readonly CSharpSchemaOptions options;
 	private readonly HandlebarsFactory handlebarsFactory;
 	private readonly PartialHeader header;
 
-	public CSharpClientTransformer(ISchemaRegistry schemaRegistry, DocumentRegistry documentRegistry, OpenApiDocument document, string baseNamespace, CSharpSchemaOptions options, HandlebarsFactory handlebarsFactory, Templates.PartialHeader header)
+	public CSharpClientTransformer(ISchemaRegistry schemaRegistry, DocumentRegistry documentRegistry, OpenApiDocument document, CSharpSchemaOptions options, HandlebarsFactory handlebarsFactory, Templates.PartialHeader header)
 	{
 		this.documentRegistry = documentRegistry;
 		this.schemaRegistry = schemaRegistry;
 		this.document = document;
-		this.baseNamespace = baseNamespace;
 		this.options = options;
 		this.handlebarsFactory = handlebarsFactory;
 		this.header = header;
@@ -34,6 +32,7 @@ public class CSharpClientTransformer : ISourceProvider
 	{
 		foreach (var schema in document.GetNestedNodes(recursive: true).OfType<JsonSchema>())
 			schemaRegistry.EnsureSchemasRegistered(schema);
+		var baseNamespace = options.DefaultNamespace;
 
 		var className = CSharpNaming.ToClassName("operations", options.ReservedIdentifiers());
 
@@ -67,6 +66,7 @@ public class CSharpClientTransformer : ISourceProvider
 
 	internal SourceEntry TransformAddServicesHelper(OpenApiTransformDiagnostic diagnostic)
 	{
+		var baseNamespace = options.DefaultNamespace;
 		return new SourceEntry(
 			Key: $"{baseNamespace}.AddServicesExtensions.cs",
 			SourceText: handlebarsFactory.Handlebars.ProcessAddServices(new Templates.AddServicesModel(

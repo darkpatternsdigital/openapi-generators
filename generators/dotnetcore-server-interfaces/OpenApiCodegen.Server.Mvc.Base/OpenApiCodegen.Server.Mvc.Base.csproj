@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<RootNamespace>$(RootNamespacePrefix).OpenApi.CSharp</RootNamespace>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<VersionPrefix>$(SharedAnalyzerLibrariesVersion)</VersionPrefix>
+		<VersionPrefix>$(OpenApiMvcServerVersion)</VersionPrefix>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
 
@@ -11,6 +11,8 @@
 	<ItemGroup>
 		<None Remove="Templates\*.handlebars" />
 		<EmbeddedResource Include="Templates\*.handlebars" />
+		<None Remove="csharp.config.yaml" />
+		<EmbeddedResource Include="csharp.config.yaml" />
 	</ItemGroup>
 
 	<ItemGroup>

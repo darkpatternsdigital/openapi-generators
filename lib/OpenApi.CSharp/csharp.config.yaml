@@ -1,4 +1,6 @@
-﻿controllerNameExtension: dotnet-mvc-server-controller
+﻿extensions:
+  namespaceOverride: dotnet-type-namespace
+  typeNameOverride: dotnet-type-name
 globalReservedIdentifiers:
   - 'string'
   - 'bool'

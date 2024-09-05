@@ -51,14 +51,36 @@ public class CSharpInlineSchemasShould
 	}
 
 	[Theory]
-	[InlineData("FindPetsByStatusStatusItem", "petstore3.json", "/paths/~1pet~1findByStatus/get/parameters/0/schema/items")]
-	[InlineData("DifficultQueryStringEnumEnum", "enum.yaml", "/paths/~1difficult-enum/get/parameters/0/schema")]
+	[InlineData("global::DPD.Controller.FindPetsByStatusStatusItem", "petstore3.json", "/paths/~1pet~1findByStatus/get/parameters/0/schema/items")]
+	[InlineData("global::DPD.Controller.DifficultQueryStringEnumEnum", "enum.yaml", "/paths/~1difficult-enum/get/parameters/0/schema")]
+	[InlineData("global::DPD.Controller.TreeNode", "csharp-name-override.yaml", "/components/schemas/Node")]
 	public void Determine_a_name_for_schema_by_path(string expectedName, string documentName, string path)
 	{
 		var docResult = GetDocumentReference(documentName);
 		Assert.NotNull(docResult);
 		var (registry, document, schema) = GetSchema(docResult, path);
 		var target = CreateTarget(LoadOptions(), registry);
+
+		Assert.NotNull(schema);
+
+		var actual = target.ToInlineDataType(schema!);
+
+		Assert.Equal(expectedName, actual?.Text);
+	}
+
+	[Fact]
+	public void Determine_a_name_for_schema_with_override()
+	{
+		string expectedName = "global::My.TestEnum";
+		string documentName = "enum.yaml";
+		string path = "/paths/~1difficult-enum/get/parameters/0/schema";
+
+		var docResult = GetDocumentReference(documentName);
+		Assert.NotNull(docResult);
+		var (registry, document, schema) = GetSchema(docResult, path);
+		var opt = LoadOptions();
+		opt.OverrideNames[schema!.Metadata.Id.OriginalString] = "My.TestEnum";
+		var target = CreateTarget(opt, registry);
 
 		Assert.NotNull(schema);
 

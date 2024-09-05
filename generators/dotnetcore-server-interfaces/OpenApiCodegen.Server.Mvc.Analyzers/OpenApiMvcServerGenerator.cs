@@ -18,9 +18,9 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc
 	[Generator]
 	public sealed class OpenApiMvcServerGenerator : BaseGenerator
 	{
-		const string sourceGroup = "OpenApiServerInterface";
-
 		private const string sourceItemGroupKey = "SourceItemGroup";
+		const string sourceGroup = "OpenApiServerInterface";
+		const string sharedSourceGroup = "JsonSchemaDocument";
 		private static readonly DiagnosticDescriptor IncludeDependentDll = new DiagnosticDescriptor(id: "DPDAPICTRL001",
 																									title: "Include a reference to DarkPatterns.OpenApiCodegen.Json.Extensions",
 																									messageFormat: "Include a reference to DarkPatterns.OpenApiCodegen.Json.Extensions",
@@ -41,10 +41,16 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc
 			}
 		}
 
+		protected override bool IsEntrypointFile(AdditionalTextWithOptions additionalText)
+		{
+			string? currentSourceGroup = additionalText.ConfigOptions.GetAdditionalFilesMetadata(sourceItemGroupKey);
+			return currentSourceGroup == sourceGroup;
+		}
+
 		protected override bool IsRelevantFile(AdditionalTextWithOptions additionalText)
 		{
 			string? currentSourceGroup = additionalText.ConfigOptions.GetAdditionalFilesMetadata(sourceItemGroupKey);
-			if (currentSourceGroup != sourceGroup)
+			if (currentSourceGroup != sourceGroup && currentSourceGroup != sharedSourceGroup)
 			{
 				return false;
 			}

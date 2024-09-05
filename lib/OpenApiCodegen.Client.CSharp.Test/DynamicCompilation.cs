@@ -45,7 +45,7 @@ namespace DarkPatterns.OpenApiCodegen.Client.CSharp
 			var options = LoadOptions();
 			configureOptions?.Invoke(options);
 
-			var transformer = document.BuildCSharpClientSourceProvider(registry, "", "DPD.Controller", options);
+			var transformer = document.BuildCSharpClientSourceProvider(registry, "", options);
 			OpenApiTransformDiagnostic diagnostic = new();
 
 			var entries = transformer.GetSources(diagnostic).ToArray();

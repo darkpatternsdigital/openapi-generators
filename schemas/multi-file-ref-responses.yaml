@@ -1,0 +1,21 @@
+components:
+  responses:
+    Number:
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: integer
+    BadRequest:
+      description: unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: 'multi-file-ref-types.yaml#/BadRequest'
+    Unknown:
+      description: unexpected error
+      content:
+        application/json:
+          schema:
+            type: object
+            format: any

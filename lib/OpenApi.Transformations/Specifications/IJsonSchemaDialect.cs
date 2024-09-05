@@ -8,14 +8,14 @@ namespace DarkPatterns.OpenApi.Transformations.Specifications;
 public interface IJsonSchemaDialect
 {
 	Uri Id { get; }
-	string IdField { get; }
+	string? IdField { get; }
 	IReadOnlyCollection<IJsonSchemaVocabulary> Vocabularies { get; }
 	IJsonSchemaKeyword UnknownKeyword { get; }
 }
 
 public record JsonSchemaDialect(
 	Uri Id,
-	string IdField,
+	string? IdField,
 	IReadOnlyCollection<IJsonSchemaVocabulary> Vocabularies,
 	IJsonSchemaKeyword UnknownKeyword
 ) : IJsonSchemaDialect

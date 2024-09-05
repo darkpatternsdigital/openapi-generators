@@ -21,17 +21,15 @@ public class CSharpSchemaSourceProvider : SchemaSourceProvider
 	private readonly DocumentRegistry documentRegistry;
 	private readonly ISchemaRegistry schemaRegistry;
 	private readonly CSharpInlineSchemas inlineSchemas;
-	private readonly string baseNamespace;
 	private readonly CSharpSchemaOptions options;
 	private readonly HandlebarsFactory handlebarsFactory;
 	private readonly PartialHeader header;
 
-	public CSharpSchemaSourceProvider(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, string baseNamespace, CSharpSchemaOptions options, HandlebarsFactory handlebarsFactory, Templates.PartialHeader header) : base(schemaRegistry)
+	public CSharpSchemaSourceProvider(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, CSharpSchemaOptions options, HandlebarsFactory handlebarsFactory, Templates.PartialHeader header) : base(schemaRegistry)
 	{
 		this.documentRegistry = documentRegistry;
 		this.schemaRegistry = schemaRegistry;
 		this.inlineSchemas = new CSharpInlineSchemas(options, documentRegistry);
-		this.baseNamespace = baseNamespace;
 		this.options = options;
 		this.handlebarsFactory = handlebarsFactory;
 		this.header = header;
@@ -40,7 +38,7 @@ public class CSharpSchemaSourceProvider : SchemaSourceProvider
 	protected override SourceEntry? GetSourceEntry(JsonSchema entry, OpenApiTransformDiagnostic diagnostic)
 	{
 		if (!inlineSchemas.ProduceSourceEntry(entry)) return null;
-		var targetNamespace = baseNamespace;
+		var targetNamespace = options.GetNamespace(entry);
 		var className = GetClassName(entry);
 
 		Templates.Model? model = GetModel(entry, diagnostic, className);
@@ -49,6 +47,7 @@ public class CSharpSchemaSourceProvider : SchemaSourceProvider
 		var sourceText = HandlebarsTemplateProcess.ProcessModel(
 			header: header,
 			packageName: targetNamespace,
+			schemaId: entry.Metadata.Id,
 			model: model,
 			handlebarsFactory.Handlebars
 		);
@@ -98,11 +97,8 @@ public class CSharpSchemaSourceProvider : SchemaSourceProvider
 		return null;
 	}
 
-	private string GetClassName(JsonSchema schema)
-	{
-		var context = schema.Metadata.Id;
-		return CSharpNaming.ToClassName(inlineSchemas.UriToClassIdentifier(context), options.ReservedIdentifiers());
-	}
+	private string GetClassName(JsonSchema schema) =>
+		options.ToClassName(schema, inlineSchemas.UriToClassIdentifier(schema.Metadata.Id));
 
 	record ObjectModel(Func<IReadOnlyDictionary<string, JsonSchema>> Properties, Func<IEnumerable<string>> Required, bool LegacyOptionalBehavior);
 

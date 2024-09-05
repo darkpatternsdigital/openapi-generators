@@ -149,6 +149,5 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 			additionalSchemas
 				.Select(doc => DocumentResolverFactory.LoadAs(ToInternalUri(doc), doc.Contents))
 				.ToArray()
-		// TODO: use the `options` to determine how to resolve additional documents
 		);
 }

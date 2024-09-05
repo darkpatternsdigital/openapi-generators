@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,7 +6,7 @@ namespace DarkPatterns.OpenApi.CSharp
 {
 	public class CSharpSchemaOptions
 	{
-		public string ControllerNameExtension { get; set; } = "dotnet-mvc-server-controller";
+		public CSharpSchemaExtensionsOptions Extensions { get; set; } = new();
 		public List<string> GlobalReservedIdentifiers { get; } = new();
 		public Dictionary<string, List<string>> ContextualReservedIdentifiers { get; } = new();
 		public string MapType { get; set; } = "global::System.Collections.Generic.Dictionary<string, {}>";

@@ -82,8 +82,10 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 		var optionsFiles = entrypointMetadata[propConfig];
 		var pathPrefix = entrypointMetadata[propPathPrefix];
 		using var defaultJsonStream = CSharpSchemaOptions.GetDefaultOptionsJson();
+		using var serverJsonStream = CSharpServerSchemaOptions.GetServerDefaultOptionsJson();
 		var builder = new ConfigurationBuilder();
 		builder.AddYamlStream(defaultJsonStream);
+		builder.AddYamlStream(serverJsonStream);
 		if (optionsFiles is { Length: > 0 })
 		{
 			foreach (var file in optionsFiles.Split(';'))

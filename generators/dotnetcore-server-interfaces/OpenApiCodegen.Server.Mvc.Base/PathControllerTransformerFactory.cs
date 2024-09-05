@@ -24,7 +24,7 @@ namespace DarkPatterns.OpenApi.CSharp
 			var operationGrouping =
 				new PathControllerSourceTransformer(documentRegistry, schemaRegistry, document, controllerTransformer, (operation, path) =>
 				{
-					var key = $"x-{options.ControllerNameExtension}";
+					var key = $"x-{options.Extensions.ControllerName}";
 					return operation.Extensions.TryGetValue(key, out var opOverride) ? opOverride?.GetValue<string>()
 						: path.Extensions.TryGetValue(key, out var pathOverride) ? pathOverride?.GetValue<string>()
 						: null;

@@ -69,7 +69,8 @@ commonly, only one or two parameters are needed. Missing keys are merged with
 the defaults. For example:
 
 ```yaml
-controllerNameExtension: dotnet-mvc-server-controller
+extensions:
+  controllerName: dotnet-mvc-server-controller
 mapType: global::System.Collections.Generic.Dictionary<string, {}>
 arrayType: global::System.Collections.Generic.IEnumerable<{}>
 types:
@@ -82,7 +83,7 @@ overrideNames:
   proj://darkpatterns-openapi/multi-file-ref-types.yaml#/BadRequest: My.Common.BadRequest
 ```
 
-- `controllerNameExtension` specifies the extension (for example,
+- `extensions.controllerName` specifies the extension (for example,
   `x-dotnet-mvc-server-controller`) used to override the generated controller
   name. This may be specified on either the operation or the path level.
 - `mapType` specifies the type to use for JSON maps, which occur when when

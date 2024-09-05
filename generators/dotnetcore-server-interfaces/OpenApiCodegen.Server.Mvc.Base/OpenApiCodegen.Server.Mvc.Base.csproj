@@ -11,6 +11,8 @@
 	<ItemGroup>
 		<None Remove="Templates\*.handlebars" />
 		<EmbeddedResource Include="Templates\*.handlebars" />
+		<None Remove="csharp.config.yaml" />
+		<EmbeddedResource Include="csharp.config.yaml" />
 	</ItemGroup>
 
 	<ItemGroup>

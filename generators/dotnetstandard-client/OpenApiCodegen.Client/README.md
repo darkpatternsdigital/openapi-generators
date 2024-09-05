@@ -77,6 +77,8 @@ types:
       float: float
       double: double
     default: double
+overrideNames:
+  proj://darkpatterns-openapi/multi-file-ref-types.yaml#/BadRequest: My.Common.BadRequest
 ```
 
 - `mapType` - Specifies the type to use for JSON maps, which occur when when
@@ -96,3 +98,5 @@ types:
     type: number
     format: float
     ```
+- `overrideNames` is a dictionary of schema URIs to the namespace-qualified C#
+  type name to use for the generated class. (Note: this feature is still experimental and may change or be removed in a later relaese.)

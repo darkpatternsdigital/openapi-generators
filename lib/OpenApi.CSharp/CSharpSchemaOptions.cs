@@ -13,6 +13,7 @@ namespace DarkPatterns.OpenApi.CSharp
 		public string ArrayType { get; set; } = "global::System.Collections.Generic.IEnumerable<{}>";
 		public string FallbackType { get; set; } = "object";
 		public string DefaultNamespace { get; set; } = "";
+		public Dictionary<string, string> OverrideNames { get; set; } = new();
 		public Dictionary<Uri, string> NamespacesBySchema { get; set; } = new();
 		public Dictionary<string, OpenApiTypeFormats> Types { get; } = new();
 
@@ -49,12 +50,14 @@ namespace DarkPatterns.OpenApi.CSharp
 
 		internal string GetNamespace(Uri schemaId)
 		{
+			if (OverrideNames.TryGetValue(schemaId.OriginalString, out var fullName)) return fullName.Substring(0, fullName.LastIndexOf('.'));
 			if (NamespacesBySchema.TryGetValue(schemaId, out var result)) return result;
 			return DefaultNamespace;
 		}
 
 		internal string ToClassName(Uri schemaId, string nameFromFragment)
 		{
+			if (OverrideNames.TryGetValue(schemaId.OriginalString, out var fullName)) return fullName.Substring(fullName.LastIndexOf('.') + 1);
 			return CSharpNaming.ToClassName(nameFromFragment, ReservedIdentifiers());
 		}
 	}

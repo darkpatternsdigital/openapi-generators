@@ -67,6 +67,27 @@ public class CSharpInlineSchemasShould
 		Assert.Equal(expectedName, actual?.Text);
 	}
 
+	[Fact]
+	public void Determine_a_name_for_schema_with_override()
+	{
+		string expectedName = "global::My.TestEnum";
+		string documentName = "enum.yaml";
+		string path = "/paths/~1difficult-enum/get/parameters/0/schema";
+
+		var docResult = GetDocumentReference(documentName);
+		Assert.NotNull(docResult);
+		var (registry, document, schema) = GetSchema(docResult, path);
+		var opt = LoadOptions();
+		opt.OverrideNames[schema!.Metadata.Id.OriginalString] = "My.TestEnum";
+		var target = CreateTarget(opt, registry);
+
+		Assert.NotNull(schema);
+
+		var actual = target.ToInlineDataType(schema!);
+
+		Assert.Equal(expectedName, actual?.Text);
+	}
+
 	private static (DocumentRegistry registry, OpenApiDocument? document, JsonSchema? schema) GetSchema(IDocumentReference docRef, string path)
 	{
 		var registry = DocumentLoader.CreateRegistry();

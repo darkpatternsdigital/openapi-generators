@@ -78,6 +78,8 @@ types:
       float: float
       double: double
     default: double
+overrideNames:
+  proj://darkpatterns-openapi/multi-file-ref-types.yaml#/BadRequest: My.Common.BadRequest
 ```
 
 - `controllerNameExtension` specifies the extension (for example,
@@ -100,3 +102,5 @@ types:
     type: number
     format: float
     ```
+- `overrideNames` is a dictionary of schema URIs to the namespace-qualified C#
+  type name to use for the generated class. (Note: this feature is still experimental and may change or be removed in a later relaese.)

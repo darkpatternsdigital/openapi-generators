@@ -1,16 +1,13 @@
-﻿using Bogus;
-using Json.Pointer;
-using DarkPatterns.OpenApi.CSharp;
+﻿using DarkPatterns.OpenApi.CSharp;
 using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApi.Transformations.Abstractions;
 using DarkPatterns.OpenApi.Transformations.DocumentTypes;
 using DarkPatterns.OpenApi.Transformations.Specifications;
-using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Applicator;
 using DarkPatterns.OpenApiCodegen.TestUtils;
+using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.Text;
 using System.Text.Json.Nodes;
 using Xunit;
 using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
@@ -18,7 +15,7 @@ using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc;
 using static OptionsHelpers;
 
-public class CSharpInlineSchemasShould
+public class CSharpSchemaTransformerShould
 {
 	private CSharpInlineSchemas CreateTarget(CSharpServerSchemaOptions options, DocumentRegistry registry) => new(options, registry);
 
@@ -78,8 +75,13 @@ public class CSharpInlineSchemasShould
 		var docResult = GetDocumentReference(documentName);
 		Assert.NotNull(docResult);
 		var (registry, document, schema) = GetSchema(docResult, path);
-		var opt = LoadOptions();
-		opt.OverrideNames[schema!.Metadata.Id.OriginalString] = "My.TestEnum";
+		var opt = LoadOptions(configurationBuilder =>
+		{
+			configurationBuilder.AddYamlStream(new MemoryStream(Encoding.UTF8.GetBytes($@"
+overrideNames:
+  {schema!.Metadata.Id.OriginalString}: My.TestEnum
+")));
+		});
 		var target = CreateTarget(opt, registry);
 
 		Assert.NotNull(schema);

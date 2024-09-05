@@ -1,4 +1,4 @@
-﻿Adds source generators to generate C# client extension methods from an OpenAPI
+Adds source generators to generate C# client extension methods from an OpenAPI
 specification file.
 
 Add this package, select the OpenAPI specification file from your project, and
@@ -50,6 +50,8 @@ Additional settings may be added within the `.csproj`. For example:
   path of the schema file
 - `Configuration` - Additional configuration settings specific to this schema.
   See the configuration yaml documentation below.
+- `SchemaId` - Specifies the "retrieval URI" used when resolving relative paths
+  to external files. Otherwise, the absolute file-scheme URL will be used.
 
 In addition, adding the following to an ItemGroup in the csproj (or adding the
 yaml file with the build action `OpenApiSchemaCSharpClientOptions` via Visual

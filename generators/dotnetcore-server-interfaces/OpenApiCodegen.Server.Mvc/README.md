@@ -49,6 +49,9 @@ Additional settings may be added within the `.csproj`. For example:
   path of the schema file
 - `Configuration` - Additional configuration settings specific to this schema.
   See the configuration yaml documentation below.
+- `PathPrefix` - Prefixes the paths of the generated paths with the given path.
+- `SchemaId` - Specifies the "retrieval URI" used when resolving relative paths
+  to external files. Otherwise, the absolute file-scheme URL will be used.
 
 In addition, adding the following to an ItemGroup in the csproj (or adding the
 yaml file with the build action `OpenApiSchemaCSharpServerOptions` via Visual

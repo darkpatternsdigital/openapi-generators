@@ -10,6 +10,7 @@ namespace DarkPatterns.OpenApi.CSharp.Templates
 		PartialHeader Header,
 
 		string PackageName,
+		string SourceSchemaId,
 
 		TModel Model
 	) where TModel : Model;

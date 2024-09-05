@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -51,6 +51,11 @@ namespace DarkPatterns.OpenApi.CSharp
 		{
 			if (NamespacesBySchema.TryGetValue(schemaId, out var result)) return result;
 			return DefaultNamespace;
+		}
+
+		internal string ToClassName(Uri schemaId, string nameFromFragment)
+		{
+			return CSharpNaming.ToClassName(nameFromFragment, ReservedIdentifiers());
 		}
 	}
 

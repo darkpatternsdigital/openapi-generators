@@ -47,6 +47,7 @@ public class CSharpSchemaSourceProvider : SchemaSourceProvider
 		var sourceText = HandlebarsTemplateProcess.ProcessModel(
 			header: header,
 			packageName: targetNamespace,
+			schemaId: entry.Metadata.Id,
 			model: model,
 			handlebarsFactory.Handlebars
 		);

@@ -75,7 +75,7 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, DocumentRegistry d
 
 	private string GetClassName(JsonSchema schema)
 	{
-		return CSharpNaming.ToClassName(UriToClassIdentifier(schema.Metadata.Id), options.ReservedIdentifiers());
+		return options.ToClassName(schema.Metadata.Id, UriToClassIdentifier(schema.Metadata.Id));
 	}
 
 	private static readonly Regex HttpSuccessRegex = new Regex("2[0-9]{2}");

@@ -3,8 +3,6 @@ using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApiCodegen;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using System.Linq;
 using DarkPatterns.OpenApi.Transformations.DocumentTypes;
 using DarkPatterns.OpenApi.Transformations.Specifications;
@@ -18,6 +16,7 @@ public class ClientGenerator : IOpenApiCodeGenerator
 	const string propConfig = "Configuration";
 	const string propIdentity = "identity";
 	const string propLink = "link";
+	const string propSchemaId = "schemaId";
 	private readonly IEnumerable<string> metadataKeys = new[]
 	{
 		propNamespace,
@@ -120,6 +119,7 @@ public class ClientGenerator : IOpenApiCodeGenerator
 	}
 
 	private static Uri ToInternalUri(AdditionalTextInfo document) =>
+		document.Metadata.TryGetValue(propSchemaId, out var schemaId) ? new Uri(schemaId) :
 		new Uri(new Uri(document.Path).AbsoluteUri);
 
 	private static (IDocumentReference, DocumentRegistry) LoadDocument(AdditionalTextInfo document, CSharpSchemaOptions options, IEnumerable<AdditionalTextInfo> additionalSchemas)

@@ -8,8 +8,6 @@ using System.Linq;
 using DarkPatterns.OpenApi.Transformations.DocumentTypes;
 using DarkPatterns.OpenApi.Transformations.Specifications;
 using DarkPatterns.OpenApi.Transformations.Diagnostics;
-using System.IO;
-using System.Net.Mime;
 
 namespace DarkPatterns.OpenApi.CSharp;
 
@@ -20,6 +18,7 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 	const string propIdentity = "identity";
 	const string propLink = "link";
 	const string propPathPrefix = "pathPrefix";
+	const string propSchemaId = "schemaId";
 	private readonly IEnumerable<string> metadataKeys = new[]
 	{
 		propNamespace,
@@ -27,6 +26,7 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 		propIdentity,
 		propLink,
 		propPathPrefix,
+		propSchemaId,
 	};
 
 	public IEnumerable<string> MetadataKeys => metadataKeys;
@@ -130,7 +130,7 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 	}
 
 	private static Uri ToInternalUri(AdditionalTextInfo document) =>
-		// TODO: check schema url from metadata
+		document.Metadata.TryGetValue(propSchemaId, out var schemaId) && schemaId is { Length: > 0 } ? new Uri(schemaId) :
 		new Uri(new Uri(document.Path).AbsoluteUri);
 
 	private static (IDocumentReference, DocumentRegistry) LoadDocument(AdditionalTextInfo document, CSharpServerSchemaOptions options, IEnumerable<AdditionalTextInfo> additionalSchemas)

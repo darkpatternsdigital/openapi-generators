@@ -20,6 +20,7 @@ public static class DocumentResolverFactory
 	{
 		return (baseUri, _) =>
 		{
+			if (baseUri != uri) return null;
 			using var sr = new StringReader(documentContents);
 			return docLoader.LoadDocument(uri, sr, null);
 		};

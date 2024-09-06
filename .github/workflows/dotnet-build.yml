@@ -88,6 +88,7 @@ jobs:
     - name: Set publish NPM registry
       if: ${{ github.ref != 'refs/heads/main' }}
       run:  |
+        echo '' >> .npmrc
         echo '@darkpatternsdigital:_authToken=${NODE_AUTH_TOKEN}' >> .npmrc
         echo '@darkpatternsdigital:registry=https://npm.pkg.github.com/' >> .npmrc
         echo 'always-auth=false' >> .npmrc

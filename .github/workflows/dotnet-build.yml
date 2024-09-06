@@ -86,11 +86,9 @@ jobs:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
 
     - name: Set publish NPM registry
-      if: ${{ github.ref == 'refs/heads/main' }}
+      if: ${{ github.ref != 'refs/heads/main' }}
       run:  |
-        echo '@darkpatternsdigital:registry=$NODE_REGISTRY' >> ~/.npmrc
-      env:
-        NODE_REGISTRY: ${{ github.ref != 'refs/heads/main' && 'https://npm.pkg.github.com/' || 'https://registry.npmjs.org/' }}
+        echo '@darkpatternsdigital:registry=https://npm.pkg.github.com/' >> ~/.npmrc
     - name: Publish npm packages
       working-directory: ./artifacts/package/release
       run:  |

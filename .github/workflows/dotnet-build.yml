@@ -92,7 +92,7 @@ jobs:
         echo '@darkpatternsdigital:_authToken=${NODE_AUTH_TOKEN}' >> .npmrc
         echo '@darkpatternsdigital:registry=https://npm.pkg.github.com/' >> .npmrc
         echo 'always-auth=false' >> .npmrc
-        cat .npmrc
+        echo "NPM_CONFIG_USERCONFIG=$(pwd)/.npmrc" >> $GITHUB_ENV
     - name: Publish npm packages
       working-directory: ./artifacts/package/release
       run:  |

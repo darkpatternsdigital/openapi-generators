@@ -9,6 +9,7 @@ using System.Linq;
 using static System.Linq.Expressions.Expression;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace DarkPatterns.OpenApiCodegen;
 
@@ -22,7 +23,7 @@ public abstract class BaseGenerator :
 	ISourceGenerator
 #endif
 {
-	private const string additionalTextInfoAssemblyName = "DarkPatterns.OpenApiCodegen.0.8.0";
+	private const string additionalTextInfoAssemblyName = "DarkPatterns.OpenApiCodegen";
 	private const string additionalTextInfoTypeName = "DarkPatterns.OpenApiCodegen.AdditionalTextInfo";
 	private static readonly DiagnosticDescriptor OpenApiConversionError = new DiagnosticDescriptor(id: "DPD_PARSE_UNK",
 																								title: "A conversion error was encountered",
@@ -101,7 +102,11 @@ public abstract class BaseGenerator :
 			if (loadedAssemblies.FirstOrDefault(asm => asm.FullName == name) is Assembly preloaded)
 				return preloaded;
 
-			using var stream = myAsm.GetManifestResourceStream(name.Split(',')[0] + ".dll");
+			var namePart = name.Split(',')[0];
+			var nameRegex = new Regex("^" + Regex.Escape(namePart) + @"(\.\d+){3}\.dll");
+			var streamName = myAsm.GetManifestResourceNames().SingleOrDefault(n => n == namePart + ".dll" || nameRegex.IsMatch(n));
+			if (streamName == null) return null;
+			using var stream = myAsm.GetManifestResourceStream(streamName);
 			if (stream != null)
 			{
 				var dllBytes = new byte[stream.Length];

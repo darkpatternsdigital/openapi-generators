@@ -92,6 +92,12 @@ jobs:
         echo '//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}' >> .npmrc
         echo '@darkpatternsdigital:registry=https://npm.pkg.github.com/' >> .npmrc
         echo 'always-auth=false' >> .npmrc
+    - name: Set NPM token path
+      if: ${{ github.ref == 'refs/heads/main' }}
+      run:  |
+        echo '' >> .npmrc
+        echo '//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}' >> .npmrc
+        echo 'always-auth=false' >> .npmrc
     - name: Publish npm packages
       working-directory: ./artifacts/package/release
       run:  |

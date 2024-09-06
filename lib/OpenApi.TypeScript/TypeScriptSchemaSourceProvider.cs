@@ -101,7 +101,7 @@ public class TypeScriptSchemaSourceProvider : SchemaSourceProvider
 			schema.Description,
 			className,
 			Item: dataType.Text,
-			Imports: inlineSchemas.GetImportStatements([schema.Items], Enumerable.Empty<JsonSchema>(), "./models/").ToArray()
+			Imports: inlineSchemas.GetImportStatements([schema.Items], [schema.Schema], "./models/").ToArray()
 		);
 	}
 
@@ -194,7 +194,7 @@ public class TypeScriptSchemaSourceProvider : SchemaSourceProvider
 											))).ToArray();
 
 		return () => new Templates.ObjectModel(
-			Imports: inlineSchemas.GetImportStatements(properties.Values, new[] { schema }, "./models/").ToArray(),
+			Imports: inlineSchemas.GetImportStatements(properties.Values, [schema], "./models/").ToArray(),
 			Description: schema.TryGetAnnotation<DescriptionKeyword>()?.Description,
 			ClassName: className,
 			Parent: null, // TODO - if "all of" and only one was a reference, we should be able to use inheritance.
@@ -224,10 +224,11 @@ public static class TypeScriptInlineSchemasExtensions
 
 	public static IEnumerable<Templates.ImportStatement> GetImportStatements(this TypeScriptInlineSchemas inlineSchemas, IEnumerable<JsonSchema?> schemasReferenced, IEnumerable<JsonSchema?> excludedSchemas, string path)
 	{
+		var excludedSchemaIds = excludedSchemas.Select(s => s?.Metadata.Id.OriginalString);
 		return from entry in schemasReferenced.Except(excludedSchemas)
 			   let t = inlineSchemas.ToInlineDataType(entry)
 			   from import in t.Imports
-			   where !excludedSchemas.Contains(import.Schema)
+			   where !excludedSchemaIds.Contains(import.Schema.Metadata.Id.OriginalString)
 			   let refName = import.Member
 			   let fileName = import.File
 			   group refName by fileName into imports

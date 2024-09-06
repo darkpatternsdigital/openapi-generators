@@ -5,14 +5,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Schemas Include="$(SolutionRoot)schemas/all-of.yaml" />
-		<Schemas Include="$(SolutionRoot)schemas/array.yaml" />
-		<Schemas Include="$(SolutionRoot)schemas/enum.yaml" />
-		<Schemas Include="$(SolutionRoot)schemas/github-issue-42.yaml" />
-		<Schemas Include="$(SolutionRoot)schemas/headers.yaml" />
-		<Schemas Include="$(SolutionRoot)schemas/nullable-vs-optional-legacy.yaml" />
-		<Schemas Include="$(SolutionRoot)schemas/nullable-vs-optional.yaml" />
-		<Schemas Include="$(SolutionRoot)schemas/one-of.yaml" />
+		<Schemas Include="$(SolutionRoot)schemas/*.yaml" />
+		<Schemas Remove="$(SolutionRoot)schemas/bad*.yaml" />
+		<!-- TODO: Support OpenAPI 3.1 -->
+		<Schemas Remove="$(SolutionRoot)schemas/exclusive-range-openapi-3_1.yaml" />
+		<Schemas Remove="$(SolutionRoot)schemas/multi-file-ref-*.yaml" />
 		<Schemas Update="$(SolutionRoot)schemas/*">
 			<DestinationFolder>$([MSBuild]::NormalizeDirectory('$(ProjectDir)', '%(Schemas.filename)%(Schemas.extension)'))</DestinationFolder>
 		</Schemas>

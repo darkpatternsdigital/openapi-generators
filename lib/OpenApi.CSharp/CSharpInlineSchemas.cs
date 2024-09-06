@@ -33,6 +33,8 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, DocumentRegistry d
 			{ Type: "object", Properties: { Count: 0 }, AdditionalProperties: JsonSchema dictionaryValueSchema } =>
 				new(options.ToMapType(ToInlineDataType(dictionaryValueSchema).Text), IsEnumerable: true),
 			// Array
+			{ Type: "array", Items: null } =>
+				new(options.ToArrayType(options.FallbackType), IsEnumerable: true),
 			{ Items: JsonSchema items } =>
 				new(options.ToArrayType(ToInlineDataType(items).Text), IsEnumerable: true),
 			// Generates a source file, so therefore it must have a class name

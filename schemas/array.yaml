@@ -12,7 +12,6 @@ components:
     Palette:
       $ref: '#/components/schemas/Colors'
     Palettes:
-      type: array
       items:
         $ref: '#/components/schemas/Palette'
 paths:

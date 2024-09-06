@@ -60,7 +60,7 @@ public class TypeScriptSchemaSourceProvider : SchemaSourceProvider
 		var typeInfo = TypeScriptTypeInfo.From(schema);
 		Templates.Model? model = typeInfo switch
 		{
-			{ Items: JsonSchema arrayItem, Type: "array" } => ToArrayModel(className, typeInfo),
+			{ Type: "array" } or { Items: JsonSchema _ } => ToArrayModel(className, typeInfo),
 			{ Enum: { Count: > 0 }, Type: "string" } => ToEnumModel(className, typeInfo),
 			{ OneOf: { Count: > 0 } } => ToOneOfModel(className, typeInfo),
 			_ => BuildObjectModel(schema) switch

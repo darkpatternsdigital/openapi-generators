@@ -59,7 +59,10 @@ public class TypeScriptInlineSchemas(TypeScriptSchemaOptions options, DocumentRe
 		{
 			_ when ProduceSourceEntry(schema) =>
 				new(UseReferenceName(schema), [ToImportReference(schema)]),
-			{ Type: "array", Items: var items } => ArrayToInline(items),
+			{ Type: "array", Items: null } => ArrayToInline(null),
+			{ Items: JsonSchema items } => ArrayToInline(items),
+			{ Schema: { BoolValue: false } } => new TypeScriptInlineDefinition("never", [], false, false),
+			{ Schema: { BoolValue: true } } => new TypeScriptInlineDefinition("unknown", [], true, false),
 			{ Type: string type, Format: var format } =>
 				new(options.Find(type, format), []),
 			_ => throw new NotSupportedException($"Unknown schema: {schema.Metadata.Id}"),

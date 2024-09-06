@@ -54,7 +54,8 @@ namespace DarkPatterns.OpenApi.CSharp
 		internal string GetNamespace(JsonSchema schema)
 		{
 			var schemaId = schema.Metadata.Id;
-			if (OverrideNames.TryGetValue(schemaId.OriginalString, out var fullName)) return fullName.Substring(0, fullName.LastIndexOf('.'));
+			// This is a hack to avoid lack of support for https://github.com/dotnet/runtime/issues/67616
+			if (OverrideNames.TryGetValue(schemaId.OriginalString.Replace(':', '#'), out var fullName)) return fullName.Substring(0, fullName.LastIndexOf('.'));
 			if (schema.TryGetAnnotation<UnknownKeyword>($"x-{Extensions.NamespaceOverride}") is { } nsOverride
 				&& nsOverride.Value?.GetValueKind() == System.Text.Json.JsonValueKind.String)
 				return nsOverride.Value.GetValue<string>();
@@ -65,7 +66,8 @@ namespace DarkPatterns.OpenApi.CSharp
 		internal string ToClassName(JsonSchema schema, string nameFromFragment)
 		{
 			var schemaId = schema.Metadata.Id;
-			if (OverrideNames.TryGetValue(schemaId.OriginalString, out var fullName)) return fullName.Substring(fullName.LastIndexOf('.') + 1);
+			// This is a hack to avoid lack of support for https://github.com/dotnet/runtime/issues/67616
+			if (OverrideNames.TryGetValue(schemaId.OriginalString.Replace(':', '#'), out var fullName)) return fullName.Substring(fullName.LastIndexOf('.') + 1);
 			if (schema.TryGetAnnotation<UnknownKeyword>($"x-{Extensions.TypeNameOverride}") is { } typeNameOverride
 				&& typeNameOverride.Value?.GetValueKind() == System.Text.Json.JsonValueKind.String)
 				return typeNameOverride.Value.GetValue<string>();

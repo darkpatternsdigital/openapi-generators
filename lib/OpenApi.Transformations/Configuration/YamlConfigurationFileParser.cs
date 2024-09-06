@@ -36,7 +36,8 @@ namespace DarkPatterns.OpenApi.Transformations.Configuration
 
 		private void VisitYamlNodePair(KeyValuePair<YamlNode, YamlNode> yamlNodePair)
 		{
-			var context = ((YamlScalarNode)yamlNodePair.Key).Value!;
+			// This is a hack to avoid lack of support for https://github.com/dotnet/runtime/issues/67616
+			var context = ((YamlScalarNode)yamlNodePair.Key).Value!.Replace(':', '#');
 			VisitYamlNode(context, yamlNodePair.Value);
 		}
 

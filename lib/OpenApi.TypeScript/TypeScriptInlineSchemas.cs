@@ -169,6 +169,13 @@ public class TypeScriptInlineSchemas(TypeScriptSchemaOptions options, DocumentRe
 						};
 						return ([responseName, qualifierName, typeName], context.Skip(3).ToArray());
 					}
+				case (["components", "requestBodies", var requestName], OpenApiRequestBody requestBody) when context.Count >= 3:
+					{
+						if (context[1] is not (["content", var mimeType], _)) throw new NotImplementedException();
+						if (context[2] is not (["schema"], _)) throw new NotImplementedException();
+
+						return ([requestName, requestBody.Content!.Count == 1 ? "" : mimeType, "request"], context.Skip(3).ToArray());
+					}
 				case (["requestBody"], OpenApiRequestBody requestBody) when context.Count >= 3:
 					{
 						if (context[1] is not (["content", var mimeType], _)) throw new NotImplementedException();

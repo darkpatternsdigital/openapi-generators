@@ -1,12 +1,8 @@
 import type {
-	RequestBodies,
 	RequestConversion,
 	StandardResponse,
 	TransformCallType,
-	AdapterRequestArgs,
-	RequestConversions,
 	HttpMethod,
-	AdapterResponseArgs,
 } from '@darkpatternsdigital/openapi-codegen-typescript';
 
 export const applicationJson = 'application/json';

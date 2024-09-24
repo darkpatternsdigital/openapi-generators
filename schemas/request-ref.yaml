@@ -1,0 +1,86 @@
+openapi: "3.0.3"
+info:
+  version: 1.0.0
+  title: Request Body Refs Demo
+  description: A sample API that uses request body refs
+paths:
+  /address:
+    post:
+      operationId: lookupRecord
+      requestBody:
+        $ref: '#/components/requestBodies/LookupRecord'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  multiple:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - formattedAddress
+                        - location
+                      properties:
+                        formattedAddress:
+                          type: string
+                        location:
+                          type: object
+                          required:
+                            - latitude
+                            - longitude
+                          properties:
+                            latitude:
+                              type: number
+                            longitude:
+                              type: number
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - message
+                properties:
+                  code:
+                    type: string
+                  message:
+                    type: string
+components:
+  requestBodies:
+    LookupRecord:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - formattedAddress
+              - location
+            properties:
+              formattedAddress:
+                type: string
+              location:
+                type: object
+                required:
+                  - latitude
+                  - longitude
+                properties:
+                  latitude:
+                    type: number
+                  longitude:
+                    type: number

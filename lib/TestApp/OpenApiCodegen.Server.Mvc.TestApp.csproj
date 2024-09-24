@@ -24,6 +24,7 @@
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\nullable-vs-optional-legacy.yaml" Link="LegacyOptional\nullable-vs-optional-legacy.yaml" PathPrefix="/nullable-vs-optional-legacy" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\nullable-vs-optional.yaml" Link="NullableVsOptional\nullable-vs-optional.yaml" PathPrefix="/nullable-vs-optional" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\annotations.yaml" Link="Annotations\annotations.yaml" PathPrefix="/annotations" />
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\request-ref.yaml" Link="RequestRef\request-ref.yaml" PathPrefix="/request-ref" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\response-ref.yaml" Link="ResponseRef\response-ref.yaml" PathPrefix="/response-ref" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\multi-file-ref.yaml" Link="MultiFileRef\multi-file-ref.yaml" PathPrefix="/multi-file-ref" SchemaId="proj://darkpatterns-openapi/multi-file-ref.yaml" />
     <JsonSchemaDocument Include="$(SolutionRoot)schemas\multi-file-ref-types.yaml" Link="MultiFileRef\Types\multi-file-ref-types.yaml" SchemaId="proj://darkpatterns-openapi/multi-file-ref-types.yaml" />

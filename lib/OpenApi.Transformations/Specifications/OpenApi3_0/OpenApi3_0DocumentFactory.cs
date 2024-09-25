@@ -313,7 +313,7 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 	}
 
 	private OpenApiPath ConstructPath(ResolvableNode key) =>
-		CatchDiagnostic(InternalConstructPath, MissingRequiredFieldDefaults.ConstructPlaceholderPath)(key);
+		CatchDiagnostic(AllowReference(InternalConstructPath), MissingRequiredFieldDefaults.ConstructPlaceholderPath)(key);
 	private OpenApiPath InternalConstructPath(ResolvableNode key)
 	{
 		if (key.Node is not JsonObject obj) throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiPath)));

@@ -29,6 +29,7 @@
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\multi-file-ref.yaml" Link="MultiFileRef\multi-file-ref.yaml" PathPrefix="/multi-file-ref" SchemaId="proj://darkpatterns-openapi/multi-file-ref.yaml" />
     <JsonSchemaDocument Include="$(SolutionRoot)schemas\multi-file-ref-types.yaml" Link="MultiFileRef\Types\multi-file-ref-types.yaml" SchemaId="proj://darkpatterns-openapi/multi-file-ref-types.yaml" />
     <JsonSchemaDocument Include="$(SolutionRoot)schemas\multi-file-ref-responses.yaml" Link="MultiFileRef\Responses\multi-file-ref-responses.yaml" SchemaId="proj://darkpatterns-openapi/multi-file-ref-responses.yaml" />
+    <JsonSchemaDocument Include="$(SolutionRoot)schemas\multi-file-ref-endpoints.yaml" Link="MultiFileRef\Endpoints\multi-file-ref-endpoints.yaml" SchemaId="proj://darkpatterns-openapi/multi-file-ref-endpoints.yaml" />
 
     <Compile Remove="generated/**/*" />
     <Clean Include="generated/**/*" />

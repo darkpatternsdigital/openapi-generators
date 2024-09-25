@@ -1,0 +1,8 @@
+components:
+  endpoints:
+    /endpoint:
+      get:
+        operationId: doSomething
+        responses:
+          '200':
+            $ref: 'multi-file-ref-responses.yaml#/components/responses/Number'

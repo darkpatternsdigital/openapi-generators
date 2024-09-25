@@ -4,6 +4,8 @@ info:
   title: Multi File Ref Demo
   description: A sample API that uses references from other files
 paths:
+  /endpoint:
+    $ref: 'multi-file-ref-endpoints.yaml#/components/endpoints/~1endpoint'
   /random:
     get:
       operationId: getRandom

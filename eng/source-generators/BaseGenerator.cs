@@ -45,6 +45,7 @@ public abstract class BaseGenerator :
 		var references = myAsm.GetReferencedAssemblies();
 
 		List<Assembly> loadedAssemblies = new() { myAsm };
+		Dictionary<string, Assembly> loadedFromStreamAssemblies = new() { };
 		AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += ResolveAssembly!;
 		AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly!;
 
@@ -106,6 +107,9 @@ public abstract class BaseGenerator :
 			var nameRegex = new Regex("^" + Regex.Escape(namePart) + @"(\.\d+){3}\.dll");
 			var streamName = myAsm.GetManifestResourceNames().SingleOrDefault(n => n == namePart + ".dll" || nameRegex.IsMatch(n));
 			if (streamName == null) return null;
+			if (loadedFromStreamAssemblies.TryGetValue(streamName, out var versionMismatchAssembly))
+				return versionMismatchAssembly;
+
 			using var stream = myAsm.GetManifestResourceStream(streamName);
 			if (stream != null)
 			{
@@ -113,6 +117,7 @@ public abstract class BaseGenerator :
 				stream.Read(dllBytes, 0, (int)stream.Length);
 				var resultAsm = Assembly.Load(dllBytes);
 				loadedAssemblies.Add(resultAsm);
+				loadedFromStreamAssemblies[streamName] = resultAsm;
 				return resultAsm;
 			}
 			return null;

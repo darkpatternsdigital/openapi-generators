@@ -42,6 +42,6 @@
 	<Target Name="Generate" BeforeTargets="NodeBuild;PrepareLint" />
 
 	<ItemGroup>
-		<ProjectReference Include="$(SolutionRoot)generators\typescript\npm\npm-typescript.esproj" />
+		<ProjectReference Include="$(SolutionRoot)generators\typescript\npm\npm-typescript.csproj" />
 	</ItemGroup>
 </Project>

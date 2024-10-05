@@ -23,7 +23,13 @@
         <TestedSchema Include="headers" />
     </ItemGroup>
 
-    <Target Name="GenerateFromSchema" BeforeTargets="Generation" DependsOnTargets="ResolveReferences">
+    <ItemGroup>
+        <OpenApiGenerator Include="node_modules/@darkpatternsdigital/openapi-codegen-typescript/**/*" Exclude="node_modules/@darkpatternsdigital/openapi-codegen-typescript/tests/**/*" />
+    </ItemGroup>
+
+    <Target Name="GenerateFromSchema" BeforeTargets="Generation" DependsOnTargets="ResolveReferences"
+        Inputs="@(OpenApiGenerator);openapi-codegen-options.yaml;../../../schemas/%(TestedSchema.Identity).yaml"
+        Outputs="tests/generated/%(TestedSchema.Identity)/.gitignore">
         <Exec Command="pnpm openapi-codegen-typescript -o ./openapi-codegen-options.yaml ../../../schemas/%(TestedSchema.Identity).yaml tests/generated/%(TestedSchema.Identity)/" />
     </Target>
 

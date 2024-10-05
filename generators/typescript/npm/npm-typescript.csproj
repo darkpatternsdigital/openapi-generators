@@ -23,7 +23,14 @@
         <TestedSchema Include="headers" />
     </ItemGroup>
 
-    <Target Name="GenerateFromSchema" DependsOnTargets="NodeBuild" BeforeTargets="VSTest_pnpm;PrepareLint">
+    <ItemGroup>
+        <OpenApiGenerator Include="bin/**/*" />
+        <OpenApiGenerator Include="dotnet/**/*" />
+    </ItemGroup>
+
+    <Target Name="GenerateFromSchema" DependsOnTargets="NodeBuild" BeforeTargets="VSTest_pnpm;PrepareLint"
+        Inputs="@(OpenApiGenerator);../../../schemas/%(TestedSchema.Identity).yaml"
+        Outputs="tests/generated/%(TestedSchema.Identity)/.gitignore">
         <Exec Command="pnpm node bin/index.js ../../../schemas/%(TestedSchema.Identity).yaml tests/generated/%(TestedSchema.Identity)/" />
     </Target>
 
@@ -41,7 +48,8 @@
                 OverwriteReadOnlyFiles="true" />
 
         <ItemGroup>
-            <NpmPackagedFiles Include="$(ProjectDir)dotnet/**/*" />
+            <NpmPackagedFiles Include="dotnet/**/*" />
+            <OpenApiGenerator Include="dotnet/**/*" />
         </ItemGroup>
     </Target>
 

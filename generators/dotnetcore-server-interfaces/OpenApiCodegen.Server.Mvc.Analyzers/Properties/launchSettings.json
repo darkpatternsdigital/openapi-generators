@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Debug Generators": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "..\\..\\..\\lib\\TestApp\\OpenApiCodegen.Server.Mvc.TestApp.csproj"
+    }
+  }
+}

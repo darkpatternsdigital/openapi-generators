@@ -37,7 +37,7 @@
 
   <ItemGroup>
     <ProjectReference
-      Include="$(SolutionRoot)generators\dotnetcore-server-interfaces\OpenApiCodegen.Server.Mvc.Analyzers\OpenApiCodegen.Server.Mvc.Roslyn3.11.csproj"
+      Include="$(SolutionRoot)generators\dotnetcore-server-interfaces\OpenApiCodegen.Server.Mvc.Analyzers\OpenApiCodegen.Server.Mvc.Roslyn4.1.csproj"
       OutputItemType="Analyzer"
       ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\OpenApiCodegen.Json.Extensions\OpenApiCodegen.Json.Extensions.csproj" />

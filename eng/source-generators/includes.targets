@@ -1,4 +1,7 @@
 <Project>
+	<PropertyGroup>
+		<IsRoslynComponent>true</IsRoslynComponent>
+	</PropertyGroup>
 	<ItemGroup>
 		<Compile Include="$(MSBuildThisFileDirectory)*.cs">
 			<Link>source-generation/%(filename).resx</Link>

@@ -7,11 +7,13 @@
 
     <PropertyGroup>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <RoslynApiVersion Condition=" '$(AnalyzerRoslynVersion)' == '4.1' ">4.1.0</RoslynApiVersion>
         <RoslynApiVersion Condition=" '$(AnalyzerRoslynVersion)' == '4.0' ">4.0.0</RoslynApiVersion>
         <RoslynApiVersion Condition=" '$(AnalyzerRoslynVersion)' == '3.11' ">3.11.0</RoslynApiVersion>
 
         <DefineConstants Condition=" $([MSBuild]::VersionGreaterThanOrEquals($(RoslynApiVersion), 3.11.0)) ">$(DefineConstants);ROSLYN3_11_OR_GREATER</DefineConstants>
         <DefineConstants Condition=" $([MSBuild]::VersionGreaterThanOrEquals($(RoslynApiVersion), 4.0.0)) ">$(DefineConstants);ROSLYN4_0_OR_GREATER</DefineConstants>
+        <DefineConstants Condition=" $([MSBuild]::VersionGreaterThanOrEquals($(RoslynApiVersion), 4.1.0)) ">$(DefineConstants);ROSLYN4_1_OR_GREATER</DefineConstants>
     </PropertyGroup>
 
 	<ItemGroup>

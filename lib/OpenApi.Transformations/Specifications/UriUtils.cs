@@ -9,7 +9,7 @@ public static class UriUtils
 	public static Uri AppendPointer(this Uri uri, string pointerParts)
 	{
 		var result = new UriBuilder(uri);
-		result.Fragment = result.Fragment + "/" + pointerParts;
+		result.Fragment = (result.Fragment + "/" + pointerParts).TrimStart('#');
 		return result.Uri;
 	}
 

@@ -177,7 +177,7 @@ public class DocumentRegistry(DocumentRegistryOptions registryOptions)
 		if (fragment is not { Length: > 1 })
 			return registryEntry.Document.RootNode;
 
-		var uri = new UriBuilder(registryEntry.Document.BaseUri) { Fragment = fragment }.Uri;
+		var uri = new UriBuilder(registryEntry.Document.BaseUri) { Fragment = fragment.TrimStart('#') }.Uri;
 		if (!ResolvePointer(uri, registryEntry).TryEvaluate(registryEntry.Document.RootNode, out var node))
 			throw new DiagnosticException(CouldNotFindTargetNodeDiagnostic.Builder(uri));
 

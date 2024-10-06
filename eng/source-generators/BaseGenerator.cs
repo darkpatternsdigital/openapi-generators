@@ -18,10 +18,9 @@ using AddSourceText = Action<string, SourceText>;
 
 public abstract class BaseGenerator :
 #if ROSLYN4_0_OR_GREATER
-	IIncrementalGenerator
-#else
-	ISourceGenerator
+	IIncrementalGenerator,
 #endif
+	ISourceGenerator
 {
 	private const string additionalTextInfoAssemblyName = "DarkPatterns.OpenApiCodegen";
 	private const string additionalTextInfoTypeName = "DarkPatterns.OpenApiCodegen.AdditionalTextInfo";
@@ -45,6 +44,7 @@ public abstract class BaseGenerator :
 		var references = myAsm.GetReferencedAssemblies();
 
 		List<Assembly> loadedAssemblies = new() { myAsm };
+		Dictionary<string, Assembly> loadedFromStreamAssemblies = new() { };
 		AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += ResolveAssembly!;
 		AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly!;
 
@@ -106,6 +106,9 @@ public abstract class BaseGenerator :
 			var nameRegex = new Regex("^" + Regex.Escape(namePart) + @"(\.\d+){3}\.dll");
 			var streamName = myAsm.GetManifestResourceNames().SingleOrDefault(n => n == namePart + ".dll" || nameRegex.IsMatch(n));
 			if (streamName == null) return null;
+			if (loadedFromStreamAssemblies.TryGetValue(streamName, out var versionMismatchAssembly))
+				return versionMismatchAssembly;
+
 			using var stream = myAsm.GetManifestResourceStream(streamName);
 			if (stream != null)
 			{
@@ -113,6 +116,7 @@ public abstract class BaseGenerator :
 				stream.Read(dllBytes, 0, (int)stream.Length);
 				var resultAsm = Assembly.Load(dllBytes);
 				loadedAssemblies.Add(resultAsm);
+				loadedFromStreamAssemblies[streamName] = resultAsm;
 				return resultAsm;
 			}
 			return null;
@@ -144,7 +148,8 @@ public abstract class BaseGenerator :
 			GenerateSources(tuple.Entrypoint, tuple.OtherKnownSchemas, context);
 		});
 	}
-#else
+#endif
+
 	public virtual void Execute(GeneratorExecutionContext context)
 	{
 		ReportCompilationDiagnostics(context.Compilation, context);
@@ -163,7 +168,6 @@ public abstract class BaseGenerator :
 	public void Initialize(GeneratorInitializationContext context)
 	{
 	}
-#endif
 
 
 	protected record AdditionalTextWithOptions(string Path, string TextContents, AnalyzerConfigOptions ConfigOptions);
@@ -173,10 +177,9 @@ public abstract class BaseGenerator :
 #if ROSLYN4_0_OR_GREATER
 		public static implicit operator CompilerApis(SourceProductionContext context) =>
 			new(context.AddSource, context.ReportDiagnostic);
-#else
+#endif
 		public static implicit operator CompilerApis(GeneratorExecutionContext context) =>
 			new(context.AddSource, context.ReportDiagnostic);
-#endif
 #pragma warning restore CA2225 // Operator overloads have named alternates
 	}
 	private static AdditionalTextWithOptions GetOptions(AdditionalText file, AnalyzerConfigOptionsProvider analyzerConfigOptions)

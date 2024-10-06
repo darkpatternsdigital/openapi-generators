@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "OpenApiCodegen.Server.Mvc.TestApp.Bad": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:54281;http://localhost:54282"
+    }
+  }
+}

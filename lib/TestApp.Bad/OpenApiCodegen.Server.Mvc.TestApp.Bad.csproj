@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>generated</CompilerGeneratedFilesOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\bad.yaml" Link="Bad\bad.yaml" PathPrefix="/bad" SchemaId="proj://darkpatterns-openapi/bad.yaml" />
+
+    <Compile Remove="generated/**/*" />
+    <Clean Include="generated/**/*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference
+      Include="$(SolutionRoot)generators\dotnetcore-server-interfaces\OpenApiCodegen.Server.Mvc.Analyzers\OpenApiCodegen.Server.Mvc.Roslyn4.1.csproj"
+      OutputItemType="Analyzer"
+      ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\OpenApiCodegen.Json.Extensions\OpenApiCodegen.Json.Extensions.csproj" />
+  </ItemGroup>
+
+  <!-- The project reference won't include this due to the multi-version targeting trick -->
+  <Import Project="$(SolutionRoot)generators\dotnetcore-server-interfaces\OpenApiCodegen.Server.Mvc\OpenApiCodegen.Server.Mvc.props" />
+
+</Project>

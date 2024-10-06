@@ -39,9 +39,10 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 	public GenerationResult Generate(AdditionalTextInfo entrypoint, IEnumerable<AdditionalTextInfo> other)
 	{
 		var options = LoadOptionsFromMetadata(entrypoint.Metadata, other);
-		var (baseDocument, registry) = LoadDocument(entrypoint, options, other);
+		var (baseDocument, registry, pathResolver) = LoadDocument(entrypoint, options, other);
+		var diagnosticConverter = DiagnosticsConversion.GetConverter(pathResolver);
 		var parseResult = CommonParsers.DefaultParsers.Parse(baseDocument, registry);
-		var parsedDiagnostics = parseResult.Diagnostics.Select(DiagnosticsConversion.ToDiagnosticInfo).ToArray();
+		var parsedDiagnostics = parseResult.Diagnostics.Select(diagnosticConverter).ToArray();
 		if (!parseResult.HasDocument || parseResult.Document == null)
 			return new GenerationResult(Array.Empty<OpenApiCodegen.SourceEntry>(), parsedDiagnostics);
 
@@ -61,12 +62,18 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 #pragma warning disable CA1031 // Catching a general exception type here to turn it into a diagnostic for reporting
 		catch (Exception ex)
 		{
+			if (parsedDiagnostics is { Length: > 0 })
+				return new GenerationResult(
+					[],
+					parsedDiagnostics
+				);
+
 			var diagnostics = new List<DiagnosticBase>();
 			diagnostics.AddExceptionAsDiagnostic(ex, registry, NodeMetadata.FromRoot(baseDocument));
 
 			return new GenerationResult(
-				Array.Empty<OpenApiCodegen.SourceEntry>(),
-				parsedDiagnostics.Concat(parsedDiagnostics.Concat(diagnostics.Select(DiagnosticsConversion.ToDiagnosticInfo))).ToArray()
+				[],
+				diagnostics.Select(diagnosticConverter).ToArray()
 			);
 		}
 #pragma warning restore CA1031 // Do not catch general exception types
@@ -135,13 +142,16 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 		document.Metadata.TryGetValue(propSchemaId, out var schemaId) && schemaId is { Length: > 0 } ? new Uri(schemaId) :
 		new Uri(new Uri(document.Path).AbsoluteUri);
 
-	private static (IDocumentReference, DocumentRegistry) LoadDocument(AdditionalTextInfo document, CSharpServerSchemaOptions options, IEnumerable<AdditionalTextInfo> additionalSchemas)
+	private static (IDocumentReference, DocumentRegistry, PathResolver) LoadDocument(AdditionalTextInfo document, CSharpServerSchemaOptions options, IEnumerable<AdditionalTextInfo> additionalSchemas)
 	{
-		return DocumentResolverFactory.FromInitialDocumentInMemory(
+		var paths = additionalSchemas.ConcatOne(document).Distinct().ToLookup(ToInternalUri, doc => doc.Path);
+
+		var (docRef, reg) = DocumentResolverFactory.FromInitialDocumentInMemory(
 			ToInternalUri(document),
 			document.Contents,
 			ToResolverOptions(options, additionalSchemas)
 		);
+		return (docRef, reg, (uri) => paths[uri].FirstOrDefault());
 	}
 
 	private static DocumentRegistryOptions ToResolverOptions(CSharpServerSchemaOptions options, IEnumerable<AdditionalTextInfo> additionalSchemas) =>

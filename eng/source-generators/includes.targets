@@ -1,7 +1,10 @@
 <Project>
+	<PropertyGroup>
+		<IsRoslynComponent>true</IsRoslynComponent>
+	</PropertyGroup>
 	<ItemGroup>
 		<Compile Include="$(MSBuildThisFileDirectory)*.cs">
-			<Link>source-generation/%(filename).resx</Link>
+			<Link>source-generation/%(filename).cs</Link>
 		</Compile>
 	</ItemGroup>
 	<Import Project="$(RepositoryEngineeringDir)diagnostics/includes.targets" />

@@ -1,4 +1,4 @@
-<Project Sdk="DarkPatterns.Build.Pnpm/0.1.14">
+<Project Sdk="DarkPatterns.Build.Pnpm/0.2.0">
     <PropertyGroup>
         <VersionPrefix>$(OpenApiTypeScriptRxjsClientVersion)</VersionPrefix>
         <PackPnpmOnBuild Condition=" $(Configuration) == 'Release' ">true</PackPnpmOnBuild>
@@ -11,8 +11,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="$(SolutionRoot)generators\typescript\npm\npm-typescript.esproj" SpecificVersion="true" />
-        <ProjectReference Include="$(SolutionRoot)generators\typescript-msw\npm\npm-typescript-msw.esproj" SpecificVersion="true" />
+        <ProjectReference Include="$(SolutionRoot)generators\typescript\npm\npm-typescript.csproj" SpecificVersion="true" />
+        <ProjectReference Include="$(SolutionRoot)generators\typescript-msw\npm\npm-typescript-msw.csproj" SpecificVersion="true" />
     </ItemGroup>
 
     <Target Name="Generation" BeforeTargets="NodeBuild;PrepareLint" />
@@ -23,7 +23,13 @@
         <TestedSchema Include="headers" />
     </ItemGroup>
 
-    <Target Name="GenerateFromSchema" BeforeTargets="Generation" DependsOnTargets="ResolveReferences">
+    <ItemGroup>
+        <OpenApiGenerator Include="node_modules/@darkpatternsdigital/openapi-codegen-typescript/**/*" Exclude="node_modules/@darkpatternsdigital/openapi-codegen-typescript/tests/**/*" />
+    </ItemGroup>
+
+    <Target Name="GenerateFromSchema" BeforeTargets="Generation" DependsOnTargets="ResolveReferences"
+        Inputs="@(OpenApiGenerator);openapi-codegen-options.yaml;../../../schemas/%(TestedSchema.Identity).yaml"
+        Outputs="tests/generated/%(TestedSchema.Identity)/.gitignore">
         <Exec Command="pnpm openapi-codegen-typescript -o ./openapi-codegen-options.yaml ../../../schemas/%(TestedSchema.Identity).yaml tests/generated/%(TestedSchema.Identity)/" />
     </Target>
 

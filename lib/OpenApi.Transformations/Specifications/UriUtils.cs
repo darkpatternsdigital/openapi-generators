@@ -9,7 +9,7 @@ public static class UriUtils
 	public static Uri AppendPointer(this Uri uri, string pointerParts)
 	{
 		var result = new UriBuilder(uri);
-		result.Fragment = result.Fragment + "/" + pointerParts;
+		result.Fragment = (result.Fragment + "/" + pointerParts).TrimStart('#');
 		return result.Uri;
 	}
 
@@ -18,7 +18,7 @@ public static class UriUtils
 		var pointer = JsonPointer.Create(PointerSegment.Create(pointerStep));
 
 		var resultUri = new UriBuilder(resolution.Id);
-		resultUri.Fragment += pointer.ToString();
+		resultUri.Fragment = (resultUri.Fragment + pointer.ToString()).TrimStart('#');
 		return resolution with { Id = resultUri.Uri };
 	}
 

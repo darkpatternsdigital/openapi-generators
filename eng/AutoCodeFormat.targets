@@ -1,6 +1,6 @@
 <Project>
 	<ItemGroup>
-		<PackageReference Include="DarkPatterns.Build.Autoformat" Version="0.1.0" PrivateAssets="All" />
+		<PackageReference Include="DarkPatterns.Build.Autoformat" Version="0.2.0" PrivateAssets="All" />
 	</ItemGroup>
 
 	<PropertyGroup>

@@ -3,19 +3,27 @@ using DarkPatterns.OpenApiCodegen;
 
 namespace DarkPatterns.OpenApi.Transformations.Diagnostics;
 
+
+public delegate string? PathResolver(Uri uri);
+
 public static class DiagnosticsConversion
 {
-	public static DiagnosticInfo ToDiagnosticInfo(DiagnosticBase diagnostic) =>
+	public static Func<DiagnosticBase, DiagnosticInfo> GetConverter(PathResolver resolver) => (DiagnosticBase diagnostic) =>
 		new DiagnosticInfo(
 			Id: diagnostic.GetType().FullName,
-			Location: ToDiagnosticLocation(diagnostic.Location),
+			Location: ToDiagnosticLocation(diagnostic.Location, resolver),
 			Metadata: diagnostic.GetTextArguments()
 		);
 
-	private static DiagnosticLocation ToDiagnosticLocation(Location location)
+	private static DiagnosticLocation ToDiagnosticLocation(Location location, PathResolver resolver)
 	{
 		return new DiagnosticLocation(
-			location.RetrievalUri is { Scheme: "file" } ? location.RetrievalUri.LocalPath : location.RetrievalUri.OriginalString,
+			location.RetrievalUri switch
+			{
+				var uri when resolver(uri) is string s => s,
+				{ Scheme: "file" } => location.RetrievalUri.LocalPath,
+				{ OriginalString: var s } => s
+			},
 			location.Range == null ? null : new DiagnosticLocationRange(ToDiagnosticLocationMark(location.Range.Start), ToDiagnosticLocationMark(location.Range.End))
 		);
 	}

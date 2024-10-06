@@ -18,7 +18,7 @@ public static class UriUtils
 		var pointer = JsonPointer.Create(PointerSegment.Create(pointerStep));
 
 		var resultUri = new UriBuilder(resolution.Id);
-		resultUri.Fragment += pointer.ToString();
+		resultUri.Fragment = (resultUri.Fragment + pointer.ToString()).TrimStart('#');
 		return resolution with { Id = resultUri.Uri };
 	}
 

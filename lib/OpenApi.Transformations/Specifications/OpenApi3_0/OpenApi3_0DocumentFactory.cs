@@ -188,9 +188,8 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 	private OpenApiMediaTypeObject InternalConstructMediaTypeObject(ResolvableNode key)
 	{
 		if (key.Node is not JsonObject obj) throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiMediaTypeObject)));
-		return new OpenApiMediaTypeObject(key.Id,
-			Schema: ConstructSchema(key.Navigate("schema"))
-		);
+		var schema = ConstructSchema(key.Navigate("schema"));
+		return new OpenApiMediaTypeObject(key.Id, Schema: schema);
 	}
 
 	private OpenApiOperation ConstructOperation(ResolvableNode key) =>

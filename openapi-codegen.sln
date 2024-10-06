@@ -35,51 +35,53 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp.Test", "lib\TestApp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiCodegen", "lib\OpenApiCodegen\OpenApiCodegen.csproj", "{BDCCEC47-6541-497D-8160-681E06E9F696}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApiCodegen.Server.Mvc.Test", "lib\OpenApiCodegen.Server.Mvc.Test\OpenApiCodegen.Server.Mvc.Test.csproj", "{FF5B3B72-C0ED-4128-9294-E77A9953637A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiCodegen.Server.Mvc.Test", "lib\OpenApiCodegen.Server.Mvc.Test\OpenApiCodegen.Server.Mvc.Test.csproj", "{FF5B3B72-C0ED-4128-9294-E77A9953637A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotnetcore-server-interfaces", "dotnetcore-server-interfaces", "{563CBB19-A6A0-487D-8587-992D92AD90B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApiCodegen.Server.Mvc.Roslyn3.11", "generators\dotnetcore-server-interfaces\OpenApiCodegen.Server.Mvc.Analyzers\OpenApiCodegen.Server.Mvc.Roslyn3.11.csproj", "{8B77315E-F0CC-4B19-BD3C-5627CD3CE777}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiCodegen.Server.Mvc.Roslyn3.11", "generators\dotnetcore-server-interfaces\OpenApiCodegen.Server.Mvc.Analyzers\OpenApiCodegen.Server.Mvc.Roslyn3.11.csproj", "{8B77315E-F0CC-4B19-BD3C-5627CD3CE777}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "typescript", "typescript", "{73D36E56-44DA-40D6-9A88-F6DC342EDEF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApiCodegen.Client.TypeScript", "generators\typescript\OpenApiCodegen.Client.TypeScript\OpenApiCodegen.Client.TypeScript.csproj", "{D8E411EC-80C1-4A13-B48D-33237E0B84DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiCodegen.Client.TypeScript", "generators\typescript\OpenApiCodegen.Client.TypeScript\OpenApiCodegen.Client.TypeScript.csproj", "{D8E411EC-80C1-4A13-B48D-33237E0B84DF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotnetstandard-client", "dotnetstandard-client", "{0B7F4CE4-8F2A-402A-9AF6-E6C723F00B70}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApiCodegen.Client.Roslyn3.11", "generators\dotnetstandard-client\OpenApiCodegen.Client.Analyzers\OpenApiCodegen.Client.Roslyn3.11.csproj", "{08745B6C-3EC5-45B7-91CD-07F8C098B7C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiCodegen.Client.Roslyn3.11", "generators\dotnetstandard-client\OpenApiCodegen.Client.Analyzers\OpenApiCodegen.Client.Roslyn3.11.csproj", "{08745B6C-3EC5-45B7-91CD-07F8C098B7C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApiCodegen.Client.CSharp.Test", "lib\OpenApiCodegen.Client.CSharp.Test\OpenApiCodegen.Client.CSharp.Test.csproj", "{09D0AF36-09AB-418D-BBA2-3915AE853BD7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiCodegen.Client.CSharp.Test", "lib\OpenApiCodegen.Client.CSharp.Test\OpenApiCodegen.Client.CSharp.Test.csproj", "{09D0AF36-09AB-418D-BBA2-3915AE853BD7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApiCodegen.Client", "generators\dotnetstandard-client\OpenApiCodegen.Client\OpenApiCodegen.Client.csproj", "{A16023B9-03CE-4D15-AA2C-58A4FFCC7F18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiCodegen.Client", "generators\dotnetstandard-client\OpenApiCodegen.Client\OpenApiCodegen.Client.csproj", "{A16023B9-03CE-4D15-AA2C-58A4FFCC7F18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApiCodegen.Json.Extensions", "lib\OpenApiCodegen.Json.Extensions\OpenApiCodegen.Json.Extensions.csproj", "{0646CEFE-3B71-42AE-AA86-25F2AF980300}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiCodegen.Json.Extensions", "lib\OpenApiCodegen.Json.Extensions\OpenApiCodegen.Json.Extensions.csproj", "{0646CEFE-3B71-42AE-AA86-25F2AF980300}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApiCodegen.TestUtils", "lib\OpenApiCodegen.TestUtils\OpenApiCodegen.TestUtils.csproj", "{EA45C409-74C2-4C95-9F98-EDF3F66213A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiCodegen.TestUtils", "lib\OpenApiCodegen.TestUtils\OpenApiCodegen.TestUtils.csproj", "{EA45C409-74C2-4C95-9F98-EDF3F66213A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApi.Transformations", "lib\OpenApi.Transformations\OpenApi.Transformations.csproj", "{B624670F-36F9-4647-B607-2450B696860F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApi.Transformations", "lib\OpenApi.Transformations\OpenApi.Transformations.csproj", "{B624670F-36F9-4647-B607-2450B696860F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApi.CSharp", "lib\OpenApi.CSharp\OpenApi.CSharp.csproj", "{92D317C2-8730-4295-9B18-4C6D52603C24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApi.CSharp", "lib\OpenApi.CSharp\OpenApi.CSharp.csproj", "{92D317C2-8730-4295-9B18-4C6D52603C24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApi.TypeScript", "lib\OpenApi.TypeScript\OpenApi.TypeScript.csproj", "{1A34DB62-2B58-4AB6-96BD-37B0A8DCB2DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApi.TypeScript", "lib\OpenApi.TypeScript\OpenApi.TypeScript.csproj", "{1A34DB62-2B58-4AB6-96BD-37B0A8DCB2DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApiCodegen.Server.Mvc.Roslyn4.0", "generators\dotnetcore-server-interfaces\OpenApiCodegen.Server.Mvc.Analyzers\OpenApiCodegen.Server.Mvc.Roslyn4.0.csproj", "{C0381DD9-8F08-4050-9C5C-5508D1A33116}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiCodegen.Server.Mvc.Roslyn4.0", "generators\dotnetcore-server-interfaces\OpenApiCodegen.Server.Mvc.Analyzers\OpenApiCodegen.Server.Mvc.Roslyn4.0.csproj", "{C0381DD9-8F08-4050-9C5C-5508D1A33116}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApiCodegen.Client.Roslyn4.0", "generators\dotnetstandard-client\OpenApiCodegen.Client.Analyzers\OpenApiCodegen.Client.Roslyn4.0.csproj", "{8500C983-4829-4B07-A129-EAF5C28AF3FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiCodegen.Client.Roslyn4.0", "generators\dotnetstandard-client\OpenApiCodegen.Client.Analyzers\OpenApiCodegen.Client.Roslyn4.0.csproj", "{8500C983-4829-4B07-A129-EAF5C28AF3FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApiCodegen.JsonExtensions.Test", "lib\OpenApiCodegen.Json.Extensions.Test\OpenApiCodegen.JsonExtensions.Test.csproj", "{3D4515E9-5055-4D5C-9287-1BEB921705AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiCodegen.JsonExtensions.Test", "lib\OpenApiCodegen.Json.Extensions.Test\OpenApiCodegen.JsonExtensions.Test.csproj", "{3D4515E9-5055-4D5C-9287-1BEB921705AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApiCodegen.Server.Mvc.TestApp", "lib\TestApp\OpenApiCodegen.Server.Mvc.TestApp.csproj", "{FA89866E-ADF1-4336-9632-821A69EA52C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiCodegen.Server.Mvc.TestApp", "lib\TestApp\OpenApiCodegen.Server.Mvc.TestApp.csproj", "{FA89866E-ADF1-4336-9632-821A69EA52C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApiCodegen.Server.Mvc.Base", "generators\dotnetcore-server-interfaces\OpenApiCodegen.Server.Mvc.Base\OpenApiCodegen.Server.Mvc.Base.csproj", "{7461DDFF-1A83-467D-B16E-8E1324EAB9ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiCodegen.Server.Mvc.Base", "generators\dotnetcore-server-interfaces\OpenApiCodegen.Server.Mvc.Base\OpenApiCodegen.Server.Mvc.Base.csproj", "{7461DDFF-1A83-467D-B16E-8E1324EAB9ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApiCodegen.Client.Base", "generators\dotnetstandard-client\OpenApiCodegen.Client.Base\OpenApiCodegen.Client.Base.csproj", "{3DD9D662-5396-4D62-BB2D-763040115B43}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiCodegen.Client.Base", "generators\dotnetstandard-client\OpenApiCodegen.Client.Base\OpenApiCodegen.Client.Base.csproj", "{3DD9D662-5396-4D62-BB2D-763040115B43}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "npm-typescript", "generators\typescript\npm\npm-typescript.csproj", "{7EB2F9C9-8B94-438F-9721-6176A03F087E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "npm-typescript", "generators\typescript\npm\npm-typescript.csproj", "{7EB2F9C9-8B94-438F-9721-6176A03F087E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApiCodegen.Server.Mvc", "generators\dotnetcore-server-interfaces\OpenApiCodegen.Server.Mvc\OpenApiCodegen.Server.Mvc.csproj", "{4965E053-2F85-47CA-8F1E-D994D7A8254E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiCodegen.Server.Mvc", "generators\dotnetcore-server-interfaces\OpenApiCodegen.Server.Mvc\OpenApiCodegen.Server.Mvc.csproj", "{4965E053-2F85-47CA-8F1E-D994D7A8254E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApiCodegen.Server.Mvc.Roslyn4.1", "generators\dotnetcore-server-interfaces\OpenApiCodegen.Server.Mvc.Analyzers\OpenApiCodegen.Server.Mvc.Roslyn4.1.csproj", "{2705BE5C-D544-41C7-8D18-890422B84D86}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiCodegen.Server.Mvc.Roslyn4.1", "generators\dotnetcore-server-interfaces\OpenApiCodegen.Server.Mvc.Analyzers\OpenApiCodegen.Server.Mvc.Roslyn4.1.csproj", "{2705BE5C-D544-41C7-8D18-890422B84D86}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiCodegen.Server.Mvc.TestApp.Bad", "lib\TestApp.Bad\OpenApiCodegen.Server.Mvc.TestApp.Bad.csproj", "{C6137D34-5716-4900-8C0F-7F96CDE51C68}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -427,6 +429,12 @@ Global
 		{2705BE5C-D544-41C7-8D18-890422B84D86}.Release|x64.Build.0 = Release|Any CPU
 		{2705BE5C-D544-41C7-8D18-890422B84D86}.Release|x86.ActiveCfg = Release|Any CPU
 		{2705BE5C-D544-41C7-8D18-890422B84D86}.Release|x86.Build.0 = Release|Any CPU
+		{C6137D34-5716-4900-8C0F-7F96CDE51C68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6137D34-5716-4900-8C0F-7F96CDE51C68}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C6137D34-5716-4900-8C0F-7F96CDE51C68}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C6137D34-5716-4900-8C0F-7F96CDE51C68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6137D34-5716-4900-8C0F-7F96CDE51C68}.Release|x64.ActiveCfg = Release|Any CPU
+		{C6137D34-5716-4900-8C0F-7F96CDE51C68}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -464,6 +472,7 @@ Global
 		{7EB2F9C9-8B94-438F-9721-6176A03F087E} = {73D36E56-44DA-40D6-9A88-F6DC342EDEF8}
 		{4965E053-2F85-47CA-8F1E-D994D7A8254E} = {563CBB19-A6A0-487D-8587-992D92AD90B8}
 		{2705BE5C-D544-41C7-8D18-890422B84D86} = {563CBB19-A6A0-487D-8587-992D92AD90B8}
+		{C6137D34-5716-4900-8C0F-7F96CDE51C68} = {AAC9998B-F9AF-4096-92CB-81914E85BE56}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DC32F906-1354-428B-BD36-FC718248DAFB}

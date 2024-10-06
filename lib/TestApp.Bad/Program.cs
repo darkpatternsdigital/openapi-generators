@@ -1,0 +1,8 @@
+﻿using DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp;
+
+Host.CreateDefaultBuilder(args)
+	.ConfigureWebHostDefaults(webBuilder =>
+	{
+		webBuilder.UseStartup<Startup>();
+	})
+	.Build().Run();

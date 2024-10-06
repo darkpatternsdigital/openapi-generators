@@ -1,8 +1,12 @@
 {
 	"profiles": {
-		"Debug Generators": {
+		"Debug Correct Generators": {
 			"commandName": "DebugRoslynComponent",
 			"targetProject": "..\\..\\..\\lib\\TestApp\\OpenApiCodegen.Server.Mvc.TestApp.csproj"
+		},
+		"Debug Bad Generators": {
+			"commandName": "DebugRoslynComponent",
+			"targetProject": "..\\..\\..\\lib\\TestApp.Bad\\OpenApiCodegen.Server.Mvc.TestApp.Bad.csproj"
 		}
 	}
 }

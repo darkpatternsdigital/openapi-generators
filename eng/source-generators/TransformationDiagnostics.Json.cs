@@ -5,11 +5,11 @@ namespace DarkPatterns.OpenApiCodegen;
 
 public partial class TransformationDiagnostics
 {
-	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.DocumentTypes.UnableToParseSchema")]
+	[TransformationDiagnostic("DarkPatterns.Json.Documents.UnableToParseSchema")]
 	public static readonly DiagnosticDescriptor UnableToParseSchemaDiagnostic =
 		new DiagnosticDescriptor(id: "DPD_JSON_001",
 								title: "Unable to parse schema; it must be either an object or a boolean value",
-								messageFormat: DarkPatterns_OpenApi_Transformations_DocumentTypes_UnableToParseSchema,
+								messageFormat: DarkPatterns_Json_Documents_UnableToParseSchema,
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);

@@ -4,6 +4,7 @@ using System.Linq;
 using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.OpenApiCodegen;
+using DarkPatterns.OpenApi.Transformations.Specifications;
 
 namespace DarkPatterns.OpenApiCodegen;
 
@@ -45,6 +46,9 @@ public class DiagnosticsShould
 	private static IEnumerable<Type> ChildTypesOf(Type target)
 	{
 		return from asm in AppDomain.CurrentDomain.GetAssemblies()
+					.Concat([
+						typeof(CommonParsers).Assembly,
+					]).Distinct()
 			   from type in asm.GetTypes()
 			   where type.IsAssignableTo(target)
 			   where !type.IsAbstract

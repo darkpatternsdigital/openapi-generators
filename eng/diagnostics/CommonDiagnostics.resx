@@ -117,31 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DarkPatterns.OpenApi.Transformations.InvalidRetrievalUri" xml:space="preserve">
+  <data name="DarkPatterns.Json.Documents.InvalidRetrievalUri" xml:space="preserve">
     <value>An invalid URI was provided to retrieve a document: {0}</value>
     <comment/>
   </data>
-  <data name="DarkPatterns.OpenApi.Transformations.InvalidDocumentBaseUri" xml:space="preserve">
+  <data name="DarkPatterns.Json.Documents.InvalidDocumentBaseUri" xml:space="preserve">
     <value>An invalid base URI was provided by a document: {0}</value>
     <comment/>
   </data>
-  <data name="DarkPatterns.OpenApi.Transformations.InvalidFragmentDiagnostic" xml:space="preserve">
+  <data name="DarkPatterns.Json.Documents.InvalidFragmentDiagnostic" xml:space="preserve">
     <value>The fragment provided was not a valid JSON pointer: {0}</value>
     <comment/>
   </data>
-  <data name="DarkPatterns.OpenApi.Transformations.InvalidRefDiagnostic" xml:space="preserve">
+  <data name="DarkPatterns.Json.Documents.InvalidRefDiagnostic" xml:space="preserve">
     <value>Unable to parse provided URI for ref: {0}</value>
     <comment/>
   </data>
-  <data name="DarkPatterns.OpenApi.Transformations.CouldNotFindTargetNodeDiagnostic" xml:space="preserve">
+  <data name="DarkPatterns.Json.Documents.CouldNotFindTargetNodeDiagnostic" xml:space="preserve">
     <value>Unable to locate node: {0}</value>
     <comment/>
   </data>
-  <data name="DarkPatterns.OpenApi.Transformations.UnknownAnchorDiagnostic" xml:space="preserve">
+  <data name="DarkPatterns.Json.Documents.UnknownAnchorDiagnostic" xml:space="preserve">
     <value>Unable to locate anchor referenced from fragment: {0}</value>
     <comment/>
   </data>
-  <data name="DarkPatterns.OpenApi.Transformations.ResolveDocumentDiagnostic" xml:space="preserve">
+  <data name="DarkPatterns.Json.Documents.ResolveDocumentDiagnostic" xml:space="preserve">
     <value>Could not resolve the document with the URI {0}</value>
     <comment/>
   </data>
@@ -165,7 +165,7 @@
     <value>Array items must be unique; detected duplicate array</value>
     <comment/>
   </data>
-  <data name="DarkPatterns.OpenApi.Transformations.DocumentTypes.UnableToParseSchema" xml:space="preserve">
+  <data name="DarkPatterns.Json.Documents.UnableToParseSchema" xml:space="preserve">
     <value>Unable to parse schema; it must be either an object or a boolean value</value>
     <comment/>
   </data>
@@ -185,15 +185,15 @@
     <value>Unhandled exception occurred: [{0}] {1}</value>
     <comment/>
   </data>
-  <data name="DarkPatterns.Json.Specifications.OpenApi3_0.TypeKeywordMismatch" xml:space="preserve">
+  <data name="DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0.TypeKeywordMismatch" xml:space="preserve">
     <value>Type did not match {0}</value>
     <comment/>
   </data>
-  <data name="DarkPatterns.Json.Specifications.OpenApi3_0.InvalidNode" xml:space="preserve">
+  <data name="DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0.InvalidNode" xml:space="preserve">
     <value>Unable to parse node of type {0} in OpenAPI 3.0 document</value>
     <comment/>
   </data>
-  <data name="DarkPatterns.Json.Specifications.UnableToParseDiagnostic" xml:space="preserve">
+  <data name="DarkPatterns.OpenApi.Transformations.Specifications.UnableToParseDiagnostic" xml:space="preserve">
     <value>Unable to parse the document; unknown document type</value>
     <comment/>
   </data>

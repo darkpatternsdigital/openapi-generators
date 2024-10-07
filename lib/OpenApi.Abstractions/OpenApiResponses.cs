@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using DarkPatterns.Json.Documents;
 using DarkPatterns.Json.Specifications;
 
-namespace DarkPatterns.OpenApi.Transformations.Abstractions;
+namespace DarkPatterns.OpenApi.Abstractions;
 
 /// <summary>
 /// See https://spec.openapis.org/oas/v3.1.0#responsesObject

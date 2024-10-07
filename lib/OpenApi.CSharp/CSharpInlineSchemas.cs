@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Json.Pointer;
 using DarkPatterns.OpenApi.Transformations;
-using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0;
 using DarkPatterns.Json.Documents;

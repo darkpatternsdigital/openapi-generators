@@ -6,7 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text.Json.Nodes;
 using DarkPatterns.OpenApi.CSharp.Templates;
 using DarkPatterns.OpenApi.Transformations;
-using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Metadata;

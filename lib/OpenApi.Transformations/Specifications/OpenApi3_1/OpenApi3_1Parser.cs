@@ -3,7 +3,7 @@ using DarkPatterns.Json.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
-using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.Json.Specifications;
 
 namespace DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_1;

@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
 using Json.Pointer;
-using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.Json.Specifications;
 
-namespace DarkPatterns.OpenApi.Transformations.Abstractions;
+namespace DarkPatterns.OpenApi.Abstractions;
 
 public static class OpenApiFragmentHelpers
 {

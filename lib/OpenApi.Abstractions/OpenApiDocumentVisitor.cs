@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.Json.Documents;
 
-namespace DarkPatterns.OpenApi.Transformations.Abstractions;
+namespace DarkPatterns.OpenApi.Abstractions;
 
 public abstract class OpenApiDocumentVisitor<TArgument> : IOpenApiDocumentVisitor<TArgument>
 {

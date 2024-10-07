@@ -18,7 +18,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="$(SolutionRoot)lib\OpenApiCodegen\OpenApiCodegen.csproj" SpecificVersion="true" />
-		<ProjectReference Include="$(SolutionRoot)lib\Json.Specifications\Json.Specifications.csproj" SpecificVersion="true" />
+		<ProjectReference Include="$(SolutionRoot)lib\OpenApi.Abstractions\OpenApi.Abstractions.csproj" SpecificVersion="true" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Primitives" Version="8.0.0" />

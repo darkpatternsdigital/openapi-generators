@@ -1,5 +1,5 @@
 ﻿using DarkPatterns.Json.Documents;
-using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Abstractions;
 
 namespace DarkPatterns.OpenApi.Transformations
 {

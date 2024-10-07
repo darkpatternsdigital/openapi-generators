@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Nodes;
 
-namespace DarkPatterns.OpenApi.Transformations.Abstractions;
+namespace DarkPatterns.OpenApi.Abstractions;
 
 public interface IOpenApiDocumentFactory
 {

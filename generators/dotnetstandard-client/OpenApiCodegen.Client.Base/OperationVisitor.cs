@@ -1,7 +1,7 @@
 ﻿using Json.Pointer;
 using DarkPatterns.OpenApi.CSharp.Templates;
 using DarkPatterns.OpenApi.Transformations;
-using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator;

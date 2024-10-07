@@ -1,4 +1,4 @@
-﻿using DarkPatterns.OpenApi.Transformations.Abstractions;
+﻿using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.OpenApiCodegen;

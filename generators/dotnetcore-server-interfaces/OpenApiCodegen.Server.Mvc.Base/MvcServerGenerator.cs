@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using DarkPatterns.OpenApi.Transformations;
-using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.OpenApiCodegen;
 using System;
 using System.Collections.Generic;

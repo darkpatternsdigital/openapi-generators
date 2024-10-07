@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Draft04 = DarkPatterns.Json.Specifications.Keywords.Draft04;
-using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.Json.Specifications;
 using Keywords = DarkPatterns.Json.Specifications.Keywords;

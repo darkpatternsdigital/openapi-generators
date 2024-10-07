@@ -1,4 +1,4 @@
-﻿namespace DarkPatterns.OpenApi.Transformations.Abstractions;
+﻿namespace DarkPatterns.OpenApi.Abstractions;
 
 /// <summary>
 /// Specification of the version this document uses

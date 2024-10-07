@@ -2,18 +2,17 @@
 using DarkPatterns.OpenApi.CSharp.Templates;
 using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.Json.Specifications;
-using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
-using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator;
 using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.OpenApi.CSharp;
 
-class ControllerOperationVisitor : Transformations.Abstractions.OpenApiDocumentVisitor<ControllerOperationVisitor.Argument>
+class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVisitor.Argument>
 {
 	private readonly DocumentRegistry documentRegistry;
 	private readonly ISchemaRegistry schemaRegistry;

@@ -69,7 +69,7 @@ public class ClientGenerator : IOpenApiCodeGenerator
 #pragma warning restore CA1031 // Do not catch general exception types
 	}
 
-	private static ISourceProvider CreateSourceProvider(Transformations.Abstractions.OpenApiDocument document, DocumentRegistry registry, CSharpSchemaOptions options, IReadOnlyDictionary<string, string?> opt)
+	private static ISourceProvider CreateSourceProvider(Abstractions.OpenApiDocument document, DocumentRegistry registry, CSharpSchemaOptions options, IReadOnlyDictionary<string, string?> opt)
 	{
 		return document.BuildCSharpClientSourceProvider(registry, GetVersionInfo(), options);
 	}

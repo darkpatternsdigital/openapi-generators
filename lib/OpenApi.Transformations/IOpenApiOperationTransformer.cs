@@ -1,5 +1,5 @@
 ﻿using System;
-using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.OpenApiCodegen;
 
 namespace DarkPatterns.OpenApi.Transformations

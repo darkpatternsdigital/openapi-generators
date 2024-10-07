@@ -4,7 +4,7 @@ using System.Linq;
 using DarkPatterns.Json.Documents;
 using DarkPatterns.Json.Specifications;
 
-namespace DarkPatterns.OpenApi.Transformations.Abstractions;
+namespace DarkPatterns.OpenApi.Abstractions;
 
 public record OpenApiSecurityRequirement(
 	Uri Id,

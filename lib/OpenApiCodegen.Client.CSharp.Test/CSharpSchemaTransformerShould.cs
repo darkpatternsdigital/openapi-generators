@@ -1,7 +1,7 @@
 ﻿using Json.Pointer;
 using DarkPatterns.OpenApi.CSharp;
 using DarkPatterns.OpenApi.Transformations;
-using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.OpenApi.Transformations.DocumentTypes;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.OpenApiCodegen.TestUtils;

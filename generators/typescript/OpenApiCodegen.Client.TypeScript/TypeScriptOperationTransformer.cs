@@ -1,5 +1,5 @@
 ﻿using DarkPatterns.OpenApi.Transformations;
-using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.OpenApi.TypeScript;
 using DarkPatterns.OpenApi.TypeScript.Templates;

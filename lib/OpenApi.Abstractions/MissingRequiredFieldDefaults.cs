@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
 
-namespace DarkPatterns.OpenApi.Transformations.Abstractions;
+namespace DarkPatterns.OpenApi.Abstractions;
 
 
 /// <summary>
@@ -10,7 +10,7 @@ namespace DarkPatterns.OpenApi.Transformations.Abstractions;
 ///
 /// </summary>
 // TODO - do we want to swap these out so that it captures the id in exceptions?
-internal static class MissingRequiredFieldDefaults
+public static class MissingRequiredFieldDefaults
 {
 	public static string InfoTitle => "";
 	public static string InfoVersion => "0";
@@ -109,5 +109,5 @@ internal static class MissingRequiredFieldDefaults
 
 	public static OpenApiResponse ConstructPlaceholderResponse(Uri id) => new PlaceholderResponse(id);
 
-	internal static OpenApiSecurityRequirement ConstructPlaceholderSecurityRequirement(Uri id) => new OpenApiSecurityRequirement(id, Array.Empty<OpenApiSecuritySchemeRequirement>());
+	public static OpenApiSecurityRequirement ConstructPlaceholderSecurityRequirement(Uri id) => new OpenApiSecurityRequirement(id, Array.Empty<OpenApiSecuritySchemeRequirement>());
 }

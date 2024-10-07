@@ -44,6 +44,7 @@ internal static class MissingRequiredFieldDefaults
 		Operations: new Dictionary<string, OpenApiOperation>(),
 		Extensions: new Dictionary<string, JsonNode?>()
 	);
+
 	public static OpenApiPath ConstructPlaceholderPath(Uri id) => new EmptyPath(id);
 
 	private record PlaceholderOperation(Uri Id) : OpenApiOperation(
@@ -59,6 +60,7 @@ internal static class MissingRequiredFieldDefaults
 		Deprecated: false,
 		Extensions: new Dictionary<string, JsonNode?>()
 	);
+
 	public static OpenApiOperation ConstructPlaceholderOperation(Uri id) => new PlaceholderOperation(id);
 
 	private record PlaceholderParameter(Uri Id) : OpenApiParameter(
@@ -73,6 +75,7 @@ internal static class MissingRequiredFieldDefaults
 		Explode: false,
 		Schema: null
 	);
+
 	public static OpenApiParameter ConstructPlaceholderParameter(Uri id) => new PlaceholderParameter(id);
 
 	private record PlaceholderHeaderParameter(Uri Id) : OpenApiParameter(
@@ -87,12 +90,14 @@ internal static class MissingRequiredFieldDefaults
 		Explode: false,
 		Schema: null
 	);
+
 	public static OpenApiParameter ConstructPlaceholderHeaderParameter(Uri id) => new PlaceholderHeaderParameter(id);
 
 	private record PlaceholderMediaTypeObject(Uri Id) : OpenApiMediaTypeObject(
 		Id,
 		Schema: null
 	);
+
 	public static OpenApiMediaTypeObject ConstructPlaceholderMediaTypeObject(Uri id) => new PlaceholderMediaTypeObject(id);
 
 	private record PlaceholderResponse(Uri Id) : OpenApiResponse(
@@ -101,6 +106,7 @@ internal static class MissingRequiredFieldDefaults
 		Headers: Array.Empty<OpenApiParameter>(),
 		Content: new Dictionary<string, OpenApiMediaTypeObject>()
 	);
+
 	public static OpenApiResponse ConstructPlaceholderResponse(Uri id) => new PlaceholderResponse(id);
 
 	internal static OpenApiSecurityRequirement ConstructPlaceholderSecurityRequirement(Uri id) => new OpenApiSecurityRequirement(id, Array.Empty<OpenApiSecuritySchemeRequirement>());

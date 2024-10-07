@@ -1,8 +1,10 @@
 ﻿using System;
 using DarkPatterns.OpenApi.Transformations.DocumentTypes;
-using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.Json.Specifications;
 using DarkPatterns.OpenApi.Transformations.Abstractions;
 using DarkPatterns.OpenApi.Transformations;
+using DarkPatterns.Json.Documents;
+using DarkPatterns.OpenApi.Transformations.Specifications;
 
 namespace DarkPatterns.OpenApiCodegen.TestUtils
 {

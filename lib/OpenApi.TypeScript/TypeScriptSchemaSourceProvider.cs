@@ -5,12 +5,13 @@ using System.ComponentModel;
 using System.Linq;
 using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApi.Transformations.Abstractions;
-using DarkPatterns.OpenApi.Transformations.Specifications;
-using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Applicator;
-using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Metadata;
-using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Validation;
+using DarkPatterns.Json.Specifications;
+using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator;
+using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Metadata;
+using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
 using DarkPatterns.OpenApi.TypeScript.Templates;
 using DarkPatterns.OpenApiCodegen;
+using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.OpenApi.TypeScript;
 

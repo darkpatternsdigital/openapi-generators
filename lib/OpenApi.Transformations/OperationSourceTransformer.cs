@@ -1,8 +1,9 @@
 ﻿using DarkPatterns.OpenApi.Transformations.Abstractions;
-using DarkPatterns.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.OpenApiCodegen;
 using System;
 using System.Collections.Generic;
+using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.OpenApi.Transformations;
 

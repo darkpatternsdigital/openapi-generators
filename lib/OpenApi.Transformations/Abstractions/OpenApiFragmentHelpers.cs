@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Json.Pointer;
 using DarkPatterns.OpenApi.Transformations.Abstractions;
-using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.Json.Specifications;
 
 namespace DarkPatterns.OpenApi.Transformations.Abstractions;
 

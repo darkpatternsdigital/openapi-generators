@@ -13,11 +13,11 @@ public partial class TransformationDiagnostics
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.Specifications.FalseJsonSchemasFailDiagnostic")]
+	[TransformationDiagnostic("DarkPatterns.Json.Specifications.FalseJsonSchemasFailDiagnostic")]
 	public static readonly DiagnosticDescriptor FalseJsonSchemasFailDiagnostic =
 		new DiagnosticDescriptor(id: "DPD_JSON_002",
 								title: "Unable to match against a 'false' schema",
-								messageFormat: DarkPatterns_OpenApi_Transformations_Specifications_FalseJsonSchemasFailDiagnostic,
+								messageFormat: DarkPatterns_Json_Specifications_FalseJsonSchemasFailDiagnostic,
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
@@ -29,11 +29,11 @@ public partial class TransformationDiagnostics
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.Specifications.Keywords.UnableToParseKeyword")]
+	[TransformationDiagnostic("DarkPatterns.Json.Specifications.Keywords.UnableToParseKeyword")]
 	public static readonly DiagnosticDescriptor UnableToParseKeywordDiagnostic =
 		new DiagnosticDescriptor(id: "DPD_JSON_004",
 								title: "Could not parse the keyword",
-								messageFormat: DarkPatterns_OpenApi_Transformations_Specifications_Keywords_UnableToParseKeyword,
+								messageFormat: DarkPatterns_Json_Specifications_Keywords_UnableToParseKeyword,
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);

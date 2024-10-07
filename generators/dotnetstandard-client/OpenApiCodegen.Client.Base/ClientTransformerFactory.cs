@@ -1,4 +1,5 @@
-﻿using DarkPatterns.OpenApi.Transformations;
+﻿using DarkPatterns.Json.Documents;
+using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApi.Transformations.Abstractions;
 using System.Linq;
 

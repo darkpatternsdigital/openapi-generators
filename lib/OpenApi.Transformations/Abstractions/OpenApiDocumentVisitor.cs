@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using DarkPatterns.OpenApi.Transformations.Abstractions;
-using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.Json.Specifications;
+using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.OpenApi.Transformations.Abstractions;
 

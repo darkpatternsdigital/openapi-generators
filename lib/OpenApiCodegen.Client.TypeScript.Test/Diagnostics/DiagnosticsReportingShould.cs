@@ -1,6 +1,6 @@
 ﻿using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApi.Transformations.Diagnostics;
-using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.Json.Specifications;
 using DarkPatterns.OpenApiCodegen.TestUtils;
 using System;
 using System.Collections.Generic;

@@ -1,4 +1,4 @@
-﻿using DarkPatterns.OpenApi.Transformations.DocumentTypes;
+﻿using DarkPatterns.Json.Documents;
 using System;
 using System.Collections.Generic;
 using System.Text;

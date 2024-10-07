@@ -1,13 +1,15 @@
 ﻿using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Configuration;
 using DarkPatterns.OpenApi.Transformations;
-using DarkPatterns.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.OpenApi.Transformations.DocumentTypes;
-using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.Json.Specifications;
 using DarkPatterns.OpenApi.TypeScript;
 using System;
 using System.IO;
 using System.Linq;
+using DarkPatterns.Json.Documents;
+using DarkPatterns.OpenApi.Transformations.Specifications;
 
 namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 {

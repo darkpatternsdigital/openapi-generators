@@ -2,7 +2,7 @@
 using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApi.Transformations.Abstractions;
 using DarkPatterns.OpenApi.Transformations.DocumentTypes;
-using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.Json.Specifications;
 using DarkPatterns.OpenApiCodegen.TestUtils;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -11,6 +11,8 @@ using System.Text;
 using System.Text.Json.Nodes;
 using Xunit;
 using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
+using DarkPatterns.Json.Documents;
+using DarkPatterns.OpenApi.Transformations.Specifications;
 
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc;
 using static OptionsHelpers;

@@ -1,4 +1,5 @@
-﻿using DarkPatterns.OpenApi.Transformations.Specifications;
+﻿using DarkPatterns.Json.Documents;
+using DarkPatterns.Json.Specifications;
 using System;
 using System.Collections.Generic;
 

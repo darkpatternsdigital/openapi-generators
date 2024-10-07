@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using DarkPatterns.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.Json.Diagnostics;
 
 namespace DarkPatterns.OpenApi.Transformations
 {

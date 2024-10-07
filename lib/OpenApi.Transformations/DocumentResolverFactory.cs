@@ -2,15 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DarkPatterns.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.Json.Diagnostics;
+using DarkPatterns.Json.Documents;
 using DarkPatterns.OpenApi.Transformations.DocumentTypes;
 using DarkPatterns.OpenApiCodegen;
 
 namespace DarkPatterns.OpenApi.Transformations;
-
-public record DocumentRegistryOptions(
-	IReadOnlyList<DocumentResolver> Resolvers
-);
 
 public static class DocumentResolverFactory
 {

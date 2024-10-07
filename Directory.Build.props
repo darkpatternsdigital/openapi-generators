@@ -29,6 +29,7 @@
 	</ItemGroup>
 
 	<PropertyGroup>
+		<JsonSchemasVersion>0.1.0</JsonSchemasVersion>
 		<OpenApiJsonExtensionsVersion>0.17.1</OpenApiJsonExtensionsVersion>
 		<OpenApiMvcServerVersion>0.18.5</OpenApiMvcServerVersion>
 		<OpenApiCSharpClientVersion>0.18.5</OpenApiCSharpClientVersion>

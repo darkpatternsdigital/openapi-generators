@@ -1,10 +1,11 @@
 ﻿using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApi.Transformations.Abstractions;
-using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.Json.Specifications;
 using DarkPatterns.OpenApi.TypeScript;
 using DarkPatterns.OpenApi.TypeScript.Templates;
 using System.Collections.Generic;
 using System.Linq;
+using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 {

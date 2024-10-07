@@ -145,23 +145,23 @@
     <value>Could not resolve the document with the URI {0}</value>
     <comment/>
   </data>
-  <data name="DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Applicator.MustNotMatch" xml:space="preserve">
+  <data name="DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator.MustNotMatch" xml:space="preserve">
     <value>Value matched 'not'-constrained schema</value>
     <comment/>
   </data>
-  <data name="DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Applicator.OnlyOneMustMatch" xml:space="preserve">
+  <data name="DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator.OnlyOneMustMatch" xml:space="preserve">
     <value>Value matched multiple 'oneOf'-constrained schemas</value>
     <comment/>
   </data>
-  <data name="DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Validation.JsonSchemaPatternMismatchDiagnostic" xml:space="preserve">
+  <data name="DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation.JsonSchemaPatternMismatchDiagnostic" xml:space="preserve">
     <value>Value did not match pattern: {0}</value>
     <comment/>
   </data>
-  <data name="DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Validation.MissingRequiredProperties" xml:space="preserve">
+  <data name="DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation.MissingRequiredProperties" xml:space="preserve">
     <value>The following properties are required but missing: {0}</value>
     <comment/>
   </data>
-  <data name="DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Validation.UniqueItemsKeywordNotUnique" xml:space="preserve">
+  <data name="DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation.UniqueItemsKeywordNotUnique" xml:space="preserve">
     <value>Array items must be unique; detected duplicate array</value>
     <comment/>
   </data>
@@ -169,7 +169,7 @@
     <value>Unable to parse schema; it must be either an object or a boolean value</value>
     <comment/>
   </data>
-  <data name="DarkPatterns.OpenApi.Transformations.Specifications.FalseJsonSchemasFailDiagnostic" xml:space="preserve">
+  <data name="DarkPatterns.Json.Specifications.FalseJsonSchemasFailDiagnostic" xml:space="preserve">
     <value>Unable to match against a 'false' schema</value>
     <comment/>
   </data>
@@ -177,23 +177,23 @@
     <value>Unable to parse document</value>
     <comment/>
   </data>
-  <data name="DarkPatterns.OpenApi.Transformations.Specifications.Keywords.UnableToParseKeyword" xml:space="preserve">
+  <data name="DarkPatterns.Json.Specifications.Keywords.UnableToParseKeyword" xml:space="preserve">
     <value>Could not parse the '{0}' keyword; ensure it is the correct format</value>
     <comment/>
   </data>
-  <data name="DarkPatterns.OpenApi.Transformations.Diagnostics.UnhandledExceptionDiagnostic" xml:space="preserve">
+  <data name="DarkPatterns.Json.Diagnostics.UnhandledExceptionDiagnostic" xml:space="preserve">
     <value>Unhandled exception occurred: [{0}] {1}</value>
     <comment/>
   </data>
-  <data name="DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0.TypeKeywordMismatch" xml:space="preserve">
+  <data name="DarkPatterns.Json.Specifications.OpenApi3_0.TypeKeywordMismatch" xml:space="preserve">
     <value>Type did not match {0}</value>
     <comment/>
   </data>
-  <data name="DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0.InvalidNode" xml:space="preserve">
+  <data name="DarkPatterns.Json.Specifications.OpenApi3_0.InvalidNode" xml:space="preserve">
     <value>Unable to parse node of type {0} in OpenAPI 3.0 document</value>
     <comment/>
   </data>
-  <data name="DarkPatterns.OpenApi.Transformations.Specifications.UnableToParseDiagnostic" xml:space="preserve">
+  <data name="DarkPatterns.Json.Specifications.UnableToParseDiagnostic" xml:space="preserve">
     <value>Unable to parse the document; unknown document type</value>
     <comment/>
   </data>

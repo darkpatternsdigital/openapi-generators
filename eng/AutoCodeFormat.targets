@@ -10,6 +10,7 @@
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<WarningsAsErrors />
 		<!--
+			CA1067 - should override Equals (but records already override equals)
 			CA1852 - seal internal types
 
 			CA1304 - specify CultureInfo
@@ -21,7 +22,7 @@
 			CA1716 - identifiers should not match keywords - Optional matched a keyword...
 			CA1805 - do not initialize unnecessarily
 		 -->
-		<NoWarn>$(NoWarn),CA1852,CA1304,CA1305,CA1311,CA1707,CA1310,CA1716,CA1805</NoWarn>
+		<NoWarn>$(NoWarn),CA1067,CA1852,CA1304,CA1305,CA1311,CA1707,CA1310,CA1716,CA1805</NoWarn>
 		<!-- CS9057 - Visual Studio is finding a different version of analyzers; this will allow builds in VS. -->
 		<NoWarn>$(NoWarn),CS9057</NoWarn>
 		<!--

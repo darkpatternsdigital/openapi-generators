@@ -13,11 +13,11 @@ public partial class TransformationDiagnostics
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.Specifications.UnableToParseDiagnostic")]
+	[TransformationDiagnostic("DarkPatterns.Json.Specifications.UnableToParseDiagnostic")]
 	public static readonly DiagnosticDescriptor UnableToParseDiagnostic =
 		new DiagnosticDescriptor(id: "DPD_PARSE_003",
 								title: "Could not identify the document type",
-								messageFormat: DarkPatterns_OpenApi_Transformations_Specifications_UnableToParseDiagnostic,
+								messageFormat: DarkPatterns_Json_Specifications_UnableToParseDiagnostic,
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
@@ -69,11 +69,11 @@ public partial class TransformationDiagnostics
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.Diagnostics.UnhandledExceptionDiagnostic")]
+	[TransformationDiagnostic("DarkPatterns.Json.Diagnostics.UnhandledExceptionDiagnostic")]
 	public static readonly DiagnosticDescriptor UnhandledExceptionDiagnostic =
 		new DiagnosticDescriptor(id: "DPD_UNK",
 								title: "Unhandled exception",
-								messageFormat: DarkPatterns_OpenApi_Transformations_Diagnostics_UnhandledExceptionDiagnostic,
+								messageFormat: DarkPatterns_Json_Diagnostics_UnhandledExceptionDiagnostic,
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);

@@ -1,11 +1,12 @@
 ﻿using DarkPatterns.OpenApi.Transformations.Abstractions;
-using DarkPatterns.OpenApi.Transformations.Diagnostics;
-using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.Json.Diagnostics;
+using DarkPatterns.Json.Specifications;
 using DarkPatterns.OpenApiCodegen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.OpenApi.Transformations;
 

@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.Json.Documents;
+using DarkPatterns.Json.Specifications;
 
 namespace DarkPatterns.OpenApi.Transformations.Abstractions;
 
@@ -37,5 +38,4 @@ public record OpenApiDocument(
 		foreach (var securityRequirement in SecurityRequirements)
 			yield return securityRequirement;
 	}
-
 }

@@ -1,14 +1,17 @@
-using DarkPatterns.OpenApi.Transformations.Abstractions;
-using DarkPatterns.OpenApi.Transformations.Diagnostics;
-using DarkPatterns.OpenApi.Transformations.DocumentTypes;
-using DarkPatterns.OpenApi.Transformations.Specifications.Keywords;
+using DarkPatterns.Json.Documents;
+using DarkPatterns.Json.Diagnostics;
+using DarkPatterns.Json.Specifications.Keywords;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Draft04 = DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft04;
+using Draft04 = DarkPatterns.Json.Specifications.Keywords.Draft04;
+using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Transformations;
+using DarkPatterns.Json.Specifications;
+using Keywords = DarkPatterns.Json.Specifications.Keywords;
 
 namespace DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0;
 

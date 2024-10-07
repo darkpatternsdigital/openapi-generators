@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.Json.Documents;
+using DarkPatterns.Json.Specifications;
 
 namespace DarkPatterns.OpenApi.Transformations.Abstractions;
 

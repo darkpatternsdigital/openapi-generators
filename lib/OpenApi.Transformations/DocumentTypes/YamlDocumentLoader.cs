@@ -1,7 +1,6 @@
 ﻿using Json.Pointer;
-using DarkPatterns.OpenApi.Transformations;
-using DarkPatterns.OpenApi.Transformations.Diagnostics;
-using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.Json.Specifications;
+using DarkPatterns.Json.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -14,6 +13,7 @@ using System.Xml;
 using Yaml2JsonNode;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
+using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.OpenApi.Transformations.DocumentTypes;
 
@@ -32,7 +32,7 @@ public class YamlDocumentLoader : IDocumentTypeLoader
 		}
 
 		// TODO: check $ top-level variables for vocabulary overrides
-		return new YamlDocument(retrievalUri, yamlStream, dialect ?? Specifications.Dialects.StandardDialects.CoreNext);
+		return new YamlDocument(retrievalUri, yamlStream, dialect ?? Json.Specifications.Dialects.StandardDialects.CoreNext);
 	}
 
 	private class YamlDocument : IDocumentReference

@@ -1,4 +1,4 @@
-﻿using DarkPatterns.OpenApi.Transformations.Specifications;
+﻿using DarkPatterns.Json.Specifications;
 using DarkPatterns.OpenApiCodegen;
 using System.Collections.Generic;
 using System.Linq;

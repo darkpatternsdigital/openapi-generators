@@ -1,7 +1,9 @@
 
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
-using DarkPatterns.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.Json.Diagnostics;
+using DarkPatterns.Json.Documents;
+using DarkPatterns.Json.Specifications;
 
 namespace DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0;
 

@@ -1,3 +1,5 @@
+using DarkPatterns.Json.Documents;
+
 namespace DarkPatterns.OpenApi.Transformations.Abstractions;
 
 public interface IOpenApiDocumentVisitor<TArgument>

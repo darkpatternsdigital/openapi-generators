@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DarkPatterns.OpenApiCodegen;
+using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.OpenApi.CSharp
 {

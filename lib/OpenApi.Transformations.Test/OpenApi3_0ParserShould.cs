@@ -1,10 +1,10 @@
-﻿using DarkPatterns.OpenApi.Transformations.DocumentTypes;
-using DarkPatterns.OpenApi.Transformations.Specifications.Keywords;
+﻿using DarkPatterns.Json.Specifications.Keywords;
 using DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0;
 using DarkPatterns.OpenApiCodegen.TestUtils;
 using System.Linq;
 using Xunit;
 using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
+using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.OpenApi.Transformations;
 
@@ -73,7 +73,7 @@ public class OpenApi3_0ParserShould
 								Assert.NotNull(param.Schema.Annotations);
 								var schemaType = Assert.Single(param.Schema.Annotations.OfType<TypeKeyword>());
 								Assert.Equal(TypeKeyword.Common.Array, schemaType.Value);
-								var itemsType = Assert.Single(param.Schema.Annotations.OfType<Specifications.Keywords.Draft2020_12Applicator.ItemsKeyword>());
+								var itemsType = Assert.Single(param.Schema.Annotations.OfType<Json.Specifications.Keywords.Draft2020_12Applicator.ItemsKeyword>());
 								Assert.NotNull(itemsType.Schema?.Annotations);
 								Assert.Equal("proj://embedded/petstore.yaml#/paths/~1pets/get/parameters/0/schema/items", itemsType.Schema.Metadata.Id.OriginalString);
 								var itemSchemaType = Assert.Single(itemsType.Schema.Annotations.OfType<TypeKeyword>());

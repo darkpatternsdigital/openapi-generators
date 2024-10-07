@@ -6,7 +6,7 @@ using DarkPatterns.Json.Specifications.Keywords;
 using DarkPatterns.Json.Documents;
 using DarkPatterns.Json.Specifications;
 
-namespace DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0;
+namespace DarkPatterns.OpenApi.Specifications.v3_0;
 
 public class NullableKeyword(string keyword, bool isNullable) : IJsonSchemaAnnotation
 {

@@ -9,11 +9,10 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Draft04 = DarkPatterns.Json.Specifications.Keywords.Draft04;
 using DarkPatterns.OpenApi.Abstractions;
-using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.Json.Specifications;
 using Keywords = DarkPatterns.Json.Specifications.Keywords;
 
-namespace DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0;
+namespace DarkPatterns.OpenApi.Specifications.v3_0;
 
 #pragma warning disable CA1822 // Mark members as static
 

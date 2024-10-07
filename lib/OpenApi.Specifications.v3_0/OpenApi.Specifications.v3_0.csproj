@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<AssemblyName>$(RootNamespacePrefix).$(MSBuildProjectName)</AssemblyName>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<VersionPrefix>$(OpenApiSpecifications3_0Version)</VersionPrefix>
+
+		<!-- CA1032 - Implement standard exception constructors -->
+		<NoWarn>$(NoWarn),CA1032</NoWarn>
+	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="Schemas\schema.yaml" />
+	</ItemGroup>
+	<Import Project="$(RepositoryEngineeringDir)netstandard/polyfills.targets" />
+	<ItemGroup>
+	  <EmbeddedResource Include="Schemas\schema.yaml" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="$(SolutionRoot)lib\OpenApi.Abstractions\OpenApi.Abstractions.csproj" SpecificVersion="true" />
+		<ProjectReference Include="$(SolutionRoot)lib\Json.Loaders\Json.Loaders.csproj" SpecificVersion="true" />
+	</ItemGroup>
+	<ItemGroup>
+	</ItemGroup>
+</Project>

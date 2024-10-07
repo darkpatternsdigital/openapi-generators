@@ -8,17 +8,16 @@
 		<NoWarn>$(NoWarn),CA1032</NoWarn>
 	</PropertyGroup>
 	<ItemGroup>
-	  <None Remove="Specifications\OpenApi3_0\Schemas\schema.yaml" />
 	  <None Remove="Specifications\OpenApi_3_1_0\Schemas\schema-base.yaml" />
 	</ItemGroup>
 	<Import Project="$(RepositoryEngineeringDir)netstandard/polyfills.targets" />
 	<ItemGroup>
-	  <EmbeddedResource Include="Specifications\OpenApi3_0\Schemas\schema.yaml" />
 	  <EmbeddedResource Include="Specifications\OpenApi3_1\Schemas\schema-base.yaml" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="$(SolutionRoot)lib\OpenApiCodegen\OpenApiCodegen.csproj" SpecificVersion="true" />
 		<ProjectReference Include="$(SolutionRoot)lib\OpenApi.Abstractions\OpenApi.Abstractions.csproj" SpecificVersion="true" />
+		<ProjectReference Include="$(SolutionRoot)lib\OpenApi.Specifications.v3_0\OpenApi.Specifications.v3_0.csproj" SpecificVersion="true" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Primitives" Version="8.0.0" />
@@ -28,7 +27,5 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="8.0.0" />
-		<PackageReference Include="Yaml2JsonNode" Version="2.1.0" />
-		<PackageReference Include="YamlDotNet" Version="15.1.2" />
 	</ItemGroup>
 </Project>

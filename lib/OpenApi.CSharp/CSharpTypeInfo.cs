@@ -5,7 +5,7 @@ using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
 
 namespace DarkPatterns.OpenApi.CSharp;
-using OpenApi3_0 = Transformations.Specifications.OpenApi3_0;
+using OpenApi3_0 = Specifications.v3_0;
 
 public record CSharpTypeInfo(
 	JsonSchema? Schema,

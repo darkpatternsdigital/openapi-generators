@@ -1,9 +1,8 @@
-﻿using DarkPatterns.OpenApi.Transformations.DocumentTypes;
-using DarkPatterns.OpenApi.Transformations;
-using System;
+﻿using System;
 using DarkPatterns.Json.Specifications;
 using System.IO;
 using DarkPatterns.Json.Documents;
+using DarkPatterns.Json.Loaders;
 
 namespace DarkPatterns.OpenApiCodegen.TestUtils;
 

@@ -5,7 +5,7 @@ using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.Json.Documents;
 using DarkPatterns.Json.Specifications;
 
-namespace DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0;
+namespace DarkPatterns.OpenApi.Specifications.v3_0;
 
 public class ExampleKeyword(string keyword, JsonNode? example) : IJsonSchemaAnnotation
 {

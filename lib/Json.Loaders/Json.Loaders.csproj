@@ -2,16 +2,17 @@
 	<PropertyGroup>
 		<AssemblyName>$(RootNamespacePrefix).$(MSBuildProjectName)</AssemblyName>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<VersionPrefix>$(OpenApiAbstractionsVersion)</VersionPrefix>
+		<VersionPrefix>$(OpenApiLoadersVersion)</VersionPrefix>
 
 		<!-- CA1032 - Implement standard exception constructors -->
 		<NoWarn>$(NoWarn),CA1032</NoWarn>
 	</PropertyGroup>
 	<Import Project="$(RepositoryEngineeringDir)netstandard/polyfills.targets" />
 	<ItemGroup>
-		<PackageReference Include="JsonPointer.Net" Version="3.0.3" />
+		<PackageReference Include="Yaml2JsonNode" Version="2.1.0" />
+		<PackageReference Include="YamlDotNet" Version="15.1.2" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="$(SolutionRoot)lib\Json.Specifications\Json.Specifications.csproj" SpecificVersion="true" />
+		<ProjectReference Include="$(SolutionRoot)lib\OpenApi.Abstractions\OpenApi.Abstractions.csproj" SpecificVersion="true" />
 	</ItemGroup>
 </Project>

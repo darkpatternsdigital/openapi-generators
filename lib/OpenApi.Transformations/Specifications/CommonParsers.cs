@@ -9,7 +9,7 @@ namespace DarkPatterns.OpenApi.Transformations.Specifications;
 
 public static class CommonParsers
 {
-	public static readonly IParser<OpenApiDocument> OpenApi3_0Parser = new OpenApi3_0.OpenApi3_0Parser();
+	public static readonly IParser<OpenApiDocument> OpenApi3_0Parser = new OpenApi.Specifications.v3_0.OpenApi3_0Parser();
 	public static readonly IParser<OpenApiDocument> OpenApi3_1Parser = new OpenApi3_1.OpenApi3_1Parser();
 
 	public static readonly IReadOnlyList<IParser<OpenApiDocument>> DefaultParsers =

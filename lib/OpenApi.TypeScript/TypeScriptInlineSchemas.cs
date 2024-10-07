@@ -7,7 +7,7 @@ using Json.Pointer;
 using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.Json.Specifications;
-using DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0;
+using DarkPatterns.OpenApi.Specifications.v3_0;
 using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.OpenApi.TypeScript;

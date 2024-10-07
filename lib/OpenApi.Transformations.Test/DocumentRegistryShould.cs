@@ -1,7 +1,6 @@
 ﻿using Json.More;
 using Moq;
 using DarkPatterns.Json.Diagnostics;
-using DarkPatterns.OpenApi.Transformations.DocumentTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;

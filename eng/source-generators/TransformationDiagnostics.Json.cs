@@ -21,11 +21,11 @@ public partial class TransformationDiagnostics
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.DocumentTypes.YamlLoadDiagnostic")]
+	[TransformationDiagnostic("DarkPatterns.Json.Loaders.YamlLoadDiagnostic")]
 	public static readonly DiagnosticDescriptor YamlLoadDiagnosticDiagnostic =
 		new DiagnosticDescriptor(id: "DPD_JSON_003",
 								title: "Unable to parse document",
-								messageFormat: DarkPatterns_OpenApi_Transformations_DocumentTypes_YamlLoadDiagnostic,
+								messageFormat: DarkPatterns_Json_Loaders_YamlLoadDiagnostic,
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);

@@ -7,7 +7,7 @@ using DarkPatterns.Json.Documents;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.Json.Specifications.Keywords;
 
-namespace DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0;
+namespace DarkPatterns.OpenApi.Specifications.v3_0;
 
 public class RefKeyword(string keyword, Uri reference, Uri absoluteReference) : IJsonSchemaFixupAnnotation
 {

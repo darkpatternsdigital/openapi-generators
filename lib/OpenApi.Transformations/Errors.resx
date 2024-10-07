@@ -121,12 +121,4 @@
     <value>Root node of an OpenApi document must be an object</value>
     <comment/>
   </data>
-  <data name="UnableToLoadYaml" xml:space="preserve">
-    <value>An error occurred while loading JSON or YAML file</value>
-    <comment/>
-  </data>
-  <data name="FailedToParseEmbeddedSchema" xml:space="preserve">
-    <value>Failed to parse embedded schema. This is likely a deployment issue with this version of the package.</value>
-    <comment/>
-  </data>
 </root>

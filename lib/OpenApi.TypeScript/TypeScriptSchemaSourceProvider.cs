@@ -120,7 +120,7 @@ public class TypeScriptSchemaSourceProvider : SchemaSourceProvider
 
 	private Templates.TypeUnionModel ToOneOfModel(string className, TypeScriptTypeInfo schema)
 	{
-		var discriminator = schema.Schema?.TryGetAnnotation<Transformations.Specifications.OpenApi3_0.DiscriminatorKeyword>();
+		var discriminator = schema.Schema?.TryGetAnnotation<Specifications.v3_0.DiscriminatorKeyword>();
 		return new Templates.TypeUnionModel(
 			Imports: inlineSchemas.GetImportStatements(schema.OneOf ?? Enumerable.Empty<JsonSchema>(), Enumerable.Empty<JsonSchema>(), "./models/").ToArray(),
 			Description: schema.Description,

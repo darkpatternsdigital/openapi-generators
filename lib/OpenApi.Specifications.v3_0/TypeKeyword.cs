@@ -7,7 +7,7 @@ using DarkPatterns.Json.Documents;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.Json.Specifications.Keywords;
 
-namespace DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0;
+namespace DarkPatterns.OpenApi.Specifications.v3_0;
 
 // This follows OpenApi 3.0 TypeKeyword, not the actual standard at https://json-schema.org/draft/2020-12/json-schema-validation#name-type
 

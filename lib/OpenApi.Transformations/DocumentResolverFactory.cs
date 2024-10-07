@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.Json.Documents;
-using DarkPatterns.OpenApi.Transformations.DocumentTypes;
+using DarkPatterns.Json.Loaders;
 using DarkPatterns.OpenApiCodegen;
 
 namespace DarkPatterns.OpenApi.Transformations;

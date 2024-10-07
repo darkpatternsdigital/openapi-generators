@@ -11,7 +11,7 @@ using DarkPatterns.Json.Specifications;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Metadata;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
-using DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0;
+using DarkPatterns.OpenApi.Specifications.v3_0;
 using DarkPatterns.OpenApiCodegen;
 using DarkPatterns.Json.Documents;
 

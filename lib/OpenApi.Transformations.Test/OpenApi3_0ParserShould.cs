@@ -1,5 +1,5 @@
 ﻿using DarkPatterns.Json.Specifications.Keywords;
-using DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0;
+using DarkPatterns.OpenApi.Specifications.v3_0;
 using DarkPatterns.OpenApiCodegen.TestUtils;
 using System.Linq;
 using Xunit;

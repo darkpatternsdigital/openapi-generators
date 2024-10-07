@@ -8,7 +8,7 @@ using DarkPatterns.Json.Documents;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.Json.Specifications.Keywords;
 
-namespace DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0;
+namespace DarkPatterns.OpenApi.Specifications.v3_0;
 
 /// <see href="https://spec.openapis.org/oas/v3.0.3#composition-and-inheritance-polymorphism">OpenAPI 3.0 discriminator</see>
 public class DiscriminatorKeyword(string keyword, string propertyName, IReadOnlyDictionary<string, Uri>? mapping) : IJsonSchemaAnnotation

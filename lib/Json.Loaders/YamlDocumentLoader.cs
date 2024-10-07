@@ -15,7 +15,7 @@ using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
 using DarkPatterns.Json.Documents;
 
-namespace DarkPatterns.OpenApi.Transformations.DocumentTypes;
+namespace DarkPatterns.Json.Loaders;
 
 public class YamlDocumentLoader : IDocumentTypeLoader
 {

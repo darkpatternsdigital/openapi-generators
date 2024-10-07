@@ -2,8 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.Json.Diagnostics;
-using DarkPatterns.OpenApi.Transformations.DocumentTypes;
-using DarkPatterns.Json.Specifications;
 using DarkPatterns.OpenApi.TypeScript;
 using System;
 using System.IO;

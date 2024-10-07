@@ -6,12 +6,12 @@ using System.IO;
 using System.Linq;
 using System.Text.Json.Nodes;
 using DarkPatterns.OpenApi.Abstractions;
-using DarkPatterns.OpenApi.Transformations.DocumentTypes;
 using DarkPatterns.Json.Specifications;
+using DarkPatterns.Json.Loaders;
 
-namespace DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0;
+namespace DarkPatterns.OpenApi.Specifications.v3_0;
 
-internal class OpenApi3_0Parser : SchemaValidatingParser<OpenApiDocument>
+public class OpenApi3_0Parser : SchemaValidatingParser<OpenApiDocument>
 {
 	private static readonly Uri schemaUri = new Uri("https://spec.openapis.org/oas/3.0/schema/2021-09-28");
 

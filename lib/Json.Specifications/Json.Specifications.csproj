@@ -3,7 +3,7 @@
 		<AssemblyName>$(RootNamespacePrefix).$(MSBuildProjectName)</AssemblyName>
 		<RootNamespace>$(RootNamespacePrefix).Json</RootNamespace>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<VersionPrefix>$(JsonSchemasVersion)</VersionPrefix>
+		<VersionPrefix>$(JsonSpecificationsVersion)</VersionPrefix>
 
 		<!-- CA1032 - Implement standard exception constructors -->
 		<NoWarn>$(NoWarn),CA1032</NoWarn>

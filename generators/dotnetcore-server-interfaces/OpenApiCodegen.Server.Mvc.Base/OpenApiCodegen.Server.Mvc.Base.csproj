@@ -16,6 +16,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="$(SolutionRoot)lib\Extensions.Configuration.Yaml\Extensions.Configuration.Yaml.csproj" SpecificVersion="true" />
 		<ProjectReference Include="$(SolutionRoot)lib\OpenApi.CSharp\OpenApi.CSharp.csproj" SpecificVersion="true" />
 		<ProjectReference Include="$(SolutionRoot)lib\OpenApiCodegen\OpenApiCodegen.csproj" SpecificVersion="true" />
 	</ItemGroup>

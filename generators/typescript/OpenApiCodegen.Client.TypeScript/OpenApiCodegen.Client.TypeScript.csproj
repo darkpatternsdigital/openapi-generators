@@ -21,6 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="$(SolutionRoot)lib\Extensions.Configuration.Yaml\Extensions.Configuration.Yaml.csproj" SpecificVersion="true" />
 		<ProjectReference Include="$(SolutionRoot)lib\OpenApi.TypeScript\OpenApi.TypeScript.csproj" />
 	</ItemGroup>
 </Project>

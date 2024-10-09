@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DarkPatterns.OpenApi.Transformations.Configuration
+namespace DarkPatterns.Extensions.Configuration.Yaml
 {
 	/// <summary>
 	/// A YAML file based <see cref="FileConfigurationSource"/>.

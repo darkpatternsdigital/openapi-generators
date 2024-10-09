@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.FileProviders;
-using DarkPatterns.OpenApi.Transformations.Configuration;
+using DarkPatterns.Extensions.Configuration.Yaml;
 
 namespace Microsoft.Extensions.Configuration
 {

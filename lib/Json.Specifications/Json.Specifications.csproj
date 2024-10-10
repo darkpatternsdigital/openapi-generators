@@ -5,6 +5,9 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<VersionPrefix>$(JsonSpecificationsVersion)</VersionPrefix>
 
+		<IsPackable>true</IsPackable>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+
 		<!-- CA1032 - Implement standard exception constructors -->
 		<NoWarn>$(NoWarn),CA1032</NoWarn>
 	</PropertyGroup>

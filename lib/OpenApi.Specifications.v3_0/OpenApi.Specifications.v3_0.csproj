@@ -4,6 +4,9 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<VersionPrefix>$(OpenApiSpecifications3_0Version)</VersionPrefix>
 
+		<IsPackable>true</IsPackable>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+
 		<!-- CA1032 - Implement standard exception constructors -->
 		<NoWarn>$(NoWarn),CA1032</NoWarn>
 	</PropertyGroup>
@@ -15,8 +18,8 @@
 	  <EmbeddedResource Include="Schemas\schema.yaml" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="$(SolutionRoot)lib\OpenApi.Abstractions\OpenApi.Abstractions.csproj" SpecificVersion="true" />
-		<ProjectReference Include="$(SolutionRoot)lib\Json.Loaders\Json.Loaders.csproj" SpecificVersion="true" />
+		<ProjectReference Include="$(SolutionRoot)lib\OpenApi.Abstractions\OpenApi.Abstractions.csproj" />
+		<ProjectReference Include="$(SolutionRoot)lib\Json.Loaders\Json.Loaders.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 	</ItemGroup>

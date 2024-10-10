@@ -4,6 +4,9 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<VersionPrefix>$(OpenApiAbstractionsVersion)</VersionPrefix>
 
+		<IsPackable>true</IsPackable>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+
 		<!-- CA1032 - Implement standard exception constructors -->
 		<NoWarn>$(NoWarn),CA1032</NoWarn>
 	</PropertyGroup>
@@ -12,6 +15,6 @@
 		<PackageReference Include="JsonPointer.Net" Version="3.0.3" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="$(SolutionRoot)lib\Json.Specifications\Json.Specifications.csproj" SpecificVersion="true" />
+		<ProjectReference Include="$(SolutionRoot)lib\Json.Specifications\Json.Specifications.csproj" />
 	</ItemGroup>
 </Project>

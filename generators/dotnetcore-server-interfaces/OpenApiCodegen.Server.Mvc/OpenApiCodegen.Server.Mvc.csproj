@@ -8,14 +8,12 @@
 		<IsPackable>true</IsPackable>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 
-		<PackageLicenseExpression>BSD-2-Clause</PackageLicenseExpression>
-		<title>Controller source generators from OpenAPI specification for .NET 5</title>
+		<title>Controller source generators from OpenAPI specification</title>
 		<PackageSummary>Adds source generators to generate C# controller base classes from an OpenAPI specification file.</PackageSummary>
 		<description>Adds source generators to generate C# controller base classes from an OpenAPI specification file.</description>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<IncludeBuildOutput>false</IncludeBuildOutput>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>

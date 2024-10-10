@@ -6,6 +6,9 @@
 
 		<IsPackable>true</IsPackable>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<title>$(AssemblyName)</title>
+		<PackageSummary>A parser for OpenAPI 3.0.x for DarkPatterns.OpenApi.Abstractions.</PackageSummary>
+		<description>A parser for OpenAPI 3.0.x for DarkPatterns.OpenApi.Abstractions.</description>
 
 		<!-- CA1032 - Implement standard exception constructors -->
 		<NoWarn>$(NoWarn),CA1032</NoWarn>

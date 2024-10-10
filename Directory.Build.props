@@ -56,6 +56,8 @@
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<PackageIcon>dpd-logo.png</PackageIcon>
 		<Copyright>2024 Matt DeKrey; Dark Patterns Digital, LCA; &amp; Principle Studios</Copyright>
+		<PackageLicenseExpression>BSD-2-Clause</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>

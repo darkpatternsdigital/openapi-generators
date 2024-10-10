@@ -6,6 +6,9 @@
 
 		<IsPackable>true</IsPackable>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<title>$(AssemblyName)</title>
+		<PackageSummary>An abstract model for OpenAPI in .NET.</PackageSummary>
+		<description>An abstract model for OpenAPI in .NET.</description>
 
 		<!-- CA1032 - Implement standard exception constructors -->
 		<NoWarn>$(NoWarn),CA1032</NoWarn>

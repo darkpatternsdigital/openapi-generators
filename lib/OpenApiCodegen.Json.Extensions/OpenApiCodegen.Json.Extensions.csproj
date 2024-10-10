@@ -14,7 +14,6 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<IncludeBuildOutput>true</IncludeBuildOutput>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<Import Project="$(RepositoryEngineeringDir)netstandard/polyfills.targets" />

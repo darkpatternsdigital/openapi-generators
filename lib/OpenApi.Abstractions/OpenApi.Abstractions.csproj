@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<AssemblyName>$(RootNamespacePrefix).$(MSBuildProjectName)</AssemblyName>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<VersionPrefix>$(OpenApiAbstractionsVersion)</VersionPrefix>
+
+		<IsPackable>true</IsPackable>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<title>$(AssemblyName)</title>
+		<PackageSummary>An abstract model for OpenAPI in .NET.</PackageSummary>
+		<description>An abstract model for OpenAPI in .NET.</description>
+
+		<!-- CA1032 - Implement standard exception constructors -->
+		<NoWarn>$(NoWarn),CA1032</NoWarn>
+	</PropertyGroup>
+	<Import Project="$(RepositoryEngineeringDir)netstandard/polyfills.targets" />
+	<ItemGroup>
+		<PackageReference Include="JsonPointer.Net" Version="3.0.3" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="$(SolutionRoot)lib\Json.Specifications\Json.Specifications.csproj" />
+	</ItemGroup>
+</Project>

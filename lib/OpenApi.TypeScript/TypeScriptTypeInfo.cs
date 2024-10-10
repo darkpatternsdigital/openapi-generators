@@ -1,12 +1,12 @@
 using System.Collections.Generic;
-using DarkPatterns.OpenApi.Transformations.Specifications;
-using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft04;
-using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Applicator;
-using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Metadata;
-using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Validation;
+using DarkPatterns.Json.Specifications;
+using DarkPatterns.Json.Specifications.Keywords.Draft04;
+using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator;
+using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Metadata;
+using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
 
 namespace DarkPatterns.OpenApi.TypeScript;
-using OpenApi3_0 = Transformations.Specifications.OpenApi3_0;
+using OpenApi3_0 = Specifications.v3_0;
 
 public record TypeScriptTypeInfo(
 	JsonSchema? Schema,

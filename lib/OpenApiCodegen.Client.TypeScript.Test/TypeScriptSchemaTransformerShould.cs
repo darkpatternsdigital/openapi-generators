@@ -6,7 +6,7 @@ using System;
 using DarkPatterns.OpenApi.Transformations.DocumentTypes;
 using DarkPatterns.OpenApiCodegen.TestUtils;
 using DarkPatterns.OpenApi.Transformations.Abstractions;
-using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.Json.Specifications;
 using System.Text.Json.Nodes;
 
 namespace DarkPatterns.OpenApiCodegen.Client.TypeScript;

@@ -4,8 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DarkPatterns.OpenApiCodegen;
-using DarkPatterns.OpenApi.Transformations.Abstractions;
-using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApi.Abstractions;
+using DarkPatterns.Json.Specifications;
+using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.OpenApi.CSharp;
 

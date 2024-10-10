@@ -1,5 +1,5 @@
-﻿using DarkPatterns.OpenApi.Transformations.Specifications;
-using DarkPatterns.OpenApi.Transformations.Specifications.Keywords;
+﻿using DarkPatterns.Json.Specifications;
+using DarkPatterns.Json.Specifications.Keywords;
 using System.Text.Json.Nodes;
 
 namespace DarkPatterns.OpenApi.Transformations;

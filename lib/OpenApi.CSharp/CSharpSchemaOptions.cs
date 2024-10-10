@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using DarkPatterns.OpenApi.Transformations.Specifications;
-using DarkPatterns.OpenApi.Transformations.Specifications.Keywords;
+using DarkPatterns.Json.Specifications;
+using DarkPatterns.Json.Specifications.Keywords;
 
 namespace DarkPatterns.OpenApi.CSharp
 {

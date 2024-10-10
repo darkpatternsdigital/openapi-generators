@@ -1,11 +1,12 @@
 ﻿using Json.More;
 using Json.Pointer;
-using DarkPatterns.OpenApi.Transformations.Abstractions;
-using DarkPatterns.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.Json.Documents;
+using DarkPatterns.Json.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Nodes;
+using DarkPatterns.OpenApi.Abstractions;
 
 namespace DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_1;
 

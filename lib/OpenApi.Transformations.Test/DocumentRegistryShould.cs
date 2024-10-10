@@ -1,7 +1,6 @@
 ﻿using Json.More;
 using Moq;
-using DarkPatterns.OpenApi.Transformations.Diagnostics;
-using DarkPatterns.OpenApi.Transformations.DocumentTypes;
+using DarkPatterns.Json.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +8,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
+using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.OpenApi.Transformations;
 

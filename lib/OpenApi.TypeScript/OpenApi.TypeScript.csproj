@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<AssemblyName>$(RootNamespacePrefix).OpenApi.TypeScript.$(SharedAnalyzerLibrariesVersion)</AssemblyName>
+		<AssemblyName>$(RootNamespacePrefix).OpenApi.TypeScript</AssemblyName>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<VersionPrefix>$(SharedAnalyzerLibrariesVersion)</VersionPrefix>
 	</PropertyGroup>

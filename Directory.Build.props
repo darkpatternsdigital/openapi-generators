@@ -29,10 +29,15 @@
 	</ItemGroup>
 
 	<PropertyGroup>
+		<JsonSpecificationsVersion>0.1.0</JsonSpecificationsVersion>
+		<ExtensionsConfigurationYamlVersion>0.1.0</ExtensionsConfigurationYamlVersion>
+		<OpenApiSpecificationsv3_0Version>0.1.0</OpenApiSpecificationsv3_0Version>
+		<OpenApiAbstractionsVersion>0.1.0</OpenApiAbstractionsVersion>
 		<OpenApiJsonExtensionsVersion>0.17.1</OpenApiJsonExtensionsVersion>
-		<OpenApiMvcServerVersion>0.18.5</OpenApiMvcServerVersion>
-		<OpenApiCSharpClientVersion>0.18.5</OpenApiCSharpClientVersion>
-		<OpenApiTypeScriptClientVersion>0.10.3</OpenApiTypeScriptClientVersion>
+		<OpenApiLoadersVersion>0.1.0</OpenApiLoadersVersion>
+		<OpenApiMvcServerVersion>0.19.0</OpenApiMvcServerVersion>
+		<OpenApiCSharpClientVersion>0.19.0</OpenApiCSharpClientVersion>
+		<OpenApiTypeScriptClientVersion>0.11.0</OpenApiTypeScriptClientVersion>
 		<OpenApiTypeScriptRxjsClientVersion>0.8.1</OpenApiTypeScriptRxjsClientVersion>
 		<OpenApiTypeScriptMswVersion>0.8.1</OpenApiTypeScriptMswVersion>
 		<OpenApiTypeScriptFetchVersion>0.8.2</OpenApiTypeScriptFetchVersion>
@@ -51,6 +56,8 @@
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<PackageIcon>dpd-logo.png</PackageIcon>
 		<Copyright>2024 Matt DeKrey; Dark Patterns Digital, LCA; &amp; Principle Studios</Copyright>
+		<PackageLicenseExpression>BSD-2-Clause</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>

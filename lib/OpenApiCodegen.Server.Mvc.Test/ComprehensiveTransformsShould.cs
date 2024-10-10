@@ -1,13 +1,14 @@
 ﻿using Microsoft.Win32;
 using DarkPatterns.OpenApi.CSharp;
 using DarkPatterns.OpenApi.Transformations;
-using DarkPatterns.OpenApi.Transformations.Diagnostics;
-using DarkPatterns.OpenApi.Transformations.Specifications.Keywords;
+using DarkPatterns.Json.Diagnostics;
+using DarkPatterns.Json.Specifications.Keywords;
 using DarkPatterns.OpenApiCodegen.TestUtils;
 using System.Linq;
 using Xunit;
 using static DarkPatterns.OpenApiCodegen.Server.Mvc.OptionsHelpers;
 using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
+using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc
 {
@@ -64,7 +65,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc
 		{
 			var diagnostics = GetDocumentDiagnostics("bad.yaml");
 
-			Assert.Collection(diagnostics, [
+			Assert.Collection(diagnostics,
 				(DiagnosticBase diag) =>
 				{
 					Assert.IsType<UnableToParseKeyword>(diag);
@@ -80,7 +81,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc
 					Assert.Equal(17, diag.Location.Range?.Start.Column);
 					Assert.Equal("proj://embedded/petstore.yaml#/Pet", targetNodeDiagnostic.Uri.OriginalString);
 				}
-			]);
+			);
 		}
 
 	}

@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<AssemblyName>$(RootNamespacePrefix).$(MSBuildProjectName)</AssemblyName>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<VersionPrefix>$(ExtensionsConfigurationYamlVersion)</VersionPrefix>
+
+		<IsPackable>true</IsPackable>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<title>$(AssemblyName)</title>
+		<PackageSummary>Adds support for YAML files with .NET Configuration.</PackageSummary>
+		<description>Adds support for YAML files with .NET Configuration.</description>
+
+		<!-- CA1032 - Implement standard exception constructors -->
+		<NoWarn>$(NoWarn),CA1032</NoWarn>
+	</PropertyGroup>
+	<Import Project="$(RepositoryEngineeringDir)netstandard/polyfills.targets" />
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="8.0.0" />
+		<PackageReference Include="YamlDotNet" Version="15.1.2" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="$(SolutionRoot)lib\OpenApi.Abstractions\OpenApi.Abstractions.csproj" />
+	</ItemGroup>
+</Project>

@@ -5,11 +5,11 @@ namespace DarkPatterns.OpenApiCodegen;
 
 public partial class TransformationDiagnostics
 {
-	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.InvalidRetrievalUri")]
+	[TransformationDiagnostic("DarkPatterns.Json.Documents.InvalidRetrievalUri")]
 	public static readonly DiagnosticDescriptor InvalidRetrievalUriDiagnostic =
 		new DiagnosticDescriptor(id: "DPD_PARSE_002",
 								title: "An invalid URI was provided to retrieve a document",
-								messageFormat: DarkPatterns_OpenApi_Transformations_InvalidRetrievalUri,
+								messageFormat: DarkPatterns_Json_Documents_InvalidRetrievalUri,
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
@@ -21,59 +21,59 @@ public partial class TransformationDiagnostics
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.InvalidDocumentBaseUri")]
+	[TransformationDiagnostic("DarkPatterns.Json.Documents.InvalidDocumentBaseUri")]
 	public static readonly DiagnosticDescriptor InvalidDocumentBaseUriDiagostic =
 		new DiagnosticDescriptor(id: "DPD_PARSE_004",
 								title: "An invalid base URI was provided by a document",
-								messageFormat: DarkPatterns_OpenApi_Transformations_InvalidDocumentBaseUri,
+								messageFormat: DarkPatterns_Json_Documents_InvalidDocumentBaseUri,
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.InvalidFragmentDiagnostic")]
+	[TransformationDiagnostic("DarkPatterns.Json.Documents.InvalidFragmentDiagnostic")]
 	public static readonly DiagnosticDescriptor InvalidFragmentDiagostic =
 		new DiagnosticDescriptor(id: "DPD_PARSE_005",
 								title: "The fragment provided was not a valid JSON pointer",
-								messageFormat: DarkPatterns_OpenApi_Transformations_InvalidFragmentDiagnostic,
+								messageFormat: DarkPatterns_Json_Documents_InvalidFragmentDiagnostic,
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.InvalidRefDiagnostic")]
+	[TransformationDiagnostic("DarkPatterns.Json.Documents.InvalidRefDiagnostic")]
 	public static readonly DiagnosticDescriptor InvalidRefDiagnostic =
 		new DiagnosticDescriptor(id: "DPD_PARSE_006",
 								title: "Invalid URI provided for ref",
-								messageFormat: DarkPatterns_OpenApi_Transformations_InvalidRefDiagnostic,
+								messageFormat: DarkPatterns_Json_Documents_InvalidRefDiagnostic,
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.CouldNotFindTargetNodeDiagnostic")]
+	[TransformationDiagnostic("DarkPatterns.Json.Documents.CouldNotFindTargetNodeDiagnostic")]
 	public static readonly DiagnosticDescriptor CouldNotFindTargetNodeDiagnostic =
 		new DiagnosticDescriptor(id: "DPD_PARSE_007",
 								title: "Target node did not exist in given document",
-								messageFormat: DarkPatterns_OpenApi_Transformations_CouldNotFindTargetNodeDiagnostic,
+								messageFormat: DarkPatterns_Json_Documents_CouldNotFindTargetNodeDiagnostic,
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.UnknownAnchorDiagnostic")]
+	[TransformationDiagnostic("DarkPatterns.Json.Documents.UnknownAnchorDiagnostic")]
 	public static readonly DiagnosticDescriptor UnknownAnchorDiagnostic =
 		new DiagnosticDescriptor(id: "DPD_PARSE_008",
 								title: "Unknown anchor provided in ref",
-								messageFormat: DarkPatterns_OpenApi_Transformations_UnknownAnchorDiagnostic,
+								messageFormat: DarkPatterns_Json_Documents_UnknownAnchorDiagnostic,
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.ResolveDocumentDiagnostic")]
+	[TransformationDiagnostic("DarkPatterns.Json.Documents.ResolveDocumentDiagnostic")]
 	public static readonly DiagnosticDescriptor ResolveDocumentDiagnostic =
 		new DiagnosticDescriptor(id: "DPD_PARSE_009",
 								title: "Could not retrieve the specified document",
-								messageFormat: DarkPatterns_OpenApi_Transformations_ResolveDocumentDiagnostic,
+								messageFormat: DarkPatterns_Json_Documents_ResolveDocumentDiagnostic,
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
-	[TransformationDiagnostic("DarkPatterns.OpenApi.Transformations.Diagnostics.UnhandledExceptionDiagnostic")]
+	[TransformationDiagnostic("DarkPatterns.Json.Diagnostics.UnhandledExceptionDiagnostic")]
 	public static readonly DiagnosticDescriptor UnhandledExceptionDiagnostic =
 		new DiagnosticDescriptor(id: "DPD_UNK",
 								title: "Unhandled exception",
-								messageFormat: DarkPatterns_OpenApi_Transformations_Diagnostics_UnhandledExceptionDiagnostic,
+								messageFormat: DarkPatterns_Json_Diagnostics_UnhandledExceptionDiagnostic,
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);

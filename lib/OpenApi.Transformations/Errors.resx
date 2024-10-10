@@ -117,52 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DocumentMismatch" xml:space="preserve">
-    <value>Provided document did not match registry</value>
-    <comment/>
-  </data>
-  <data name="DuplicateDocumentBaseUri" xml:space="preserve">
-    <value>Registry already contained a document with a matching URI ({0})</value>
-    <comment/>
-  </data>
-  <data name="InvalidKeywordType" xml:space="preserve">
-    <value>Keyword implementation `{0}` does not carry `{1}`</value>
-    <comment/>
-  </data>
   <data name="InvalidOpenApiRootNode" xml:space="preserve">
     <value>Root node of an OpenApi document must be an object</value>
-    <comment/>
-  </data>
-  <data name="ParserCannotHandleDocument" xml:space="preserve">
-    <value>Parser could not handle the document provided</value>
-    <comment/>
-  </data>
-  <data name="ReceivedRelativeUriWithoutDocument" xml:space="preserve">
-    <value>Received a relative URI without a relative document</value>
-    <comment/>
-  </data>
-  <data name="ResolveDocumentException" xml:space="preserve">
-    <value>An error occurred resolving a document from a URI</value>
-    <comment/>
-  </data>
-  <data name="ResolveNodeException" xml:space="preserve">
-    <value>An error occurred resolving a node from a URI</value>
-    <comment/>
-  </data>
-  <data name="UnableToLoadYaml" xml:space="preserve">
-    <value>An error occurred while loading JSON or YAML file</value>
-    <comment/>
-  </data>
-  <data name="UnsupportedDeserialization" xml:space="preserve">
-    <value>An unsupported deserialization technique was used</value>
-    <comment/>
-  </data>
-  <data name="FailedToParseEmbeddedSchema" xml:space="preserve">
-    <value>Failed to parse embedded schema. This is likely a deployment issue with this version of the package.</value>
-    <comment/>
-  </data>
-  <data name="DialectNotFound" xml:space="preserve">
-    <value>Dialect could not be termined for the node `{0}`</value>
     <comment/>
   </data>
 </root>

@@ -4,9 +4,10 @@ using DarkPatterns.OpenApiCodegen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DarkPatterns.OpenApi.Transformations.DocumentTypes;
-using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.Json.Diagnostics;
+using DarkPatterns.Json.Documents;
 using DarkPatterns.OpenApi.Transformations.Diagnostics;
+using DarkPatterns.OpenApi.Transformations.Specifications;
 
 namespace DarkPatterns.OpenApi.CSharp;
 
@@ -68,7 +69,7 @@ public class ClientGenerator : IOpenApiCodeGenerator
 #pragma warning restore CA1031 // Do not catch general exception types
 	}
 
-	private static ISourceProvider CreateSourceProvider(Transformations.Abstractions.OpenApiDocument document, DocumentRegistry registry, CSharpSchemaOptions options, IReadOnlyDictionary<string, string?> opt)
+	private static ISourceProvider CreateSourceProvider(Abstractions.OpenApiDocument document, DocumentRegistry registry, CSharpSchemaOptions options, IReadOnlyDictionary<string, string?> opt)
 	{
 		return document.BuildCSharpClientSourceProvider(registry, GetVersionInfo(), options);
 	}

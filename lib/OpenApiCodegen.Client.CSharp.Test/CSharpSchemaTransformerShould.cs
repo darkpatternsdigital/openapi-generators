@@ -1,15 +1,14 @@
-﻿using Json.Pointer;
-using DarkPatterns.OpenApi.CSharp;
-using DarkPatterns.OpenApi.Transformations;
-using DarkPatterns.OpenApi.Transformations.Abstractions;
-using DarkPatterns.OpenApi.Transformations.DocumentTypes;
-using DarkPatterns.OpenApi.Transformations.Specifications;
+﻿using DarkPatterns.OpenApi.CSharp;
+using DarkPatterns.OpenApi.Abstractions;
+using DarkPatterns.Json.Specifications;
 using DarkPatterns.OpenApiCodegen.TestUtils;
 using System;
 using System.IO;
 using System.Text.Json.Nodes;
 using Xunit;
 using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
+using DarkPatterns.Json.Documents;
+using DarkPatterns.OpenApi.Transformations.Specifications;
 
 namespace DarkPatterns.OpenApiCodegen.Client.CSharp;
 using static OptionsHelpers;
@@ -57,7 +56,7 @@ public class CSharpSchemaTransformerShould
 		{
 			metadata = new ResolvableNode(new NodeMetadata(new Uri(metadata.Id, refValue), metadata.Metadata), registry);
 		}
-		var schemaResult = JsonSchemaParser.Deserialize(metadata, new JsonSchemaParserOptions(registry, OpenApi.Transformations.Specifications.OpenApi3_0.OpenApi3_0DocumentFactory.OpenApiDialect));
+		var schemaResult = JsonSchemaParser.Deserialize(metadata, new JsonSchemaParserOptions(registry, OpenApi.Specifications.v3_0.OpenApi3_0DocumentFactory.OpenApiDialect));
 		return (registry, document, schemaResult.Fold<JsonSchema?>(v => v, _ => null));
 	}
 

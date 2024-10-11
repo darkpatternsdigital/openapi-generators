@@ -1,14 +1,15 @@
-﻿using DarkPatterns.OpenApi.Transformations.Abstractions;
-using DarkPatterns.OpenApi.Transformations.Diagnostics;
-using DarkPatterns.OpenApi.Transformations.DocumentTypes;
+﻿using DarkPatterns.Json.Documents;
+using DarkPatterns.Json.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
+using DarkPatterns.OpenApi.Abstractions;
+using DarkPatterns.Json.Specifications;
 
 namespace DarkPatterns.OpenApi.Transformations.Specifications;
 
 public static class CommonParsers
 {
-	public static readonly IParser<OpenApiDocument> OpenApi3_0Parser = new OpenApi3_0.OpenApi3_0Parser();
+	public static readonly IParser<OpenApiDocument> OpenApi3_0Parser = new OpenApi.Specifications.v3_0.OpenApi3_0Parser();
 	public static readonly IParser<OpenApiDocument> OpenApi3_1Parser = new OpenApi3_1.OpenApi3_1Parser();
 
 	public static readonly IReadOnlyList<IParser<OpenApiDocument>> DefaultParsers =

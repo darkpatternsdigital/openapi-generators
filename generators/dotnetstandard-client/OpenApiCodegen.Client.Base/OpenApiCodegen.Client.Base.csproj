@@ -14,6 +14,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="$(SolutionRoot)lib\Extensions.Configuration.Yaml\Extensions.Configuration.Yaml.csproj" SpecificVersion="true" />
 		<ProjectReference Include="$(SolutionRoot)lib\OpenApi.CSharp\OpenApi.CSharp.csproj" SpecificVersion="true" />
 		<ProjectReference Include="$(SolutionRoot)lib\OpenApiCodegen\OpenApiCodegen.csproj" SpecificVersion="true" />
 	</ItemGroup>

@@ -1,10 +1,11 @@
 ﻿using DarkPatterns.OpenApi.CSharp.Templates;
-using DarkPatterns.OpenApi.Transformations.Abstractions;
+using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.OpenApi.Transformations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using DarkPatterns.OpenApiCodegen;
+using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.OpenApi.CSharp
 {

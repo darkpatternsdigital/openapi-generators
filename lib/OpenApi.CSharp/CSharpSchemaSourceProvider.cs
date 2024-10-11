@@ -6,13 +6,14 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text.Json.Nodes;
 using DarkPatterns.OpenApi.CSharp.Templates;
 using DarkPatterns.OpenApi.Transformations;
-using DarkPatterns.OpenApi.Transformations.Abstractions;
-using DarkPatterns.OpenApi.Transformations.Specifications;
-using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Applicator;
-using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Metadata;
-using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Validation;
-using DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_0;
+using DarkPatterns.OpenApi.Abstractions;
+using DarkPatterns.Json.Specifications;
+using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator;
+using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Metadata;
+using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
+using DarkPatterns.OpenApi.Specifications.v3_0;
 using DarkPatterns.OpenApiCodegen;
+using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.OpenApi.CSharp;
 

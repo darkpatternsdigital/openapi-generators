@@ -27,7 +27,7 @@
 				<SourceItemGroup>JsonSchemaDocument</SourceItemGroup>
 			</AdditionalFiles>
 			<AdditionalFiles Condition=" '%(AdditionalFiles.SourceItemGroup)' == 'OpenApiClientInterface' or '%(AdditionalFiles.SourceItemGroup)' == 'JsonSchemaDocument' ">
-				<WorkingOutputPath Condition=" '%(AdditionalFiles.Link)' != '' ">$([System.Text.RegularExpressions.Regex]::Replace(%(OpenApiSchemaMvcServer.Link), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__'))</WorkingOutputPath>
+				<WorkingOutputPath Condition=" '%(AdditionalFiles.Link)' != '' ">$([System.Text.RegularExpressions.Regex]::Replace(%(AdditionalFiles.Link), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__'))</WorkingOutputPath>
 			</AdditionalFiles>
 			<AdditionalFiles Condition=" '%(AdditionalFiles.SourceItemGroup)' == 'OpenApiClientInterface' or '%(AdditionalFiles.SourceItemGroup)' == 'JsonSchemaDocument' ">
 				<WorkingOutputPath Condition=" '%(AdditionalFiles.WorkingOutputPath)' == '' ">$([System.Text.RegularExpressions.Regex]::Replace(%(AdditionalFiles.Identity), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__'))</WorkingOutputPath>

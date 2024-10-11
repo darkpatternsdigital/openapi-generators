@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<AssemblyName>$(RootNamespacePrefix).$(MSBuildProjectName)</AssemblyName>
+		<RootNamespace>$(RootNamespacePrefix).Json</RootNamespace>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<VersionPrefix>$(JsonSpecificationsVersion)</VersionPrefix>
+
+		<IsPackable>true</IsPackable>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<title>$(AssemblyName)</title>
+		<PackageSummary>A set of models around JSON Schema.</PackageSummary>
+		<description>A set of models supporting JSON Schema, with extra flexibility to support multiple and older dialects.</description>
+
+		<!-- CA1032 - Implement standard exception constructors -->
+		<NoWarn>$(NoWarn),CA1032</NoWarn>
+	</PropertyGroup>
+	<Import Project="$(RepositoryEngineeringDir)netstandard/polyfills.targets" />
+	<ItemGroup>
+		<PackageReference Include="JsonPointer.Net" Version="3.0.3" />
+	</ItemGroup>
+</Project>

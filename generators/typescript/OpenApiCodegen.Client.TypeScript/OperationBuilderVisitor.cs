@@ -1,13 +1,14 @@
 ﻿using DarkPatterns.OpenApi.Transformations;
-using DarkPatterns.OpenApi.Transformations.Abstractions;
-using DarkPatterns.OpenApi.Transformations.Specifications;
-using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Applicator;
-using DarkPatterns.OpenApi.Transformations.Specifications.Keywords.Draft2020_12Validation;
+using DarkPatterns.OpenApi.Abstractions;
+using DarkPatterns.Json.Specifications;
+using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator;
+using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
 using DarkPatterns.OpenApi.TypeScript;
 using DarkPatterns.OpenApiCodegen.Client.TypeScript.Templates;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 {

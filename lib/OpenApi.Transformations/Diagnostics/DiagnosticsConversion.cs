@@ -1,4 +1,5 @@
 using System;
+using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.OpenApiCodegen;
 
 namespace DarkPatterns.OpenApi.Transformations.Diagnostics;

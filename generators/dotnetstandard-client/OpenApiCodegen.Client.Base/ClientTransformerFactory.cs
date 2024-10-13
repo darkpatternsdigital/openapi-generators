@@ -1,7 +1,6 @@
 ﻿using DarkPatterns.Json.Documents;
 using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApi.Abstractions;
-
 namespace DarkPatterns.OpenApi.CSharp;
 
 public class ClientTransformerFactory(TransformSettings settings)
@@ -12,26 +11,12 @@ public class ClientTransformerFactory(TransformSettings settings)
 		return new CSharpClientTransformer(settings, document, options, handlebarsFactory);
 	}
 
-	public static ISourceProvider Build(OpenApiDocument document, DocumentRegistry documentRegistry, string versionInfo, CSharpSchemaOptions options)
+	public static CompositeOpenApiSourceProvider BuildComposite(OpenApiDocument document, DocumentRegistry documentRegistry, string versionInfo, CSharpSchemaOptions options)
 	{
-		var schemaRegistry = new SchemaRegistry(documentRegistry);
-		var header = new Templates.PartialHeader(
-			AppName: document.Info.Title,
-			AppDescription: document.Info.Description,
-			Version: document.Info.Version,
-			InfoEmail: document.Info.Contact?.Email,
-			CodeGeneratorVersionInfo: versionInfo
-		);
-
-		var settings = new TransformSettings(schemaRegistry, header);
-		var factory = new ClientTransformerFactory(settings);
-		var clientTransformer = factory.Build(document, options);
-		var schemaSourceProvider = new CSharpSchemaSourceProvider(settings, options);
-
-		return new CompositeOpenApiSourceProvider(
-			clientTransformer,
-			schemaSourceProvider
-		);
+		return TransformSettings.BuildComposite(document, documentRegistry, versionInfo, [
+			(s) => new ClientTransformerFactory(s).Build(document, options),
+			(s) => new CSharpSchemaSourceProvider(s, options)
+		]);
 	}
 
 }

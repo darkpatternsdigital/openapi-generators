@@ -1,8 +1,6 @@
 ﻿using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.OpenApi.TypeScript;
-using Microsoft.Win32;
-using System.Reflection.Metadata;
 
 namespace DarkPatterns.OpenApiCodegen.Client.TypeScript;
 

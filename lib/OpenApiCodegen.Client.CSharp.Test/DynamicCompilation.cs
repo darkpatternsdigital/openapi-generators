@@ -42,7 +42,7 @@ internal class DynamicCompilation
 		var options = LoadOptions();
 		configureOptions?.Invoke(options);
 
-		var transformer = ClientTransformerFactory.Build(document, registry, "", options);
+		var transformer = ClientTransformerFactory.BuildComposite(document, registry, "", options);
 		OpenApiTransformDiagnostic diagnostic = new();
 
 		var entries = transformer.GetSources(diagnostic).ToArray();

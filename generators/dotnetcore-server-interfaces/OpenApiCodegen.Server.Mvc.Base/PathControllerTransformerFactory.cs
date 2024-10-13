@@ -30,23 +30,10 @@ public class PathControllerTransformerFactory(TransformSettings settings)
 
 	public static CompositeOpenApiSourceProvider BuildComposite(OpenApiDocument document, DocumentRegistry documentRegistry, string versionInfo, CSharpServerSchemaOptions options)
 	{
-		var handlebarsFactory = new HandlebarsFactory(ControllerHandlebarsTemplateProcess.CreateHandlebars);
-		var schemaRegistry = new SchemaRegistry(documentRegistry);
-		var header = new Templates.PartialHeader(
-			AppName: document.Info.Title,
-			AppDescription: document.Info.Description,
-			Version: document.Info.Version,
-			InfoEmail: document.Info.Contact?.Email,
-			CodeGeneratorVersionInfo: versionInfo
-		);
-		var settings = new TransformSettings(schemaRegistry, header);
-		var schemaProvider = new CSharpSchemaSourceProvider(settings, options);
-		var factory = new PathControllerTransformerFactory(settings);
-
-		return new CompositeOpenApiSourceProvider(
-			factory.Build(document, options),
-			schemaProvider
-		);
+		return TransformSettings.BuildComposite(document, documentRegistry, versionInfo, [
+			(s) => new PathControllerTransformerFactory(s).Build(document, options),
+			(s) => new CSharpSchemaSourceProvider(s, options)
+		]);
 	}
 
 }

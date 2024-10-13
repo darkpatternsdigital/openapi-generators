@@ -38,9 +38,9 @@ public class ClientGenerator : IOpenApiCodeGenerator
 		var (baseDocument, registry, pathResolver) = LoadDocument(entrypoint, options, other);
 		var diagnosticConverter = DiagnosticsConversion.GetConverter(pathResolver);
 		var parseResult = CommonParsers.DefaultParsers.Parse(baseDocument, registry);
-		var parsedDiagnostics = parseResult.Diagnostics.Select(diagnosticConverter).ToArray();
+		var parsedDiagnostics = parseResult.Diagnostics;
 		if (!parseResult.HasDocument || parseResult.Document == null)
-			return new GenerationResult(Array.Empty<OpenApiCodegen.SourceEntry>(), parsedDiagnostics);
+			return new GenerationResult([], parsedDiagnostics.Select(diagnosticConverter).ToArray());
 
 		var sourceProvider = CreateSourceProvider(parseResult.Document, registry, options, entrypoint.Metadata);
 		var openApiDiagnostic = new OpenApiTransformDiagnostic();
@@ -52,18 +52,22 @@ public class ClientGenerator : IOpenApiCodeGenerator
 
 			return new GenerationResult(
 				sources,
-				parsedDiagnostics
+				parsedDiagnostics.Select(diagnosticConverter).ToArray()
+			);
+		}
+		catch (Exception) when (parsedDiagnostics is not [])
+		{
+			return new GenerationResult(
+				[],
+				parsedDiagnostics.Select(diagnosticConverter).ToArray()
 			);
 		}
 #pragma warning disable CA1031 // Catching a general exception type here to turn it into a diagnostic for reporting
 		catch (Exception ex)
 		{
-			var diagnostics = new List<DiagnosticBase>();
-			diagnostics.AddExceptionAsDiagnostic(ex, registry, NodeMetadata.FromRoot(baseDocument));
-
 			return new GenerationResult(
-				Array.Empty<OpenApiCodegen.SourceEntry>(),
-				parsedDiagnostics.Concat(parsedDiagnostics.Concat(diagnostics.Select(diagnosticConverter))).ToArray()
+				[],
+				ex.ToDiagnostics(registry, NodeMetadata.FromRoot(baseDocument)).Select(diagnosticConverter).ToArray()
 			);
 		}
 #pragma warning restore CA1031 // Do not catch general exception types

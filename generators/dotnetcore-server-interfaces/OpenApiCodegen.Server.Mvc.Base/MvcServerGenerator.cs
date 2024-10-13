@@ -59,7 +59,6 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 				Convert(parsedDiagnostics.Concat(openApiDiagnostic.Diagnostics))
 			);
 		}
-#pragma warning disable CA1031 // Catching a general exception type here to turn it into a diagnostic for reporting
 		catch (Exception) when (parsedDiagnostics is not [])
 		{
 			// Assume that the parser errors caused the exception.
@@ -68,14 +67,12 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 				Convert(parsedDiagnostics)
 			);
 		}
+#pragma warning disable CA1031 // Catching a general exception type here to turn it into a diagnostic for reporting
 		catch (Exception ex)
 		{
-			var diagnostics = new List<DiagnosticBase>();
-			diagnostics.AddExceptionAsDiagnostic(ex, registry, NodeMetadata.FromRoot(baseDocument));
-
 			return new GenerationResult(
 				[],
-				diagnostics.Select(diagnosticConverter).ToArray()
+				Convert(ex.ToDiagnostics(registry, NodeMetadata.FromRoot(baseDocument)))
 			);
 		}
 #pragma warning restore CA1031 // Do not catch general exception types

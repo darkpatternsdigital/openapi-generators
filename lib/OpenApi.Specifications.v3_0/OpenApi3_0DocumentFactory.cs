@@ -450,7 +450,7 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 #pragma warning disable CA1031 // Catching a general exception type here to turn it into a diagnostic for reporting
 			catch (Exception ex)
 			{
-				diagnostics.AddExceptionAsDiagnostic(ex, documentRegistry, key.Metadata);
+				diagnostics.AddRange(ex.ToDiagnostics(documentRegistry, key.Metadata));
 			}
 #pragma warning restore CA1031 // Do not catch general exception types
 			return constructDefault(key.Id);

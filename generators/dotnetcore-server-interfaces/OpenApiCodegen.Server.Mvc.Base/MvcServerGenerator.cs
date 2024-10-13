@@ -8,6 +8,7 @@ using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.Json.Documents;
 using DarkPatterns.OpenApi.Transformations.Diagnostics;
 using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApiCodegen.Handlebars;
 
 namespace DarkPatterns.OpenApi.CSharp;
 
@@ -43,10 +44,13 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 		var diagnosticConverter = DiagnosticsConversion.GetConverter(pathResolver);
 		var parseResult = CommonParsers.DefaultParsers.Parse(baseDocument, registry);
 		var parsedDiagnostics = parseResult.Diagnostics;
-		if (!parseResult.HasDocument || parseResult.Document == null)
-			return new GenerationResult(Array.Empty<OpenApiCodegen.SourceEntry>(), Convert(parsedDiagnostics));
+		if (!parseResult.HasDocument || parseResult.Document is not { } document)
+			return new GenerationResult([], Convert(parsedDiagnostics));
 
-		var sourceProvider = PathControllerTransformerFactory.BuildComposite(parseResult.Document, registry, GetVersionInfo(), options);
+		var sourceProvider = TransformSettings.BuildComposite(document, registry, GetVersionInfo(), [
+			(s) => new PathControllerTransformerFactory(s).Build(document, options),
+			(s) => new CSharpSchemaSourceProvider(s, options)
+		]);
 		var openApiDiagnostic = new OpenApiTransformDiagnostic();
 
 		try

@@ -8,6 +8,7 @@ using Xunit;
 using static DarkPatterns.OpenApiCodegen.Server.Mvc.OptionsHelpers;
 using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
 using DarkPatterns.Json.Documents;
+using DarkPatterns.OpenApiCodegen.Handlebars;
 
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc;
 
@@ -45,7 +46,10 @@ public class ComprehensiveTransformsShould
 		Assert.NotNull(docResult.Document);
 		var options = LoadOptions();
 
-		var transformer = PathControllerTransformerFactory.BuildComposite(docResult.Document, registry, "", options);
+		var transformer = TransformSettings.BuildComposite(docResult.Document, registry, "", [
+			(s) => new PathControllerTransformerFactory(s).Build(docResult.Document, options),
+			(s) => new CSharpSchemaSourceProvider(s, options)
+		]);
 		OpenApiTransformDiagnostic diagnostic = new();
 
 		try

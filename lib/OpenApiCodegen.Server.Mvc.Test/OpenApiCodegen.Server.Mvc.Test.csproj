@@ -27,6 +27,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="$(SolutionRoot)generators\dotnetcore-server-interfaces\OpenApiCodegen.Server.Mvc.Base\OpenApiCodegen.Server.Mvc.Base.csproj" />
+		<ProjectReference Include="..\OpenApiCodegen.Handlebars\OpenApiCodegen.Handlebars.csproj" />
 		<ProjectReference Include="..\OpenApiCodegen.Json.Extensions\OpenApiCodegen.Json.Extensions.csproj" />
 		<ProjectReference Include="..\OpenApiCodegen.TestUtils\OpenApiCodegen.TestUtils.csproj" />
 	</ItemGroup>

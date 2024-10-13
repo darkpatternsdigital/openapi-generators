@@ -8,6 +8,7 @@ using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.Json.Documents;
 using DarkPatterns.OpenApi.Transformations.Diagnostics;
 using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApiCodegen.Handlebars;
 
 namespace DarkPatterns.OpenApi.CSharp;
 
@@ -42,7 +43,10 @@ public class ClientGenerator : IOpenApiCodeGenerator
 		if (!parseResult.HasDocument || parseResult.Document == null)
 			return new GenerationResult([], parsedDiagnostics.Select(diagnosticConverter).ToArray());
 
-		var sourceProvider = CreateSourceProvider(parseResult.Document, registry, options, entrypoint.Metadata);
+		var sourceProvider = TransformSettings.BuildComposite(parseResult.Document, registry, GetVersionInfo(), [
+			(s) => new ClientTransformerFactory(s).Build(parseResult.Document, options),
+			(s) => new CSharpSchemaSourceProvider(s, options)
+		]);
 		var openApiDiagnostic = new OpenApiTransformDiagnostic();
 
 		try
@@ -71,11 +75,6 @@ public class ClientGenerator : IOpenApiCodeGenerator
 			);
 		}
 #pragma warning restore CA1031 // Do not catch general exception types
-	}
-
-	private static CompositeOpenApiSourceProvider CreateSourceProvider(Abstractions.OpenApiDocument document, DocumentRegistry registry, CSharpSchemaOptions options, IReadOnlyDictionary<string, string?> opt)
-	{
-		return ClientTransformerFactory.BuildComposite(document, registry, GetVersionInfo(), options);
 	}
 
 	private static CSharpSchemaOptions LoadOptionsFromMetadata(IReadOnlyDictionary<string, string?> entrypointMetadata, IEnumerable<AdditionalTextInfo> additionalSchemas)

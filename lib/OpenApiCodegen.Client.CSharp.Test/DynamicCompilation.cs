@@ -9,6 +9,7 @@ using DarkPatterns.OpenApi.Transformations;
 using static DarkPatterns.OpenApiCodegen.Client.CSharp.OptionsHelpers;
 using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
 using DarkPatterns.OpenApiCodegen.TestUtils;
+using DarkPatterns.OpenApiCodegen.Handlebars;
 
 namespace DarkPatterns.OpenApiCodegen.Client.CSharp;
 
@@ -42,7 +43,10 @@ internal class DynamicCompilation
 		var options = LoadOptions();
 		configureOptions?.Invoke(options);
 
-		var transformer = ClientTransformerFactory.BuildComposite(document, registry, "", options);
+		var transformer = TransformSettings.BuildComposite(document, registry, "", [
+			(s) => new ClientTransformerFactory(s).Build(document, options),
+			(s) => new CSharpSchemaSourceProvider(s, options)
+		]);
 		OpenApiTransformDiagnostic diagnostic = new();
 
 		var entries = transformer.GetSources(diagnostic).ToArray();

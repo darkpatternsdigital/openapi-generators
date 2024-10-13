@@ -1,5 +1,4 @@
-﻿using DarkPatterns.Json.Documents;
-using DarkPatterns.OpenApi.Transformations;
+﻿using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.OpenApiCodegen.Handlebars;
 
@@ -28,13 +27,4 @@ public class PathControllerTransformerFactory(TransformSettings settings)
 		);
 		return result;
 	}
-
-	public static CompositeOpenApiSourceProvider BuildComposite(OpenApiDocument document, DocumentRegistry documentRegistry, string versionInfo, CSharpServerSchemaOptions options)
-	{
-		return TransformSettings.BuildComposite(document, documentRegistry, versionInfo, [
-			(s) => new PathControllerTransformerFactory(s).Build(document, options),
-			(s) => new CSharpSchemaSourceProvider(s, options)
-		]);
-	}
-
 }

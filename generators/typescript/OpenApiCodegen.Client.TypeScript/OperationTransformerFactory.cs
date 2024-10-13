@@ -1,7 +1,6 @@
 ﻿using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.OpenApi.TypeScript;
-using DarkPatterns.OpenApiCodegen.Handlebars.Templates;
 using DarkPatterns.OpenApiCodegen.Handlebars;
 
 namespace DarkPatterns.OpenApiCodegen.Client.TypeScript;
@@ -23,25 +22,5 @@ public class OperationTransformerFactory(TransformSettings settings)
 			schemaProvider
 		);
 		return result;
-	}
-
-	public static CompositeOpenApiSourceProvider BuildComposite(OpenApiDocument document, Json.Documents.DocumentRegistry registry, string versionInfo, TypeScriptSchemaOptions options)
-	{
-		var header = new PartialHeader(
-			AppName: document.Info.Title,
-			AppDescription: document.Info.Description,
-			Version: document.Info.Version,
-			InfoEmail: document.Info.Contact?.Email,
-			CodeGeneratorVersionInfo: versionInfo
-		);
-		var schemaRegistry = new SchemaRegistry(registry);
-		var settings = new TransformSettings(schemaRegistry, header);
-		var factory = new OperationTransformerFactory(settings);
-		var schemaProvider = new TypeScriptSchemaSourceProvider(settings, options);
-
-		return new CompositeOpenApiSourceProvider(
-			factory.Build(document, options),
-			schemaProvider
-		);
 	}
 }

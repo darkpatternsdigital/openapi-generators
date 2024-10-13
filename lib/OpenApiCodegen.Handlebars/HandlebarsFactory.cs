@@ -1,7 +1,7 @@
 ﻿using HandlebarsDotNet;
 using System;
 
-namespace DarkPatterns.OpenApi.CSharp;
+namespace DarkPatterns.OpenApiCodegen.Handlebars;
 
 public class HandlebarsFactory(Func<IHandlebars> innerFactory)
 {

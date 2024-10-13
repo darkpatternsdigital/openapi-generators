@@ -1,12 +1,8 @@
-﻿using HandlebarsDotNet;
-using System;
+﻿using DarkPatterns.OpenApiCodegen.Handlebars;
 
 namespace DarkPatterns.OpenApi.TypeScript;
 
-public class HandlebarsFactory(Func<IHandlebars> innerFactory)
+public static class HandlebarsFactoryDefaults
 {
-	private readonly Lazy<IHandlebars> handlebars = new(innerFactory);
-	public static HandlebarsFactory Default { get; } = new(HandlebarsTemplateProcess.CreateHandlebars);
-
-	public IHandlebars Handlebars => handlebars.Value;
+	public static HandlebarsFactory Default { get; } = new(TypeScriptHandlebarsCommon.CreateHandlebars);
 }

@@ -1,6 +1,8 @@
 ﻿using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.OpenApi.TypeScript;
+using DarkPatterns.OpenApiCodegen.Handlebars.Templates;
+using DarkPatterns.OpenApiCodegen.Handlebars;
 
 namespace DarkPatterns.OpenApiCodegen.Client.TypeScript;
 
@@ -25,7 +27,7 @@ public class OperationTransformerFactory(TransformSettings settings)
 
 	public static CompositeOpenApiSourceProvider BuildComposite(OpenApiDocument document, Json.Documents.DocumentRegistry registry, string versionInfo, TypeScriptSchemaOptions options)
 	{
-		var header = new OpenApi.TypeScript.Templates.PartialHeader(
+		var header = new PartialHeader(
 			AppName: document.Info.Title,
 			AppDescription: document.Info.Description,
 			Version: document.Info.Version,

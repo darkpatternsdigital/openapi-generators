@@ -9,6 +9,7 @@ using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Metadata;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
 using DarkPatterns.OpenApiCodegen;
+using DarkPatterns.OpenApiCodegen.Handlebars;
 
 namespace DarkPatterns.OpenApi.TypeScript;
 
@@ -18,7 +19,7 @@ public class TypeScriptSchemaSourceProvider(
 	HandlebarsFactory? handlebarsFactory = null
 ) : SchemaSourceProvider(settings.SchemaRegistry)
 {
-	private readonly HandlebarsFactory handlebarsFactory = handlebarsFactory ?? HandlebarsFactory.Default;
+	private readonly HandlebarsFactory handlebarsFactory = handlebarsFactory ?? HandlebarsFactoryDefaults.Default;
 	private readonly TypeScriptInlineSchemas inlineSchemas = new TypeScriptInlineSchemas(options, settings.SchemaRegistry.DocumentRegistry);
 
 	protected override IEnumerable<SourceEntry> GetAdditionalSources(OpenApiTransformDiagnostic diagnostic)
@@ -28,7 +29,7 @@ public class TypeScriptSchemaSourceProvider(
 		if (exportStatements.Length > 0)
 			yield return new SourceEntry(
 				Key: "models/index.ts",
-				SourceText: HandlebarsTemplateProcess.ProcessModelBarrelFile(
+				SourceText: TypeScriptHandlebarsCommon.ProcessModelBarrelFile(
 					new Templates.ModelBarrelFile(settings.Header, exportStatements),
 					handlebarsFactory.Handlebars
 				)
@@ -59,7 +60,7 @@ public class TypeScriptSchemaSourceProvider(
 		};
 		if (model == null)
 			return null;
-		var entry = HandlebarsTemplateProcess.ProcessModel(
+		var entry = TypeScriptHandlebarsCommon.ProcessModel(
 			header: settings.Header,
 			packageName: "",
 			model: model,

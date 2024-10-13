@@ -1,6 +1,7 @@
 ﻿using DarkPatterns.Json.Documents;
 using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApi.Abstractions;
+using DarkPatterns.OpenApiCodegen.Handlebars;
 
 namespace DarkPatterns.OpenApi.CSharp;
 

@@ -5,6 +5,7 @@ using DarkPatterns.OpenApi.TypeScript;
 using System.Collections.Generic;
 using System.Linq;
 using DarkPatterns.Json.Documents;
+using DarkPatterns.OpenApiCodegen.Handlebars;
 
 namespace DarkPatterns.OpenApiCodegen.Client.TypeScript;
 

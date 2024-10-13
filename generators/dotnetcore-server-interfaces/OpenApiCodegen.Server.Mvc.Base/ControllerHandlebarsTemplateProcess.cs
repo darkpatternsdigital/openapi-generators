@@ -1,6 +1,7 @@
-﻿using HandlebarsDotNet;
+﻿using DarkPatterns.OpenApiCodegen.Handlebars;
+using HandlebarsDotNet;
 using System.IO;
-using System.Linq;
+using BaseProcess = DarkPatterns.OpenApiCodegen.Handlebars.HandlebarsTemplateProcess;
 
 namespace DarkPatterns.OpenApi.CSharp
 {
@@ -8,10 +9,9 @@ namespace DarkPatterns.OpenApi.CSharp
 	{
 		public static IHandlebars CreateHandlebars()
 		{
-			var result = HandlebarsTemplateProcess.CreateHandlebars();
+			var result = CSharpHandlebarsCommon.CreateHandlebars();
 
-			foreach (var resourceName in typeof(ControllerHandlebarsTemplateProcess).Assembly.GetManifestResourceNames().Where(n => n.EndsWith(".handlebars")))
-				result.AddTemplate(typeof(ControllerHandlebarsTemplateProcess).Assembly, resourceName);
+			result.AddTemplatesFromAssembly(typeof(ControllerHandlebarsTemplateProcess).Assembly);
 
 			return result;
 		}
@@ -21,7 +21,7 @@ namespace DarkPatterns.OpenApi.CSharp
 			var template = handlebars.Configuration.RegisteredTemplates["controller"];
 
 			using var sr = new StringWriter();
-			var dict = HandlebarsTemplateProcess.ToDictionary<Templates.ControllerTemplate>(controllerTemplate);
+			var dict = BaseProcess.ToDictionary(controllerTemplate);
 			template(sr, dict);
 			return sr.ToString();
 		}
@@ -31,7 +31,7 @@ namespace DarkPatterns.OpenApi.CSharp
 			var template = handlebars.Configuration.RegisteredTemplates["addServices"];
 
 			using var sr = new StringWriter();
-			var dict = HandlebarsTemplateProcess.ToDictionary<Templates.AddServicesModel>(addServices);
+			var dict = BaseProcess.ToDictionary(addServices);
 			template(sr, dict);
 			return sr.ToString();
 		}

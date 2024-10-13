@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using DarkPatterns.OpenApiCodegen.Handlebars.Templates;
 
-namespace DarkPatterns.OpenApi.CSharp.Templates
-{
-	public record AddServicesModel(Templates.PartialHeader Header, string MethodName, string PackageName);
-}
+namespace DarkPatterns.OpenApi.CSharp.Templates;
+
+public record AddServicesModel(PartialHeader Header, string MethodName, string PackageName);

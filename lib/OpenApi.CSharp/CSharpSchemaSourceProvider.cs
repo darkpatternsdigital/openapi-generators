@@ -12,6 +12,7 @@ using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Metadata;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
 using DarkPatterns.OpenApi.Specifications.v3_0;
 using DarkPatterns.OpenApiCodegen;
+using DarkPatterns.OpenApiCodegen.Handlebars;
 
 namespace DarkPatterns.OpenApi.CSharp;
 
@@ -21,7 +22,7 @@ public class CSharpSchemaSourceProvider(
 	HandlebarsFactory? handlebarsFactory = null
 ) : SchemaSourceProvider(settings.SchemaRegistry)
 {
-	private readonly HandlebarsFactory handlebarsFactory = handlebarsFactory ?? HandlebarsFactory.Default;
+	private readonly HandlebarsFactory handlebarsFactory = handlebarsFactory ?? HandlebarsFactoryDefaults.Default;
 	private readonly CSharpInlineSchemas inlineSchemas = new CSharpInlineSchemas(options, settings.SchemaRegistry.DocumentRegistry);
 
 	protected override SourceEntry? GetSourceEntry(JsonSchema entry, OpenApiTransformDiagnostic diagnostic)
@@ -33,7 +34,7 @@ public class CSharpSchemaSourceProvider(
 		Templates.Model? model = GetModel(entry, diagnostic, className);
 		if (model == null)
 			return null;
-		var sourceText = HandlebarsTemplateProcess.ProcessModel(
+		var sourceText = CSharpHandlebarsCommon.ProcessModel(
 			header: settings.Header,
 			packageName: targetNamespace,
 			schemaId: entry.Metadata.Id,

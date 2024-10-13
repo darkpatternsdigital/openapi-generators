@@ -91,6 +91,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApi.Specifications.v3_0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json.Loaders", "lib\Json.Loaders\Json.Loaders.csproj", "{913FDC5E-59AA-40C7-A4A5-3E50B9BAC2A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApiCodegen.Handlebars", "lib\OpenApiCodegen.Handlebars\OpenApiCodegen.Handlebars.csproj", "{C05680A3-6B66-44CC-922D-752028760299}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -491,6 +493,18 @@ Global
 		{913FDC5E-59AA-40C7-A4A5-3E50B9BAC2A9}.Release|x64.Build.0 = Release|Any CPU
 		{913FDC5E-59AA-40C7-A4A5-3E50B9BAC2A9}.Release|x86.ActiveCfg = Release|Any CPU
 		{913FDC5E-59AA-40C7-A4A5-3E50B9BAC2A9}.Release|x86.Build.0 = Release|Any CPU
+		{C05680A3-6B66-44CC-922D-752028760299}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C05680A3-6B66-44CC-922D-752028760299}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C05680A3-6B66-44CC-922D-752028760299}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C05680A3-6B66-44CC-922D-752028760299}.Debug|x64.Build.0 = Debug|Any CPU
+		{C05680A3-6B66-44CC-922D-752028760299}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C05680A3-6B66-44CC-922D-752028760299}.Debug|x86.Build.0 = Debug|Any CPU
+		{C05680A3-6B66-44CC-922D-752028760299}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C05680A3-6B66-44CC-922D-752028760299}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C05680A3-6B66-44CC-922D-752028760299}.Release|x64.ActiveCfg = Release|Any CPU
+		{C05680A3-6B66-44CC-922D-752028760299}.Release|x64.Build.0 = Release|Any CPU
+		{C05680A3-6B66-44CC-922D-752028760299}.Release|x86.ActiveCfg = Release|Any CPU
+		{C05680A3-6B66-44CC-922D-752028760299}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -533,6 +547,7 @@ Global
 		{65511D18-D7B4-4D84-A8B9-63599A60D76E} = {AAC9998B-F9AF-4096-92CB-81914E85BE56}
 		{8CB77FE4-B08B-4F2A-82D8-DC575F1F7824} = {AAC9998B-F9AF-4096-92CB-81914E85BE56}
 		{913FDC5E-59AA-40C7-A4A5-3E50B9BAC2A9} = {AAC9998B-F9AF-4096-92CB-81914E85BE56}
+		{C05680A3-6B66-44CC-922D-752028760299} = {AAC9998B-F9AF-4096-92CB-81914E85BE56}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DC32F906-1354-428B-BD36-FC718248DAFB}

@@ -1,4 +1,4 @@
-﻿namespace DarkPatterns.OpenApi.CSharp.Templates;
+﻿namespace DarkPatterns.OpenApiCodegen.Handlebars.Templates;
 
 public record PartialHeader(
 	string? AppName,

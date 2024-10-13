@@ -10,42 +10,25 @@ using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.OpenApi.CSharp;
 
-public class CSharpClientTransformer : ISourceProvider
+public class CSharpClientTransformer(TransformSettings settings, OpenApiDocument document, CSharpSchemaOptions options, HandlebarsFactory handlebarsFactory) : ISourceProvider
 {
-	private readonly ISchemaRegistry schemaRegistry;
-	private readonly DocumentRegistry documentRegistry;
-	private readonly OpenApiDocument document;
-	private readonly CSharpSchemaOptions options;
-	private readonly HandlebarsFactory handlebarsFactory;
-	private readonly PartialHeader header;
-
-	public CSharpClientTransformer(ISchemaRegistry schemaRegistry, DocumentRegistry documentRegistry, OpenApiDocument document, CSharpSchemaOptions options, HandlebarsFactory handlebarsFactory, Templates.PartialHeader header)
-	{
-		this.documentRegistry = documentRegistry;
-		this.schemaRegistry = schemaRegistry;
-		this.document = document;
-		this.options = options;
-		this.handlebarsFactory = handlebarsFactory;
-		this.header = header;
-	}
-
 	public SourceEntry TransformOperations(OpenApiTransformDiagnostic diagnostic)
 	{
 		foreach (var schema in document.GetNestedNodes(recursive: true).OfType<JsonSchema>())
-			schemaRegistry.EnsureSchemasRegistered(schema);
+			settings.SchemaRegistry.EnsureSchemasRegistered(schema);
 		var baseNamespace = options.DefaultNamespace;
 
 		var className = CSharpNaming.ToClassName("operations", options.ReservedIdentifiers());
 
 		var resultOperations = new List<Operation>();
-		var visitor = new OperationVisitor(documentRegistry, schemaRegistry, options, controllerClassName: className);
+		var visitor = new OperationVisitor(settings.SchemaRegistry, options, controllerClassName: className);
 		visitor.Visit(document, new OperationVisitor.Argument(diagnostic, resultOperations.Add));
 
 		resultOperations = (from operation in resultOperations
 							select operation with { Path = operation.Path.Substring(1) }).ToList();
 
 		var template = new Templates.FullTemplate(
-			Header: header,
+			Header: settings.Header,
 
 			PackageName: baseNamespace,
 			ClassName: className,
@@ -71,7 +54,7 @@ public class CSharpClientTransformer : ISourceProvider
 		return new SourceEntry(
 			Key: $"{baseNamespace}.AddServicesExtensions.cs",
 			SourceText: handlebarsFactory.Handlebars.ProcessAddServices(new Templates.AddServicesModel(
-				Header: header,
+				Header: settings.Header,
 				MethodName: CSharpNaming.ToMethodName(document.Info.Title, options.ReservedIdentifiers()),
 				PackageName: baseNamespace
 			))

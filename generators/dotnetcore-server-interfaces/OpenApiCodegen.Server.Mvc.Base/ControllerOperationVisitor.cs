@@ -14,7 +14,6 @@ namespace DarkPatterns.OpenApi.CSharp;
 
 class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVisitor.Argument>
 {
-	private readonly DocumentRegistry documentRegistry;
 	private readonly ISchemaRegistry schemaRegistry;
 	private readonly CSharpServerSchemaOptions options;
 	private readonly CSharpInlineSchemas inlineSchemas;
@@ -44,12 +43,11 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 		public OpenApiOperation Operation { get; }
 	}
 
-	public ControllerOperationVisitor(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, CSharpServerSchemaOptions options, string controllerClassName)
+	public ControllerOperationVisitor(ISchemaRegistry schemaRegistry, CSharpServerSchemaOptions options, string controllerClassName)
 	{
-		this.documentRegistry = documentRegistry;
 		this.schemaRegistry = schemaRegistry;
 		this.options = options;
-		this.inlineSchemas = new CSharpInlineSchemas(options, documentRegistry);
+		this.inlineSchemas = new CSharpInlineSchemas(options, schemaRegistry.DocumentRegistry);
 		this.controllerClassName = controllerClassName;
 	}
 

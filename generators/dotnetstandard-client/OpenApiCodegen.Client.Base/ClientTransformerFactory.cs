@@ -1,34 +1,37 @@
 ﻿using DarkPatterns.Json.Documents;
 using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApi.Abstractions;
-using System.Linq;
 
-namespace DarkPatterns.OpenApi.CSharp
+namespace DarkPatterns.OpenApi.CSharp;
+
+public class ClientTransformerFactory(TransformSettings settings)
 {
-	public static class ClientTransformerFactory
+	public CSharpClientTransformer Build(OpenApiDocument document, CSharpSchemaOptions options)
 	{
-		public static ISourceProvider BuildCSharpClientSourceProvider(this OpenApiDocument document, DocumentRegistry documentRegistry, string versionInfo, CSharpSchemaOptions options)
-		{
-			ISourceProvider? result;
-			var handlebarsFactory = new HandlebarsFactory(ControllerHandlebarsTemplateProcess.CreateHandlebars);
-			var schemaRegistry = new SchemaRegistry();
-			var header = new Templates.PartialHeader(
-				AppName: document.Info.Title,
-				AppDescription: document.Info.Description,
-				Version: document.Info.Version,
-				InfoEmail: document.Info.Contact?.Email,
-				CodeGeneratorVersionInfo: versionInfo
-			);
-
-			var controllerTransformer = new CSharpClientTransformer(schemaRegistry, documentRegistry, document, options, handlebarsFactory, header);
-			var schemaSourceProvider = new CSharpSchemaSourceProvider(documentRegistry, schemaRegistry, options, handlebarsFactory, header);
-
-			result = new CompositeOpenApiSourceProvider(
-				controllerTransformer,
-				schemaSourceProvider
-			);
-			return result;
-		}
-
+		var handlebarsFactory = new HandlebarsFactory(ControllerHandlebarsTemplateProcess.CreateHandlebars);
+		return new CSharpClientTransformer(settings, document, options, handlebarsFactory);
 	}
+
+	public static ISourceProvider Build(OpenApiDocument document, DocumentRegistry documentRegistry, string versionInfo, CSharpSchemaOptions options)
+	{
+		var schemaRegistry = new SchemaRegistry(documentRegistry);
+		var header = new Templates.PartialHeader(
+			AppName: document.Info.Title,
+			AppDescription: document.Info.Description,
+			Version: document.Info.Version,
+			InfoEmail: document.Info.Contact?.Email,
+			CodeGeneratorVersionInfo: versionInfo
+		);
+
+		var settings = new TransformSettings(schemaRegistry, header);
+		var factory = new ClientTransformerFactory(settings);
+		var clientTransformer = factory.Build(document, options);
+		var schemaSourceProvider = new CSharpSchemaSourceProvider(settings, options);
+
+		return new CompositeOpenApiSourceProvider(
+			clientTransformer,
+			schemaSourceProvider
+		);
+	}
+
 }

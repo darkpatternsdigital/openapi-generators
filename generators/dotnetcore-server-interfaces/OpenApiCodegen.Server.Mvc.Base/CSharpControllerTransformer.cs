@@ -5,93 +5,62 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DarkPatterns.OpenApiCodegen;
-using DarkPatterns.Json.Documents;
 
-namespace DarkPatterns.OpenApi.CSharp
+namespace DarkPatterns.OpenApi.CSharp;
+
+public class CSharpControllerTransformer(TransformSettings settings, OpenApiDocument document, CSharpServerSchemaOptions options, HandlebarsFactory handlebarsFactory) : IOpenApiOperationControllerTransformer
 {
-	public class CSharpControllerTransformer : IOpenApiOperationControllerTransformer
+	public SourceEntry TransformController(string groupName, OperationGroupData groupData, OpenApiTransformDiagnostic diagnostic)
 	{
-		private readonly DocumentRegistry documentRegistry;
-		private readonly ISchemaRegistry schemaRegistry;
-		private readonly OpenApiDocument document;
-		private readonly CSharpServerSchemaOptions options;
-		private readonly string versionInfo;
-		private readonly HandlebarsFactory handlebarsFactory;
+		var (summary, description, operations) = groupData;
+		var baseNamespace = options.DefaultNamespace;
 
-		public CSharpControllerTransformer(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, OpenApiDocument document, CSharpServerSchemaOptions options, string versionInfo, HandlebarsFactory handlebarsFactory)
-		{
-			this.documentRegistry = documentRegistry;
-			this.schemaRegistry = schemaRegistry;
-			this.document = document;
-			this.options = options;
-			this.versionInfo = versionInfo;
-			this.handlebarsFactory = handlebarsFactory;
-		}
+		var className = CSharpNaming.ToClassName(groupName + " base", options.ReservedIdentifiers());
 
-		public SourceEntry TransformController(string groupName, OperationGroupData groupData, OpenApiTransformDiagnostic diagnostic)
-		{
-			var (summary, description, operations) = groupData;
-			var baseNamespace = options.DefaultNamespace;
+		var resultOperations = new List<ControllerOperation>();
+		var visitor = new ControllerOperationVisitor(settings.SchemaRegistry, options, controllerClassName: className);
+		foreach (var (operation, method, path) in operations)
+			visitor.Visit(operation, method, new ControllerOperationVisitor.Argument(diagnostic, resultOperations.Add, CurrentPath: path));
 
-			var className = CSharpNaming.ToClassName(groupName + " base", options.ReservedIdentifiers());
+		var template = new Templates.ControllerTemplate(
+			Header: settings.Header,
 
-			var resultOperations = new List<ControllerOperation>();
-			var visitor = new ControllerOperationVisitor(documentRegistry, schemaRegistry, options, controllerClassName: className);
-			foreach (var (operation, method, path) in operations)
-				visitor.Visit(operation, method, new ControllerOperationVisitor.Argument(diagnostic, resultOperations.Add, CurrentPath: path));
+			PackageName: baseNamespace,
+			ClassName: className,
+			HasDescriptionOrSummary: (summary?.Trim() + description?.Trim()) is { Length: > 0 },
+			Summary: summary,
+			Description: description,
 
-			var template = new Templates.ControllerTemplate(
-				Header: new Templates.PartialHeader(
-					AppName: document.Info.Title,
-					AppDescription: document.Info.Description,
-					Version: document.Info.Version,
-					InfoEmail: document.Info.Contact?.Email,
-					CodeGeneratorVersionInfo: versionInfo
-				),
+			Operations: resultOperations.ToArray()
+		);
 
+		var entry = handlebarsFactory.Handlebars.ProcessController(template);
+		return new SourceEntry(
+			Key: $"{baseNamespace}.{className}.cs",
+			SourceText: entry
+		);
+	}
+
+	public string SanitizeGroupName(string groupName)
+	{
+		return CSharpNaming.ToClassName(groupName + " controller", options.ReservedIdentifiers());
+	}
+
+	internal SourceEntry TransformAddServicesHelper(IEnumerable<string> groups, OpenApiTransformDiagnostic diagnostic)
+	{
+		var baseNamespace = options.DefaultNamespace;
+		return new SourceEntry(
+			Key: $"{baseNamespace}.AddServicesExtensions.cs",
+			SourceText: handlebarsFactory.Handlebars.ProcessAddServices(new Templates.AddServicesModel(
+				Header: settings.Header,
+				MethodName: CSharpNaming.ToMethodName(document.Info.Title, options.ReservedIdentifiers()),
 				PackageName: baseNamespace,
-				ClassName: className,
-				HasDescriptionOrSummary: (summary?.Trim() + description?.Trim()) is { Length: > 0 },
-				Summary: summary,
-				Description: description,
-
-				Operations: resultOperations.ToArray()
-			);
-
-			var entry = handlebarsFactory.Handlebars.ProcessController(template);
-			return new SourceEntry(
-				Key: $"{baseNamespace}.{className}.cs",
-				SourceText: entry
-			);
-		}
-
-		public string SanitizeGroupName(string groupName)
-		{
-			return CSharpNaming.ToClassName(groupName + " controller", options.ReservedIdentifiers());
-		}
-
-		internal SourceEntry TransformAddServicesHelper(IEnumerable<string> groups, OpenApiTransformDiagnostic diagnostic)
-		{
-			var baseNamespace = options.DefaultNamespace;
-			return new SourceEntry(
-				Key: $"{baseNamespace}.AddServicesExtensions.cs",
-				SourceText: handlebarsFactory.Handlebars.ProcessAddServices(new Templates.AddServicesModel(
-					Header: new Templates.PartialHeader(
-						AppName: document.Info.Title,
-						AppDescription: document.Info.Description,
-						Version: document.Info.Version,
-						InfoEmail: document.Info.Contact?.Email,
-						CodeGeneratorVersionInfo: versionInfo
-					),
-					MethodName: CSharpNaming.ToMethodName(document.Info.Title, options.ReservedIdentifiers()),
-					PackageName: baseNamespace,
-					Controllers: (from p in groups
-								  let genericTypeName = CSharpNaming.ToClassName($"T {p}", options.ReservedIdentifiers())
-								  let className = CSharpNaming.ToClassName(p + " base", options.ReservedIdentifiers())
-								  select new Templates.ControllerReference(genericTypeName, className)
-								  ).ToArray()
-				))
-			);
-		}
+				Controllers: (from p in groups
+							  let genericTypeName = CSharpNaming.ToClassName($"T {p}", options.ReservedIdentifiers())
+							  let className = CSharpNaming.ToClassName(p + " base", options.ReservedIdentifiers())
+							  select new Templates.ControllerReference(genericTypeName, className)
+							  ).ToArray()
+			))
+		);
 	}
 }

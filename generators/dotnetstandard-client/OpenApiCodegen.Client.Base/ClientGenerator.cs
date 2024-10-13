@@ -71,7 +71,7 @@ public class ClientGenerator : IOpenApiCodeGenerator
 
 	private static ISourceProvider CreateSourceProvider(Abstractions.OpenApiDocument document, DocumentRegistry registry, CSharpSchemaOptions options, IReadOnlyDictionary<string, string?> opt)
 	{
-		return document.BuildCSharpClientSourceProvider(registry, GetVersionInfo(), options);
+		return ClientTransformerFactory.Build(document, registry, GetVersionInfo(), options);
 	}
 
 	private static CSharpSchemaOptions LoadOptionsFromMetadata(IReadOnlyDictionary<string, string?> entrypointMetadata, IEnumerable<AdditionalTextInfo> additionalSchemas)

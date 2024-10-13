@@ -13,13 +13,9 @@ using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.OpenApi.CSharp;
 
-class OperationVisitor : OpenApiDocumentVisitor<OperationVisitor.Argument>
+class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions options, string controllerClassName) : OpenApiDocumentVisitor<OperationVisitor.Argument>
 {
-	private readonly DocumentRegistry documentRegistry;
-	private readonly ISchemaRegistry schemaRegistry;
-	private readonly CSharpSchemaOptions options;
-	private readonly CSharpInlineSchemas inlineSchemas;
-	private readonly string controllerClassName;
+	private readonly CSharpInlineSchemas inlineSchemas = new(options, schemaRegistry.DocumentRegistry);
 
 	public record Argument(
 		OpenApiTransformDiagnostic Diagnostic,
@@ -44,15 +40,6 @@ class OperationVisitor : OpenApiDocumentVisitor<OperationVisitor.Argument>
 		public List<OperationSecurityRequirement> SecurityRequirements { get; } = new();
 		public List<OperationParameter> SharedParameters { get; } = new();
 		public OpenApiOperation Operation { get; }
-	}
-
-	public OperationVisitor(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, CSharpSchemaOptions options, string controllerClassName)
-	{
-		this.documentRegistry = documentRegistry;
-		this.schemaRegistry = schemaRegistry;
-		this.options = options;
-		this.inlineSchemas = new(options, documentRegistry);
-		this.controllerClassName = controllerClassName;
 	}
 
 	public override void Visit(OpenApiPath path, Argument argument)

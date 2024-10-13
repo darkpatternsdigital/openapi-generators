@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.Json.Nodes;
 using DarkPatterns.OpenApi.CSharp.Templates;
 using DarkPatterns.OpenApi.Transformations;
@@ -13,28 +12,17 @@ using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Metadata;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
 using DarkPatterns.OpenApi.Specifications.v3_0;
 using DarkPatterns.OpenApiCodegen;
-using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.OpenApi.CSharp;
 
-public class CSharpSchemaSourceProvider : SchemaSourceProvider
+public class CSharpSchemaSourceProvider(
+	TransformSettings settings,
+	CSharpSchemaOptions options,
+	HandlebarsFactory? handlebarsFactory = null
+) : SchemaSourceProvider(settings.SchemaRegistry)
 {
-	private readonly DocumentRegistry documentRegistry;
-	private readonly ISchemaRegistry schemaRegistry;
-	private readonly CSharpInlineSchemas inlineSchemas;
-	private readonly CSharpSchemaOptions options;
-	private readonly HandlebarsFactory handlebarsFactory;
-	private readonly PartialHeader header;
-
-	public CSharpSchemaSourceProvider(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, CSharpSchemaOptions options, HandlebarsFactory handlebarsFactory, Templates.PartialHeader header) : base(schemaRegistry)
-	{
-		this.documentRegistry = documentRegistry;
-		this.schemaRegistry = schemaRegistry;
-		this.inlineSchemas = new CSharpInlineSchemas(options, documentRegistry);
-		this.options = options;
-		this.handlebarsFactory = handlebarsFactory;
-		this.header = header;
-	}
+	private readonly HandlebarsFactory handlebarsFactory = handlebarsFactory ?? HandlebarsFactory.Default;
+	private readonly CSharpInlineSchemas inlineSchemas = new CSharpInlineSchemas(options, settings.SchemaRegistry.DocumentRegistry);
 
 	protected override SourceEntry? GetSourceEntry(JsonSchema entry, OpenApiTransformDiagnostic diagnostic)
 	{
@@ -46,7 +34,7 @@ public class CSharpSchemaSourceProvider : SchemaSourceProvider
 		if (model == null)
 			return null;
 		var sourceText = HandlebarsTemplateProcess.ProcessModel(
-			header: header,
+			header: settings.Header,
 			packageName: targetNamespace,
 			schemaId: entry.Metadata.Id,
 			model: model,

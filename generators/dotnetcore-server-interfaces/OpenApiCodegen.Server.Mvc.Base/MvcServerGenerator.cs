@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using DarkPatterns.OpenApi.Transformations;
-using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.OpenApiCodegen;
 using System;
 using System.Collections.Generic;
@@ -20,15 +19,15 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 	const string propLink = "link";
 	const string propPathPrefix = "pathPrefix";
 	const string propSchemaId = "schemaId";
-	private readonly IEnumerable<string> metadataKeys = new[]
-	{
+	private readonly IEnumerable<string> metadataKeys =
+	[
 		propNamespace,
 		propConfig,
 		propIdentity,
 		propLink,
 		propPathPrefix,
 		propSchemaId,
-	};
+	];
 
 	public IEnumerable<string> MetadataKeys => metadataKeys;
 
@@ -43,11 +42,11 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 		var (baseDocument, registry, pathResolver) = LoadDocument(entrypoint, options, other);
 		var diagnosticConverter = DiagnosticsConversion.GetConverter(pathResolver);
 		var parseResult = CommonParsers.DefaultParsers.Parse(baseDocument, registry);
-		var parsedDiagnostics = parseResult.Diagnostics.Select(diagnosticConverter).ToArray();
+		var parsedDiagnostics = parseResult.Diagnostics;
 		if (!parseResult.HasDocument || parseResult.Document == null)
-			return new GenerationResult(Array.Empty<OpenApiCodegen.SourceEntry>(), parsedDiagnostics);
+			return new GenerationResult(Array.Empty<OpenApiCodegen.SourceEntry>(), Convert(parsedDiagnostics));
 
-		var sourceProvider = CreateSourceProvider(parseResult.Document, registry, options);
+		var sourceProvider = PathControllerTransformerFactory.BuildComposite(parseResult.Document, registry, GetVersionInfo(), options);
 		var openApiDiagnostic = new OpenApiTransformDiagnostic();
 
 		try
@@ -57,18 +56,20 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 
 			return new GenerationResult(
 				sources,
-				parsedDiagnostics
+				Convert(parsedDiagnostics.Concat(openApiDiagnostic.Diagnostics))
 			);
 		}
 #pragma warning disable CA1031 // Catching a general exception type here to turn it into a diagnostic for reporting
+		catch (Exception) when (parsedDiagnostics is not [])
+		{
+			// Assume that the parser errors caused the exception.
+			return new GenerationResult(
+				[],
+				Convert(parsedDiagnostics)
+			);
+		}
 		catch (Exception ex)
 		{
-			if (parsedDiagnostics is { Length: > 0 })
-				return new GenerationResult(
-					[],
-					parsedDiagnostics
-				);
-
 			var diagnostics = new List<DiagnosticBase>();
 			diagnostics.AddExceptionAsDiagnostic(ex, registry, NodeMetadata.FromRoot(baseDocument));
 
@@ -78,11 +79,11 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 			);
 		}
 #pragma warning restore CA1031 // Do not catch general exception types
-	}
 
-	private static ISourceProvider CreateSourceProvider(OpenApiDocument document, DocumentRegistry registry, CSharpServerSchemaOptions options)
-	{
-		return document.BuildCSharpPathControllerSourceProvider(registry, GetVersionInfo(), options);
+		DiagnosticInfo[] Convert(IEnumerable<DiagnosticBase> diagnostics)
+		{
+			return diagnostics.Select(diagnosticConverter).ToArray();
+		}
 	}
 
 	private static CSharpServerSchemaOptions LoadOptionsFromMetadata(IReadOnlyDictionary<string, string?> entrypointMetadata, IEnumerable<AdditionalTextInfo> additionalSchemas)

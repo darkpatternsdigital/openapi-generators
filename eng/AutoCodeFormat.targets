@@ -4,11 +4,11 @@
 	</ItemGroup>
 
 	<PropertyGroup>
-		<CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+		<CodeAnalysisTreatWarningsAsErrors Condition=" '$(Configuration)' == 'Release' ">true</CodeAnalysisTreatWarningsAsErrors>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-		<WarningsAsErrors />
+		<TreatWarningsAsErrors Condition=" '$(Configuration)' == 'Release' ">true</TreatWarningsAsErrors>
+		<WarningsAsErrors Condition=" '$(Configuration)' == 'Release' " />
 		<!--
 			CA1067 - should override Equals (but records already override equals)
 			CA1852 - seal internal types

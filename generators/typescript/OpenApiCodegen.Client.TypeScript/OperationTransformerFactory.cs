@@ -1,57 +1,47 @@
-﻿using DarkPatterns.Json.Documents;
-using DarkPatterns.OpenApi.Transformations;
+﻿using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.OpenApi.TypeScript;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.Win32;
+using System.Reflection.Metadata;
 
-namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
+namespace DarkPatterns.OpenApiCodegen.Client.TypeScript;
+
+public class OperationTransformerFactory(TransformSettings settings)
 {
-	public static class OperationTransformerFactory
+	public ISourceProvider Build(OpenApiDocument document, TypeScriptSchemaOptions options)
 	{
+		ISourceProvider? result;
+		var handlebarsFactory = new HandlebarsFactory(OperationHandlebarsTemplateProcess.CreateHandlebars);
+		var schemaProvider = new TypeScriptSchemaSourceProvider(settings, options, handlebarsFactory);
+		var operationTransformer = new TypeScriptOperationTransformer(settings, options, handlebarsFactory);
 
-		public static ISourceProvider BuildTypeScriptOperationSourceProvider(this OpenApiDocument document, DocumentRegistry documentRegistry, string versionInfo, TypeScriptSchemaOptions options)
-		{
-			ISourceProvider? result;
-			var handlebarsFactory = new HandlebarsFactory(OperationHandlebarsTemplateProcess.CreateHandlebars);
-			var schemaRegistry = new SchemaRegistry();
-			var header = new OpenApi.TypeScript.Templates.PartialHeader(
-				AppName: document.Info.Title,
-				AppDescription: document.Info.Description,
-				Version: document.Info.Version,
-				InfoEmail: document.Info.Contact?.Email,
-				CodeGeneratorVersionInfo: versionInfo
-			);
-			var schemaProvider = new TypeScriptSchemaSourceProvider(documentRegistry, schemaRegistry, options, handlebarsFactory, header);
-			var operationTransformer = new TypeScriptOperationTransformer(documentRegistry, schemaRegistry, document, options, versionInfo, handlebarsFactory);
+		var operationsSourceProvider = new OperationSourceTransformer(settings.SchemaRegistry.DocumentRegistry, document, operationTransformer);
 
-			var operationsSourceProvider = new OperationSourceTransformer(documentRegistry, document, operationTransformer);
-
-			result = new CompositeOpenApiSourceProvider(
-				operationsSourceProvider,
-				new AllOperationsBarrelTransformer(operationsSourceProvider, operationTransformer),
-				schemaProvider
-			);
-			return result;
-		}
-
+		result = new CompositeOpenApiSourceProvider(
+			operationsSourceProvider,
+			new AllOperationsBarrelTransformer(operationsSourceProvider, operationTransformer),
+			schemaProvider
+		);
+		return result;
 	}
 
-	public class AllOperationsBarrelTransformer : ISourceProvider
+	public static CompositeOpenApiSourceProvider BuildComposite(OpenApiDocument document, Json.Documents.DocumentRegistry registry, string versionInfo, TypeScriptSchemaOptions options)
 	{
-		private readonly OperationSourceTransformer operationsSourceProvider;
-		private TypeScriptOperationTransformer operationTransformer;
+		var header = new OpenApi.TypeScript.Templates.PartialHeader(
+			AppName: document.Info.Title,
+			AppDescription: document.Info.Description,
+			Version: document.Info.Version,
+			InfoEmail: document.Info.Contact?.Email,
+			CodeGeneratorVersionInfo: versionInfo
+		);
+		var schemaRegistry = new SchemaRegistry(registry);
+		var settings = new TransformSettings(schemaRegistry, header);
+		var factory = new OperationTransformerFactory(settings);
+		var schemaProvider = new TypeScriptSchemaSourceProvider(settings, options);
 
-		public AllOperationsBarrelTransformer(OperationSourceTransformer operationsSourceProvider, TypeScriptOperationTransformer operationTransformer)
-		{
-			this.operationsSourceProvider = operationsSourceProvider;
-			this.operationTransformer = operationTransformer;
-		}
-
-		public IEnumerable<SourceEntry> GetSources(OpenApiTransformDiagnostic diagnostic)
-		{
-			yield return operationTransformer.TransformBarrelFileHelper(operationsSourceProvider.GetOperations(diagnostic), diagnostic);
-		}
+		return new CompositeOpenApiSourceProvider(
+			factory.Build(document, options),
+			schemaProvider
+		);
 	}
 }

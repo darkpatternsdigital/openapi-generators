@@ -1,19 +1,15 @@
 
 using System;
 using System.Collections.Generic;
+using DarkPatterns.Json.Documents;
 using DarkPatterns.Json.Specifications;
 
 namespace DarkPatterns.OpenApi.Transformations;
 
-public interface ISchemaRegistry
+public class SchemaRegistry(DocumentRegistry documentRegistry) : ISchemaRegistry
 {
-	JsonSchema? FindSchema(Uri uri);
-	IEnumerable<JsonSchema> GetSchemas();
-	void EnsureSchemasRegistered(JsonSchema schema);
-}
+	public DocumentRegistry DocumentRegistry => documentRegistry;
 
-public class SchemaRegistry : ISchemaRegistry
-{
 	// Not using Uri for the key because it doesn't compare fragments, which are necessary for this
 	private Dictionary<string, JsonSchema> allSchemas = new();
 

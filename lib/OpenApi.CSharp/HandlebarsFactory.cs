@@ -1,17 +1,13 @@
 ﻿using HandlebarsDotNet;
 using System;
 
-namespace DarkPatterns.OpenApi.CSharp
+namespace DarkPatterns.OpenApi.CSharp;
+
+public class HandlebarsFactory(Func<IHandlebars> innerFactory)
 {
-	public class HandlebarsFactory
-	{
-		private readonly Lazy<IHandlebars> handlebars;
+	private readonly Lazy<IHandlebars> handlebars = new Lazy<IHandlebars>(innerFactory);
 
-		public HandlebarsFactory(Func<IHandlebars> innerFactory)
-		{
-			this.handlebars = new Lazy<IHandlebars>(innerFactory);
-		}
+	public static HandlebarsFactory Default { get; } = new(HandlebarsTemplateProcess.CreateHandlebars);
 
-		public IHandlebars Handlebars => handlebars.Value;
-	}
+	public IHandlebars Handlebars => handlebars.Value;
 }

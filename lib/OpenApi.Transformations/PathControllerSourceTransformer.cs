@@ -1,29 +1,27 @@
 ﻿using DarkPatterns.Json.Documents;
 using DarkPatterns.OpenApi.Abstractions;
 
-namespace DarkPatterns.OpenApi.Transformations
+namespace DarkPatterns.OpenApi.Transformations;
+
+public class PathControllerSourceTransformer(
+	ISchemaRegistry schemaRegistry,
+	OpenApiDocument document,
+	IOpenApiOperationControllerTransformer operationControllerTransformer,
+	PathControllerSourceTransformer.OperationToGroupOverride? operationToGroupOverride = null
+) : OperationGroupingSourceTransformer(schemaRegistry, document, GetGroup(operationToGroupOverride), operationControllerTransformer)
 {
-	public class PathControllerSourceTransformer : OperationGroupingSourceTransformer
+	public delegate string? OperationToGroupOverride(OpenApiOperation operation, OpenApiPath path);
+
+	private static OperationToGroup GetGroup(OperationToGroupOverride? operationToGroupOverride)
 	{
-		public delegate string? OperationToGroupOverride(OpenApiOperation operation, OpenApiPath path);
-
-
-		public PathControllerSourceTransformer(DocumentRegistry registry, ISchemaRegistry schemaRegistry, OpenApiDocument document, IOpenApiOperationControllerTransformer operationControllerTransformer, OperationToGroupOverride? operationToGroupOverride = null)
-			: base(registry, schemaRegistry, document, GetGroup(operationToGroupOverride), operationControllerTransformer)
+		return (operation, pathEntry) =>
 		{
-		}
+			var group = operationToGroupOverride?.Invoke(operation, pathEntry);
+			if (group != null)
+				return (group, null, null);
 
-		private static OperationToGroup GetGroup(OperationToGroupOverride? operationToGroupOverride)
-		{
-			return (operation, pathEntry) =>
-			{
-				var group = operationToGroupOverride?.Invoke(operation, pathEntry);
-				if (group != null)
-					return (group, null, null);
-
-				var path = pathEntry.GetLastContextPart();
-				return (path, pathEntry.Summary, pathEntry.Description);
-			};
-		}
+			var path = pathEntry.GetLastContextPart();
+			return (path, pathEntry.Summary, pathEntry.Description);
+		};
 	}
 }

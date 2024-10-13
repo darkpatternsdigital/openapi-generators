@@ -48,10 +48,10 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 					return 3;
 				}
 
-				if (parseResult.Document == null)
+				if (parseResult.Document is not { } document)
 					return 2;
 
-				var transformer = parseResult.Document.BuildTypeScriptOperationSourceProvider(registry, GetVersionInfo(), options);
+				var transformer = OperationTransformerFactory.BuildComposite(document, registry, GetVersionInfo(), options);
 
 				var diagnostic = new OpenApiTransformDiagnostic();
 				var entries = transformer.GetSources(diagnostic).ToArray();

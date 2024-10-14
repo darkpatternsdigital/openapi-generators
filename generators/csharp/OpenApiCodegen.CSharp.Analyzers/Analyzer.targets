@@ -29,7 +29,7 @@
 
 	<ItemGroup>
 		<ProjectReference
-			Include="$(SolutionRoot)generators\dotnetcore-server-interfaces\OpenApiCodegen.Server.Mvc.Base\OpenApiCodegen.Server.Mvc.Base.csproj"
+			Include="$(SolutionRoot)generators\csharp\OpenApiCodegen.CSharp.Base\OpenApiCodegen.CSharp.Base.csproj"
 			SpecificVersion="true"
 			AnalyzerDynamicContext="true"
 			ReferenceOutputAssembly="false" />

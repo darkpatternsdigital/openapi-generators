@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<RootNamespace>$(RootNamespacePrefix).OpenApi.CSharp</RootNamespace>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<VersionPrefix>$(OpenApiMvcServerVersion)</VersionPrefix>
+		<VersionPrefix>$(OpenApiCSharpVersion)</VersionPrefix>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
 

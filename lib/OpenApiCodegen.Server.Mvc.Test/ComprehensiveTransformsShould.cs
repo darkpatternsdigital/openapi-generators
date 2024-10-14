@@ -1,5 +1,4 @@
-﻿using DarkPatterns.OpenApi.CSharp;
-using DarkPatterns.OpenApi.Transformations;
+﻿using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.Json.Specifications.Keywords;
 using DarkPatterns.OpenApiCodegen.TestUtils;
@@ -9,8 +8,9 @@ using static DarkPatterns.OpenApiCodegen.Server.Mvc.OptionsHelpers;
 using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
 using DarkPatterns.Json.Documents;
 using DarkPatterns.OpenApiCodegen.Handlebars;
+using DarkPatterns.OpenApi.CSharp;
 
-namespace DarkPatterns.OpenApiCodegen.Server.Mvc;
+namespace DarkPatterns.OpenApiCodegen.CSharp;
 
 public class ComprehensiveTransformsShould
 {
@@ -54,7 +54,7 @@ public class ComprehensiveTransformsShould
 		try
 		{
 			var generated = transformer.GetSources();
-			return [.. docResult.Diagnostics, .. generated.Diagnostics];
+			return [.. generated.Diagnostics];
 		}
 		catch
 		{

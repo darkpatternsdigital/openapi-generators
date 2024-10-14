@@ -4,13 +4,12 @@ using System.IO;
 using System.Linq;
 using Xunit;
 using DarkPatterns.OpenApi.CSharp;
-using DarkPatterns.OpenApi.Transformations;
 using static DarkPatterns.OpenApiCodegen.Server.Mvc.OptionsHelpers;
 using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
 using DarkPatterns.OpenApiCodegen.TestUtils;
 using DarkPatterns.OpenApiCodegen.Handlebars;
 
-namespace DarkPatterns.OpenApiCodegen.Server.Mvc;
+namespace DarkPatterns.OpenApiCodegen.CSharp;
 
 internal class DynamicCompilation
 {

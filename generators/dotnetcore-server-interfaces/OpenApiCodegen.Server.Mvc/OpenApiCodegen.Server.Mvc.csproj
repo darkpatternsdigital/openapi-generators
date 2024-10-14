@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<RootNamespace>$(RootNamespacePrefix).OpenApi.CSharp</RootNamespace>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<VersionPrefix Condition=" '$(VersionPrefix)' == '' ">$(OpenApiMvcServerVersion)</VersionPrefix>
+		<VersionPrefix Condition=" '$(VersionPrefix)' == '' ">$(OpenApiCSharpVersion)</VersionPrefix>
 
 		<IsPackable>true</IsPackable>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -17,15 +17,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="*.props" Exclude="$(MSBuildProjectName).props" Pack="true" PackagePath="build" />
-		<None Include="$(MSBuildProjectName).props" Pack="true" PackagePath="build/$(RootNamespacePrefix).$(MSBuildProjectName).props" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<AnalyzerReference Include="..\OpenApiCodegen.Server.Mvc.Analyzers\OpenApiCodegen.Server.Mvc.Roslyn3.11.csproj"
-						   ReferenceAnalyzer="false" />
-		<AnalyzerReference Include="..\OpenApiCodegen.Server.Mvc.Analyzers\OpenApiCodegen.Server.Mvc.Roslyn4.0.csproj"
-						   ReferenceAnalyzer="false" />
+		<ProjectReference Include="$(SolutionRoot)generators\csharp\OpenApiCodegen.CSharp\OpenApiCodegen.CSharp.csproj"/>
 	</ItemGroup>
 
 	<Target Name="AddDlls" BeforeTargets="_GetPackageFiles">

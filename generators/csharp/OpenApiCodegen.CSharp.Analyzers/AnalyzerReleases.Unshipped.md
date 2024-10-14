@@ -4,6 +4,7 @@
 ### New Rules
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
+DPDAPI001 | DarkPatterns.OpenApiCodegen.CSharp | Warning | OpenApiMvcServerGenerator
 DPD_JSON_001 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
 DPD_JSON_002 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
 DPD_JSON_003 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
@@ -26,4 +27,3 @@ DPD_PARSE_009 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
 DPD_PARSE_UNK | DarkPatterns.OpenApiCodegen | Error | BaseGenerator
 DPD_TRANSFORM_001 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
 DPD_UNK | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
-DPDAPICTRL001 | DarkPatterns.OpenApiCodegen.Server.Mvc | Warning | OpenApiMvcServerGenerator

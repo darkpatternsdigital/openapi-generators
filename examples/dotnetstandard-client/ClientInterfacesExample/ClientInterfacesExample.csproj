@@ -15,8 +15,8 @@
 	</ItemGroup>
 	<ItemGroup Condition=" '$(UseProjectReferences)' != 'true' ">
 		<PackageReference Include="DarkPatterns.OpenApiCodegen.Client" Condition=" '$(OpenApiCSharpClientFullVersion)' != '' " Version="$(OpenApiCSharpClientFullVersion)" />
-		<PackageReference Include="DarkPatterns.OpenApiCodegen.Client" Condition=" '$(OpenApiCSharpClientFullVersion)' == '' and '$(VersionSuffix)' == '' " Version="$(OpenApiCSharpClientVersion)" />
-		<PackageReference Include="DarkPatterns.OpenApiCodegen.Client" Condition=" '$(OpenApiCSharpClientFullVersion)' == '' and '$(VersionSuffix)' != '' " Version="$(OpenApiCSharpClientVersion)-$(VersionSuffix)" />
+		<PackageReference Include="DarkPatterns.OpenApiCodegen.Client" Condition=" '$(OpenApiCSharpClientFullVersion)' == '' and '$(VersionSuffix)' == '' " Version="$(OpenApiCSharpVersion)" />
+		<PackageReference Include="DarkPatterns.OpenApiCodegen.Client" Condition=" '$(OpenApiCSharpClientFullVersion)' == '' and '$(VersionSuffix)' != '' " Version="$(OpenApiCSharpVersion)-$(VersionSuffix)" />
 
 		<PackageReference Include="DarkPatterns.OpenApiCodegen.Json.Extensions" Condition=" '$(OpenApiJsonExtensionsFullVersion)' != '' " Version="$(OpenApiJsonExtensionsFullVersion)" />
 		<PackageReference Include="DarkPatterns.OpenApiCodegen.Json.Extensions" Condition=" '$(OpenApiJsonExtensionsFullVersion)' == '' and '$(VersionSuffix)' == '' " Version="$(OpenApiJsonExtensionsVersion)" />

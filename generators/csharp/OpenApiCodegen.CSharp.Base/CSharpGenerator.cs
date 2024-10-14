@@ -10,7 +10,7 @@ using DarkPatterns.OpenApiCodegen.Handlebars;
 
 namespace DarkPatterns.OpenApi.CSharp;
 
-public class MvcServerGenerator : IOpenApiCodeGenerator
+public class CSharpGenerator : IOpenApiCodeGenerator
 {
 	const string propNamespace = "Namespace";
 	const string propConfig = "Configuration";

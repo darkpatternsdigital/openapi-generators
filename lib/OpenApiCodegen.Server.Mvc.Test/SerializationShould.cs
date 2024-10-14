@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
+using DarkPatterns.OpenApiCodegen.CSharp;
 
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc
 {

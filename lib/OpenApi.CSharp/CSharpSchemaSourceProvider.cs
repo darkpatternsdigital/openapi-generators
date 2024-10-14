@@ -13,6 +13,8 @@ using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
 using DarkPatterns.OpenApi.Specifications.v3_0;
 using DarkPatterns.OpenApiCodegen;
 using DarkPatterns.OpenApiCodegen.Handlebars;
+using DarkPatterns.OpenApiCodegen.Handlebars.Templates;
+using System.Xml.Linq;
 
 namespace DarkPatterns.OpenApi.CSharp;
 
@@ -35,7 +37,7 @@ public class CSharpSchemaSourceProvider(
 		if (model == null)
 			return null;
 		var sourceText = CSharpHandlebarsCommon.ProcessModel(
-			header: settings.Header,
+			header: settings.Header(entry.Metadata.Id),
 			packageName: targetNamespace,
 			schemaId: entry.Metadata.Id,
 			model: model,

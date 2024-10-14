@@ -24,7 +24,7 @@ public class CSharpControllerTransformer(TransformSettings settings, OpenApiDocu
 			visitor.Visit(operation, method, new ControllerOperationVisitor.Argument(diagnostic, resultOperations.Add, CurrentPath: path));
 
 		var template = new Templates.ControllerTemplate(
-			Header: settings.Header,
+			Header: settings.Header(document.Id),
 
 			PackageName: baseNamespace,
 			ClassName: className,
@@ -53,7 +53,7 @@ public class CSharpControllerTransformer(TransformSettings settings, OpenApiDocu
 		return new SourceEntry(
 			Key: $"{baseNamespace}.AddServicesExtensions.cs",
 			SourceText: handlebarsFactory.Handlebars.ProcessAddServices(new Templates.AddServicesModel(
-				Header: settings.Header,
+				Header: settings.Header("Add MVC Services, useful for ensuring all controllers are mapped"),
 				MethodName: CSharpNaming.ToMethodName(document.Info.Title, options.ReservedIdentifiers()),
 				PackageName: baseNamespace,
 				Controllers: (from p in groups

@@ -8,6 +8,7 @@ using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.Json.Documents;
 using DarkPatterns.OpenApiCodegen.Handlebars;
+using DarkPatterns.OpenApiCodegen.Handlebars.Templates;
 
 namespace DarkPatterns.OpenApi.CSharp;
 
@@ -29,7 +30,7 @@ public class CSharpClientTransformer(TransformSettings settings, OpenApiDocument
 							select operation with { Path = operation.Path.Substring(1) }).ToList();
 
 		var template = new Templates.FullTemplate(
-			Header: settings.Header,
+			Header: settings.Header(document.Id),
 
 			PackageName: baseNamespace,
 			ClassName: className,
@@ -55,7 +56,7 @@ public class CSharpClientTransformer(TransformSettings settings, OpenApiDocument
 		return new SourceEntry(
 			Key: $"{baseNamespace}.AddServicesExtensions.cs",
 			SourceText: handlebarsFactory.Handlebars.ProcessAddServices(new Templates.AddServicesModel(
-				Header: settings.Header,
+				Header: settings.Header(document.Id),
 				MethodName: CSharpNaming.ToMethodName(document.Info.Title, options.ReservedIdentifiers()),
 				PackageName: baseNamespace
 			))

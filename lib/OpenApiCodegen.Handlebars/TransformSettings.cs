@@ -3,10 +3,11 @@ using DarkPatterns.OpenApi.Abstractions;
 using System.Linq;
 using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApiCodegen.Handlebars.Templates;
+using System;
 
 namespace DarkPatterns.OpenApiCodegen.Handlebars;
 
-public record TransformSettings(SchemaRegistry SchemaRegistry, PartialHeader Header)
+public record TransformSettings(SchemaRegistry SchemaRegistry, string CodeGeneratorVersionInfo)
 {
 	public static CompositeOpenApiSourceProvider BuildComposite(
 		OpenApiDocument document,
@@ -14,19 +15,30 @@ public record TransformSettings(SchemaRegistry SchemaRegistry, PartialHeader Hea
 		string versionInfo,
 		System.Func<TransformSettings, ISourceProvider>[] factories)
 	{
-		var header = new PartialHeader(
-			AppName: document.Info.Title,
-			AppDescription: document.Info.Description,
-			Version: document.Info.Version,
-			InfoEmail: document.Info.Contact?.Email,
-			CodeGeneratorVersionInfo: versionInfo
-		);
 		var schemaRegistry = new SchemaRegistry(documentRegistry);
-		var settings = new TransformSettings(schemaRegistry, header);
+		var settings = new TransformSettings(schemaRegistry, versionInfo);
 
 		return new CompositeOpenApiSourceProvider(
 			factories.Select(factory => factory(settings)).ToArray()
 		);
 	}
 
+	public PartialHeader Header(Uri id)
+	{
+		if (!SchemaRegistry.DocumentRegistry.TryGetDocument(id, out var doc))
+		{
+			return new PartialHeader(null, null, CodeGeneratorVersionInfo);
+		}
+		var info = doc.Dialect.GetInfo(doc);
+		return Header(info.Title, info.Description);
+	}
+
+	public PartialHeader Header(string? title, string? description = null)
+	{
+		return new PartialHeader(
+			AppTitle: title,
+			AppDescription: description,
+			CodeGeneratorVersionInfo: CodeGeneratorVersionInfo
+		);
+	}
 }

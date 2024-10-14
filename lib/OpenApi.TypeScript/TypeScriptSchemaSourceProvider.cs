@@ -24,13 +24,16 @@ public class TypeScriptSchemaSourceProvider(
 
 	protected override IEnumerable<SourceEntry> GetAdditionalSources(OpenApiTransformDiagnostic diagnostic)
 	{
-		if (settings.Header == null) yield break;
 		var exportStatements = inlineSchemas.GetExportStatements(settings.SchemaRegistry.GetSchemas(), options, "./models/").ToArray();
 		if (exportStatements.Length > 0)
 			yield return new SourceEntry(
 				Key: "models/index.ts",
 				SourceText: TypeScriptHandlebarsCommon.ProcessModelBarrelFile(
-					new Templates.ModelBarrelFile(settings.Header, exportStatements),
+					new Templates.ModelBarrelFile(new OpenApiCodegen.Handlebars.Templates.PartialHeader(
+						"All models",
+						null,
+						settings.CodeGeneratorVersionInfo
+					), exportStatements),
 					handlebarsFactory.Handlebars
 				)
 			);
@@ -61,7 +64,7 @@ public class TypeScriptSchemaSourceProvider(
 		if (model == null)
 			return null;
 		var entry = TypeScriptHandlebarsCommon.ProcessModel(
-			header: settings.Header,
+			header: settings.Header(schema.Metadata.Id),
 			packageName: "",
 			model: model,
 			handlebarsFactory.Handlebars

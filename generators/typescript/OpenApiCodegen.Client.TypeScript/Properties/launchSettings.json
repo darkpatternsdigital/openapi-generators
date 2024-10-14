@@ -2,7 +2,7 @@
 	"profiles": {
 		"DarkPatterns.OpenApiCodegen.Client.TypeScript": {
 			"commandName": "Project",
-			"commandLineArgs": "\"$(SolutionDir)schemas/local.yaml\" \"$(ProjectDir)demo/\" -c"
+			"commandLineArgs": "\"$(SolutionDir)schemas/no-refs.yaml\" \"$(ProjectDir)demo/\" -c"
 		}
 	}
 }

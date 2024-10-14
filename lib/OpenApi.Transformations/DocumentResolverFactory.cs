@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.Json.Documents;
 using DarkPatterns.Json.Loaders;
-using DarkPatterns.OpenApiCodegen;
 
 namespace DarkPatterns.OpenApi.Transformations;
 
@@ -36,16 +34,31 @@ public static class DocumentResolverFactory
 		};
 	}
 
+	public static IDocumentReference Load(Uri uri, string documentContents)
+	{
+		using var sr = new StringReader(documentContents);
+		var doc = docLoader.LoadDocument(uri, sr, null);
+		return doc;
+	}
+
+	public static DocumentRegistry From(IEnumerable<IDocumentReference> documents, DocumentRegistryOptions resolverOptions)
+	{
+		var allDocs = documents.ToArray();
+
+		var registry = new DocumentRegistry(resolverOptions with
+		{
+			Resolvers = [.. documents.Select(RelativeFrom), .. resolverOptions.Resolvers],
+		});
+		foreach (var doc in allDocs)
+			registry.AddDocument(doc);
+		return registry;
+	}
+
 	public static (IDocumentReference, DocumentRegistry) FromInitialDocumentInMemory(Uri uri, string documentContents, DocumentRegistryOptions resolverOptions)
 	{
 		using var sr = new StringReader(documentContents);
 		var doc = docLoader.LoadDocument(uri, sr, null);
 
-		var registry = new DocumentRegistry(resolverOptions with
-		{
-			Resolvers = Enumerable.Concat([RelativeFrom(doc)], resolverOptions.Resolvers).ToArray()
-		});
-		registry.AddDocument(doc);
-		return (doc, registry);
+		return (doc, From([doc], resolverOptions));
 	}
 }

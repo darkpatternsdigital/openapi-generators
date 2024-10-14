@@ -1,5 +1,4 @@
 ﻿using DarkPatterns.OpenApi.Transformations;
-using System.Collections.Generic;
 
 namespace DarkPatterns.OpenApiCodegen.Client.TypeScript;
 
@@ -14,8 +13,9 @@ public class AllOperationsBarrelTransformer : ISourceProvider
 		this.operationTransformer = operationTransformer;
 	}
 
-	public IEnumerable<SourceEntry> GetSources(OpenApiTransformDiagnostic diagnostic)
+	public SourcesResult GetSources()
 	{
-		yield return operationTransformer.TransformBarrelFileHelper(operationsSourceProvider.GetOperations(diagnostic), diagnostic);
+		OpenApiTransformDiagnostic diagnostic = new();
+		return new([operationTransformer.TransformBarrelFileHelper(operationsSourceProvider.GetOperations(diagnostic), diagnostic)], [.. diagnostic.Diagnostics]);
 	}
 }

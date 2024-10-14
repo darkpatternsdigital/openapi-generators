@@ -1,21 +1,27 @@
 ﻿using DarkPatterns.Json.Specifications;
 using DarkPatterns.OpenApiCodegen;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace DarkPatterns.OpenApi.Transformations
 {
 	public abstract class SchemaSourceProvider(ISchemaRegistry schemaRegistry) : ISourceProvider
 	{
-		public IEnumerable<SourceEntry> GetSources(OpenApiTransformDiagnostic diagnostic) =>
-			(from entry in schemaRegistry.GetSchemas()
-			 let sourceEntry = GetSourceEntry(entry, diagnostic)
-			 where sourceEntry != null
-			 select sourceEntry)
-			.Concat(GetAdditionalSources(diagnostic));
+		public SourcesResult GetSources()
+		{
+			var diagnostic = new OpenApiTransformDiagnostic();
+			return SourcesResult.Combine([
+				new SourcesResult([
+					.. from entry in schemaRegistry.GetSchemas()
+					   let e = GetSourceEntry(entry, diagnostic)
+					   where e != null
+					   select e,
+				], [.. diagnostic.Diagnostics]),
+				GetAdditionalSources()
+			]);
+		}
 
-		protected virtual IEnumerable<SourceEntry> GetAdditionalSources(OpenApiTransformDiagnostic diagnostic) =>
-			Enumerable.Empty<SourceEntry>();
+		protected virtual SourcesResult GetAdditionalSources() =>
+			SourcesResult.Empty;
 
 		protected abstract SourceEntry? GetSourceEntry(JsonSchema entry, OpenApiTransformDiagnostic diagnostic);
 

@@ -4,6 +4,8 @@ using DarkPatterns.OpenApiCodegen;
 using System;
 using System.Collections.Generic;
 using DarkPatterns.Json.Documents;
+using System.IO;
+using System.Linq;
 
 namespace DarkPatterns.OpenApi.Transformations;
 
@@ -13,13 +15,15 @@ public class OperationSourceTransformer(DocumentRegistry documentRegistry, OpenA
 	private readonly OpenApiDocument document = document;
 	private readonly IOpenApiOperationTransformer operationTransformer = operationTransformer;
 	private static readonly OperationVisitor visitor = new();
-
-	public IEnumerable<SourceEntry> GetSources(OpenApiTransformDiagnostic diagnostic)
+	public SourcesResult GetSources()
 	{
-		foreach (var (path, method, operation) in GetOperations(diagnostic))
-		{
-			yield return operationTransformer.TransformOperation(path, method, operation, diagnostic);
-		}
+		var diagnostic = new OpenApiTransformDiagnostic();
+		var sources = from opDetail in GetOperations(diagnostic)
+					  select operationTransformer.TransformOperation(opDetail.Path, opDetail.Method, opDetail.Operation, diagnostic);
+		return new SourcesResult(
+			sources.ToArray(),
+			[.. diagnostic.Diagnostics]
+		);
 	}
 
 	public List<OperationDetail> GetOperations(OpenApiTransformDiagnostic diagnostic)

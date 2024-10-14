@@ -38,22 +38,25 @@ public class ClientGenerator : IOpenApiCodeGenerator
 
 	public GenerationResult Generate(IEnumerable<AdditionalTextInfo> additionalTextInfos)
 	{
+		var registry = new DocumentRegistry(ToRegistryOptions(additionalTextInfos));
+		var schemaRegistry = new SchemaRegistry(registry);
+		var pathResolver = ToPathResolver(additionalTextInfos);
+
 		var entrypoints = additionalTextInfos.Where(f => f.Types.Contains(sourceGroup));
-		return entrypoints.Select(ep => Generate(ep, additionalTextInfos.Where(f => f.Types.Contains(sharedSourceGroup))))
+		return entrypoints.Select(ep => GenerateOneDocument(ep, schemaRegistry, LoadOptionsFromMetadata(ep.Metadata, additionalTextInfos), pathResolver))
 			.Aggregate((prev, next) => new GenerationResult([.. prev.Sources, .. next.Sources], [.. prev.Diagnostics, .. next.Diagnostics]));
 	}
 
-	public static GenerationResult Generate(AdditionalTextInfo entrypoint, IEnumerable<AdditionalTextInfo> other)
+	public static GenerationResult GenerateOneDocument(AdditionalTextInfo entrypoint, SchemaRegistry schemaRegistry, CSharpSchemaOptions options, PathResolver pathResolver)
 	{
-		var options = LoadOptionsFromMetadata(entrypoint.Metadata, other);
-		var (baseDocument, registry, pathResolver) = LoadDocument(entrypoint, options, other);
+		var baseDocument = schemaRegistry.DocumentRegistry.ResolveDocument(ToInternalUri(entrypoint), null);
 		var diagnosticConverter = DiagnosticsConversion.GetConverter(pathResolver);
-		var parseResult = CommonParsers.DefaultParsers.Parse(baseDocument, registry);
+		var parseResult = CommonParsers.DefaultParsers.Parse(baseDocument, schemaRegistry.DocumentRegistry);
 		var parsedDiagnostics = parseResult.Diagnostics;
 		if (!parseResult.HasDocument || parseResult.Document == null)
 			return new GenerationResult([], Convert(parsedDiagnostics));
 
-		var sourceProvider = TransformSettings.BuildComposite(parseResult.Document, registry, GetVersionInfo(), [
+		var sourceProvider = TransformSettings.BuildComposite(schemaRegistry, GetVersionInfo(), [
 			(s) => new ClientTransformerFactory(s).Build(parseResult.Document, options),
 			(s) => new CSharpSchemaSourceProvider(s, options)
 		]);
@@ -61,12 +64,11 @@ public class ClientGenerator : IOpenApiCodeGenerator
 
 		try
 		{
-			var sources = (from entry in sourceProvider.GetSources(openApiDiagnostic)
-						   select new OpenApiCodegen.SourceEntry(entry.Key, entry.SourceText)).ToArray();
+			var result = sourceProvider.GetSources();
 
 			return new GenerationResult(
-				sources,
-				Convert(parsedDiagnostics)
+				result.Sources,
+				Convert([.. parsedDiagnostics, .. result.Diagnostics])
 			);
 		}
 		catch (Exception) when (parsedDiagnostics is not [])
@@ -81,7 +83,7 @@ public class ClientGenerator : IOpenApiCodeGenerator
 		{
 			return new GenerationResult(
 				[],
-				Convert(ex.ToDiagnostics(registry, NodeMetadata.FromRoot(baseDocument)))
+				Convert(ex.ToDiagnostics(schemaRegistry.DocumentRegistry, NodeMetadata.FromRoot(baseDocument)))
 			);
 		}
 #pragma warning restore CA1031 // Do not catch general exception types
@@ -102,6 +104,7 @@ public class ClientGenerator : IOpenApiCodeGenerator
 		result.DefaultNamespace = fullNamespace ?? GetStandardNamespace(entrypointMetadata, result);
 		foreach (var entry in additionalSchemas)
 		{
+			// TODO: This ignores the propNamespace
 			var ns = GetStandardNamespace(entry.Metadata, result);
 			if (result.DefaultNamespace != ns)
 				result.NamespacesBySchema[ToInternalUri(entry)] = ns;
@@ -128,19 +131,13 @@ public class ClientGenerator : IOpenApiCodeGenerator
 		document.Metadata.TryGetValue(propSchemaId, out var schemaId) ? new Uri(schemaId) :
 		new Uri(new Uri(document.Path).AbsoluteUri);
 
-	private static (IDocumentReference, DocumentRegistry, PathResolver) LoadDocument(AdditionalTextInfo document, CSharpSchemaOptions options, IEnumerable<AdditionalTextInfo> additionalSchemas)
+	private static PathResolver ToPathResolver(IEnumerable<AdditionalTextInfo> files)
 	{
-		var paths = additionalSchemas.ConcatOne(document).Distinct().ToLookup(ToInternalUri, doc => doc.Path);
-
-		var (docRef, reg) = DocumentResolverFactory.FromInitialDocumentInMemory(
-			ToInternalUri(document),
-			document.Contents,
-			ToResolverOptions(options, additionalSchemas)
-		);
-		return (docRef, reg, (uri) => paths[uri].FirstOrDefault());
+		var paths = files.Distinct().ToLookup(ToInternalUri, doc => doc.Path);
+		return (uri) => paths[uri].FirstOrDefault();
 	}
 
-	private static DocumentRegistryOptions ToResolverOptions(CSharpSchemaOptions options, IEnumerable<AdditionalTextInfo> additionalSchemas) =>
+	private static DocumentRegistryOptions ToRegistryOptions(IEnumerable<AdditionalTextInfo> additionalSchemas) =>
 		new DocumentRegistryOptions(
 			additionalSchemas
 				.Select(doc => DocumentResolverFactory.LoadAs(ToInternalUri(doc), doc.Contents))

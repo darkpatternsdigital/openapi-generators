@@ -49,9 +49,14 @@ public class OperationGroupingSourceTransformer(
 		return GetGroups(diagnostic).Keys;
 	}
 
-	public IEnumerable<SourceEntry> GetSources(OpenApiTransformDiagnostic diagnostic)
+	public SourcesResult GetSources()
 	{
-		return GetGroups(diagnostic).Select(kvp => operationControllerTransformer.TransformController(kvp.Key, kvp.Value, diagnostic)).ToArray();
+		var diagnostic = new OpenApiTransformDiagnostic();
+		var sources = GetGroups(diagnostic).Select(kvp => operationControllerTransformer.TransformController(kvp.Key, kvp.Value, diagnostic)).ToArray();
+		return new SourcesResult(
+			sources,
+			[.. diagnostic.Diagnostics]
+		);
 	}
 
 	class OperationGroupingVisitor(DocumentRegistry documentRegistry) : Abstractions.OpenApiDocumentVisitor<OperationGroupingVisitor.Argument>

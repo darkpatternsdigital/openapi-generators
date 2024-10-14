@@ -22,11 +22,11 @@ public class TypeScriptSchemaSourceProvider(
 	private readonly HandlebarsFactory handlebarsFactory = handlebarsFactory ?? HandlebarsFactoryDefaults.Default;
 	private readonly TypeScriptInlineSchemas inlineSchemas = new TypeScriptInlineSchemas(options, settings.SchemaRegistry.DocumentRegistry);
 
-	protected override IEnumerable<SourceEntry> GetAdditionalSources(OpenApiTransformDiagnostic diagnostic)
+	protected override SourcesResult GetAdditionalSources()
 	{
 		var exportStatements = inlineSchemas.GetExportStatements(settings.SchemaRegistry.GetSchemas(), options, "./models/").ToArray();
 		if (exportStatements.Length > 0)
-			yield return new SourceEntry(
+			return new([new SourceEntry(
 				Key: "models/index.ts",
 				SourceText: TypeScriptHandlebarsCommon.ProcessModelBarrelFile(
 					new Templates.ModelBarrelFile(new OpenApiCodegen.Handlebars.Templates.PartialHeader(
@@ -36,7 +36,8 @@ public class TypeScriptSchemaSourceProvider(
 					), exportStatements),
 					handlebarsFactory.Handlebars
 				)
-			);
+			)], []);
+		return SourcesResult.Empty;
 	}
 
 	protected override SourceEntry? GetSourceEntry(JsonSchema entry, OpenApiTransformDiagnostic diagnostic)

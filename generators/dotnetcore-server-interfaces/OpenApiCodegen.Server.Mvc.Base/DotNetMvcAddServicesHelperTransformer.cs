@@ -15,9 +15,10 @@ namespace DarkPatterns.OpenApi.CSharp
 			this.operationGrouping = operationGrouping;
 		}
 
-		public IEnumerable<SourceEntry> GetSources(OpenApiTransformDiagnostic diagnostic)
+		public SourcesResult GetSources()
 		{
-			yield return schemaTransformer.TransformAddServicesHelper(operationGrouping.GetGroupNames(diagnostic), diagnostic);
+			OpenApiTransformDiagnostic diagnostic = new();
+			return new([schemaTransformer.TransformAddServicesHelper(operationGrouping.GetGroupNames(diagnostic), diagnostic)], [.. diagnostic.Diagnostics]);
 		}
 	}
 }

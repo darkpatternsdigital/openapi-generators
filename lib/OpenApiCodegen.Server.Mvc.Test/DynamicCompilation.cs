@@ -46,18 +46,17 @@ internal class DynamicCompilation
 		Assert.NotNull(docResult.Document);
 		var options = LoadOptions();
 
-		var transformer = TransformSettings.BuildComposite(docResult.Document, registry, "", [
+		var transformer = TransformSettings.BuildComposite(registry, "", [
 			(s) => new PathControllerTransformerFactory(s).Build(docResult.Document, options),
 			(s) => new CSharpSchemaSourceProvider(s, options)
 		]);
-		OpenApiTransformDiagnostic diagnostic = new();
 
-		var entries = transformer.GetSources(diagnostic).ToArray();
+		var generated = transformer.GetSources();
 
-		Assert.Empty(diagnostic.Diagnostics);
+		Assert.Empty(generated.Diagnostics);
 
 		var parseOptions = CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.CSharp11);
-		var syntaxTrees = entries.Select(e => CSharpSyntaxTree.ParseText(e.SourceText, options: parseOptions, path: e.Key)).ToArray();
+		var syntaxTrees = generated.Sources.Select(e => CSharpSyntaxTree.ParseText(e.SourceText, options: parseOptions, path: e.Key)).ToArray();
 
 		string assemblyName = Path.GetRandomFileName();
 		MetadataReference[] references = SystemTextCompilationRefPaths.Select(r => MetadataReference.CreateFromFile(r)).ToArray();

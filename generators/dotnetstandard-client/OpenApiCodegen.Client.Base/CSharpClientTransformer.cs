@@ -63,8 +63,9 @@ public class CSharpClientTransformer(TransformSettings settings, OpenApiDocument
 		);
 	}
 
-	public IEnumerable<SourceEntry> GetSources(OpenApiTransformDiagnostic diagnostic)
+	public SourcesResult GetSources()
 	{
-		yield return TransformOperations(diagnostic);
+		var diagnostic = new OpenApiTransformDiagnostic();
+		return new([TransformOperations(diagnostic)], [.. diagnostic.Diagnostics]);
 	}
 }

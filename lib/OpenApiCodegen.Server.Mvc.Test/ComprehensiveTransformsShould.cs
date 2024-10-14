@@ -46,20 +46,19 @@ public class ComprehensiveTransformsShould
 		Assert.NotNull(docResult.Document);
 		var options = LoadOptions();
 
-		var transformer = TransformSettings.BuildComposite(docResult.Document, registry, "", [
+		var transformer = TransformSettings.BuildComposite(registry, "", [
 			(s) => new PathControllerTransformerFactory(s).Build(docResult.Document, options),
 			(s) => new CSharpSchemaSourceProvider(s, options)
 		]);
-		OpenApiTransformDiagnostic diagnostic = new();
 
 		try
 		{
-			var sources = transformer.GetSources(diagnostic).ToArray(); // force all sources to load to get diagnostics
-			return docResult.Diagnostics.Concat(diagnostic.Diagnostics).ToArray();
+			var generated = transformer.GetSources();
+			return [.. docResult.Diagnostics, .. generated.Diagnostics];
 		}
 		catch
 		{
-			return docResult.Diagnostics.ToArray();
+			return [.. docResult.Diagnostics];
 		}
 	}
 

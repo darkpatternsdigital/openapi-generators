@@ -14,15 +14,7 @@ public record TransformSettings(SchemaRegistry SchemaRegistry, string CodeGenera
 		string versionInfo,
 		System.Func<TransformSettings, ISourceProvider>[] factories)
 	{
-		return BuildComposite(new SchemaRegistry(documentRegistry), versionInfo, factories);
-	}
-
-	public static CompositeOpenApiSourceProvider BuildComposite(
-		SchemaRegistry schemaRegistry,
-		string versionInfo,
-		System.Func<TransformSettings, ISourceProvider>[] factories)
-	{
-		var settings = new TransformSettings(schemaRegistry, versionInfo);
+		var settings = new TransformSettings(new SchemaRegistry(documentRegistry), versionInfo);
 
 		return new CompositeOpenApiSourceProvider(
 			factories.Select(factory => factory(settings)).ToArray()

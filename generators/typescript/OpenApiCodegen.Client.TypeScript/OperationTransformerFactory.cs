@@ -16,11 +16,11 @@ public class OperationTransformerFactory(TransformSettings settings)
 
 		var operationsSourceProvider = new OperationSourceTransformer(settings.SchemaRegistry.DocumentRegistry, document, operationTransformer);
 
-		result = new CompositeOpenApiSourceProvider(
+		result = new CompositeOpenApiSourceProvider([
 			operationsSourceProvider,
 			new AllOperationsBarrelTransformer(operationsSourceProvider, operationTransformer),
 			schemaProvider
-		);
+		]);
 		return result;
 	}
 }

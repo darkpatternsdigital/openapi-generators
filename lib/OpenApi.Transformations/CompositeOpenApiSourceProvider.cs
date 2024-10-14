@@ -1,16 +1,10 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace DarkPatterns.OpenApi.Transformations;
 
-public class CompositeOpenApiSourceProvider : ISourceProvider
+public class CompositeOpenApiSourceProvider(IReadOnlyList<ISourceProvider> sourceProviders) : ISourceProvider
 {
-	private readonly ISourceProvider[] sourceProviders;
-
-	public CompositeOpenApiSourceProvider(params ISourceProvider[] sourceProviders)
-	{
-		this.sourceProviders = sourceProviders;
-	}
-
 	public SourcesResult GetSources()
 	{
 		return SourcesResult.Combine([

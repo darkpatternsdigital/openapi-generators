@@ -55,10 +55,11 @@ public class ClientGenerator : IOpenApiCodeGenerator
 		var parsedDiagnostics = parseResult.Diagnostics;
 		if (!parseResult.HasDocument || parseResult.Document == null)
 			return new GenerationResult([], Convert(parsedDiagnostics));
+		var settings = new TransformSettings(schemaRegistry, GetVersionInfo());
 
-		var sourceProvider = TransformSettings.BuildComposite(schemaRegistry, GetVersionInfo(), [
-			(s) => new ClientTransformerFactory(s).Build(parseResult.Document, options),
-			(s) => new CSharpSchemaSourceProvider(s, options)
+		var sourceProvider = new CompositeOpenApiSourceProvider([
+			new ClientTransformerFactory(settings).Build(parseResult.Document, options),
+			new CSharpSchemaSourceProvider(settings, options)
 		]);
 		var openApiDiagnostic = new OpenApiTransformDiagnostic();
 

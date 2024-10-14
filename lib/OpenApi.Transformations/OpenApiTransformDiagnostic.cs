@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using DarkPatterns.Json.Diagnostics;
 
-namespace DarkPatterns.OpenApi.Transformations
+namespace DarkPatterns.OpenApi.Transformations;
+
+public class OpenApiTransformDiagnostic
 {
-	public class OpenApiTransformDiagnostic
-	{
-		public IList<DiagnosticBase> Diagnostics { get; } = new List<DiagnosticBase>();
-	}
+	public List<DiagnosticBase> Diagnostics { get; } = new List<DiagnosticBase>();
 }

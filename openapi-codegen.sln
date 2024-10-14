@@ -83,15 +83,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiCodegen.Server.Mvc.R
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiCodegen.Server.Mvc.TestApp.Bad", "lib\TestApp.Bad\OpenApiCodegen.Server.Mvc.TestApp.Bad.csproj", "{C6137D34-5716-4900-8C0F-7F96CDE51C68}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json.Specifications", "lib\Json.Specifications\Json.Specifications.csproj", "{5EDE63DC-9910-4AD5-864D-9A002FD7B7C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Json.Specifications", "lib\Json.Specifications\Json.Specifications.csproj", "{5EDE63DC-9910-4AD5-864D-9A002FD7B7C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApi", "lib\OpenApi.Abstractions\OpenApi.Abstractions.csproj", "{65511D18-D7B4-4D84-A8B9-63599A60D76E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApi.Abstractions", "lib\OpenApi.Abstractions\OpenApi.Abstractions.csproj", "{65511D18-D7B4-4D84-A8B9-63599A60D76E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApi.Specifications.v3_0", "lib\OpenApi.Specifications.v3_0\OpenApi.Specifications.v3_0.csproj", "{8CB77FE4-B08B-4F2A-82D8-DC575F1F7824}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApi.Specifications.v3_0", "lib\OpenApi.Specifications.v3_0\OpenApi.Specifications.v3_0.csproj", "{8CB77FE4-B08B-4F2A-82D8-DC575F1F7824}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json.Loaders", "lib\Json.Loaders\Json.Loaders.csproj", "{913FDC5E-59AA-40C7-A4A5-3E50B9BAC2A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Json.Loaders", "lib\Json.Loaders\Json.Loaders.csproj", "{913FDC5E-59AA-40C7-A4A5-3E50B9BAC2A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApiCodegen.Handlebars", "lib\OpenApiCodegen.Handlebars\OpenApiCodegen.Handlebars.csproj", "{C05680A3-6B66-44CC-922D-752028760299}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiCodegen.Handlebars", "lib\OpenApiCodegen.Handlebars\OpenApiCodegen.Handlebars.csproj", "{C05680A3-6B66-44CC-922D-752028760299}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -440,6 +440,7 @@ Global
 		{2705BE5C-D544-41C7-8D18-890422B84D86}.Release|x86.ActiveCfg = Release|Any CPU
 		{2705BE5C-D544-41C7-8D18-890422B84D86}.Release|x86.Build.0 = Release|Any CPU
 		{C6137D34-5716-4900-8C0F-7F96CDE51C68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6137D34-5716-4900-8C0F-7F96CDE51C68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6137D34-5716-4900-8C0F-7F96CDE51C68}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{C6137D34-5716-4900-8C0F-7F96CDE51C68}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{C6137D34-5716-4900-8C0F-7F96CDE51C68}.Release|Any CPU.ActiveCfg = Release|Any CPU

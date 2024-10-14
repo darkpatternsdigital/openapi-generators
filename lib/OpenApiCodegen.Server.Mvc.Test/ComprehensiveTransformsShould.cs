@@ -47,7 +47,7 @@ public class ComprehensiveTransformsShould
 		var options = LoadOptions();
 
 		var transformer = TransformSettings.BuildComposite(registry, "", [
-			(s) => new PathControllerTransformerFactory(s).Build(docResult.Document, options),
+			(s) => new PathControllerTransformerFactory(s).Build(docResult, options),
 			(s) => new CSharpSchemaSourceProvider(s, options)
 		]);
 

@@ -3,7 +3,6 @@ using DarkPatterns.OpenApiCodegen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.Json.Documents;
 using DarkPatterns.OpenApi.Transformations.Diagnostics;
 using DarkPatterns.OpenApi.Transformations.Specifications;
@@ -42,59 +41,42 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 	{
 		var registry = new DocumentRegistry(ToRegistryOptions(additionalTextInfos));
 		var schemaRegistry = new SchemaRegistry(registry);
-		var pathResolver = ToPathResolver(additionalTextInfos);
+		var settings = new TransformSettings(schemaRegistry, GetVersionInfo());
 
-		var entrypoints = additionalTextInfos.Where(f => f.Types.Contains(sourceGroup));
-		return entrypoints.Select(ep => GenerateOneDocument(ep, schemaRegistry, LoadOptionsFromMetadata(ep.Metadata, additionalTextInfos), pathResolver))
-			.Aggregate((prev, next) => new GenerationResult([.. prev.Sources, .. next.Sources], [.. prev.Diagnostics, .. next.Diagnostics]));
+		var entrypointTransforms =
+			from document in additionalTextInfos.Where(f => f.Types.Contains(sourceGroup))
+			let loaded = registry.ResolveDocument(ToInternalUri(document), relativeDocument: null)
+			let parseResult = CommonParsers.DefaultParsers.Parse(loaded, registry)
+			let options = LoadOptionsFromMetadata(document.Metadata, additionalTextInfos)
+			select new PathControllerTransformerFactory(settings).Build(parseResult, options);
+
+		var sourceProvider = new CompositeOpenApiSourceProvider([
+			.. entrypointTransforms,
+			new CSharpSchemaSourceProvider(settings, LoadOptionsFromMetadata(additionalTextInfos)),
+		]);
+
+		var result = sourceProvider.GetSources();
+
+		return new GenerationResult(
+			result.Sources,
+			[.. result.Diagnostics.Select(DiagnosticsConversion.GetConverter(ToPathResolver(additionalTextInfos)))]
+		);
 	}
 
-	public static GenerationResult GenerateOneDocument(AdditionalTextInfo entrypoint, SchemaRegistry schemaRegistry, CSharpServerSchemaOptions options, PathResolver pathResolver)
+	private static CSharpServerSchemaOptions LoadOptionsFromMetadata(IEnumerable<AdditionalTextInfo> additionalSchemas)
 	{
-		var baseDocument = schemaRegistry.DocumentRegistry.ResolveDocument(ToInternalUri(entrypoint), null);
-		var diagnosticConverter = DiagnosticsConversion.GetConverter(pathResolver);
-		var parseResult = CommonParsers.DefaultParsers.Parse(baseDocument, schemaRegistry.DocumentRegistry);
-		var parsedDiagnostics = parseResult.Diagnostics;
-		if (!parseResult.HasDocument || parseResult.Document is not { } document)
-			return new GenerationResult([], Convert(parsedDiagnostics));
+		using var defaultJsonStream = CSharpSchemaOptions.GetDefaultOptionsJson();
+		using var serverJsonStream = CSharpServerSchemaOptions.GetServerDefaultOptionsJson();
+		var result = OptionsLoader.LoadOptions<CSharpServerSchemaOptions>([defaultJsonStream, serverJsonStream], []);
 
-		var sourceProvider = TransformSettings.BuildComposite(schemaRegistry, GetVersionInfo(), [
-			(s) => new PathControllerTransformerFactory(s).Build(document, options),
-			(s) => new CSharpSchemaSourceProvider(s, options)
-		]);
-		var openApiDiagnostic = new OpenApiTransformDiagnostic();
+		foreach (var entry in additionalSchemas)
+		{
+			var ns = GetStandardNamespace(entry.Metadata, result);
+			if (result.DefaultNamespace != ns)
+				result.NamespacesBySchema[ToInternalUri(entry)] = ns;
+		}
 
-		try
-		{
-			var result = sourceProvider.GetSources();
-
-			return new GenerationResult(
-				result.Sources,
-				Convert([.. parsedDiagnostics, .. result.Diagnostics])
-			);
-		}
-		catch (Exception) when (parsedDiagnostics is not [])
-		{
-			// Assume that the parser errors caused the exception.
-			return new GenerationResult(
-				[],
-				Convert(parsedDiagnostics)
-			);
-		}
-#pragma warning disable CA1031 // Catching a general exception type here to turn it into a diagnostic for reporting
-		catch (Exception ex)
-		{
-			return new GenerationResult(
-				[],
-				Convert(ex.ToDiagnostics(schemaRegistry.DocumentRegistry, NodeMetadata.FromRoot(baseDocument)))
-			);
-		}
-#pragma warning restore CA1031 // Do not catch general exception types
-
-		DiagnosticInfo[] Convert(IEnumerable<DiagnosticBase> diagnostics)
-		{
-			return diagnostics.Select(diagnosticConverter).ToArray();
-		}
+		return result;
 	}
 
 	private static CSharpServerSchemaOptions LoadOptionsFromMetadata(IReadOnlyDictionary<string, string?> entrypointMetadata, IEnumerable<AdditionalTextInfo> additionalSchemas)

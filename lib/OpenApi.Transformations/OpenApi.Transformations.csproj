@@ -3,9 +3,6 @@
 		<AssemblyName>$(RootNamespacePrefix).$(MSBuildProjectName)</AssemblyName>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<VersionPrefix>$(SharedAnalyzerLibrariesVersion)</VersionPrefix>
-
-		<!-- CA1032 - Implement standard exception constructors -->
-		<NoWarn>$(NoWarn),CA1032</NoWarn>
 	</PropertyGroup>
 	<ItemGroup>
 	  <None Remove="Specifications\OpenApi_3_1_0\Schemas\schema-base.yaml" />

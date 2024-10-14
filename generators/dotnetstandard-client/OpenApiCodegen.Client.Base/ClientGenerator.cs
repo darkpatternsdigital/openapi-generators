@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using DarkPatterns.OpenApi.Transformations;
+﻿using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApiCodegen;
 using System;
 using System.Collections.Generic;
@@ -98,21 +97,7 @@ public class ClientGenerator : IOpenApiCodeGenerator
 		var fullNamespace = entrypointMetadata[propNamespace];
 		var optionsFiles = entrypointMetadata[propConfig];
 		using var defaultJsonStream = CSharpSchemaOptions.GetDefaultOptionsJson();
-		var builder = new ConfigurationBuilder();
-		builder.AddYamlStream(defaultJsonStream);
-		if (optionsFiles is { Length: > 0 })
-		{
-			foreach (var file in optionsFiles.Split(';'))
-			{
-				if (System.IO.File.Exists(file))
-				{
-					builder.AddYamlFile(file);
-				}
-			}
-		}
-		var result = builder.Build().Get<CSharpSchemaOptions>();
-		// TODO - generate diagnostic instead of throwing exception
-		if (result == null) throw new InvalidOperationException("Could not build schema options");
+		var result = OptionsLoader.LoadOptions<CSharpSchemaOptions>([defaultJsonStream], optionsFiles is { Length: > 0 } s ? s.Split(';') : []);
 
 		result.DefaultNamespace = fullNamespace ?? GetStandardNamespace(entrypointMetadata, result);
 		foreach (var entry in additionalSchemas)

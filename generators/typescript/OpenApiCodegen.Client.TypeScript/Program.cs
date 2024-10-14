@@ -129,13 +129,7 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 		private static TypeScriptSchemaOptions LoadOptions(string? optionsPath)
 		{
 			using var defaultJsonStream = TypeScriptSchemaOptions.GetDefaultOptionsJson();
-			var builder = new ConfigurationBuilder();
-			builder.AddYamlStream(defaultJsonStream);
-			if (optionsPath is { Length: > 0 })
-				builder.AddYamlFile(Path.Combine(Directory.GetCurrentDirectory(), optionsPath));
-			var result = builder.Build().Get<TypeScriptSchemaOptions>()
-				?? throw new InvalidOperationException("Could not construct options");
-			return result;
+			return OptionsLoader.LoadOptions<TypeScriptSchemaOptions>([defaultJsonStream], optionsPath is { Length: > 0 } ? [optionsPath] : []);
 		}
 	}
 }

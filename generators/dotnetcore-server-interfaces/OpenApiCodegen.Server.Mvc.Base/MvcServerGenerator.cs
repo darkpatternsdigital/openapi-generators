@@ -102,22 +102,7 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 		var pathPrefix = entrypointMetadata[propPathPrefix];
 		using var defaultJsonStream = CSharpSchemaOptions.GetDefaultOptionsJson();
 		using var serverJsonStream = CSharpServerSchemaOptions.GetServerDefaultOptionsJson();
-		var builder = new ConfigurationBuilder();
-		builder.AddYamlStream(defaultJsonStream);
-		builder.AddYamlStream(serverJsonStream);
-		if (optionsFiles is { Length: > 0 })
-		{
-			foreach (var file in optionsFiles.Split(';'))
-			{
-				if (System.IO.File.Exists(file))
-				{
-					builder.AddYamlFile(file);
-				}
-			}
-		}
-		var result = builder.Build().Get<CSharpServerSchemaOptions>();
-		// TODO - generate diagnostic instead of throwing exception
-		if (result == null) throw new InvalidOperationException("Could not build schema options");
+		var result = OptionsLoader.LoadOptions<CSharpServerSchemaOptions>([defaultJsonStream, serverJsonStream], optionsFiles is { Length: > 0 } s ? s.Split(';') : []);
 
 		if (pathPrefix != null)
 			result.PathPrefix = pathPrefix;

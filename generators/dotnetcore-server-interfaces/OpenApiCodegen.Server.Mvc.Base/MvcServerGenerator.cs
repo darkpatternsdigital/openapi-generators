@@ -20,6 +20,8 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 	const string propLink = "link";
 	const string propPathPrefix = "pathPrefix";
 	const string propSchemaId = "schemaId";
+	const string sourceGroup = "OpenApiServerInterface";
+	const string sharedSourceGroup = "JsonSchemaDocument";
 	private readonly IEnumerable<string> metadataKeys =
 	[
 		propNamespace,
@@ -32,12 +34,19 @@ public class MvcServerGenerator : IOpenApiCodeGenerator
 
 	public IEnumerable<string> MetadataKeys => metadataKeys;
 
-	public AdditionalTextInfo ToFileInfo(string documentPath, string documentContents, IReadOnlyDictionary<string, string?> additionalTextMetadata)
+	public AdditionalTextInfo ToFileInfo(string documentPath, string documentContents, IReadOnlyList<string> types, IReadOnlyDictionary<string, string?> additionalTextMetadata)
 	{
-		return new(Path: documentPath, Contents: documentContents, Metadata: additionalTextMetadata);
+		return new(Path: documentPath, Contents: documentContents, Types: types, Metadata: additionalTextMetadata);
 	}
 
-	public GenerationResult Generate(AdditionalTextInfo entrypoint, IEnumerable<AdditionalTextInfo> other)
+	public GenerationResult Generate(IEnumerable<AdditionalTextInfo> additionalTextInfos)
+	{
+		var entrypoints = additionalTextInfos.Where(f => f.Types.Contains(sourceGroup));
+		return entrypoints.Select(ep => Generate(ep, additionalTextInfos.Where(f => f.Types.Contains(sharedSourceGroup))))
+			.Aggregate((prev, next) => new GenerationResult([.. prev.Sources, .. next.Sources], [.. prev.Diagnostics, .. next.Diagnostics]));
+	}
+
+	public static GenerationResult Generate(AdditionalTextInfo entrypoint, IEnumerable<AdditionalTextInfo> other)
 	{
 		var options = LoadOptionsFromMetadata(entrypoint.Metadata, other);
 		var (baseDocument, registry, pathResolver) = LoadDocument(entrypoint, options, other);

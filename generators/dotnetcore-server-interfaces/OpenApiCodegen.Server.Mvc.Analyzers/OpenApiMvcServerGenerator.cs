@@ -1,13 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Text;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
-using System.Text;
 
 #if NETSTANDARD2_0
 #nullable disable warnings
@@ -19,8 +13,6 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc
 	public sealed class OpenApiMvcServerGenerator : BaseGenerator
 	{
 		private const string sourceItemGroupKey = "SourceItemGroup";
-		const string sourceGroup = "OpenApiServerInterface";
-		const string sharedSourceGroup = "JsonSchemaDocument";
 		private static readonly DiagnosticDescriptor IncludeDependentDll = new DiagnosticDescriptor(id: "DPDAPICTRL001",
 																									title: "Include a reference to DarkPatterns.OpenApiCodegen.Json.Extensions",
 																									messageFormat: "Include a reference to DarkPatterns.OpenApiCodegen.Json.Extensions",
@@ -41,22 +33,13 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc
 			}
 		}
 
-		protected override bool IsEntrypointFile(AdditionalTextWithOptions additionalText)
+		protected override string[] GetFileTypes(AdditionalTextWithOptions additionalText)
 		{
-			string? currentSourceGroup = additionalText.ConfigOptions.GetAdditionalFilesMetadata(sourceItemGroupKey);
-			return currentSourceGroup == sourceGroup;
+			var type = additionalText.ConfigOptions.GetAdditionalFilesMetadata(sourceItemGroupKey);
+			if (type == null) return [];
+
+			// sourceGroup or sharedSourceGroup
+			return [type];
 		}
-
-		protected override bool IsRelevantFile(AdditionalTextWithOptions additionalText)
-		{
-			string? currentSourceGroup = additionalText.ConfigOptions.GetAdditionalFilesMetadata(sourceItemGroupKey);
-			if (currentSourceGroup != sourceGroup && currentSourceGroup != sharedSourceGroup)
-			{
-				return false;
-			}
-
-			return true;
-		}
-
 	}
 }

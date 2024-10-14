@@ -19,7 +19,7 @@ public record DiagnosticLocation(string FilePath, DiagnosticLocationRange? Range
 
 public record DiagnosticInfo(string Id, DiagnosticLocation Location, IReadOnlyList<string> Metadata);
 
-public record AdditionalTextInfo(string Path, string Contents, IReadOnlyDictionary<string, string?> Metadata);
+public record AdditionalTextInfo(string Path, string Contents, IReadOnlyList<string> Types, IReadOnlyDictionary<string, string?> Metadata);
 
 public record GenerationResult(IReadOnlyList<SourceEntry> Sources, IReadOnlyList<DiagnosticInfo> Diagnostics);
 
@@ -28,6 +28,6 @@ public interface IOpenApiCodeGenerator
 {
 	IEnumerable<string> MetadataKeys { get; }
 
-	AdditionalTextInfo ToFileInfo(string documentPath, string documentContents, IReadOnlyDictionary<string, string?> additionalTextMetadata);
-	GenerationResult Generate(AdditionalTextInfo entrypoint, IEnumerable<AdditionalTextInfo> other);
+	AdditionalTextInfo ToFileInfo(string documentPath, string documentContents, IReadOnlyList<string> types, IReadOnlyDictionary<string, string?> additionalTextMetadata);
+	GenerationResult Generate(IEnumerable<AdditionalTextInfo> additionalTextInfos);
 }

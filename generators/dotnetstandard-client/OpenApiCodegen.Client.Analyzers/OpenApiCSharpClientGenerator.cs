@@ -18,8 +18,6 @@ namespace DarkPatterns.OpenApiCodegen.Client
 	public sealed class OpenApiCSharpClientGenerator : BaseGenerator
 	{
 		private const string sourceItemGroupKey = "SourceItemGroup";
-		const string sourceGroup = "OpenApiClientInterface";
-		const string sharedSourceGroup = "JsonSchemaDocument";
 		private static readonly DiagnosticDescriptor IncludeDependentDll = new DiagnosticDescriptor(id: "DPDAPICLNT001",
 																								  title: "Include a reference to DarkPatterns.OpenApiCodegen.Json.Extensions",
 																								  messageFormat: "Include a reference to DarkPatterns.OpenApiCodegen.Json.Extensions",
@@ -40,21 +38,13 @@ namespace DarkPatterns.OpenApiCodegen.Client
 			}
 		}
 
-		protected override bool IsEntrypointFile(AdditionalTextWithOptions additionalText)
+		protected override string[] GetFileTypes(AdditionalTextWithOptions additionalText)
 		{
-			string? currentSourceGroup = additionalText.ConfigOptions.GetAdditionalFilesMetadata(sourceItemGroupKey);
-			return currentSourceGroup == sourceGroup;
-		}
+			var type = additionalText.ConfigOptions.GetAdditionalFilesMetadata(sourceItemGroupKey);
+			if (type == null) return [];
 
-		protected override bool IsRelevantFile(AdditionalTextWithOptions additionalText)
-		{
-			string? currentSourceGroup = additionalText.ConfigOptions.GetAdditionalFilesMetadata(sourceItemGroupKey);
-			if (currentSourceGroup != sourceGroup && currentSourceGroup != sharedSourceGroup)
-			{
-				return false;
-			}
-
-			return true;
+			// sourceGroup or sharedSourceGroup
+			return [type];
 		}
 	}
 }

@@ -19,6 +19,10 @@ public class ClientGenerator : IOpenApiCodeGenerator
 	const string propIdentity = "identity";
 	const string propLink = "link";
 	const string propSchemaId = "schemaId";
+
+	const string sourceGroup = "OpenApiClientInterface";
+	const string sharedSourceGroup = "JsonSchemaDocument";
+
 	private readonly IEnumerable<string> metadataKeys = new[]
 	{
 		propNamespace,
@@ -28,12 +32,19 @@ public class ClientGenerator : IOpenApiCodeGenerator
 	};
 	public IEnumerable<string> MetadataKeys => metadataKeys;
 
-	public AdditionalTextInfo ToFileInfo(string documentPath, string documentContents, IReadOnlyDictionary<string, string?> additionalTextMetadata)
+	public AdditionalTextInfo ToFileInfo(string documentPath, string documentContents, IReadOnlyList<string> types, IReadOnlyDictionary<string, string?> additionalTextMetadata)
 	{
-		return new(Path: documentPath, Contents: documentContents, Metadata: additionalTextMetadata);
+		return new(Path: documentPath, Contents: documentContents, Types: types, Metadata: additionalTextMetadata);
 	}
 
-	public GenerationResult Generate(AdditionalTextInfo entrypoint, IEnumerable<AdditionalTextInfo> other)
+	public GenerationResult Generate(IEnumerable<AdditionalTextInfo> additionalTextInfos)
+	{
+		var entrypoints = additionalTextInfos.Where(f => f.Types.Contains(sourceGroup));
+		return entrypoints.Select(ep => Generate(ep, additionalTextInfos.Where(f => f.Types.Contains(sharedSourceGroup))))
+			.Aggregate((prev, next) => new GenerationResult([.. prev.Sources, .. next.Sources], [.. prev.Diagnostics, .. next.Diagnostics]));
+	}
+
+	public static GenerationResult Generate(AdditionalTextInfo entrypoint, IEnumerable<AdditionalTextInfo> other)
 	{
 		var options = LoadOptionsFromMetadata(entrypoint.Metadata, other);
 		var (baseDocument, registry, pathResolver) = LoadDocument(entrypoint, options, other);
@@ -41,7 +52,7 @@ public class ClientGenerator : IOpenApiCodeGenerator
 		var parseResult = CommonParsers.DefaultParsers.Parse(baseDocument, registry);
 		var parsedDiagnostics = parseResult.Diagnostics;
 		if (!parseResult.HasDocument || parseResult.Document == null)
-			return new GenerationResult([], parsedDiagnostics.Select(diagnosticConverter).ToArray());
+			return new GenerationResult([], Convert(parsedDiagnostics));
 
 		var sourceProvider = TransformSettings.BuildComposite(parseResult.Document, registry, GetVersionInfo(), [
 			(s) => new ClientTransformerFactory(s).Build(parseResult.Document, options),
@@ -56,14 +67,14 @@ public class ClientGenerator : IOpenApiCodeGenerator
 
 			return new GenerationResult(
 				sources,
-				parsedDiagnostics.Select(diagnosticConverter).ToArray()
+				Convert(parsedDiagnostics)
 			);
 		}
 		catch (Exception) when (parsedDiagnostics is not [])
 		{
 			return new GenerationResult(
 				[],
-				parsedDiagnostics.Select(diagnosticConverter).ToArray()
+				Convert(parsedDiagnostics)
 			);
 		}
 #pragma warning disable CA1031 // Catching a general exception type here to turn it into a diagnostic for reporting
@@ -71,10 +82,15 @@ public class ClientGenerator : IOpenApiCodeGenerator
 		{
 			return new GenerationResult(
 				[],
-				ex.ToDiagnostics(registry, NodeMetadata.FromRoot(baseDocument)).Select(diagnosticConverter).ToArray()
+				Convert(ex.ToDiagnostics(registry, NodeMetadata.FromRoot(baseDocument)))
 			);
 		}
 #pragma warning restore CA1031 // Do not catch general exception types
+
+		DiagnosticInfo[] Convert(IEnumerable<DiagnosticBase> diagnostics)
+		{
+			return diagnostics.Select(diagnosticConverter).ToArray();
+		}
 	}
 
 	private static CSharpSchemaOptions LoadOptionsFromMetadata(IReadOnlyDictionary<string, string?> entrypointMetadata, IEnumerable<AdditionalTextInfo> additionalSchemas)

@@ -4,7 +4,6 @@ using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using static System.Linq.Expressions.Expression;
 using System.Reflection;
@@ -34,8 +33,8 @@ public abstract class BaseGenerator :
 	private static readonly object lockHandle = new object();
 
 	private readonly Func<IEnumerable<string>> getMetadataKeys;
-	private readonly Func<string, string, IReadOnlyDictionary<string, string?>, object> toAdditionalTextType;
-	private readonly Func<object, object[], object> generate;
+	private readonly Func<string, string, IReadOnlyList<string>, IReadOnlyDictionary<string, string?>, object> toAdditionalTextType;
+	private readonly Func<object[], object> generate;
 
 	protected BaseGenerator(string generatorTypeName, string assemblyName)
 	{
@@ -61,21 +60,20 @@ public abstract class BaseGenerator :
 		var toAdditionalTextTypeMethod = generatorType.GetMethod("ToFileInfo")!;
 		var pathParameter = Parameter(typeof(string));
 		var textParameter = Parameter(typeof(string));
+		var typesParamter = Parameter(typeof(IReadOnlyList<string>));
 		var dictionaryParameter = Parameter(typeof(IReadOnlyDictionary<string, string?>));
 		getMetadataKeys = Lambda<Func<IEnumerable<string>>>(Property(generatorExpression, "MetadataKeys")).Compile();
-		toAdditionalTextType = Lambda<Func<string, string, IReadOnlyDictionary<string, string?>, object>>(
-			Convert(Call(generatorExpression, toAdditionalTextTypeMethod, pathParameter, textParameter, dictionaryParameter), typeof(object))
-			, pathParameter, textParameter, dictionaryParameter).Compile();
+		toAdditionalTextType = Lambda<Func<string, string, IReadOnlyList<string>, IReadOnlyDictionary<string, string?>, object>>(
+			Convert(Call(generatorExpression, toAdditionalTextTypeMethod, pathParameter, textParameter, typesParamter, dictionaryParameter), typeof(object))
+			, pathParameter, textParameter, typesParamter, dictionaryParameter).Compile();
 
-		var generateMethod = generatorType.GetMethod("Generate")!;
-		var ofTypeMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.OfType))!.MakeGenericMethod(generateMethod.GetParameters()[1].ParameterType.GetGenericArguments())!;
-		var entrypointParameter = Parameter(typeof(object));
+		var generateMethod = generatorType.GetMethods().FirstOrDefault(m => m.Name == "Generate" && m.GetParameters().Length == 1)!;
+		var ofTypeMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.OfType))!.MakeGenericMethod(generateMethod.GetParameters()[0].ParameterType.GetGenericArguments())!;
 		var otherFilesParameter = Parameter(typeof(object[]));
-		generate = Lambda<Func<object, object[], object>>(
+		generate = Lambda<Func<object[], object>>(
 			Convert(Call(generatorExpression, generateMethod,
-				Convert(entrypointParameter, generateMethod.GetParameters()[0].ParameterType),
 				Call(null, ofTypeMethod, otherFilesParameter)), typeof(object))
-			, entrypointParameter, otherFilesParameter).Compile();
+			, otherFilesParameter).Compile();
 
 		Assembly? ResolveAssembly(object sender, ResolveEventArgs ev)
 		{
@@ -136,16 +134,10 @@ public abstract class BaseGenerator :
 		// Build an incremental "watcher"
 		var allAdditionalTexts = context.AdditionalTextsProvider.Combine(context.AnalyzerConfigOptionsProvider)
 			.Select(static (tuple, cancellation) => GetOptions(tuple.Left, tuple.Right))
-			.Where(static (tuple) => tuple.TextContents != null)
-			.Where(IsRelevantFile);
-		// TODO: the incremental watcher could include only the additional texts actually needed
-		var additionalTexts = allAdditionalTexts
-			.Where(IsEntrypointFile)
-			.Combine(allAdditionalTexts.Collect())
-			.Select(static (tuple, cancellation) => new IncrementalData(tuple.Left, tuple.Right.ToArray()));
-		context.RegisterSourceOutput(additionalTexts, (context, tuple) =>
+			.Where(static (tuple) => tuple.TextContents != null);
+		context.RegisterSourceOutput(allAdditionalTexts.Collect(), (context, tuple) =>
 		{
-			GenerateSources(tuple.Entrypoint, tuple.OtherKnownSchemas, context);
+			GenerateSources(tuple, context);
 		});
 	}
 #endif
@@ -155,14 +147,8 @@ public abstract class BaseGenerator :
 		ReportCompilationDiagnostics(context.Compilation, context);
 
 		var allAdditionalTexts = context.AdditionalFiles.Select(file => GetOptions(file, context.AnalyzerConfigOptions))
-			.Where(static (tuple) => tuple.TextContents != null)
-			.Where(IsRelevantFile);
-		var additionalTexts = allAdditionalTexts
-			.Where(IsEntrypointFile);
-		foreach (var additionalText in additionalTexts)
-		{
-			GenerateSources(additionalText, allAdditionalTexts, context);
-		}
+			.Where(static (tuple) => tuple.TextContents != null);
+		GenerateSources(allAdditionalTexts, context);
 	}
 
 	public void Initialize(GeneratorInitializationContext context)
@@ -189,15 +175,13 @@ public abstract class BaseGenerator :
 	}
 
 	protected abstract void ReportCompilationDiagnostics(Compilation compilation, CompilerApis apis);
-	protected abstract bool IsEntrypointFile(AdditionalTextWithOptions additionalText);
-	protected abstract bool IsRelevantFile(AdditionalTextWithOptions additionalText);
-	private void GenerateSources(AdditionalTextWithOptions additionalText, IEnumerable<AdditionalTextWithOptions> otherAdditionalText, CompilerApis apis)
+	protected abstract string[] GetFileTypes(AdditionalTextWithOptions additionalText);
+	private void GenerateSources(IEnumerable<AdditionalTextWithOptions> additionalText, CompilerApis apis)
 	{
 		IEnumerable<string> metadataKeys = getMetadataKeys();
 		// result is of type DarkPatterns.OpenApiCodegen.GenerationResult
 		dynamic result = generate(
-			ToAdditionalFileType(additionalText, metadataKeys),
-			otherAdditionalText.Select(f => ToAdditionalFileType(f, metadataKeys)).ToArray()
+			additionalText.Select(f => ToAdditionalFileType(f, metadataKeys, GetFileTypes(f))).ToArray()
 		);
 		foreach (var entry in result.Sources)
 		{
@@ -238,11 +222,12 @@ public abstract class BaseGenerator :
 		}
 	}
 
-	object ToAdditionalFileType(AdditionalTextWithOptions additionalText, IEnumerable<string> metadataKeys)
+	object ToAdditionalFileType(AdditionalTextWithOptions additionalText, IEnumerable<string> metadataKeys, IEnumerable<string> fileTypes)
 	{
 		return toAdditionalTextType(
 					additionalText.Path,
 					additionalText.TextContents,
+					fileTypes.ToArray(),
 					new ReadOnlyDictionary<string, string?>(
 						metadataKeys.ToDictionary(key => key, additionalText.ConfigOptions.GetAdditionalFilesMetadata)
 					)

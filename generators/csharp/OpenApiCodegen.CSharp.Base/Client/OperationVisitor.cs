@@ -1,17 +1,16 @@
 ﻿using Json.Pointer;
-using DarkPatterns.OpenApi.CSharp.Templates;
 using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApi.Abstractions;
-using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DarkPatterns.Json.Documents;
+using DarkPatterns.OpenApiCodegen.CSharp.Client.Templates;
+using DarkPatterns.OpenApi.CSharp;
 
-namespace DarkPatterns.OpenApi.CSharp;
+namespace DarkPatterns.OpenApiCodegen.CSharp.Client;
 
 class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions options, string controllerClassName) : OpenApiDocumentVisitor<OperationVisitor.Argument>
 {
@@ -24,7 +23,7 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 		OpenApiPath? CurrentPath = null,
 		OpenApiOperation? CurrentOperation = null
 	);
-	public delegate void RegisterControllerOperation(Templates.Operation operation);
+	public delegate void RegisterControllerOperation(Operation operation);
 
 	public class OperationBuilder
 	{
@@ -57,7 +56,7 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 
 		var builder = new OperationBuilder(operation);
 
-		var operationId = operation.OperationId ?? (httpMethod + path);
+		var operationId = operation.OperationId ?? httpMethod + path;
 		var noBody = OperationRequestBodyFactory(operationId, null, Enumerable.Empty<OperationParameter>(), false);
 		if (operation.RequestBody == null || !operation.RequestBody.Required)
 			builder.RequestBodies.Add(noBody);
@@ -71,7 +70,7 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 		if (requestBodies.Length > 0)
 		{
 			argument.RegisterControllerOperation(
-				new Templates.Operation(
+				new Operation(
 				 HttpMethod: CSharpNaming.ToTitleCaseIdentifier(httpMethod, []),
 				 Summary: operation.Summary,
 				 Description: operation.Description,
@@ -79,7 +78,7 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 				 Path: path,
 				 RequestBodies: requestBodies,
 				 HasQueryStringEmbedded: path.Contains("?"),
-				 Responses: new Templates.OperationResponses(
+				 Responses: new OperationResponses(
 					 DefaultResponse: builder.DefaultResponse,
 					 StatusResponse: new(builder.StatusResponses)
 				 ),
@@ -91,7 +90,7 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 	public override void Visit(OpenApiParameter param, Argument argument)
 	{
 		var dataType = inlineSchemas.ToInlineDataType(param.Schema) ?? CSharpInlineSchemas.AnyObject;
-		argument.Builder?.SharedParameters.Add(new Templates.OperationParameter(
+		argument.Builder?.SharedParameters.Add(new OperationParameter(
 			RawName: param.Name,
 			ParamName: CSharpNaming.ToParameterName(param.Name, options.ReservedIdentifiers()),
 			Description: param.Description,
@@ -138,7 +137,7 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 			Headers: (from entry in response.Headers
 					  let required = entry.Required
 					  let dataType = inlineSchemas.ToInlineDataType(entry.Schema)
-					  select new Templates.OperationResponseHeader(
+					  select new OperationResponseHeader(
 						  RawName: entry.Name,
 						  ParamName: CSharpNaming.ToParameterName("header " + entry.Name, options.ReservedIdentifiers()),
 						  Description: entry.Description,
@@ -176,7 +175,7 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 			from param in mediaType.Schema?.TryGetAnnotation<PropertiesKeyword>()?.Properties
 			let required = mediaType.Schema?.TryGetAnnotation<RequiredKeyword>()?.RequiredProperties.Contains(param.Key) ?? false
 			let dataType = inlineSchemas.ToInlineDataType(param.Value)
-			select new Templates.OperationParameter(
+			select new OperationParameter(
 				RawName: param.Key,
 				ParamName: CSharpNaming.ToParameterName(param.Key, options.ReservedIdentifiers()),
 				Description: null,
@@ -199,7 +198,7 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 		IEnumerable<OperationParameter> GetStandardParams() =>
 			from ct in new[] { mediaType }
 			let dataType = inlineSchemas.ToInlineDataType(ct.Schema)
-			select new Templates.OperationParameter(
+			select new OperationParameter(
 				RawName: null,
 				ParamName: CSharpNaming.ToParameterName(argument.Builder?.Operation.OperationId + " body", options.ReservedIdentifiers()),
 				Description: null,
@@ -223,7 +222,7 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 
 	private Func<OperationParameter[], OperationRequestBody> OperationRequestBodyFactory(string operationName, string? requestBodyMimeType, IEnumerable<OperationParameter> parameters, bool isForm)
 	{
-		return sharedParams => new Templates.OperationRequestBody(
+		return sharedParams => new OperationRequestBody(
 			 Name: CSharpNaming.ToTitleCaseIdentifier(operationName, options.ReservedIdentifiers()),
 			 IsForm: isForm,
 			 IsFile: parameters.Any(t => t.IsFile),
@@ -237,7 +236,7 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 	{
 		argument.Builder?.SecurityRequirements.Add(new OperationSecurityRequirement(
 							 (from scheme in securityRequirement.SchemeRequirements
-							  select new Templates.OperationSecuritySchemeRequirement(scheme.SchemeName, scheme.ScopeNames.ToArray())).ToArray())
+							  select new OperationSecuritySchemeRequirement(scheme.SchemeName, scheme.ScopeNames.ToArray())).ToArray())
 						 );
 	}
 }

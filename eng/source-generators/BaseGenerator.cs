@@ -134,7 +134,8 @@ public abstract class BaseGenerator :
 		// Build an incremental "watcher"
 		var allAdditionalTexts = context.AdditionalTextsProvider.Combine(context.AnalyzerConfigOptionsProvider)
 			.Select(static (tuple, cancellation) => GetOptions(tuple.Left, tuple.Right))
-			.Where(static (tuple) => tuple.TextContents != null);
+			.Where(static (tuple) => tuple.TextContents != null)
+			.Where((tuple) => GetFileTypes(tuple) is not []);
 		context.RegisterSourceOutput(allAdditionalTexts.Collect(), (context, tuple) =>
 		{
 			GenerateSources(tuple, context);
@@ -147,7 +148,8 @@ public abstract class BaseGenerator :
 		ReportCompilationDiagnostics(context.Compilation, context);
 
 		var allAdditionalTexts = context.AdditionalFiles.Select(file => GetOptions(file, context.AnalyzerConfigOptions))
-			.Where(static (tuple) => tuple.TextContents != null);
+			.Where(static (tuple) => tuple.TextContents != null)
+			.ToArray();
 		GenerateSources(allAdditionalTexts, context);
 	}
 
@@ -179,9 +181,11 @@ public abstract class BaseGenerator :
 	private void GenerateSources(IEnumerable<AdditionalTextWithOptions> additionalText, CompilerApis apis)
 	{
 		IEnumerable<string> metadataKeys = getMetadataKeys();
+		var additionalFileInputs = additionalText.Select((f) => AdditionalFileTypeParams.Load(f, metadataKeys, GetFileTypes(f))).ToArray();
+
 		// result is of type DarkPatterns.OpenApiCodegen.GenerationResult
 		dynamic result = generate(
-			additionalText.Select(f => ToAdditionalFileType(f, metadataKeys, GetFileTypes(f))).ToArray()
+			additionalFileInputs.Select(ToAdditionalFileType).ToArray()
 		);
 		foreach (var entry in result.Sources)
 		{
@@ -222,15 +226,28 @@ public abstract class BaseGenerator :
 		}
 	}
 
-	object ToAdditionalFileType(AdditionalTextWithOptions additionalText, IEnumerable<string> metadataKeys, IEnumerable<string> fileTypes)
+	record AdditionalFileTypeParams(string Path, string TextContents, IReadOnlyList<string> FileTypes, ReadOnlyDictionary<string, string?> Metadata)
 	{
-		return toAdditionalTextType(
+		public static AdditionalFileTypeParams Load(AdditionalTextWithOptions additionalText, IEnumerable<string> metadataKeys, IEnumerable<string> fileTypes)
+		{
+			return new AdditionalFileTypeParams(
 					additionalText.Path,
 					additionalText.TextContents,
 					fileTypes.ToArray(),
 					new ReadOnlyDictionary<string, string?>(
 						metadataKeys.ToDictionary(key => key, additionalText.ConfigOptions.GetAdditionalFilesMetadata)
 					)
+				);
+		}
+	}
+
+	object ToAdditionalFileType(AdditionalFileTypeParams p)
+	{
+		return toAdditionalTextType(
+					p.Path,
+					p.TextContents,
+					p.FileTypes,
+					p.Metadata
 				);
 	}
 

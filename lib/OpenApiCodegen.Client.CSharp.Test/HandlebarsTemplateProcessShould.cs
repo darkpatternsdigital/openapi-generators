@@ -1,4 +1,5 @@
 using DarkPatterns.OpenApi.CSharp;
+using DarkPatterns.OpenApiCodegen.CSharp.Client;
 using System;
 using Xunit;
 
@@ -9,7 +10,7 @@ namespace DarkPatterns.OpenApiCodegen.Client.CSharp
 		[Fact]
 		public void RegisterAllHandlebarsTemplates()
 		{
-			var handlebars = ControllerHandlebarsTemplateProcess.CreateHandlebars();
+			var handlebars = ClientHandlebarsTemplateProcess.CreateHandlebars();
 
 			Assert.True(handlebars.Configuration.RegisteredTemplates.Count >= 4);
 		}

@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 #if NETSTANDARD2_0
@@ -12,7 +13,9 @@ namespace DarkPatterns.OpenApiCodegen.CSharp;
 [Generator]
 public sealed class OpenApiCSharpGenerator() : BaseGenerator("DarkPatterns.OpenApiCodegen.CSharp.CSharpGenerator", "DarkPatterns.OpenApiCodegen.CSharp.Base")
 {
-	private const string sourceItemGroupKey = "SourceItemGroup";
+	private const string includeKey = "DPDInclude";
+	private const string mvcServerType = "DPDGenerateMvcServer";
+	private const string clientType = "DPDGenerateClient";
 	private static readonly DiagnosticDescriptor IncludeDependentDll = new DiagnosticDescriptor(id: "DPDAPI001",
 																								title: "Include a reference to DarkPatterns.OpenApiCodegen.Json.Extensions",
 																								messageFormat: "Include a reference to DarkPatterns.OpenApiCodegen.Json.Extensions",
@@ -31,10 +34,16 @@ public sealed class OpenApiCSharpGenerator() : BaseGenerator("DarkPatterns.OpenA
 
 	protected override string[] GetFileTypes(AdditionalTextWithOptions additionalText)
 	{
-		var type = additionalText.ConfigOptions.GetAdditionalFilesMetadata(sourceItemGroupKey);
-		if (type == null) return [];
+		return [
+			.. IfHasProperty(includeKey, "JsonSchema"),
+			.. IfHasProperty(mvcServerType, "MvcServer"),
+			.. IfHasProperty(clientType, "Client"),
+		];
 
-		// sourceGroup or sharedSourceGroup
-		return [type];
+		IEnumerable<string> IfHasProperty(string property, string result)
+		{
+			var v = additionalText.ConfigOptions.GetAdditionalFilesMetadata(property);
+			return v == "true" ? [result] : [];
+		}
 	}
 }

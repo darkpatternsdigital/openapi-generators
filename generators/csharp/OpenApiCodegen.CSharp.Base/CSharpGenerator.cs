@@ -8,6 +8,7 @@ using DarkPatterns.OpenApi.Transformations.Specifications;
 using DarkPatterns.OpenApiCodegen.Handlebars;
 using DarkPatterns.OpenApi.CSharp;
 using DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
+using DarkPatterns.OpenApiCodegen.CSharp.Client;
 
 namespace DarkPatterns.OpenApiCodegen.CSharp;
 
@@ -19,8 +20,10 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 	const string propLink = "link";
 	const string propPathPrefix = "pathPrefix";
 	const string propSchemaId = "schemaId";
-	const string sourceGroup = "OpenApiServerInterface";
-	const string sharedSourceGroup = "JsonSchemaDocument";
+
+	const string typeMvcServer = "MvcServer";
+	const string typeClient = "Client";
+	const string sharedSourceGroup = "JsonSchema";
 	private readonly IEnumerable<string> metadataKeys =
 	[
 		propNamespace,
@@ -44,15 +47,22 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 		var schemaRegistry = new SchemaRegistry(registry);
 		var settings = new TransformSettings(schemaRegistry, GetVersionInfo());
 
-		var entrypointTransforms =
-			from document in additionalTextInfos.Where(f => f.Types.Contains(sourceGroup))
-			let loaded = registry.ResolveDocument(ToInternalUri(document), relativeDocument: null)
-			let parseResult = CommonParsers.DefaultParsers.Parse(loaded, registry)
-			let options = LoadOptionsFromMetadata(document.Metadata, additionalTextInfos)
-			select new PathControllerTransformerFactory(settings).Build(parseResult, options);
+		var mvcServerTransforms =
+			(from document in additionalTextInfos.Where(f => f.Types.Contains(typeMvcServer))
+			 let loaded = registry.ResolveDocument(ToInternalUri(document), relativeDocument: null)
+			 let parseResult = CommonParsers.DefaultParsers.Parse(loaded, registry)
+			 let options = LoadOptionsFromMetadata(document.Metadata, additionalTextInfos)
+			 select new PathControllerTransformerFactory(settings).Build(parseResult, options)).ToArray();
+		var clientTransforms =
+			(from document in additionalTextInfos.Where(f => f.Types.Contains(typeClient))
+			 let loaded = registry.ResolveDocument(ToInternalUri(document), relativeDocument: null)
+			 let parseResult = CommonParsers.DefaultParsers.Parse(loaded, registry)
+			 let options = LoadOptionsFromMetadata(document.Metadata, additionalTextInfos)
+			 select new ClientTransformerFactory(settings).Build(parseResult, options)).ToArray();
 
 		var sourceProvider = new CompositeOpenApiSourceProvider([
-			.. entrypointTransforms,
+			.. mvcServerTransforms,
+			.. clientTransforms,
 			new CSharpSchemaSourceProvider(settings, LoadOptionsFromMetadata(additionalTextInfos)),
 		]);
 

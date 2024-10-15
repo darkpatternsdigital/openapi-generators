@@ -18,16 +18,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="*.props" Exclude="$(MSBuildProjectName).props" Pack="true" PackagePath="build" />
-		<None Include="$(MSBuildProjectName).props" Pack="true" PackagePath="build/$(RootNamespacePrefix).$(MSBuildProjectName).props" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<AnalyzerReference Include="..\OpenApiCodegen.Client.Analyzers\OpenApiCodegen.Client.Roslyn3.11.csproj" />
-		<AnalyzerReference Include="..\OpenApiCodegen.Client.Analyzers\OpenApiCodegen.Client.Roslyn4.0.csproj"
-						   ReferenceAnalyzer="false" />
-		<ProjectReference Include="$(SolutionRoot)generators\dotnetstandard-client\OpenApiCodegen.Client.Base\OpenApiCodegen.Client.Base.csproj" SpecificVersion="true"
-						  ReferenceOutputAssembly="false" AnalyzerDynamicContext="true" />
+		<ProjectReference Include="$(SolutionRoot)generators\csharp\OpenApiCodegen.CSharp\OpenApiCodegen.CSharp.csproj"/>
 	</ItemGroup>
 
 	<Target Name="AddDlls" BeforeTargets="_GetPackageFiles">

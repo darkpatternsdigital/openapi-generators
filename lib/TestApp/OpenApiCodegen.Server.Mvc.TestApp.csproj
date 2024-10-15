@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+	  <OpenApiSchemaClient Include="$(SolutionRoot)schemas\all-of.yaml" Link="Clients\AllOf\all-of.yaml" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\all-of.yaml" Link="AllOf\all-of.yaml" PathPrefix="/all-of" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\enum.yaml" Link="Enum\enum.yaml" PathPrefix="/enum" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\controller-extension.yaml" Link="ControllerExtensions\controller-extension.yaml" PathPrefix="/controller-extensions" />

@@ -26,7 +26,7 @@
 		<ProjectReference Include="$(SolutionRoot)lib\OpenApiCodegen.Json.Extensions\OpenApiCodegen.Json.Extensions.csproj" />
 
 		<ProjectReference
-			Include="$(SolutionRoot)generators\dotnetstandard-client\OpenApiCodegen.Client.Analyzers\OpenApiCodegen.Client.Roslyn3.11.csproj"
+			Include="$(SolutionRoot)generators\csharp\OpenApiCodegen.CSharp.Analyzers\OpenApiCodegen.CSharp.Roslyn4.1.csproj"
 			OutputItemType="Analyzer"
 			ReferenceOutputAssembly="false" />
 		<!-- Not an analyzer, but the project-reference analyzer needs all child dependencies, too -->
@@ -38,7 +38,7 @@
 
 	<!-- When using project references, props/targets that are in the NuGet package don't get automatically picked up -->
 	<Import Condition=" '$(UseProjectReferences)' == 'true' "
-		Project="$(SolutionRoot)generators\dotnetstandard-client\OpenApiCodegen.Client\OpenApiCodegen.Client.props" />
+		Project="$(SolutionRoot)generators\csharp\OpenApiCodegen.CSharp\OpenApiCodegen.CSharp.props" />
 
 	<ItemGroup>
 		<OpenApiSchemaClient Include="$(SolutionRoot)schemas\petstore.yaml" Link="Clients\Petstore\petstore.yaml" />

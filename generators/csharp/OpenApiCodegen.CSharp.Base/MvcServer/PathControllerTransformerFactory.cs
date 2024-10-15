@@ -11,7 +11,6 @@ public class PathControllerTransformerFactory(TransformSettings settings)
 	public ISourceProvider Build(ParseResult<OpenApiDocument> parseResult, CSharpServerSchemaOptions options)
 	{
 		if (parseResult.Document is not { } document) return new DiagnosticOnlySourceProvider(parseResult.Diagnostics);
-		ISourceProvider? result;
 		var handlebarsFactory = new HandlebarsFactory(ControllerHandlebarsTemplateProcess.CreateHandlebars);
 		var controllerTransformer = new CSharpControllerTransformer(settings, document, options, handlebarsFactory);
 
@@ -24,7 +23,7 @@ public class PathControllerTransformerFactory(TransformSettings settings)
 					: null;
 			});
 
-		result = new CompositeOpenApiSourceProvider([
+		var result = new CompositeOpenApiSourceProvider([
 			new DiagnosticOnlySourceProvider(parseResult.Diagnostics),
 			operationGrouping,
 			new DotNetMvcAddServicesHelperTransformer(controllerTransformer, operationGrouping)

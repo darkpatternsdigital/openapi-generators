@@ -1,16 +1,15 @@
-﻿using DarkPatterns.OpenApi.CSharp.Templates;
-using DarkPatterns.OpenApi.Transformations;
+﻿using DarkPatterns.OpenApi.Transformations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DarkPatterns.OpenApiCodegen;
 using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.Json.Documents;
 using DarkPatterns.OpenApiCodegen.Handlebars;
-using DarkPatterns.OpenApiCodegen.Handlebars.Templates;
+using DarkPatterns.OpenApiCodegen.CSharp.Client.Templates;
+using DarkPatterns.OpenApi.CSharp;
 
-namespace DarkPatterns.OpenApi.CSharp;
+namespace DarkPatterns.OpenApiCodegen.CSharp.Client;
 
 public class CSharpClientTransformer(TransformSettings settings, OpenApiDocument document, CSharpSchemaOptions options, HandlebarsFactory handlebarsFactory) : ISourceProvider
 {
@@ -29,7 +28,7 @@ public class CSharpClientTransformer(TransformSettings settings, OpenApiDocument
 		resultOperations = (from operation in resultOperations
 							select operation with { Path = operation.Path.Substring(1) }).ToList();
 
-		var template = new Templates.FullTemplate(
+		var template = new FullTemplate(
 			Header: settings.Header(document.Id),
 
 			PackageName: baseNamespace,
@@ -55,7 +54,7 @@ public class CSharpClientTransformer(TransformSettings settings, OpenApiDocument
 		var baseNamespace = options.DefaultNamespace;
 		return new SourceEntry(
 			Key: $"{baseNamespace}.AddServicesExtensions.cs",
-			SourceText: handlebarsFactory.Handlebars.ProcessAddServices(new Templates.AddServicesModel(
+			SourceText: handlebarsFactory.Handlebars.ProcessAddServices(new AddServicesModel(
 				Header: settings.Header(document.Id),
 				MethodName: CSharpNaming.ToMethodName(document.Info.Title, options.ReservedIdentifiers()),
 				PackageName: baseNamespace

@@ -31,10 +31,8 @@ sides.
 
 Generators currently available:
 
-* ![DarkPatterns.OpenApiCodegen.Server.Mvc NuGet](https://img.shields.io/nuget/v/DarkPatterns.OpenApiCodegen.Server.Mvc)
-  [.NET Core Server MVC Interfaces](./generators/dotnetcore-server-interfaces), for the modern C# MVC server approach.
-* ![DarkPatterns.OpenApiCodegen.Client NuGet](https://img.shields.io/nuget/v/DarkPatterns.OpenApiCodegen.Client)
-  [.NET Standard Client](./generators/dotnetstandard-client), for the modern C# approach for a client.
+* ![DarkPatterns.OpenApiCodegen.CSharp NuGet](https://img.shields.io/nuget/v/DarkPatterns.OpenApiCodegen.CSharp)
+  [C# Source generation from OpenAPI](./generators/csharp), including .NET Core Server MVC Interfaces for the modern C# MVC server approach and .NET Standard Client extension methods.
 * ![DarkPatterns.OpenApiCodegen.Json.Extensions NuGet](https://img.shields.io/nuget/v/DarkPatterns.OpenApiCodegen.Client)
   [OpenAPI Codegen Extensions](./lib/OpenApiCodegen.Json.Extensions/), a set of System.Text.Json-compatible extensions supporting Optional parameters and enum serialization.
 * ![@darkpatternsdigital/openapi-codegen-typescript at npm](https://img.shields.io/npm/v/@darkpatternsdigital/openapi-codegen-typescript)

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using DarkPatterns.OpenApi.CSharp;
 using System;
+using DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
 
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc;
 

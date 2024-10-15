@@ -1,4 +1,6 @@
-namespace DarkPatterns.OpenApi.CSharp;
+using DarkPatterns.OpenApi.CSharp;
+
+namespace DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
 
 public class CSharpSchemaServerExtensionsOptions : CSharpSchemaExtensionsOptions
 {

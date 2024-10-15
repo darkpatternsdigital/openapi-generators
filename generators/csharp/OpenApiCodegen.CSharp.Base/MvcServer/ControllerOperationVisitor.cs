@@ -1,5 +1,4 @@
 ﻿using Json.Pointer;
-using DarkPatterns.OpenApi.CSharp.Templates;
 using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.OpenApi.Abstractions;
@@ -8,9 +7,10 @@ using System.Collections.Generic;
 using System.Linq;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator;
-using DarkPatterns.Json.Documents;
+using DarkPatterns.OpenApi.CSharp;
+using DarkPatterns.OpenApiCodegen.CSharp.MvcServer.Templates;
 
-namespace DarkPatterns.OpenApi.CSharp;
+namespace DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
 
 class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVisitor.Argument>
 {

@@ -36,6 +36,13 @@ public static class HandlebarsTemplateProcess
 		return result;
 	}
 
+	public static void AddTemplatesAdjacentToType(this IHandlebars result, Type type)
+	{
+		foreach (var resourceName in type.Assembly.GetManifestResourceNames()
+				.Where(n => n.StartsWith(type.Namespace + ".") && n.EndsWith(".handlebars")))
+			result.AddTemplate(type.Assembly, resourceName);
+	}
+
 	public static void AddTemplatesFromAssembly(this IHandlebars result, System.Reflection.Assembly assembly)
 	{
 		foreach (var resourceName in assembly.GetManifestResourceNames().Where(n => n.EndsWith(".handlebars")))

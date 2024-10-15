@@ -10,7 +10,7 @@ using System.Linq;
 namespace DarkPatterns.OpenApiCodegen.CSharp;
 
 [Generator]
-public sealed class OpenApiCSharpGenerator() : BaseGenerator("DarkPatterns.OpenApi.CSharp.CSharpGenerator", "DarkPatterns.OpenApiCodegen.CSharp.Base")
+public sealed class OpenApiCSharpGenerator() : BaseGenerator("DarkPatterns.OpenApiCodegen.CSharp.CSharpGenerator", "DarkPatterns.OpenApiCodegen.CSharp.Base")
 {
 	private const string sourceItemGroupKey = "SourceItemGroup";
 	private static readonly DiagnosticDescriptor IncludeDependentDll = new DiagnosticDescriptor(id: "DPDAPI001",

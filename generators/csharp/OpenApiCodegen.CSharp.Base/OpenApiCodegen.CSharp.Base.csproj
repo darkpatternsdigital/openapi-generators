@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<RootNamespace>$(RootNamespacePrefix).OpenApi.CSharp</RootNamespace>
+		<RootNamespace>$(RootNamespacePrefix).OpenApiCodegen.CSharp</RootNamespace>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<VersionPrefix>$(OpenApiCSharpVersion)</VersionPrefix>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
@@ -9,10 +9,8 @@
 	<Import Project="$(RepositoryEngineeringDir)netstandard/polyfills.targets" />
 
 	<ItemGroup>
-		<None Remove="Templates\*.handlebars" />
-		<EmbeddedResource Include="Templates\*.handlebars" />
-		<None Remove="csharp.config.yaml" />
-		<EmbeddedResource Include="csharp.config.yaml" />
+		<EmbeddedResource Include="**/Templates/*.handlebars" />
+		<EmbeddedResource Include="*/csharp.config.yaml" />
 	</ItemGroup>
 
 	<ItemGroup>

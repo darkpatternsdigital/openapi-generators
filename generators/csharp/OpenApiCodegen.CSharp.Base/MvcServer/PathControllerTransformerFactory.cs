@@ -4,7 +4,7 @@ using DarkPatterns.OpenApiCodegen.Handlebars;
 using DarkPatterns.Json.Documents;
 using DarkPatterns.Json.Diagnostics;
 
-namespace DarkPatterns.OpenApi.CSharp;
+namespace DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
 
 public class PathControllerTransformerFactory(TransformSettings settings)
 {

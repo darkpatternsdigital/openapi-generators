@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.IO;
+using DarkPatterns.OpenApi.CSharp;
 
-namespace DarkPatterns.OpenApi.CSharp;
+namespace DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
 
 public class CSharpServerSchemaOptions : CSharpSchemaOptions
 {
@@ -20,6 +18,6 @@ public class CSharpServerSchemaOptions : CSharpSchemaOptions
 	public string PathPrefix { get; set; } = "";
 
 
-	public static System.IO.Stream GetServerDefaultOptionsJson() =>
+	public static Stream GetServerDefaultOptionsJson() =>
 		typeof(CSharpServerSchemaOptions).Assembly.GetManifestResourceStream($"{typeof(CSharpServerSchemaOptions).Namespace}.csharp.config.yaml");
 }

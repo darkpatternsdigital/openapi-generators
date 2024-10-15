@@ -23,7 +23,7 @@ public static class CSharpHandlebarsCommon
 					: parameters[0]
 		);
 
-		result.AddTemplatesFromAssembly(typeof(CSharpHandlebarsCommon).Assembly);
+		result.AddTemplatesAdjacentToType(typeof(Templates.Model));
 
 		return result;
 	}

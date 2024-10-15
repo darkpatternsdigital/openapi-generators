@@ -1,5 +1,4 @@
 ﻿using DarkPatterns.OpenApi.Transformations;
-using DarkPatterns.OpenApiCodegen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +6,10 @@ using DarkPatterns.Json.Documents;
 using DarkPatterns.OpenApi.Transformations.Diagnostics;
 using DarkPatterns.OpenApi.Transformations.Specifications;
 using DarkPatterns.OpenApiCodegen.Handlebars;
+using DarkPatterns.OpenApi.CSharp;
+using DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
 
-namespace DarkPatterns.OpenApi.CSharp;
+namespace DarkPatterns.OpenApiCodegen.CSharp;
 
 public class CSharpGenerator : IOpenApiCodeGenerator
 {

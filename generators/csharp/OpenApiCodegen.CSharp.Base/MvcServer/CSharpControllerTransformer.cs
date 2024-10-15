@@ -1,13 +1,13 @@
-﻿using DarkPatterns.OpenApi.CSharp.Templates;
-using DarkPatterns.OpenApi.Abstractions;
+﻿using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.OpenApi.Transformations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DarkPatterns.OpenApiCodegen;
 using DarkPatterns.OpenApiCodegen.Handlebars;
+using DarkPatterns.OpenApi.CSharp;
+using DarkPatterns.OpenApiCodegen.CSharp.MvcServer.Templates;
 
-namespace DarkPatterns.OpenApi.CSharp;
+namespace DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
 
 public class CSharpControllerTransformer(TransformSettings settings, OpenApiDocument document, CSharpServerSchemaOptions options, HandlebarsFactory handlebarsFactory) : IOpenApiOperationControllerTransformer
 {
@@ -28,7 +28,7 @@ public class CSharpControllerTransformer(TransformSettings settings, OpenApiDocu
 
 			PackageName: baseNamespace,
 			ClassName: className,
-			HasDescriptionOrSummary: (summary?.Trim() + description?.Trim()) is { Length: > 0 },
+			HasDescriptionOrSummary: summary?.Trim() + description?.Trim() is { Length: > 0 },
 			Summary: summary,
 			Description: description,
 

@@ -8,6 +8,7 @@ using static DarkPatterns.OpenApiCodegen.Server.Mvc.OptionsHelpers;
 using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
 using DarkPatterns.OpenApiCodegen.TestUtils;
 using DarkPatterns.OpenApiCodegen.Handlebars;
+using DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
 
 namespace DarkPatterns.OpenApiCodegen.CSharp;
 

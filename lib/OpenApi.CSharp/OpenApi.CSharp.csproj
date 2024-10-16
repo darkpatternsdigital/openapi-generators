@@ -12,6 +12,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\OpenApi.Transformations\OpenApi.Transformations.csproj" SpecificVersion="true" />
-		<ProjectReference Include="..\OpenApiCodegen.handlebars\OpenApiCodegen.handlebars.csproj" SpecificVersion="true" />
+		<ProjectReference Include="..\OpenApiCodegen.Handlebars\OpenApiCodegen.Handlebars.csproj" SpecificVersion="true" />
 	</ItemGroup>
 </Project>

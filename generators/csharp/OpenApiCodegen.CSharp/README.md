@@ -49,7 +49,9 @@ and to control the Namespace.
 
 ## Configuration
 
-Additional settings may be added within the `.csproj`. For example:
+Additional settings may be added within the `.csproj`. For example, see the below sections.
+
+### MVC Server
 
 ```xml
 <OpenApiSchemaMvcServer Include="schemas/petstore.yaml" Namespace="My.Extensions" Configuration="path/to/config.yaml" />
@@ -64,13 +66,22 @@ Additional settings may be added within the `.csproj`. For example:
   to external files. Otherwise, the absolute file-scheme URL will be used.
 
 In addition, adding the following to an ItemGroup in the csproj (or adding the
-yaml file with the build action `OpenApiSchemaCSharpServerOptions` via Visual
-Studio) will set the configuration yaml file for all client schemas that do not
-have one specifically set.
+yaml file with the build action `OpenApiSchemaOptions` via Visual
+Studio) will set the configuration yaml file for all schemas.
+
+### Client
 
 ```xml
-<OpenApiSchemaCSharpServerOptions Include="path/to/config.yaml" />
+<OpenApiSchemaClient Include="schemas/petstore.yaml" Namespace="My.Extensions" Configuration="path/to/config.yaml" />
 ```
+
+- `Namespace` - Overrides the namespace detected by the default namespace and
+  path of the schema file
+- `Configuration` - Additional configuration settings specific to this schema.
+  See the configuration yaml documentation below.
+- `SchemaId` - Specifies the "retrieval URI" used when resolving relative paths
+  to external files. Otherwise, the absolute file-scheme URL will be used.
+
 
 ### Configuration Yaml
 
@@ -123,7 +134,17 @@ overrideNames:
     format: float
     ```
 - `overrideNames` is a dictionary of schema URIs to the namespace-qualified C#
-  type name to use for the generated class. (Note: this feature is still experimental and may change or be removed in a later relaese.)
+  type name to use for the generated class. (Note: this feature is still
+  experimental and may change or be removed in a later relaese.)
+
+Configurations may be specified with the following setting:
+
+```xml
+<OpenApiSchemaOptions Include="path/to/config.yaml" />
+```
+
+Alternatively, if a `csharp.config.yaml` is placed in the root of your project
+without any other schema options being set, it will be included.
 
 ### Schema extensions
 

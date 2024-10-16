@@ -9,6 +9,8 @@ using DarkPatterns.OpenApiCodegen.Handlebars;
 using DarkPatterns.OpenApi.CSharp;
 using DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
 using DarkPatterns.OpenApiCodegen.CSharp.Client;
+using System.IO;
+using System.Text;
 
 namespace DarkPatterns.OpenApiCodegen.CSharp;
 
@@ -23,6 +25,7 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 
 	const string typeMvcServer = "MvcServer";
 	const string typeClient = "Client";
+	const string typeConfig = "Config";
 	const string sharedSourceGroup = "JsonSchema";
 	private readonly IEnumerable<string> metadataKeys =
 	[
@@ -96,7 +99,15 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 		var pathPrefix = entrypointMetadata[propPathPrefix];
 		using var defaultJsonStream = CSharpSchemaOptions.GetDefaultOptionsJson();
 		using var serverJsonStream = CSharpServerSchemaOptions.GetServerDefaultOptionsJson();
-		var result = OptionsLoader.LoadOptions<CSharpServerSchemaOptions>([defaultJsonStream, serverJsonStream], optionsFiles is { Length: > 0 } s ? s.Split(';') : []);
+
+		var result = OptionsLoader.LoadOptions<CSharpServerSchemaOptions>(
+			[
+				defaultJsonStream,
+				serverJsonStream,
+				.. additionalSchemas.Where(s => s.Types.Contains(typeConfig)).Select(f => new MemoryStream(Encoding.UTF8.GetBytes(f.Contents))),
+			],
+			optionsFiles is { Length: > 0 } s ? s.Split(';') : []
+		);
 
 		if (pathPrefix != null)
 			result.PathPrefix = pathPrefix;

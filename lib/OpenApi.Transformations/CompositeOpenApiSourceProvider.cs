@@ -1,22 +1,14 @@
-﻿using DarkPatterns.OpenApiCodegen;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 
-namespace DarkPatterns.OpenApi.Transformations
+namespace DarkPatterns.OpenApi.Transformations;
+
+public class CompositeOpenApiSourceProvider(IReadOnlyList<ISourceProvider> sourceProviders) : ISourceProvider
 {
-	public class CompositeOpenApiSourceProvider : ISourceProvider
+	public SourcesResult GetSources()
 	{
-		private readonly ISourceProvider[] sourceProviders;
-
-		public CompositeOpenApiSourceProvider(params ISourceProvider[] sourceProviders)
-		{
-			this.sourceProviders = sourceProviders;
-		}
-
-		public IEnumerable<SourceEntry> GetSources(OpenApiTransformDiagnostic diagnostic)
-		{
-			foreach (var transformer in sourceProviders)
-				foreach (var entry in transformer.GetSources(diagnostic))
-					yield return entry;
-		}
+		return SourcesResult.Combine([
+			.. sourceProviders.Select(t => t.GetSources()),
+		]);
 	}
 }

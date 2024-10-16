@@ -18,11 +18,10 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="$(SolutionRoot)lib\Extensions.Configuration.Yaml\Extensions.Configuration.Yaml.csproj" SpecificVersion="true" />
 		<ProjectReference Include="$(SolutionRoot)lib\OpenApi.TypeScript\OpenApi.TypeScript.csproj" />
+		<ProjectReference Include="..\..\..\lib\OpenApiCodegen.Handlebars\OpenApiCodegen.Handlebars.csproj" />
 	</ItemGroup>
 </Project>

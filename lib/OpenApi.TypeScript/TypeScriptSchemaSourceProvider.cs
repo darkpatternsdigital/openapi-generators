@@ -1,7 +1,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApi.Abstractions;
@@ -9,43 +8,36 @@ using DarkPatterns.Json.Specifications;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Metadata;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
-using DarkPatterns.OpenApi.TypeScript.Templates;
 using DarkPatterns.OpenApiCodegen;
-using DarkPatterns.Json.Documents;
+using DarkPatterns.OpenApiCodegen.Handlebars;
 
 namespace DarkPatterns.OpenApi.TypeScript;
 
-public class TypeScriptSchemaSourceProvider : SchemaSourceProvider
+public class TypeScriptSchemaSourceProvider(
+	TransformSettings settings,
+	TypeScriptSchemaOptions options,
+	HandlebarsFactory? handlebarsFactory = null
+) : SchemaSourceProvider(settings.SchemaRegistry)
 {
-	private readonly DocumentRegistry documentRegistry;
-	private readonly ISchemaRegistry schemaRegistry;
-	private readonly TypeScriptInlineSchemas inlineSchemas;
-	private readonly TypeScriptSchemaOptions options;
-	private readonly HandlebarsFactory handlebarsFactory;
-	private readonly PartialHeader header;
+	private readonly HandlebarsFactory handlebarsFactory = handlebarsFactory ?? HandlebarsFactoryDefaults.Default;
+	private readonly TypeScriptInlineSchemas inlineSchemas = new TypeScriptInlineSchemas(options, settings.SchemaRegistry.DocumentRegistry);
 
-	public TypeScriptSchemaSourceProvider(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, TypeScriptSchemaOptions options, HandlebarsFactory handlebarsFactory, Templates.PartialHeader header) : base(schemaRegistry)
+	protected override SourcesResult GetAdditionalSources()
 	{
-		this.documentRegistry = documentRegistry;
-		this.schemaRegistry = schemaRegistry;
-		this.inlineSchemas = new TypeScriptInlineSchemas(options, documentRegistry);
-		this.options = options;
-		this.handlebarsFactory = handlebarsFactory;
-		this.header = header;
-	}
-
-	protected override IEnumerable<SourceEntry> GetAdditionalSources(OpenApiTransformDiagnostic diagnostic)
-	{
-		if (header == null) yield break;
-		var exportStatements = inlineSchemas.GetExportStatements(schemaRegistry.GetSchemas(), options, "./models/").ToArray();
+		var exportStatements = inlineSchemas.GetExportStatements(settings.SchemaRegistry.GetSchemas(), options, "./models/").ToArray();
 		if (exportStatements.Length > 0)
-			yield return new SourceEntry(
+			return new([new SourceEntry(
 				Key: "models/index.ts",
-				SourceText: HandlebarsTemplateProcess.ProcessModelBarrelFile(
-					new Templates.ModelBarrelFile(header, exportStatements),
+				SourceText: TypeScriptHandlebarsCommon.ProcessModelBarrelFile(
+					new Templates.ModelBarrelFile(new OpenApiCodegen.Handlebars.Templates.PartialHeader(
+						"All models",
+						null,
+						settings.CodeGeneratorVersionInfo
+					), exportStatements),
 					handlebarsFactory.Handlebars
 				)
-			);
+			)], []);
+		return SourcesResult.Empty;
 	}
 
 	protected override SourceEntry? GetSourceEntry(JsonSchema entry, OpenApiTransformDiagnostic diagnostic)
@@ -72,8 +64,8 @@ public class TypeScriptSchemaSourceProvider : SchemaSourceProvider
 		};
 		if (model == null)
 			return null;
-		var entry = HandlebarsTemplateProcess.ProcessModel(
-			header: header,
+		var entry = TypeScriptHandlebarsCommon.ProcessModel(
+			header: settings.Header(schema.Metadata.Id),
 			packageName: "",
 			model: model,
 			handlebarsFactory.Handlebars

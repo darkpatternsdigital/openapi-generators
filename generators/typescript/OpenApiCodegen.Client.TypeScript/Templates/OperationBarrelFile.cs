@@ -1,7 +1,4 @@
-﻿using DarkPatterns.OpenApi.TypeScript.Templates;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using DarkPatterns.OpenApiCodegen.Handlebars.Templates;
 
 namespace DarkPatterns.OpenApiCodegen.Client.TypeScript.Templates
 {

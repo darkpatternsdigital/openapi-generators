@@ -1,6 +1,5 @@
 ﻿using static DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ControllerExtensions.InformationControllerBase;
 using static DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Enum.RockPaperScissorsQueryControllerBase;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Enum
 {

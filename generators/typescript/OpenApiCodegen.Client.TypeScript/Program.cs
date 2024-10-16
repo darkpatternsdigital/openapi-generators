@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.CommandLineUtils;
-using Microsoft.Extensions.Configuration;
 using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.OpenApi.TypeScript;
@@ -8,6 +7,7 @@ using System.IO;
 using System.Linq;
 using DarkPatterns.Json.Documents;
 using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApiCodegen.Handlebars;
 
 namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 {
@@ -48,14 +48,16 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 					return 3;
 				}
 
-				if (parseResult.Document == null)
+				if (parseResult.Document is not { } document)
 					return 2;
 
-				var transformer = parseResult.Document.BuildTypeScriptOperationSourceProvider(registry, GetVersionInfo(), options);
+				var transformer = TransformSettings.BuildComposite(registry, GetVersionInfo(), [
+					(s) => new OperationTransformerFactory(s).Build(document, options),
+					(s) => new TypeScriptSchemaSourceProvider(s, options)
+				]);
 
-				var diagnostic = new OpenApiTransformDiagnostic();
-				var entries = transformer.GetSources(diagnostic).ToArray();
-				foreach (var error in diagnostic.Diagnostics)
+				var sourcesResult = transformer.GetSources();
+				foreach (var error in sourcesResult.Diagnostics)
 				{
 #pragma warning disable CA2241 // CommandLineApplication does not follow standard format string format
 					commandLineApplication.Error.WriteLine(
@@ -72,7 +74,7 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 					foreach (var entry in System.IO.Directory.GetDirectories(outputPath))
 						System.IO.Directory.Delete(entry, true);
 				}
-				foreach (var entry in entries)
+				foreach (var entry in sourcesResult.Sources)
 				{
 					var path = System.IO.Path.Combine(outputPath, entry.Key);
 					if (System.IO.Path.GetDirectoryName(path) is string dir)
@@ -125,13 +127,7 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 		private static TypeScriptSchemaOptions LoadOptions(string? optionsPath)
 		{
 			using var defaultJsonStream = TypeScriptSchemaOptions.GetDefaultOptionsJson();
-			var builder = new ConfigurationBuilder();
-			builder.AddYamlStream(defaultJsonStream);
-			if (optionsPath is { Length: > 0 })
-				builder.AddYamlFile(Path.Combine(Directory.GetCurrentDirectory(), optionsPath));
-			var result = builder.Build().Get<TypeScriptSchemaOptions>()
-				?? throw new InvalidOperationException("Could not construct options");
-			return result;
+			return OptionsLoader.LoadOptions<TypeScriptSchemaOptions>([defaultJsonStream], optionsPath is { Length: > 0 } ? [optionsPath] : []);
 		}
 	}
 }

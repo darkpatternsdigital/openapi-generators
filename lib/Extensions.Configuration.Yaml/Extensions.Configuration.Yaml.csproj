@@ -9,9 +9,6 @@
 		<title>$(AssemblyName)</title>
 		<PackageSummary>Adds support for YAML files with .NET Configuration.</PackageSummary>
 		<description>Adds support for YAML files with .NET Configuration.</description>
-
-		<!-- CA1032 - Implement standard exception constructors -->
-		<NoWarn>$(NoWarn),CA1032</NoWarn>
 	</PropertyGroup>
 	<Import Project="$(RepositoryEngineeringDir)netstandard/polyfills.targets" />
 	<ItemGroup>

@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<RootNamespace>$(RootNamespacePrefix).OpenApiCodegen.CSharp</RootNamespace>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<VersionPrefix>$(OpenApiCSharpVersion)</VersionPrefix>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	</PropertyGroup>
+
+	<Import Project="$(RepositoryEngineeringDir)netstandard/polyfills.targets" />
+
+	<ItemGroup>
+		<EmbeddedResource Include="**/Templates/*.handlebars" />
+		<EmbeddedResource Include="*/csharp.config.yaml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="$(SolutionRoot)lib\OpenApi.CSharp\OpenApi.CSharp.csproj" SpecificVersion="true" />
+		<ProjectReference Include="$(SolutionRoot)lib\OpenApiCodegen\OpenApiCodegen.csproj" SpecificVersion="true" />
+	</ItemGroup>
+</Project>

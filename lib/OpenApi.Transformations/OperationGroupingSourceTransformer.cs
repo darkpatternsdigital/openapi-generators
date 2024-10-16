@@ -10,23 +10,16 @@ using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.OpenApi.Transformations;
 
-public class OperationGroupingSourceTransformer : ISourceProvider
+public class OperationGroupingSourceTransformer(
+	ISchemaRegistry schemaRegistry,
+	OpenApiDocument document,
+	OperationGroupingSourceTransformer.OperationToGroup operationToGroup,
+	IOpenApiOperationControllerTransformer operationControllerTransformer
+) : ISourceProvider
 {
 	public delegate (string groupName, string? groupSummary, string? groupDescription) OperationToGroup(OpenApiOperation operation, OpenApiPath path);
-	private readonly OpenApiDocument document;
-	private readonly OperationToGroup operationToGroup;
-	private readonly IOpenApiOperationControllerTransformer operationControllerTransformer;
-	private readonly OperationGroupingVisitor visitor;
-	private readonly ISchemaRegistry schemaRegistry;
 
-	public OperationGroupingSourceTransformer(DocumentRegistry documentRegistry, ISchemaRegistry schemaRegistry, OpenApiDocument document, OperationToGroup operationToGroup, IOpenApiOperationControllerTransformer operationControllerTransformer)
-	{
-		this.visitor = new OperationGroupingVisitor(documentRegistry);
-		this.schemaRegistry = schemaRegistry;
-		this.document = document;
-		this.operationToGroup = operationToGroup;
-		this.operationControllerTransformer = operationControllerTransformer;
-	}
+	private readonly OperationGroupingVisitor visitor = new OperationGroupingVisitor(schemaRegistry.DocumentRegistry);
 
 	private Dictionary<string, OperationGroupData> GetGroups(OpenApiTransformDiagnostic diagnostic)
 	{
@@ -56,9 +49,14 @@ public class OperationGroupingSourceTransformer : ISourceProvider
 		return GetGroups(diagnostic).Keys;
 	}
 
-	public IEnumerable<SourceEntry> GetSources(OpenApiTransformDiagnostic diagnostic)
+	public SourcesResult GetSources()
 	{
-		return GetGroups(diagnostic).Select(kvp => operationControllerTransformer.TransformController(kvp.Key, kvp.Value, diagnostic)).ToArray();
+		var diagnostic = new OpenApiTransformDiagnostic();
+		var sources = GetGroups(diagnostic).Select(kvp => operationControllerTransformer.TransformController(kvp.Key, kvp.Value, diagnostic)).ToArray();
+		return new SourcesResult(
+			sources,
+			[.. diagnostic.Diagnostics]
+		);
 	}
 
 	class OperationGroupingVisitor(DocumentRegistry documentRegistry) : Abstractions.OpenApiDocumentVisitor<OperationGroupingVisitor.Argument>

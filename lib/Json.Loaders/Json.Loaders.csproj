@@ -9,9 +9,6 @@
 		<title>$(AssemblyName)</title>
 		<PackageSummary>Provides a YAML document loader for DarkPatterns.Json.Specifications.</PackageSummary>
 		<description>Provides a YAML document loader for DarkPatterns.Json.Specifications.</description>
-
-		<!-- CA1032 - Implement standard exception constructors -->
-		<NoWarn>$(NoWarn),CA1032</NoWarn>
 	</PropertyGroup>
 	<Import Project="$(RepositoryEngineeringDir)netstandard/polyfills.targets" />
 	<ItemGroup>

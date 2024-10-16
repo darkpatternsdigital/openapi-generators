@@ -11,6 +11,7 @@ using Draft04 = DarkPatterns.Json.Specifications.Keywords.Draft04;
 using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.Json.Specifications;
 using Keywords = DarkPatterns.Json.Specifications.Keywords;
+using YamlDotNet.Core.Tokens;
 
 namespace DarkPatterns.OpenApi.Specifications.v3_0;
 
@@ -104,8 +105,30 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 					Vocabulary,
 					// should be all of "https://spec.openapis.org/oas/3.0/schema/2021-09-28"
 				],
-				UnknownKeyword.Instance
+				UnknownKeyword.Instance,
+				GetInfoDefinition: OpenApi3_0DocumentInfo
 			);
+	}
+
+	private static DocumentInfo OpenApi3_0DocumentInfo(IDocumentReference doc)
+	{
+		var title = doc.RootNode?["info"]?["title"]?.GetValue<string>();
+		var version = doc.RootNode?["info"]?["version"]?.GetValue<string>();
+		var description = doc.RootNode?["info"]?["description"]?.GetValue<string>();
+		var emailLine = doc.RootNode?["info"]?["contact"]?["email"]?.GetValue<string>() switch
+		{
+			string email => $"API Contact: {email}",
+			_ => null
+		};
+
+		return new(
+			version is { Length: > 0 } ? $"{title} v{version}" : title,
+			string.Join(
+				"\n\n",
+				new[] { description, emailLine }
+					.Where(v => v is { Length: > 0 })
+			)
+		);
 	}
 
 	public OpenApi3_0DocumentFactory(DocumentRegistry documentRegistry, IEnumerable<DiagnosticBase> initialDiagnostics)
@@ -450,7 +473,7 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 #pragma warning disable CA1031 // Catching a general exception type here to turn it into a diagnostic for reporting
 			catch (Exception ex)
 			{
-				diagnostics.AddExceptionAsDiagnostic(ex, documentRegistry, key.Metadata);
+				diagnostics.AddRange(ex.ToDiagnostics(documentRegistry, key.Metadata));
 			}
 #pragma warning restore CA1031 // Do not catch general exception types
 			return constructDefault(key.Id);

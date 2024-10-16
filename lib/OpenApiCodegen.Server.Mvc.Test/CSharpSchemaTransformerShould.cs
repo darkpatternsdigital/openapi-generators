@@ -11,6 +11,7 @@ using Xunit;
 using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
 using DarkPatterns.Json.Documents;
 using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
 
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc;
 using static OptionsHelpers;

@@ -25,6 +25,6 @@
 
 3. Update your project file to reference the versions from GitHub. The version will be what the released version number will be, but with a suffix indicating a prerelease including the sha of the hash that was used to build the code.
 
-        <PackageReference Include="DarkPatterns.OpenApiCodegen.Server.Mvc" Version="--version-number--" PrivateAssets="All" />
+        <PackageReference Include="DarkPatterns.OpenApiCodegen.CSharp" Version="--version-number--" PrivateAssets="All" />
 
 4. Restore your project. If you've done everything correctly, it should build using the test version of the package!

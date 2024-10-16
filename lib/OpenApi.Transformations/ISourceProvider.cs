@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
-using DarkPatterns.OpenApiCodegen;
+﻿namespace DarkPatterns.OpenApi.Transformations;
 
-namespace DarkPatterns.OpenApi.Transformations
+public interface ISourceProvider
 {
-	public interface ISourceProvider
-	{
-		IEnumerable<SourceEntry> GetSources(OpenApiTransformDiagnostic diagnostic);
-	}
+	SourcesResult GetSources();
 }

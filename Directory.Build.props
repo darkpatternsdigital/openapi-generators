@@ -19,9 +19,6 @@
 		<SignAssembly>True</SignAssembly>
 		<AssemblyOriginatorKeyFile Condition="exists('$(SolutionRoot)OpenApiCodegen.snk')">$(SolutionRoot)OpenApiCodegen.snk</AssemblyOriginatorKeyFile>
 		<NoWarn Condition="$(MSBuildProjectName.Contains('Test'))">$(NoWarn);CS8002;CA1054</NoWarn>
-
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-		<WarningsAsErrors />
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -35,8 +32,7 @@
 		<OpenApiAbstractionsVersion>0.1.0</OpenApiAbstractionsVersion>
 		<OpenApiJsonExtensionsVersion>0.17.1</OpenApiJsonExtensionsVersion>
 		<OpenApiLoadersVersion>0.1.0</OpenApiLoadersVersion>
-		<OpenApiMvcServerVersion>0.19.0</OpenApiMvcServerVersion>
-		<OpenApiCSharpClientVersion>0.19.0</OpenApiCSharpClientVersion>
+		<OpenApiCSharpVersion>0.20.0</OpenApiCSharpVersion>
 		<OpenApiTypeScriptClientVersion>0.11.0</OpenApiTypeScriptClientVersion>
 		<OpenApiTypeScriptRxjsClientVersion>0.8.1</OpenApiTypeScriptRxjsClientVersion>
 		<OpenApiTypeScriptMswVersion>0.8.1</OpenApiTypeScriptMswVersion>

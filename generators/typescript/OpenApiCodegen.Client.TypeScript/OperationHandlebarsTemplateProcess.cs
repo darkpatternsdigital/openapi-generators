@@ -1,41 +1,40 @@
 ﻿using HandlebarsDotNet;
-using DarkPatterns.OpenApi.TypeScript;
 using System.IO;
-using System.Linq;
+using BaseProcess = DarkPatterns.OpenApiCodegen.Handlebars.HandlebarsTemplateProcess;
+using DarkPatterns.OpenApiCodegen.Handlebars;
+using DarkPatterns.OpenApi.TypeScript;
 
-namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
+namespace DarkPatterns.OpenApiCodegen.Client.TypeScript;
+
+public static class OperationHandlebarsTemplateProcess
 {
-	public static class OperationHandlebarsTemplateProcess
+	public static IHandlebars CreateHandlebars()
 	{
-		public static IHandlebars CreateHandlebars()
-		{
-			var result = HandlebarsTemplateProcess.CreateHandlebars();
+		var result = TypeScriptHandlebarsCommon.CreateHandlebars();
 
-			foreach (var resourceName in typeof(OperationHandlebarsTemplateProcess).Assembly.GetManifestResourceNames().Where(n => n.EndsWith(".handlebars")))
-				result.AddTemplate(typeof(OperationHandlebarsTemplateProcess).Assembly, resourceName);
+		result.AddTemplatesFromAssembly(typeof(OperationHandlebarsTemplateProcess).Assembly);
 
-			return result;
-		}
-
-		public static string ProcessOperation(this IHandlebars handlebars, Templates.OperationTemplate operationTemplate)
-		{
-			var template = handlebars.Configuration.RegisteredTemplates["operation"];
-
-			using var sr = new StringWriter();
-			var dict = HandlebarsTemplateProcess.ToDictionary<Templates.OperationTemplate>(operationTemplate);
-			template(sr, dict);
-			return sr.ToString();
-		}
-
-		public static string ProcessBarrelFile(this IHandlebars handlebars, Templates.OperationBarrelFileModel barrelFileModel)
-		{
-			var template = handlebars.Configuration.RegisteredTemplates["operationBarrelFile"];
-
-			using var sr = new StringWriter();
-			var dict = HandlebarsTemplateProcess.ToDictionary<Templates.OperationBarrelFileModel>(barrelFileModel);
-			template(sr, dict);
-			return sr.ToString();
-		}
-
+		return result;
 	}
+
+	public static string ProcessOperation(this IHandlebars handlebars, Templates.OperationTemplate operationTemplate)
+	{
+		var template = handlebars.Configuration.RegisteredTemplates["operation"];
+
+		using var sr = new StringWriter();
+		var dict = BaseProcess.ToDictionary(operationTemplate);
+		template(sr, dict);
+		return sr.ToString();
+	}
+
+	public static string ProcessBarrelFile(this IHandlebars handlebars, Templates.OperationBarrelFileModel barrelFileModel)
+	{
+		var template = handlebars.Configuration.RegisteredTemplates["operationBarrelFile"];
+
+		using var sr = new StringWriter();
+		var dict = BaseProcess.ToDictionary(barrelFileModel);
+		template(sr, dict);
+		return sr.ToString();
+	}
+
 }

@@ -1,4 +1,4 @@
-using DarkPatterns.OpenApi.CSharp;
+using DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
 using System;
 using Xunit;
 

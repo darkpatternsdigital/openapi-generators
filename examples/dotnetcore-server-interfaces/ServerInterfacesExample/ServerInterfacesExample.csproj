@@ -7,14 +7,6 @@
 	<Import Project="$(SolutionRoot)examples\dotnetcore-server-interfaces\tooling\server-generator-references.props" />
 
 	<ItemGroup>
-		<None Remove="csharp.config.yaml" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<OpenApiSchemaCSharpServerOptions Include="csharp.config.yaml" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\petstore.yaml" Link="Controllers\petstore.yaml" />
 	</ItemGroup>
 </Project>

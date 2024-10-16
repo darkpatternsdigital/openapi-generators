@@ -32,7 +32,7 @@
 		<OpenApiAbstractionsVersion>0.1.0</OpenApiAbstractionsVersion>
 		<OpenApiJsonExtensionsVersion>0.17.1</OpenApiJsonExtensionsVersion>
 		<OpenApiLoadersVersion>0.1.0</OpenApiLoadersVersion>
-		<OpenApiCSharpVersion>0.20.0</OpenApiCSharpVersion>
+		<OpenApiCSharpVersion>0.20.1</OpenApiCSharpVersion>
 		<OpenApiTypeScriptClientVersion>0.11.0</OpenApiTypeScriptClientVersion>
 		<OpenApiTypeScriptRxjsClientVersion>0.8.1</OpenApiTypeScriptRxjsClientVersion>
 		<OpenApiTypeScriptMswVersion>0.8.1</OpenApiTypeScriptMswVersion>

@@ -25,7 +25,8 @@ namespace {{PackageName}}
         /// {{linewrap Operation.Description "
         /// "}}
         /// </remarks>{{/if}}{{#each RequestBody.AllParams}}
-        /// <param name="{{ParamName}}">{{Description}}</param>{{/each}}
+        /// <param name="{{ParamName}}">{{linewrap Description "
+        /// "}}</param>{{/each}}
         [global::Microsoft.AspNetCore.Mvc.Http{{Operation.HttpMethod}}]
         [global::Microsoft.AspNetCore.Mvc.Route("{{{Operation.Path}}}")]{{#if RequestBody.RequestBodyType}}
         [global::Microsoft.AspNetCore.Mvc.Consumes("{{{RequestBody.RequestBodyType}}}")]{{/if}}{{!

@@ -12,7 +12,7 @@ public static class OperationHandlebarsTemplateProcess
 	{
 		var result = TypeScriptHandlebarsCommon.CreateHandlebars();
 
-		result.AddTemplatesFromAssembly(typeof(OperationHandlebarsTemplateProcess).Assembly);
+		result.AddTemplatesAdjacentToType(typeof(OperationHandlebarsTemplateProcess));
 
 		return result;
 	}

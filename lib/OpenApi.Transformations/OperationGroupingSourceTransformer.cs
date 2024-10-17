@@ -64,6 +64,10 @@ public class OperationGroupingSourceTransformer(
 		public record Argument(RegisterOperationEntry RegisterSourceEntry, OpenApiTransformDiagnostic Diagnostic, OpenApiPath? Path = null);
 		public delegate void RegisterOperationEntry(OpenApiOperation operation, string method, OpenApiPath path);
 
+		public override void VisitWebhook(OpenApiPath value, string key, Argument argument)
+		{
+		}
+
 		public override void Visit(OpenApiPath path, Argument argument)
 		{
 			base.Visit(path, argument with { Path = path });

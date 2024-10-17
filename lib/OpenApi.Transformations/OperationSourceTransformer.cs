@@ -41,6 +41,10 @@ public class OperationSourceTransformer(DocumentRegistry documentRegistry, OpenA
 		public record Argument(DocumentRegistry DocumentRegistry, RegisterOperationEntry RegisterSourceEntry, OpenApiTransformDiagnostic Diagnostic, OpenApiPath? Path = null);
 		public delegate void RegisterOperationEntry(OpenApiPath path, string method, OpenApiOperation operation);
 
+		public override void VisitWebhook(OpenApiPath value, string key, Argument argument)
+		{
+		}
+
 		public override void Visit(OpenApiPath path, Argument argument)
 		{
 			base.Visit(path, argument with { Path = path });

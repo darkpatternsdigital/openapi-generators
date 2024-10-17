@@ -7,10 +7,10 @@ using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DarkPatterns.OpenApiCodegen.CSharp.Client.Templates;
+using DarkPatterns.OpenApiCodegen.CSharp.WebhookClient.Templates;
 using DarkPatterns.OpenApi.CSharp;
 
-namespace DarkPatterns.OpenApiCodegen.CSharp.Client;
+namespace DarkPatterns.OpenApiCodegen.CSharp.WebhookClient;
 
 class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions options, string controllerClassName) : OpenApiDocumentVisitor<OperationVisitor.Argument>
 {
@@ -41,26 +41,26 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 		public OpenApiOperation Operation { get; }
 	}
 
-	public override void VisitWebhook(OpenApiPath value, string key, Argument? argument)
+	public override void VisitWebhook(OpenApiPath value, string key, Argument argument)
 	{
+		base.VisitWebhook(value, key, argument with { CurrentPath = value });
 	}
 
 	public override void Visit(OpenApiPath path, Argument argument)
 	{
-		base.Visit(path, argument with { CurrentPath = path });
 	}
 
 	public override void Visit(OpenApiOperation operation, string httpMethod, Argument argument)
 	{
 		if (argument.CurrentPath is not OpenApiPath pathObj)
 			throw new ArgumentException("Could not find path in argument; be sure to visit a whole OpenAPI doc", nameof(argument));
-		var path = JsonPointer.Parse(pathObj.Id.Fragment).Segments.Last().Value;
+		var path = JsonPointer.Parse(pathObj.Id.Fragment).Segments.Reverse().Skip(1).First().Value;
 		if (path == null)
 			throw new ArgumentException("Context is not initialized properly - key expected for path items", nameof(argument));
 
 		var builder = new OperationBuilder(operation);
 
-		var operationId = operation.OperationId ?? httpMethod + path;
+		var operationId = operation.OperationId ?? httpMethod + " " + path;
 		var noBody = OperationRequestBodyFactory(operationId, null, Enumerable.Empty<OperationParameter>(), false);
 		if (operation.RequestBody == null || !operation.RequestBody.Required)
 			builder.RequestBodies.Add(noBody);
@@ -75,19 +75,19 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 		{
 			argument.RegisterControllerOperation(
 				new Operation(
-				 HttpMethod: CSharpNaming.ToTitleCaseIdentifier(httpMethod, []),
-				 Summary: operation.Summary,
-				 Description: operation.Description,
-				 Name: CSharpNaming.ToTitleCaseIdentifier(operationId, options.ReservedIdentifiers("ControllerBase", controllerClassName)),
-				 Path: path,
-				 RequestBodies: requestBodies,
-				 HasQueryStringEmbedded: path.Contains("?"),
-				 Responses: new OperationResponses(
-					 DefaultResponse: builder.DefaultResponse,
-					 StatusResponse: new(builder.StatusResponses)
-				 ),
-				 SecurityRequirements: builder.SecurityRequirements.ToArray()
-			 ));
+					HttpMethod: CSharpNaming.ToTitleCaseIdentifier(httpMethod, []),
+					Summary: operation.Summary,
+					Description: operation.Description,
+					Name: CSharpNaming.ToTitleCaseIdentifier(operationId, options.ReservedIdentifiers("ControllerBase", controllerClassName)),
+					RequestBodies: requestBodies,
+					HasQueryStringEmbedded: path.Contains("?"),
+					Responses: new OperationResponses(
+						DefaultResponse: builder.DefaultResponse,
+						StatusResponse: new(builder.StatusResponses)
+					),
+					SecurityRequirements: builder.SecurityRequirements.ToArray()
+				)
+			);
 		}
 	}
 

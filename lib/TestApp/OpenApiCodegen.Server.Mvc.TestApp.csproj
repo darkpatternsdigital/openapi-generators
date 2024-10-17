@@ -28,6 +28,7 @@
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\request-ref.yaml" Link="RequestRef\request-ref.yaml" PathPrefix="/request-ref" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\response-ref.yaml" Link="ResponseRef\response-ref.yaml" PathPrefix="/response-ref" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\openapi-3.0-callbacks.yaml" Link="OpenApi30Callbacks\openapi-3.0-callbacks.yaml" PathPrefix="/openapi-3.0-callbacks" SchemaId="proj://darkpatterns-openapi/openapi-3.0-callbacks.yaml" />
+    <OpenApiSchemaWebhookClient Include="$(SolutionRoot)schemas\openapi-3.0-callbacks.yaml" Link="OpenApi30Callbacks\openapi-3.0-callbacks.yaml" SchemaId="proj://darkpatterns-openapi/openapi-3.0-callbacks.yaml" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\multi-file-ref.yaml" Link="MultiFileRef\multi-file-ref.yaml" PathPrefix="/multi-file-ref" SchemaId="proj://darkpatterns-openapi/multi-file-ref.yaml" />
     <JsonSchemaDocument Include="$(SolutionRoot)schemas\multi-file-ref-types.yaml" Link="MultiFileRef\Types\multi-file-ref-types.yaml" SchemaId="proj://darkpatterns-openapi/multi-file-ref-types.yaml" />
     <JsonSchemaDocument Include="$(SolutionRoot)schemas\multi-file-ref-responses.yaml" Link="MultiFileRef\Responses\multi-file-ref-responses.yaml" SchemaId="proj://darkpatterns-openapi/multi-file-ref-responses.yaml" />

@@ -11,6 +11,7 @@ using DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
 using DarkPatterns.OpenApiCodegen.CSharp.Client;
 using System.IO;
 using System.Text;
+using DarkPatterns.OpenApiCodegen.CSharp.WebhookClient;
 
 namespace DarkPatterns.OpenApiCodegen.CSharp;
 
@@ -25,6 +26,7 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 
 	const string typeMvcServer = "MvcServer";
 	const string typeClient = "Client";
+	const string typeWebhookClient = "WebhookClient";
 	const string typeConfig = "Config";
 	const string sharedSourceGroup = "JsonSchema";
 	private readonly IEnumerable<string> metadataKeys =
@@ -50,22 +52,29 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 		var schemaRegistry = new SchemaRegistry(registry);
 		var settings = new TransformSettings(schemaRegistry, GetVersionInfo());
 
+		var docs = (from document in additionalTextInfos
+					let loaded = registry.ResolveDocument(ToInternalUri(document), relativeDocument: null)
+					let parseResult = CommonParsers.DefaultParsers.Parse(loaded, registry)
+					let options = LoadOptionsFromMetadata(document.Metadata, additionalTextInfos)
+					select new { document, parseResult, options }).ToArray();
+
 		var mvcServerTransforms =
-			(from document in additionalTextInfos.Where(f => f.Types.Contains(typeMvcServer))
-			 let loaded = registry.ResolveDocument(ToInternalUri(document), relativeDocument: null)
-			 let parseResult = CommonParsers.DefaultParsers.Parse(loaded, registry)
-			 let options = LoadOptionsFromMetadata(document.Metadata, additionalTextInfos)
-			 select new PathControllerTransformerFactory(settings).Build(parseResult, options)).ToArray();
+			(from e in docs
+			 where e.document.Types.Contains(typeMvcServer)
+			 select new PathControllerTransformerFactory(settings).Build(e.parseResult, e.options)).ToArray();
 		var clientTransforms =
-			(from document in additionalTextInfos.Where(f => f.Types.Contains(typeClient))
-			 let loaded = registry.ResolveDocument(ToInternalUri(document), relativeDocument: null)
-			 let parseResult = CommonParsers.DefaultParsers.Parse(loaded, registry)
-			 let options = LoadOptionsFromMetadata(document.Metadata, additionalTextInfos)
-			 select new ClientTransformerFactory(settings).Build(parseResult, options)).ToArray();
+			(from e in docs
+			 where e.document.Types.Contains(typeClient)
+			 select new ClientTransformerFactory(settings).Build(e.parseResult, e.options)).ToArray();
+		var webhookTransforms =
+			(from e in docs
+			 where e.document.Types.Contains(typeWebhookClient)
+			 select new WebhookClientTransformerFactory(settings).Build(e.parseResult, e.options)).ToArray();
 
 		var sourceProvider = new CompositeOpenApiSourceProvider([
 			.. mvcServerTransforms,
 			.. clientTransforms,
+			.. webhookTransforms,
 			new CSharpSchemaSourceProvider(settings, LoadOptionsFromMetadata(additionalTextInfos)),
 		]);
 
@@ -125,7 +134,7 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 
 	private static string GetVersionInfo()
 	{
-		return $"{typeof(CSharpControllerTransformer).FullName} v{typeof(CSharpControllerTransformer).Assembly.GetName().Version}";
+		return $"{typeof(CSharpGenerator).FullName} v{typeof(CSharpGenerator).Assembly.GetName().Version}";
 	}
 
 	private static string GetStandardNamespace(IReadOnlyDictionary<string, string?> metadata, CSharpSchemaOptions options)

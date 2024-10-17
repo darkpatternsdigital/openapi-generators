@@ -30,10 +30,14 @@ public record OpenApiDocument(
 
 	public IEnumerable<IJsonDocumentNode> GetNestedNodes()
 	{
+		foreach (var server in Servers)
+			yield return server;
 		yield return Info;
 		foreach (var path in Paths.Values)
 			yield return path;
 		foreach (var securityRequirement in SecurityRequirements)
 			yield return securityRequirement;
+		foreach (var webhook in Webhooks.Values)
+			yield return webhook;
 	}
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.Json.Documents;
+using System.IO;
 
 namespace DarkPatterns.OpenApi.Abstractions;
 
@@ -13,13 +14,32 @@ public abstract class OpenApiDocumentVisitor<TArgument> : IOpenApiDocumentVisito
 
 	public virtual void Visit(OpenApiDocument document, TArgument argument)
 	{
-		// this.VisitHelper(document.Servers, argument);
+		foreach (var e in document.Servers)
+			this.Visit(e, argument);
 		foreach (var e in document.Paths.Values)
 			this.Visit(e, argument);
 		this.Visit(document.Info, argument);
 		foreach (var e in document.SecurityRequirements)
 			this.Visit(e, argument);
 		// this.VisitHelper(document.Tags, argument);
+		foreach (var e in document.Webhooks)
+			this.VisitWebhook(e.Value, e.Key, argument);
+	}
+
+	public virtual void VisitWebhook(OpenApiPath value, string key, TArgument argument)
+	{
+		foreach (var kvp in value.Operations)
+			this.Visit(kvp.Value, kvp.Key, argument);
+	}
+
+	public virtual void Visit(OpenApiServer server, TArgument argument)
+	{
+		foreach (var e in server.Variables)
+			this.Visit(e.Value, e.Key, argument);
+	}
+
+	public virtual void Visit(OpenApiServerVariable value, string key, TArgument? argument)
+	{
 	}
 
 	public virtual void Visit(OpenApiInfo info, TArgument argument)

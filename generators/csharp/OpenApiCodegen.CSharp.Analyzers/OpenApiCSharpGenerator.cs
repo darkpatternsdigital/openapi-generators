@@ -15,6 +15,7 @@ public sealed class OpenApiCSharpGenerator() : BaseGenerator("DarkPatterns.OpenA
 {
 	private const string includeKey = "DPDInclude";
 	private const string mvcServerType = "DPDGenerateMvcServer";
+	private const string minimalApiServerType = "DPDGenerateServerMinimalApis";
 	private const string clientType = "DPDGenerateClient";
 	private const string webhookClientType = "DPDGenerateWebhookClient";
 	private const string configType = "DPDSchemaOptions";
@@ -39,6 +40,7 @@ public sealed class OpenApiCSharpGenerator() : BaseGenerator("DarkPatterns.OpenA
 		return [
 			.. IfHasProperty(includeKey, "JsonSchema"),
 			.. IfHasProperty(mvcServerType, "MvcServer"),
+			.. IfHasProperty(minimalApiServerType, "MinimalApiServer"),
 			.. IfHasProperty(webhookClientType, "WebhookClient"),
 			.. IfHasProperty(clientType, "Client"),
 			.. IfHasProperty(configType, "Config"),

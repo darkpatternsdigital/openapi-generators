@@ -9,6 +9,7 @@
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDInclude" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDJsonSchema" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDGenerateMvcServer" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDGenerateServerMinimalApis" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDGenerateClient" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDGenerateWebhookClient" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDSchemaOptions" />
@@ -22,10 +23,12 @@
 
 		<AvailableItemName Include="OpenApiSchemaOptions" DisplayName="C# Options for Open API Code Generation (OpenApiCodeGen)" />
 		<AvailableItemName Include="OpenApiSchemaMvcServer" DisplayName="Open API Schema MVC Server (OpenApiCodeGen)" />
+		<AvailableItemName Include="OpenApiSchemaMinimalApiServer" DisplayName="Open API Schema Server with Minimal APIs (OpenApiCodeGen)" />
 		<AvailableItemName Include="OpenApiSchemaClient" DisplayName="Open API Schema Client (OpenApiCodeGen)" />
 		<AvailableItemName Include="OpenApiSchemaWebhookClient" DisplayName="Open API Schema Webhook Client (OpenApiCodeGen)" />
 		<Watch Include="@(OpenApiSchemaClient)" />
 		<Watch Include="@(OpenApiSchemaWebhookClient)" />
+		<Watch Include="@(OpenApiMinimalApiServer)" />
 		<Watch Include="@(OpenApiSchemaMvcServer)" />
 		<Watch Include="@(JsonSchemaDocument)" />
 		<Watch Include="@(OpenApiSchemaOptions)" />
@@ -47,6 +50,13 @@
 				<PathPrefix>@(OpenApiSchemaMvcServer->'%(PathPrefix)')</PathPrefix>
 				<Configuration>@(OpenApiSchemaMvcServer->'%(Configuration)')</Configuration>
 				<SchemaId Condition="'%(AdditionalFiles.SchemaId)' == ''">@(OpenApiSchemaMvcServer->'%(SchemaId)')</SchemaId>
+
+				<DPDGenerateServerMinimalApis>@(OpenApiSchemaMinimalApiServer->'true')</DPDGenerateServerMinimalApis>
+				<Link Condition="'%(AdditionalFiles.Link)' == ''">@(OpenApiSchemaMinimalApiServer->'%(Link)')</Link>
+				<Namespace Condition="'%(AdditionalFiles.Namespace)' == ''">@(OpenApiSchemaMinimalApiServer->'%(Namespace)')</Namespace>
+				<PathPrefix>@(OpenApiSchemaMinimalApiServer->'%(PathPrefix)')</PathPrefix>
+				<Configuration>@(OpenApiSchemaMinimalApiServer->'%(Configuration)')</Configuration>
+				<SchemaId Condition="'%(AdditionalFiles.SchemaId)' == ''">@(OpenApiSchemaMinimalApiServer->'%(SchemaId)')</SchemaId>
 
 				<DPDGenerateClient>@(OpenApiSchemaClient->'true')</DPDGenerateClient>
 				<Link Condition="'%(AdditionalFiles.Link)' == ''">@(OpenApiSchemaClient->'%(Link)')</Link>

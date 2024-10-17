@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>generated</CompilerGeneratedFilesOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+	  <OpenApiSchemaClient Include="$(SolutionRoot)schemas\all-of.yaml" Link="Clients\AllOf\all-of.yaml" />
+    <OpenApiSchemaMinimalApiServer Include="$(SolutionRoot)schemas\all-of.yaml" Link="AllOf\all-of.yaml" PathPrefix="/all-of" />
+    <OpenApiSchemaMinimalApiServer Include="$(SolutionRoot)schemas\enum.yaml" Link="Enum\enum.yaml" PathPrefix="/enum" />
+    <OpenApiSchemaMinimalApiServer Include="$(SolutionRoot)schemas\controller-extension.yaml" Link="ControllerExtensions\controller-extension.yaml" PathPrefix="/controller-extensions" />
+    <OpenApiSchemaMinimalApiServer Include="$(SolutionRoot)schemas\csharp-name-override.yaml" Link="CSharpNameOverride\csharp-name-override.yaml" PathPrefix="/csharp-name-override" />
+    <OpenApiSchemaMinimalApiServer Include="$(SolutionRoot)schemas\validation-min-max.yaml" Link="ValidationMinMax\validation-min-max.yaml" PathPrefix="/validation-min-max" />
+    <OpenApiSchemaMinimalApiServer Include="$(SolutionRoot)schemas\regex-escape.yaml" Link="RegexEscape\regex-escape.yaml" PathPrefix="/regex-escape" />
+    <OpenApiSchemaMinimalApiServer Include="$(SolutionRoot)schemas\headers.yaml" Link="Headers\headers.yaml" PathPrefix="/headers" />
+    <OpenApiSchemaMinimalApiServer Include="$(SolutionRoot)schemas\oauth.yaml" Link="OAuth\oauth.yaml" PathPrefix="/oauth" />
+    <OpenApiSchemaMinimalApiServer Include="$(SolutionRoot)schemas\form.yaml" Link="Form\form.yaml" PathPrefix="/form" />
+    <OpenApiSchemaMinimalApiServer Include="$(SolutionRoot)schemas\one-of.yaml" Link="OneOf\one-of.yaml" PathPrefix="/one-of" />
+    <OpenApiSchemaMinimalApiServer Include="$(SolutionRoot)schemas\nullable-vs-optional-legacy.yaml" Link="LegacyOptional\nullable-vs-optional-legacy.yaml" PathPrefix="/nullable-vs-optional-legacy" />
+    <OpenApiSchemaMinimalApiServer Include="$(SolutionRoot)schemas\nullable-vs-optional.yaml" Link="NullableVsOptional\nullable-vs-optional.yaml" PathPrefix="/nullable-vs-optional" />
+    <OpenApiSchemaMinimalApiServer Include="$(SolutionRoot)schemas\annotations.yaml" Link="Annotations\annotations.yaml" PathPrefix="/annotations" />
+    <OpenApiSchemaMinimalApiServer Include="$(SolutionRoot)schemas\request-ref.yaml" Link="RequestRef\request-ref.yaml" PathPrefix="/request-ref" />
+    <OpenApiSchemaMinimalApiServer Include="$(SolutionRoot)schemas\response-ref.yaml" Link="ResponseRef\response-ref.yaml" PathPrefix="/response-ref" />
+    <OpenApiSchemaMinimalApiServer Include="$(SolutionRoot)schemas\openapi-3.0-callbacks.yaml" Link="OpenApi30Callbacks\openapi-3.0-callbacks.yaml" PathPrefix="/openapi-3.0-callbacks" SchemaId="proj://darkpatterns-openapi/openapi-3.0-callbacks.yaml" />
+    <OpenApiSchemaWebhookClient Include="$(SolutionRoot)schemas\openapi-3.0-callbacks.yaml" Link="OpenApi30Callbacks\openapi-3.0-callbacks.yaml" SchemaId="proj://darkpatterns-openapi/openapi-3.0-callbacks.yaml" />
+    <OpenApiSchemaMinimalApiServer Include="$(SolutionRoot)schemas\multi-file-ref.yaml" Link="MultiFileRef\multi-file-ref.yaml" PathPrefix="/multi-file-ref" SchemaId="proj://darkpatterns-openapi/multi-file-ref.yaml" />
+    <JsonSchemaDocument Include="$(SolutionRoot)schemas\multi-file-ref-types.yaml" Link="MultiFileRef\Types\multi-file-ref-types.yaml" SchemaId="proj://darkpatterns-openapi/multi-file-ref-types.yaml" />
+    <JsonSchemaDocument Include="$(SolutionRoot)schemas\multi-file-ref-responses.yaml" Link="MultiFileRef\Responses\multi-file-ref-responses.yaml" SchemaId="proj://darkpatterns-openapi/multi-file-ref-responses.yaml" />
+    <JsonSchemaDocument Include="$(SolutionRoot)schemas\multi-file-ref-endpoints.yaml" Link="MultiFileRef\Endpoints\multi-file-ref-endpoints.yaml" SchemaId="proj://darkpatterns-openapi/multi-file-ref-endpoints.yaml" />
+
+    <Compile Remove="generated/**/*" />
+    <Clean Include="generated/**/*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference
+      Include="$(SolutionRoot)generators\csharp\OpenApiCodegen.CSharp.Analyzers\OpenApiCodegen.CSharp.Roslyn4.0.csproj"
+      OutputItemType="Analyzer"
+      ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\OpenApiCodegen.Json.Extensions\OpenApiCodegen.Json.Extensions.csproj" />
+  </ItemGroup>
+
+  <!-- The project reference won't include this due to the multi-version targeting trick -->
+  <Import Project="$(SolutionRoot)generators\csharp\OpenApiCodegen.CSharp\OpenApiCodegen.CSharp.props" />
+
+</Project>

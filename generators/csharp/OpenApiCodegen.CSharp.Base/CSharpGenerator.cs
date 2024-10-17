@@ -12,6 +12,7 @@ using DarkPatterns.OpenApiCodegen.CSharp.Client;
 using System.IO;
 using System.Text;
 using DarkPatterns.OpenApiCodegen.CSharp.WebhookClient;
+using DarkPatterns.OpenApiCodegen.CSharp.MinimalApi;
 
 namespace DarkPatterns.OpenApiCodegen.CSharp;
 
@@ -25,6 +26,7 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 	const string propSchemaId = "schemaId";
 
 	const string typeMvcServer = "MvcServer";
+	const string typeMinimalApiServer = "MinimalApiServer";
 	const string typeClient = "Client";
 	const string typeWebhookClient = "WebhookClient";
 	const string typeConfig = "Config";
@@ -62,6 +64,10 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 			(from e in docs
 			 where e.document.Types.Contains(typeMvcServer)
 			 select new PathControllerTransformerFactory(settings).Build(e.parseResult, e.options)).ToArray();
+		var minimalApiServerTransforms =
+			(from e in docs
+			 where e.document.Types.Contains(typeMinimalApiServer)
+			 select new MinimalApiTransformerFactory(settings).Build(e.parseResult, e.options)).ToArray();
 		var clientTransforms =
 			(from e in docs
 			 where e.document.Types.Contains(typeClient)
@@ -73,6 +79,7 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 
 		var sourceProvider = new CompositeOpenApiSourceProvider([
 			.. mvcServerTransforms,
+			.. minimalApiServerTransforms,
 			.. clientTransforms,
 			.. webhookTransforms,
 			new CSharpSchemaSourceProvider(settings, LoadOptionsFromMetadata(additionalTextInfos)),

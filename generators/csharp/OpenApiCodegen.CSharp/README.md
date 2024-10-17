@@ -69,6 +69,23 @@ In addition, adding the following to an ItemGroup in the csproj (or adding the
 yaml file with the build action `OpenApiSchemaOptions` via Visual
 Studio) will set the configuration yaml file for all schemas.
 
+### Minimal API Server
+
+```xml
+<OpenApiSchemaMvcServer Include="schemas/petstore.yaml" Namespace="My.Extensions" Configuration="path/to/config.yaml" />
+```
+
+- `Namespace` - Overrides the namespace detected by the default namespace and
+  path of the schema file
+- `Configuration` - Additional configuration settings specific to this schema.
+  See the configuration yaml documentation below.
+- `SchemaId` - Specifies the "retrieval URI" used when resolving relative paths
+  to external files. Otherwise, the absolute file-scheme URL will be used.
+
+In addition, adding the following to an ItemGroup in the csproj (or adding the
+yaml file with the build action `OpenApiSchemaOptions` via Visual
+Studio) will set the configuration yaml file for all schemas.
+
 ### Client
 
 ```xml

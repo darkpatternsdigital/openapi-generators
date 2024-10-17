@@ -16,13 +16,11 @@ public record OpenApiDocument(
 	OpenApiInfo Info,
 	IJsonSchemaDialect Dialect,
 	IReadOnlyDictionary<string, OpenApiPath> Paths,
-	IReadOnlyList<OpenApiSecurityRequirement> SecurityRequirements
+	IReadOnlyList<OpenApiSecurityRequirement> SecurityRequirements,
+	IReadOnlyList<OpenApiServer> Servers,
+	IReadOnlyDictionary<string, OpenApiPath> Webhooks
 ) : IReferenceableDocument
 {
-	// TODO:
-	// servers?
-	// webhooks?
-
 	// We don't use the following internally (yet?) directly, so we probably won't map them... at least for now
 	// components
 	// tags

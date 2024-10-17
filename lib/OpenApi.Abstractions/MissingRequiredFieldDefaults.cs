@@ -20,6 +20,7 @@ public static class MissingRequiredFieldDefaults
 	public static string ParameterName => "unknown-param";
 	public static string HeaderName => "unknown-header";
 	public static string ResponseDescription => "unknown-description";
+	public static string ServerVariableAllowedValue => "NA";
 
 	private record PlaceholderInfo(Uri Id) : OpenApiInfo(
 		Id,
@@ -110,4 +111,22 @@ public static class MissingRequiredFieldDefaults
 	public static OpenApiResponse ConstructPlaceholderResponse(Uri id) => new PlaceholderResponse(id);
 
 	public static OpenApiSecurityRequirement ConstructPlaceholderSecurityRequirement(Uri id) => new OpenApiSecurityRequirement(id, Array.Empty<OpenApiSecuritySchemeRequirement>());
+
+	public static OpenApiServer ConstructPlaceholderServerRequirement(Uri id) => new PlaceholderServer(id);
+
+	private record PlaceholderServer(Uri Id) : OpenApiServer(
+		Id,
+		Url: new Uri("#", UriKind.Relative),
+		Description: string.Empty,
+		Variables: new Dictionary<string, OpenApiServerVariable>()
+	);
+
+	public static OpenApiServerVariable ConstructPlaceholderServerVariable(Uri id) => new PlaceholderServerVariable(id);
+
+	private record PlaceholderServerVariable(Uri Id) : OpenApiServerVariable(
+		Id,
+		[],
+		string.Empty,
+		null
+	);
 }

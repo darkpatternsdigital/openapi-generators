@@ -14,6 +14,7 @@ namespace DarkPatterns.OpenApiCodegen.CSharp;
 public sealed class OpenApiCSharpGenerator() : BaseGenerator("DarkPatterns.OpenApiCodegen.CSharp.CSharpGenerator", "DarkPatterns.OpenApiCodegen.CSharp.Base")
 {
 	private const string includeKey = "DPDInclude";
+	private const string jsonSchemaType = "DPDJsonSchema";
 	private const string mvcServerType = "DPDGenerateMvcServer";
 	private const string clientType = "DPDGenerateClient";
 	private const string webhookClientType = "DPDGenerateWebhookClient";
@@ -37,7 +38,8 @@ public sealed class OpenApiCSharpGenerator() : BaseGenerator("DarkPatterns.OpenA
 	protected override string[] GetFileTypes(AdditionalTextWithOptions additionalText)
 	{
 		return [
-			.. IfHasProperty(includeKey, "JsonSchema"),
+			.. IfHasProperty(includeKey, "Other"),
+			.. IfHasProperty(jsonSchemaType, "JsonSchema"),
 			.. IfHasProperty(mvcServerType, "MvcServer"),
 			.. IfHasProperty(webhookClientType, "WebhookClient"),
 			.. IfHasProperty(clientType, "Client"),

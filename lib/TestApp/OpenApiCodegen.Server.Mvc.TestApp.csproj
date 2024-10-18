@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-	  <OpenApiSchemaClient Include="$(SolutionRoot)schemas\all-of.yaml" Link="Clients\AllOf\all-of.yaml" />
+    <OpenApiSchemaClient Include="$(SolutionRoot)schemas\all-of.yaml" Link="Clients\AllOf\all-of.yaml" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\all-of.yaml" Link="AllOf\all-of.yaml" PathPrefix="/all-of" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\enum.yaml" Link="Enum\enum.yaml" PathPrefix="/enum" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\controller-extension.yaml" Link="ControllerExtensions\controller-extension.yaml" PathPrefix="/controller-extensions" />
@@ -39,10 +39,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference
-      Include="$(SolutionRoot)generators\csharp\OpenApiCodegen.CSharp.Analyzers\OpenApiCodegen.CSharp.Roslyn4.0.csproj"
-      OutputItemType="Analyzer"
-      ReferenceOutputAssembly="false" />
+	  <ProjectReference
+		Include="$(SolutionRoot)generators\csharp\OpenApiCodegen.CSharp.Analyzers\OpenApiCodegen.CSharp.Roslyn4.0.csproj"
+		OutputItemType="Analyzer"
+		ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\OpenApiCodegen.Json.Extensions\OpenApiCodegen.Json.Extensions.csproj" />
   </ItemGroup>
 

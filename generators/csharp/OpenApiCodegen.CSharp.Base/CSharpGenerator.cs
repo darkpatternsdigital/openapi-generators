@@ -54,28 +54,32 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 
 		var docs = (from document in additionalTextInfos
 					let loaded = registry.ResolveDocument(ToInternalUri(document), relativeDocument: null)
-					let parseResult = CommonParsers.DefaultParsers.Parse(loaded, registry)
 					let options = LoadOptionsFromMetadata(document.Metadata, additionalTextInfos)
-					select new { document, parseResult, options }).ToArray();
+					select new { document, loaded, options }).ToArray();
 
 		var mvcServerTransforms =
 			(from e in docs
 			 where e.document.Types.Contains(typeMvcServer)
-			 select new PathControllerTransformerFactory(settings).Build(e.parseResult, e.options)).ToArray();
+			 let parseResult = CommonParsers.DefaultParsers.Parse(e.loaded, registry)
+			 select new PathControllerTransformerFactory(settings).Build(parseResult, e.options)).ToArray();
 		var clientTransforms =
 			(from e in docs
 			 where e.document.Types.Contains(typeClient)
-			 select new ClientTransformerFactory(settings).Build(e.parseResult, e.options)).ToArray();
+			 let parseResult = CommonParsers.DefaultParsers.Parse(e.loaded, registry)
+			 select new ClientTransformerFactory(settings).Build(parseResult, e.options)).ToArray();
 		var webhookTransforms =
 			(from e in docs
 			 where e.document.Types.Contains(typeWebhookClient)
-			 select new WebhookClientTransformerFactory(settings).Build(e.parseResult, e.options)).ToArray();
+			 let parseResult = CommonParsers.DefaultParsers.Parse(e.loaded, registry)
+			 select new WebhookClientTransformerFactory(settings).Build(parseResult, e.options)).ToArray();
+
+		var allSchemasOptions = LoadOptionsFromMetadata(additionalTextInfos);
 
 		var sourceProvider = new CompositeOpenApiSourceProvider([
 			.. mvcServerTransforms,
 			.. clientTransforms,
 			.. webhookTransforms,
-			new CSharpSchemaSourceProvider(settings, LoadOptionsFromMetadata(additionalTextInfos)),
+			new CSharpSchemaSourceProvider(settings, allSchemasOptions),
 		]);
 
 		var result = sourceProvider.GetSources();
@@ -90,7 +94,15 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 	{
 		using var defaultJsonStream = CSharpSchemaOptions.GetDefaultOptionsJson();
 		using var serverJsonStream = CSharpServerSchemaOptions.GetServerDefaultOptionsJson();
-		var result = OptionsLoader.LoadOptions<CSharpServerSchemaOptions>([defaultJsonStream, serverJsonStream], []);
+
+		var result = OptionsLoader.LoadOptions<CSharpServerSchemaOptions>(
+			[
+				defaultJsonStream,
+				serverJsonStream,
+				.. additionalSchemas.Where(s => s.Types.Contains(typeConfig)).Select(f => new MemoryStream(Encoding.UTF8.GetBytes(f.Contents))),
+			],
+			[]
+		);
 
 		foreach (var entry in additionalSchemas)
 		{
@@ -104,8 +116,8 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 
 	private static CSharpServerSchemaOptions LoadOptionsFromMetadata(IReadOnlyDictionary<string, string?> entrypointMetadata, IEnumerable<AdditionalTextInfo> additionalSchemas)
 	{
-		var optionsFiles = entrypointMetadata[propConfig];
-		var pathPrefix = entrypointMetadata[propPathPrefix];
+		entrypointMetadata.TryGetValue(propConfig, out var optionsFiles);
+		entrypointMetadata.TryGetValue(propPathPrefix, out var pathPrefix);
 		using var defaultJsonStream = CSharpSchemaOptions.GetDefaultOptionsJson();
 		using var serverJsonStream = CSharpServerSchemaOptions.GetServerDefaultOptionsJson();
 
@@ -139,10 +151,9 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 
 	private static string GetStandardNamespace(IReadOnlyDictionary<string, string?> metadata, CSharpSchemaOptions options)
 	{
-		var fullNamespace = metadata[propNamespace];
-		if (fullNamespace != null) return fullNamespace;
-		var identity = metadata[propIdentity];
-		var link = metadata[propLink];
+		if (metadata.TryGetValue(propNamespace, out var fullNamespace)) return fullNamespace!;
+		metadata.TryGetValue(propIdentity, out var identity);
+		metadata.TryGetValue(propLink, out var link);
 		metadata.TryGetValue("build_property.projectdir", out var projectDir);
 		metadata.TryGetValue("build_property.rootnamespace", out var rootNamespace);
 

@@ -17,8 +17,8 @@
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="PathPrefix" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="SchemaId" />
 
-		<OpenApiSchemaOptions Condition="Exists('$(ProjectDir)/csharp.config.yaml') and '' == '@(OpenApiSchemaOptions)'"
-			Include="$(ProjectDir)/csharp.config.yaml"/>
+		<OpenApiSchemaOptions Condition="Exists('$(ProjectDir)csharp.config.yaml') and '' == '@(OpenApiSchemaOptions)'"
+			Include="$(ProjectDir)csharp.config.yaml"/>
 
 		<AvailableItemName Include="OpenApiSchemaOptions" DisplayName="C# Options for Open API Code Generation (OpenApiCodeGen)" />
 		<AvailableItemName Include="OpenApiSchemaMvcServer" DisplayName="Open API Schema MVC Server (OpenApiCodeGen)" />
@@ -67,7 +67,7 @@
 			</AdditionalFiles>
 			<AdditionalFiles Condition=" '@(AdditionalFiles.DPDInclude)' != '' ">
 				<WorkingOutputPath Condition=" '%(AdditionalFiles.WorkingOutputPath)' == '' ">$([System.Text.RegularExpressions.Regex]::Replace(%(AdditionalFiles.Identity), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__'))</WorkingOutputPath>
-				<Namespace Condition=" '%(AdditionalFiles.Namespace)' == '' ">$(RootNamespace)$([System.Text.RegularExpressions.Regex]::Replace($([System.Text.RegularExpressions.Regex]::Replace('/$([System.IO.Path]::GetDirectoryName('%(AdditionalFiles.WorkingOutputPath)'))', '[/\\]', '.')), '\.$', ''))</Namespace>
+				<Namespace Condition=" '%(AdditionalFiles.Namespace)' == '' and '%(AdditionalFiles.WorkingOutputPath)' != '' ">$(RootNamespace)$([System.Text.RegularExpressions.Regex]::Replace($([System.Text.RegularExpressions.Regex]::Replace('/$([System.IO.Path]::GetDirectoryName('%(AdditionalFiles.WorkingOutputPath)'))', '[/\\]', '.')), '\.$', ''))</Namespace>
 			</AdditionalFiles>
 		</ItemGroup>
 	</Target>

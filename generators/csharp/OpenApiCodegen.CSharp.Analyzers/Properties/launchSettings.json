@@ -4,6 +4,10 @@
 			"commandName": "DebugRoslynComponent",
 			"targetProject": "..\\..\\..\\lib\\TestApp\\OpenApiCodegen.Server.Mvc.TestApp.csproj"
 		},
+		"Debug Minimal API Generators": {
+			"commandName": "DebugRoslynComponent",
+			"targetProject": "..\\..\\..\\lib\\TestApp.MinimalApis\\TestApp.MinimalApis.csproj"
+		},
 		"Debug Bad Generators": {
 			"commandName": "DebugRoslynComponent",
 			"targetProject": "..\\..\\..\\lib\\TestApp.Bad\\OpenApiCodegen.Server.Mvc.TestApp.Bad.csproj"

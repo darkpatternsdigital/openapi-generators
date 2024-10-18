@@ -189,7 +189,7 @@ public abstract class BaseGenerator :
 		);
 		foreach (var entry in result.Sources)
 		{
-			apis.AddSource($"DPD_{entry.Key}", SourceText.From(entry.SourceText, Encoding.UTF8));
+			apis.AddSource(entry.Key, SourceText.From(entry.SourceText, Encoding.UTF8));
 		}
 		foreach (var diagnostic in result.Diagnostics)
 		{

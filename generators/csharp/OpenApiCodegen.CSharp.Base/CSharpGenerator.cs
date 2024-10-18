@@ -13,6 +13,8 @@ using System.IO;
 using System.Text;
 using DarkPatterns.OpenApiCodegen.CSharp.WebhookClient;
 using DarkPatterns.OpenApiCodegen.CSharp.MinimalApi;
+using DarkPatterns.OpenApi.Abstractions;
+using DarkPatterns.Json.Diagnostics;
 
 namespace DarkPatterns.OpenApiCodegen.CSharp;
 
@@ -63,27 +65,27 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 			(from e in docs
 			 where e.document.Types.Contains(typeMvcServer)
 			 let parseResult = CommonParsers.DefaultParsers.Parse(e.loaded, registry)
-			 select new PathControllerTransformerFactory(settings).Build(parseResult, e.options)).ToArray();
+			 select BuildSafe(parseResult, () => new PathControllerTransformerFactory(settings).Build(parseResult, e.options))).ToArray();
 		var minimalApiServerTransforms =
 			(from e in docs
 			 where e.document.Types.Contains(typeMinimalApiServer)
 			 let parseResult = CommonParsers.DefaultParsers.Parse(e.loaded, registry)
-			 select new MinimalApiTransformerFactory(settings).Build(parseResult, e.options)).ToArray();
+			 select BuildSafe(parseResult, () => new MinimalApiTransformerFactory(settings).Build(parseResult, e.options))).ToArray();
 		var clientTransforms =
 			(from e in docs
 			 where e.document.Types.Contains(typeClient)
 			 let parseResult = CommonParsers.DefaultParsers.Parse(e.loaded, registry)
-			 select new ClientTransformerFactory(settings).Build(parseResult, e.options)).ToArray();
+			 select BuildSafe(parseResult, () => new ClientTransformerFactory(settings).Build(parseResult, e.options))).ToArray();
 		var webhookTransforms =
 			(from e in docs
 			 where e.document.Types.Contains(typeWebhookClient)
 			 let parseResult = CommonParsers.DefaultParsers.Parse(e.loaded, registry)
-			 select new WebhookClientTransformerFactory(settings).Build(parseResult, e.options)).ToArray();
+			 select BuildSafe(parseResult, () => new WebhookClientTransformerFactory(settings).Build(parseResult, e.options))).ToArray();
 
 		var allSchemasOptions = LoadOptionsFromMetadata(additionalTextInfos);
 
 		var sourceProvider = new CompositeOpenApiSourceProvider([
-			.. mvcServerTransforms,
+				.. mvcServerTransforms,
 			.. minimalApiServerTransforms,
 			.. clientTransforms,
 			.. webhookTransforms,
@@ -96,6 +98,20 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 			result.Sources,
 			[.. result.Diagnostics.Select(DiagnosticsConversion.GetConverter(ToPathResolver(additionalTextInfos)))]
 		);
+
+		ISourceProvider BuildSafe(ParseResult<OpenApiDocument> parseResult, Func<ISourceProvider> value)
+		{
+			if (parseResult.Document == null)
+				return new DiagnosticOnlySourceProvider(parseResult.Diagnostics);
+			try
+			{
+				return value();
+			}
+			catch (Exception e)
+			{
+				return new DiagnosticOnlySourceProvider([.. e.ToDiagnostics(registry, parseResult.Document.Metadata)]);
+			}
+		}
 	}
 
 	private static CSharpServerSchemaOptions LoadOptionsFromMetadata(IEnumerable<AdditionalTextInfo> additionalSchemas)

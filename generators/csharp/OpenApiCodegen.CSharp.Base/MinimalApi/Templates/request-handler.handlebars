@@ -14,7 +14,7 @@ namespace {{PackageName}}
     /// "}}
     /// </remarks>{{/if}}{{#if Description}}
     [Description("{{Description}}")]{{/if}}
-    public abstract class {{ClassName}} : global::Microsoft.AspNetCore.Mvc.ControllerBase
+    public abstract class {{ClassName}}
     {
         {{#each Operations as |Operation|}}{{#each RequestBodies as |RequestBody|}}{{#if Operation.Summary}}
         /// <summary>
@@ -111,31 +111,31 @@ namespace {{PackageName}}
                 }, headers)
             {
             }
-            {{#each Responses.StatusResponse as |Response Code|}}{{#each Content}}
-            {{#if Response.Description}}/// <summary>
-            /// {{linewrap Response.Description "
-            /// "}}
-            /// </summary>{{/if}}
-            public static {{../../Name}}ActionResult {{ResponseMethodName}}({{#if DataType}}{{{DataType}}} result{{#if ../Headers.Length}},
-                {{/if}}{{/if}}{{#each ../Headers}}{{#unless @first}},
-                {{/unless}}string {{ParamName}}{{/each}}) =>
-                new {{../../Name}}ActionResult({{Code}}{{#if DataType}}, "{{MediaType}}", typeof({{{DataType}}}), result{{/if}}{{#each ../Headers}},
-                    new global::System.Collections.Generic.KeyValuePair<string, string>("{{RawName}}", {{ParamName}}){{/each}});
-            {{/each}}{{/each}}{{#if Responses.DefaultResponse}}{{#each Responses.DefaultResponse.Content}}
-            {{#if Responses.DefaultResponse.Description}}/// <summary>
-            /// {{linewrap Responses.DefaultResponse.Description "
-            /// "}}
-            /// </summary>{{/if}}
-            public static {{../Name}}ActionResult {{ResponseMethodName}}(int statusCode{{#if DataType}}, {{{DataType}}} result{{/if}}{{#each ../Responses.DefaultResponse.Headers}},
-                string {{ParamName}}{{/each}}) =>
-                new {{../Name}}ActionResult(statusCode{{#if DataType}}, "{{MediaType}}", typeof({{{DataType}}}), result{{/if}}{{#each ../Responses.DefaultResponse.Headers}},
-                    new global::System.Collections.Generic.KeyValuePair<string, string>("{{RawName}}", {{ParamName}}){{/each}});
-            {{/each}}{{/if}}
-
-            /// <summary>Allows for action results not specified in the API</summary>
-            public static {{Name}}ActionResult Unsafe(global::Microsoft.AspNetCore.Mvc.IActionResult actionResult, params global::System.Collections.Generic.KeyValuePair<string, string>[] headers) =>
-                new {{Name}}ActionResult(actionResult, headers);
         }
+        {{#each Responses.StatusResponse as |Response Code|}}{{#each Content}}
+        {{#if Response.Description}}/// <summary>
+        /// {{linewrap Response.Description "
+        /// "}}
+        /// </summary>{{/if}}
+        public static {{../../Name}}ActionResult {{ResponseMethodName}}({{#if DataType}}{{{DataType}}} result{{#if ../Headers.Length}},
+            {{/if}}{{/if}}{{#each ../Headers}}{{#unless @first}},
+            {{/unless}}string {{ParamName}}{{/each}}) =>
+            new {{../../Name}}ActionResult({{Code}}{{#if DataType}}, "{{MediaType}}", typeof({{{DataType}}}), result{{/if}}{{#each ../Headers}},
+                new global::System.Collections.Generic.KeyValuePair<string, string>("{{RawName}}", {{ParamName}}){{/each}});
+        {{/each}}{{/each}}{{#if Responses.DefaultResponse}}{{#each Responses.DefaultResponse.Content}}
+        {{#if Responses.DefaultResponse.Description}}/// <summary>
+        /// {{linewrap Responses.DefaultResponse.Description "
+        /// "}}
+        /// </summary>{{/if}}
+        public static {{../Name}}ActionResult {{ResponseMethodName}}(int statusCode{{#if DataType}}, {{{DataType}}} result{{/if}}{{#each ../Responses.DefaultResponse.Headers}},
+            string {{ParamName}}{{/each}}) =>
+            new {{../Name}}ActionResult(statusCode{{#if DataType}}, "{{MediaType}}", typeof({{{DataType}}}), result{{/if}}{{#each ../Responses.DefaultResponse.Headers}},
+                new global::System.Collections.Generic.KeyValuePair<string, string>("{{RawName}}", {{ParamName}}){{/each}});
+        {{/each}}{{/if}}
+
+        /// <summary>Allows for action results not specified in the API</summary>
+        public static {{Name}}ActionResult Unsafe(global::Microsoft.AspNetCore.Mvc.IActionResult actionResult, params global::System.Collections.Generic.KeyValuePair<string, string>[] headers) =>
+            new {{Name}}ActionResult(actionResult, headers);
         {{/each}}
     }
 {{/if}}

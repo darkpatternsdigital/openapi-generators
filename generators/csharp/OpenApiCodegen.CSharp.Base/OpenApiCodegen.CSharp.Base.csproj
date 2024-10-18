@@ -14,27 +14,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="MinimalApi\Templates\request-handler.handlebars" />
-	  <None Remove="MinimalApi\Templates\setup.handlebars" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="$(SolutionRoot)lib\OpenApi.CSharp\OpenApi.CSharp.csproj" />
 		<ProjectReference Include="$(SolutionRoot)lib\OpenApiCodegen\OpenApiCodegen.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EmbeddedResource Update="MinimalApi\Templates\request-handler.handlebars">
-	    <StronglyTypedClassName>%(Filename)</StronglyTypedClassName>
-	    <StronglyTypedNamespace>$(RootNamespace).$([MSBuild]::ValueOrDefault('%(RelativeDir)', '').Replace('\', '.').Replace('/', '.').TrimEnd('.'))</StronglyTypedNamespace>
-	    <StronglyTypedFileName>$(IntermediateOutputPath)\$([MSBuild]::ValueOrDefault('%(RelativeDir)', '').Replace('\', '.').Replace('/', '.'))%(Filename).g$(DefaultLanguageSourceExtension)</StronglyTypedFileName>
-	    <StronglyTypedLanguage>$(Language)</StronglyTypedLanguage>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="MinimalApi\Templates\setup.handlebars">
-	    <StronglyTypedClassName>%(Filename)</StronglyTypedClassName>
-	    <StronglyTypedNamespace>$(RootNamespace).$([MSBuild]::ValueOrDefault('%(RelativeDir)', '').Replace('\', '.').Replace('/', '.').TrimEnd('.'))</StronglyTypedNamespace>
-	    <StronglyTypedFileName>$(IntermediateOutputPath)\$([MSBuild]::ValueOrDefault('%(RelativeDir)', '').Replace('\', '.').Replace('/', '.'))%(Filename).g$(DefaultLanguageSourceExtension)</StronglyTypedFileName>
-	    <StronglyTypedLanguage>$(Language)</StronglyTypedLanguage>
-	  </EmbeddedResource>
 	</ItemGroup>
 </Project>

@@ -3,7 +3,7 @@ using DarkPatterns.OpenApiCodegen.Handlebars.Templates;
 
 namespace DarkPatterns.OpenApiCodegen.CSharp.MinimalApi.Templates;
 
-public record FullTemplate(
+public record SetupTemplate(
 	PartialHeader Header,
 
 	string PackageName,
@@ -12,12 +12,21 @@ public record FullTemplate(
 	Operation[] Operations
 );
 
+public record RequestHandlerTemplate(
+	PartialHeader Header,
+
+	string PackageName,
+
+	Operation Operations
+);
+
 public record Operation(
 	string HttpMethod,
 	string? Summary,
 	string? Description,
 	string Name,
 	string Path,
+	string AbstractTypeName,
 	bool HasQueryStringEmbedded,
 	OperationRequestBody[] RequestBodies,
 	OperationResponses Responses,

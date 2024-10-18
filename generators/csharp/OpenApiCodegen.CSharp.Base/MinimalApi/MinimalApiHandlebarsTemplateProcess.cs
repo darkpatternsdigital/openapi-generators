@@ -17,9 +17,19 @@ public static class MinimalApiHandlebarsTemplateProcess
 		return result;
 	}
 
-	public static string ProcessSetup(this IHandlebars handlebars, FullTemplate serviceExtensionsTemplate)
+	public static string ProcessSetup(this IHandlebars handlebars, SetupTemplate serviceExtensionsTemplate)
 	{
 		var template = handlebars.Configuration.RegisteredTemplates["setup"];
+
+		using var sr = new StringWriter();
+		var dict = Handlebars.HandlebarsTemplateProcess.ToDictionary(serviceExtensionsTemplate);
+		template(sr, dict);
+		return sr.ToString();
+	}
+
+	public static string ProcessRequestHandler(this IHandlebars handlebars, RequestHandlerTemplate serviceExtensionsTemplate)
+	{
+		var template = handlebars.Configuration.RegisteredTemplates["request-handler"];
 
 		using var sr = new StringWriter();
 		var dict = Handlebars.HandlebarsTemplateProcess.ToDictionary(serviceExtensionsTemplate);

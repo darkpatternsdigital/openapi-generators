@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-	  <OpenApiSchemaClient Include="$(SolutionRoot)schemas\all-of.yaml" Link="Clients\AllOf\all-of.yaml" />
+    <OpenApiSchemaClient Include="$(SolutionRoot)schemas\all-of.yaml" Link="Clients\AllOf\all-of.yaml" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\all-of.yaml" Link="AllOf\all-of.yaml" PathPrefix="/all-of" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\enum.yaml" Link="Enum\enum.yaml" PathPrefix="/enum" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\controller-extension.yaml" Link="ControllerExtensions\controller-extension.yaml" PathPrefix="/controller-extensions" />
@@ -27,6 +27,8 @@
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\annotations.yaml" Link="Annotations\annotations.yaml" PathPrefix="/annotations" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\request-ref.yaml" Link="RequestRef\request-ref.yaml" PathPrefix="/request-ref" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\response-ref.yaml" Link="ResponseRef\response-ref.yaml" PathPrefix="/response-ref" />
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\openapi-3.0-callbacks.yaml" Link="OpenApi30Callbacks\openapi-3.0-callbacks.yaml" PathPrefix="/openapi-3.0-callbacks" SchemaId="proj://darkpatterns-openapi/openapi-3.0-callbacks.yaml" />
+    <OpenApiSchemaWebhookClient Include="$(SolutionRoot)schemas\openapi-3.0-callbacks.yaml" Link="OpenApi30Callbacks\openapi-3.0-callbacks.yaml" SchemaId="proj://darkpatterns-openapi/openapi-3.0-callbacks.yaml" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\multi-file-ref.yaml" Link="MultiFileRef\multi-file-ref.yaml" PathPrefix="/multi-file-ref" SchemaId="proj://darkpatterns-openapi/multi-file-ref.yaml" />
     <JsonSchemaDocument Include="$(SolutionRoot)schemas\multi-file-ref-types.yaml" Link="MultiFileRef\Types\multi-file-ref-types.yaml" SchemaId="proj://darkpatterns-openapi/multi-file-ref-types.yaml" />
     <JsonSchemaDocument Include="$(SolutionRoot)schemas\multi-file-ref-responses.yaml" Link="MultiFileRef\Responses\multi-file-ref-responses.yaml" SchemaId="proj://darkpatterns-openapi/multi-file-ref-responses.yaml" />
@@ -37,10 +39,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference
-      Include="$(SolutionRoot)generators\csharp\OpenApiCodegen.CSharp.Analyzers\OpenApiCodegen.CSharp.Roslyn4.0.csproj"
-      OutputItemType="Analyzer"
-      ReferenceOutputAssembly="false" />
+	  <ProjectReference
+		Include="$(SolutionRoot)generators\csharp\OpenApiCodegen.CSharp.Analyzers\OpenApiCodegen.CSharp.Roslyn4.0.csproj"
+		OutputItemType="Analyzer"
+		ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\OpenApiCodegen.Json.Extensions\OpenApiCodegen.Json.Extensions.csproj" />
   </ItemGroup>
 

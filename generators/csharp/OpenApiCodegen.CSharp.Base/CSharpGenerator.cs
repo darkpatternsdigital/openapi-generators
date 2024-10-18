@@ -11,6 +11,7 @@ using DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
 using DarkPatterns.OpenApiCodegen.CSharp.Client;
 using System.IO;
 using System.Text;
+using DarkPatterns.OpenApiCodegen.CSharp.WebhookClient;
 
 namespace DarkPatterns.OpenApiCodegen.CSharp;
 
@@ -25,6 +26,7 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 
 	const string typeMvcServer = "MvcServer";
 	const string typeClient = "Client";
+	const string typeWebhookClient = "WebhookClient";
 	const string typeConfig = "Config";
 	const string sharedSourceGroup = "JsonSchema";
 	private readonly IEnumerable<string> metadataKeys =
@@ -50,23 +52,34 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 		var schemaRegistry = new SchemaRegistry(registry);
 		var settings = new TransformSettings(schemaRegistry, GetVersionInfo());
 
+		var docs = (from document in additionalTextInfos
+					let loaded = registry.ResolveDocument(ToInternalUri(document), relativeDocument: null)
+					let options = LoadOptionsFromMetadata(document.Metadata, additionalTextInfos)
+					select new { document, loaded, options }).ToArray();
+
 		var mvcServerTransforms =
-			(from document in additionalTextInfos.Where(f => f.Types.Contains(typeMvcServer))
-			 let loaded = registry.ResolveDocument(ToInternalUri(document), relativeDocument: null)
-			 let parseResult = CommonParsers.DefaultParsers.Parse(loaded, registry)
-			 let options = LoadOptionsFromMetadata(document.Metadata, additionalTextInfos)
-			 select new PathControllerTransformerFactory(settings).Build(parseResult, options)).ToArray();
+			(from e in docs
+			 where e.document.Types.Contains(typeMvcServer)
+			 let parseResult = CommonParsers.DefaultParsers.Parse(e.loaded, registry)
+			 select new PathControllerTransformerFactory(settings).Build(parseResult, e.options)).ToArray();
 		var clientTransforms =
-			(from document in additionalTextInfos.Where(f => f.Types.Contains(typeClient))
-			 let loaded = registry.ResolveDocument(ToInternalUri(document), relativeDocument: null)
-			 let parseResult = CommonParsers.DefaultParsers.Parse(loaded, registry)
-			 let options = LoadOptionsFromMetadata(document.Metadata, additionalTextInfos)
-			 select new ClientTransformerFactory(settings).Build(parseResult, options)).ToArray();
+			(from e in docs
+			 where e.document.Types.Contains(typeClient)
+			 let parseResult = CommonParsers.DefaultParsers.Parse(e.loaded, registry)
+			 select new ClientTransformerFactory(settings).Build(parseResult, e.options)).ToArray();
+		var webhookTransforms =
+			(from e in docs
+			 where e.document.Types.Contains(typeWebhookClient)
+			 let parseResult = CommonParsers.DefaultParsers.Parse(e.loaded, registry)
+			 select new WebhookClientTransformerFactory(settings).Build(parseResult, e.options)).ToArray();
+
+		var allSchemasOptions = LoadOptionsFromMetadata(additionalTextInfos);
 
 		var sourceProvider = new CompositeOpenApiSourceProvider([
 			.. mvcServerTransforms,
 			.. clientTransforms,
-			new CSharpSchemaSourceProvider(settings, LoadOptionsFromMetadata(additionalTextInfos)),
+			.. webhookTransforms,
+			new CSharpSchemaSourceProvider(settings, allSchemasOptions),
 		]);
 
 		var result = sourceProvider.GetSources();
@@ -81,7 +94,15 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 	{
 		using var defaultJsonStream = CSharpSchemaOptions.GetDefaultOptionsJson();
 		using var serverJsonStream = CSharpServerSchemaOptions.GetServerDefaultOptionsJson();
-		var result = OptionsLoader.LoadOptions<CSharpServerSchemaOptions>([defaultJsonStream, serverJsonStream], []);
+
+		var result = OptionsLoader.LoadOptions<CSharpServerSchemaOptions>(
+			[
+				defaultJsonStream,
+				serverJsonStream,
+				.. additionalSchemas.Where(s => s.Types.Contains(typeConfig)).Select(f => new MemoryStream(Encoding.UTF8.GetBytes(f.Contents))),
+			],
+			[]
+		);
 
 		foreach (var entry in additionalSchemas)
 		{
@@ -95,8 +116,8 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 
 	private static CSharpServerSchemaOptions LoadOptionsFromMetadata(IReadOnlyDictionary<string, string?> entrypointMetadata, IEnumerable<AdditionalTextInfo> additionalSchemas)
 	{
-		var optionsFiles = entrypointMetadata[propConfig];
-		var pathPrefix = entrypointMetadata[propPathPrefix];
+		entrypointMetadata.TryGetValue(propConfig, out var optionsFiles);
+		entrypointMetadata.TryGetValue(propPathPrefix, out var pathPrefix);
 		using var defaultJsonStream = CSharpSchemaOptions.GetDefaultOptionsJson();
 		using var serverJsonStream = CSharpServerSchemaOptions.GetServerDefaultOptionsJson();
 
@@ -125,15 +146,14 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 
 	private static string GetVersionInfo()
 	{
-		return $"{typeof(CSharpControllerTransformer).FullName} v{typeof(CSharpControllerTransformer).Assembly.GetName().Version}";
+		return $"{typeof(CSharpGenerator).FullName} v{typeof(CSharpGenerator).Assembly.GetName().Version}";
 	}
 
 	private static string GetStandardNamespace(IReadOnlyDictionary<string, string?> metadata, CSharpSchemaOptions options)
 	{
-		var fullNamespace = metadata[propNamespace];
-		if (fullNamespace != null) return fullNamespace;
-		var identity = metadata[propIdentity];
-		var link = metadata[propLink];
+		if (metadata.TryGetValue(propNamespace, out var fullNamespace)) return fullNamespace!;
+		metadata.TryGetValue(propIdentity, out var identity);
+		metadata.TryGetValue(propLink, out var link);
 		metadata.TryGetValue("build_property.projectdir", out var projectDir);
 		metadata.TryGetValue("build_property.rootnamespace", out var rootNamespace);
 

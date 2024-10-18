@@ -8,6 +8,7 @@ using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.OpenApi.Specifications.v3_0;
 using DarkPatterns.Json.Documents;
+using System.IO;
 
 namespace DarkPatterns.OpenApi.CSharp;
 
@@ -114,7 +115,19 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, DocumentRegistry d
 					}
 				case ([], OpenApiDocument) when context.Count >= 2 && context[1] is (["components", _, string componentName], JsonSchema):
 					return ([componentName], context.Skip(2).ToArray());
-				case (_, OpenApiDocument or OpenApiPath):
+				case ([], OpenApiDocument):
+					return (Enumerable.Empty<string>(), context.Skip(1).ToArray());
+				case (["callbacks", var callbackName, _], OpenApiPath):
+					switch (context[1])
+					{
+						case ([var method], OpenApiOperation { OperationId: null }):
+							return ([$"{method} {callbackName}"], context.Skip(2).ToArray());
+						case (_, OpenApiOperation { OperationId: string opId }):
+							return ([opId], context.Skip(2).ToArray());
+						default:
+							throw new NotImplementedException();
+					}
+				case (_, OpenApiPath):
 					return (Enumerable.Empty<string>(), context.Skip(1).ToArray());
 				case (["responses"], OpenApiResponses responses) when context.Count >= 4:
 					{

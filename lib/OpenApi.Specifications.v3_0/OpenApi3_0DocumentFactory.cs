@@ -152,7 +152,69 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 			Info: ConstructInfo(key.Navigate("info")),
 			Dialect: OpenApiDialect,
 			Paths: ConstructPaths(key.Navigate("paths")),
-			SecurityRequirements: ReadArray(key.Navigate("security"), ConstructSecurityRequirement)
+			SecurityRequirements: ReadArray(key.Navigate("security"), ConstructSecurityRequirement),
+			Servers: ReadArray(key.Navigate("servers"), ConstructServer),
+			Webhooks: ConstructWebhooksFromCallbacks(key)
+		);
+	}
+
+	private Dictionary<string, OpenApiPath> ConstructWebhooksFromCallbacks(ResolvableNode key)
+	{
+		var result = new Dictionary<string, OpenApiPath>();
+		var callbackNodes = (from path in GetChildrenOf(key.Navigate("paths"))
+							 from operation in GetChildrenOf(path, validMethods.Contains).Select(AllowReference(n => n))
+							 from callback in GetChildrenOf(operation.Navigate("callbacks")).Select(AllowReference(n => n))
+							 from withExpression in GetChildrenOf(callback).Select(AllowReference(n => n))
+							 group withExpression by withExpression.Id.OriginalString into matchingIds
+							 select matchingIds.First()).ToArray();
+
+		return callbackNodes.ToDictionary(n => n.Id.OriginalString, n => ConstructPath(n));
+	}
+
+	private IEnumerable<ResolvableNode> GetChildrenOf(ResolvableNode target, Func<string, bool>? propertyNameFilter = null)
+	{
+		switch (target.Node)
+		{
+			case JsonObject obj:
+				foreach (var n in obj)
+					if (propertyNameFilter?.Invoke(n.Key) ?? true)
+						yield return target.Navigate(n.Key);
+				yield break;
+			case JsonArray arr:
+				foreach (var index in arr.Select((n, i) => i))
+					yield return target.Navigate(index);
+				yield break;
+			case null: yield break;
+			case JsonValue:
+				yield break;
+		}
+	}
+
+	private OpenApiServer ConstructServer(ResolvableNode key) =>
+		CatchDiagnostic(InternalConstructServer, MissingRequiredFieldDefaults.ConstructPlaceholderServerRequirement)(key);
+	private OpenApiServer InternalConstructServer(ResolvableNode key)
+	{
+		if (key.Node is not JsonObject obj) throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiServer)));
+		return new OpenApiServer(key.Id,
+			Url: obj["url"]?.GetValue<string>() is string url
+				&& Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out var result)
+					? result
+					: new Uri("#", UriKind.Relative),
+			Description: obj["description"]?.GetValue<string>(),
+			Variables: ReadDictionary(key.Navigate("variables"), v => true, (prop, key) => (prop, ConstructServerVariable(key)))
+		);
+	}
+
+	private OpenApiServerVariable ConstructServerVariable(ResolvableNode key) =>
+		CatchDiagnostic(InternalConstructServerVariable, MissingRequiredFieldDefaults.ConstructPlaceholderServerVariable)(key);
+	private OpenApiServerVariable InternalConstructServerVariable(ResolvableNode key)
+	{
+		if (key.Node is not JsonObject obj) throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiServerVariable)));
+		return new OpenApiServerVariable(
+			key.Id,
+			AllowedValues: ReadArray(key.Navigate("enum"), (n) => n.Node?.GetValue<string>() ?? MissingRequiredFieldDefaults.ServerVariableAllowedValue),
+			DefaultValue: obj["default"]?.GetValue<string>() ?? MissingRequiredFieldDefaults.ServerVariableAllowedValue,
+			Description: obj["description"]?.GetValue<string>()
 		);
 	}
 

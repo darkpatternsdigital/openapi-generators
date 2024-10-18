@@ -65,15 +65,13 @@ Additional settings may be added within the `.csproj`. For example, see the belo
 - `SchemaId` - Specifies the "retrieval URI" used when resolving relative paths
   to external files. Otherwise, the absolute file-scheme URL will be used.
 
-In addition, adding the following to an ItemGroup in the csproj (or adding the
-yaml file with the build action `OpenApiSchemaOptions` via Visual
-Studio) will set the configuration yaml file for all schemas.
-
 ### Client
 
 ```xml
 <OpenApiSchemaClient Include="schemas/petstore.yaml" Namespace="My.Extensions" Configuration="path/to/config.yaml" />
 ```
+
+Generates extension methods off of `HttpClient` to access the API as defined.
 
 - `Namespace` - Overrides the namespace detected by the default namespace and
   path of the schema file
@@ -82,6 +80,21 @@ Studio) will set the configuration yaml file for all schemas.
 - `SchemaId` - Specifies the "retrieval URI" used when resolving relative paths
   to external files. Otherwise, the absolute file-scheme URL will be used.
 
+
+### Webhook Client
+
+```xml
+<OpenApiSchemaWebhookClient Include="schemas/petstore.yaml" Namespace="My.Extensions" Configuration="path/to/config.yaml" />
+```
+
+Generates extension methods off of `HttpClient` to access webhooks and callbacks.
+
+- `Namespace` - Overrides the namespace detected by the default namespace and
+  path of the schema file
+- `Configuration` - Additional configuration settings specific to this schema.
+  See the configuration yaml documentation below.
+- `SchemaId` - Specifies the "retrieval URI" used when resolving relative paths
+  to external files. Otherwise, the absolute file-scheme URL will be used.
 
 ### Configuration Yaml
 

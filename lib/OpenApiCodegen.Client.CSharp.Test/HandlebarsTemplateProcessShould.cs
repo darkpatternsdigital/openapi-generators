@@ -1,5 +1,6 @@
 using DarkPatterns.OpenApi.CSharp;
 using DarkPatterns.OpenApiCodegen.CSharp.Client;
+using DarkPatterns.OpenApiCodegen.CSharp.WebhookClient;
 using System;
 using Xunit;
 

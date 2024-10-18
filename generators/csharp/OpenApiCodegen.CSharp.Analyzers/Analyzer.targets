@@ -30,7 +30,6 @@
 	<ItemGroup>
 		<ProjectReference
 			Include="$(SolutionRoot)generators\csharp\OpenApiCodegen.CSharp.Base\OpenApiCodegen.CSharp.Base.csproj"
-			SpecificVersion="true"
 			AnalyzerDynamicContext="true"
 			ReferenceOutputAssembly="false" />
 	</ItemGroup>

@@ -13,7 +13,7 @@ public static class ClientHandlebarsTemplateProcess
 	{
 		var result = CSharpHandlebarsCommon.CreateHandlebars();
 
-		result.AddTemplatesFromAssembly(typeof(ClientHandlebarsTemplateProcess).Assembly);
+		result.AddTemplatesAdjacentToType(typeof(ClientHandlebarsTemplateProcess));
 
 		return result;
 	}
@@ -24,16 +24,6 @@ public static class ClientHandlebarsTemplateProcess
 
 		using var sr = new StringWriter();
 		var dict = BaseProcess.ToDictionary(clientTemplate);
-		template(sr, dict);
-		return sr.ToString();
-	}
-
-	public static string ProcessAddServices(this IHandlebars handlebars, AddServicesModel addServices)
-	{
-		var template = handlebars.Configuration.RegisteredTemplates["addServices"];
-
-		using var sr = new StringWriter();
-		var dict = BaseProcess.ToDictionary(addServices);
 		template(sr, dict);
 		return sr.ToString();
 	}

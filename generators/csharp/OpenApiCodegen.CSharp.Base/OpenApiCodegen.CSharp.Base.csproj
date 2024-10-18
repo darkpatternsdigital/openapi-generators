@@ -14,7 +14,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="$(SolutionRoot)lib\OpenApi.CSharp\OpenApi.CSharp.csproj" SpecificVersion="true" />
-		<ProjectReference Include="$(SolutionRoot)lib\OpenApiCodegen\OpenApiCodegen.csproj" SpecificVersion="true" />
+		<ProjectReference Include="$(SolutionRoot)lib\OpenApi.CSharp\OpenApi.CSharp.csproj" />
+		<ProjectReference Include="$(SolutionRoot)lib\OpenApiCodegen\OpenApiCodegen.csproj" />
 	</ItemGroup>
 </Project>

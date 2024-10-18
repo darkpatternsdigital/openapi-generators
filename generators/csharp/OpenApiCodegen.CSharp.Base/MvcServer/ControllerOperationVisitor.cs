@@ -56,6 +56,10 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 		base.Visit(path, argument with { CurrentPath = path });
 	}
 
+	public override void VisitWebhook(OpenApiPath value, string key, Argument? argument)
+	{
+	}
+
 	public override void Visit(OpenApiOperation operation, string httpMethod, Argument argument)
 	{
 		if (argument.CurrentPath is not OpenApiPath pathObj)

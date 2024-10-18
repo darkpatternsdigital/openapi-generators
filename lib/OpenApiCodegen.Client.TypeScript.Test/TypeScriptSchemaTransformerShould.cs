@@ -1,13 +1,13 @@
 using Xunit;
-using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApi.TypeScript;
 using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
 using System;
-using DarkPatterns.OpenApi.Transformations.DocumentTypes;
 using DarkPatterns.OpenApiCodegen.TestUtils;
-using DarkPatterns.OpenApi.Transformations.Abstractions;
 using DarkPatterns.Json.Specifications;
 using System.Text.Json.Nodes;
+using DarkPatterns.OpenApi.Transformations.Specifications;
+using DarkPatterns.Json.Documents;
+using DarkPatterns.OpenApi.Abstractions;
 
 namespace DarkPatterns.OpenApiCodegen.Client.TypeScript;
 using static OptionsHelpers;

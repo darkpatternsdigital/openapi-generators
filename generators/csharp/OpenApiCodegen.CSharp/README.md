@@ -65,10 +65,6 @@ Additional settings may be added within the `.csproj`. For example, see the belo
 - `SchemaId` - Specifies the "retrieval URI" used when resolving relative paths
   to external files. Otherwise, the absolute file-scheme URL will be used.
 
-In addition, adding the following to an ItemGroup in the csproj (or adding the
-yaml file with the build action `OpenApiSchemaOptions` via Visual
-Studio) will set the configuration yaml file for all schemas.
-
 ### Minimal API Server
 
 ```xml

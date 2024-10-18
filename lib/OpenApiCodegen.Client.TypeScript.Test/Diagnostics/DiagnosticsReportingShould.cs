@@ -1,6 +1,4 @@
 ﻿using DarkPatterns.OpenApi.Transformations;
-using DarkPatterns.OpenApi.Transformations.Diagnostics;
-using DarkPatterns.Json.Specifications;
 using DarkPatterns.OpenApiCodegen.TestUtils;
 using System;
 using System.Collections.Generic;
@@ -8,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using DarkPatterns.Json.Documents;
+using DarkPatterns.Json.Diagnostics;
 
 namespace DarkPatterns.OpenApiCodegen.Client.TypeScript.Diagnostics;
 
@@ -33,13 +33,13 @@ public class DiagnosticsReportingShould
 		Assert.NotNull(docResult.Document);
 		var document = docResult.Document;
 
+		var settings = new Handlebars.TransformSettings(new SchemaRegistry(registry), "");
 		var options = LoadOptions();
 
-		var transformer = document.BuildTypeScriptOperationSourceProvider(registry, "", options);
-		OpenApiTransformDiagnostic diagnostic = new();
+		var transformer = new OperationTransformerFactory(settings).Build(docResult.Document, options);
 
-		transformer.GetSources(diagnostic).ToArray(); // force all sources to load to get diagnostics
-		return docResult.Diagnostics.Concat(diagnostic.Diagnostics);
+		var result = transformer.GetSources();
+		return docResult.Diagnostics.Concat(result.Diagnostics);
 	}
 
 }

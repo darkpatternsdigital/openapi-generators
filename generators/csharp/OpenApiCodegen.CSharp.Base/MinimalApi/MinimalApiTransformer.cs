@@ -6,12 +6,20 @@ using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.Json.Documents;
 using DarkPatterns.OpenApiCodegen.Handlebars;
-using DarkPatterns.OpenApiCodegen.CSharp.Client.Templates;
+using DarkPatterns.OpenApiCodegen.CSharp.MinimalApi.Templates;
 using DarkPatterns.OpenApi.CSharp;
 
-namespace DarkPatterns.OpenApiCodegen.CSharp.Client;
+namespace DarkPatterns.OpenApiCodegen.CSharp.MinimalApi;
 
-public class CSharpClientTransformer(TransformSettings settings, OpenApiDocument document, CSharpSchemaOptions options, HandlebarsFactory handlebarsFactory) : ISourceProvider
+public class MinimalApiRequestHandlerTransformer : IOpenApiOperationTransformer
+{
+	public SourceEntry TransformOperation(OpenApiPath path, string method, OpenApiOperation operation, OpenApiTransformDiagnostic diagnostic)
+	{
+		throw new NotImplementedException();
+	}
+}
+
+public class MinimalApiTransformer(TransformSettings settings, OpenApiDocument document, CSharpSchemaOptions options, HandlebarsFactory handlebarsFactory) : ISourceProvider
 {
 	public SourceEntry TransformOperations(OpenApiTransformDiagnostic diagnostic)
 	{
@@ -37,7 +45,7 @@ public class CSharpClientTransformer(TransformSettings settings, OpenApiDocument
 			Operations: resultOperations.ToArray()
 		);
 
-		var entry = handlebarsFactory.Handlebars.ProcessClient(template);
+		var entry = handlebarsFactory.Handlebars.ProcessSetup(template);
 		return new SourceEntry(
 			Key: $"{baseNamespace}.{className}.cs",
 			SourceText: entry

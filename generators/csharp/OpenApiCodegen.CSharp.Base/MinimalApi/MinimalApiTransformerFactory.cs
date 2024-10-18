@@ -3,47 +3,23 @@ using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.OpenApiCodegen.Handlebars;
 using DarkPatterns.Json.Documents;
 using DarkPatterns.Json.Diagnostics;
-using DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
+using DarkPatterns.OpenApi.CSharp;
 
 namespace DarkPatterns.OpenApiCodegen.CSharp.MinimalApi;
 
 public class MinimalApiTransformerFactory(TransformSettings settings)
 {
-	public ISourceProvider Build(ParseResult<OpenApiDocument> parseResult, CSharpServerSchemaOptions options)
+	public ISourceProvider Build(ParseResult<OpenApiDocument> parseResult, CSharpSchemaOptions options)
 	{
 		if (parseResult.Document is not { } document) return new DiagnosticOnlySourceProvider(parseResult.Diagnostics);
-		var handlebarsFactory = new HandlebarsFactory(ControllerHandlebarsTemplateProcess.CreateHandlebars);
-		var controllerTransformer = new CSharpControllerTransformer(settings, document, options, handlebarsFactory);
+		var handlebarsFactory = new HandlebarsFactory(MinimalApiHandlebarsTemplateProcess.CreateHandlebars);
 
-		var operationGrouping =
-			new PathControllerSourceTransformer(settings.SchemaRegistry, document, controllerTransformer, (operation, path) =>
-			{
-				var key = $"x-{options.Extensions.ControllerName}";
-				return operation.Extensions.TryGetValue(key, out var opOverride) ? opOverride?.GetValue<string>()
-					: path.Extensions.TryGetValue(key, out var pathOverride) ? pathOverride?.GetValue<string>()
-					: null;
-			});
-
-		var result = new CompositeOpenApiSourceProvider([
+		return new CompositeOpenApiSourceProvider([
 			new DiagnosticOnlySourceProvider(parseResult.Diagnostics),
-			operationGrouping,
-			new DotNetMvcAddServicesHelperTransformer(controllerTransformer, operationGrouping)
+			new SafeSourceProvider(
+				new MinimalApiTransformer(settings, document, options, handlebarsFactory),
+				SafeSourceProvider.DefaultExceptionHandler(settings.SchemaRegistry.DocumentRegistry, document.Metadata)
+			)
 		]);
-
-		return new SafeSourceProvider(result, (ex) =>
-		{
-			if (parseResult.Diagnostics is not [])
-			{
-				// Assume that the parser errors caused the exception.
-				return new(
-					[],
-					parseResult.Diagnostics
-				);
-			}
-			return new(
-				[],
-				[.. ex.ToDiagnostics(settings.SchemaRegistry.DocumentRegistry, document.Metadata)]
-			);
-		});
 	}
 }

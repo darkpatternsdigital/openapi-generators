@@ -43,8 +43,8 @@ public class OneOfYamlShould
 	}
 	public static IEnumerable<object[]> ModelsWithDiscriminator()
 	{
-		yield return new object[] { new { petType = "Dog", bark = true, breed = "Shiba Inu" } };
-		yield return new object[] { new { petType = "Cat", hunts = false, age = 12 } };
+		yield return new object[] { new { petType = "dog", bark = true, breed = "Shiba Inu" } };
+		yield return new object[] { new { petType = "cat", hunts = false, age = 12 } };
 	}
 
 	[Fact]

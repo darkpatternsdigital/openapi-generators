@@ -112,9 +112,9 @@ public class TypeScriptSchemaSourceProvider(
 
 	private Templates.TypeUnionModel ToOneOfModel(string className, TypeScriptTypeInfo schema)
 	{
-		var discriminator = schema.Schema?.TryGetAnnotation<Specifications.v3_0.DiscriminatorKeyword>();
+		var discriminator = schema.Schema.TryGetAnnotation<Specifications.v3_0.DiscriminatorKeyword>();
 		return new Templates.TypeUnionModel(
-			Imports: inlineSchemas.GetImportStatements(schema.OneOf ?? Enumerable.Empty<JsonSchema>(), Enumerable.Empty<JsonSchema>(), "./models/").ToArray(),
+			Imports: inlineSchemas.GetImportStatements(schema.OneOf ?? [], [], "./models/").ToArray(),
 			Description: schema.Description,
 			ClassName: className,
 			AllowAnyOf: false,
@@ -124,7 +124,9 @@ public class TypeScriptSchemaSourceProvider(
 				{
 					var id = e.Metadata.Id;
 					string? discriminatorValue = e.GetLastContextPart();
-					if (discriminator?.Mapping?.FirstOrDefault(kvp => kvp.Value.OriginalString == id.OriginalString) is { Key: string key, Value: var relativeId })
+					if (discriminator?.Mapping?.FirstOrDefault(
+							kvp => new Uri(schema.Schema.Metadata.Id, kvp.Value).OriginalString == id.OriginalString
+						) is { Key: string key, Value: var relativeId })
 					{
 						discriminatorValue = key;
 						id = new Uri(id, relativeId);

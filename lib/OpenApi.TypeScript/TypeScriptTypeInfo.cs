@@ -9,7 +9,7 @@ namespace DarkPatterns.OpenApi.TypeScript;
 using OpenApi3_0 = Specifications.v3_0;
 
 public record TypeScriptTypeInfo(
-	JsonSchema? Schema,
+	JsonSchema Schema,
 	string? Description,
 	string? Type,
 	string? Format,
@@ -22,7 +22,7 @@ public record TypeScriptTypeInfo(
 	JsonSchema? Items
 	)
 {
-	public static TypeScriptTypeInfo From(JsonSchema? schema)
+	public static TypeScriptTypeInfo From(JsonSchema schema)
 	{
 		return new TypeScriptTypeInfo(
 			schema,

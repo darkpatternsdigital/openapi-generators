@@ -156,7 +156,9 @@ public class CSharpSchemaSourceProvider(
 				{
 					var id = e.Metadata.Id;
 					string? discriminatorValue = e.GetLastContextPart();
-					if (discriminator?.Mapping?.FirstOrDefault(kvp => kvp.Value.OriginalString == id.OriginalString) is { Key: string key, Value: var relativeId })
+					if (discriminator?.Mapping?.FirstOrDefault(
+							kvp => new Uri(schema.Metadata.Id, kvp.Value).OriginalString == id.OriginalString
+						) is { Key: string key, Value: var relativeId })
 					{
 						discriminatorValue = key;
 						id = new Uri(id, relativeId);

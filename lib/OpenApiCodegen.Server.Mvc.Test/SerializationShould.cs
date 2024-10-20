@@ -87,8 +87,8 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc
 		[Theory]
 		[InlineData("new DPD.Controller.Pet(Dog: new DPD.Controller.Dog(Bark: true, Breed: \"Shiba Inu\"))", "{ \"bark\": true, \"breed\": \"Shiba Inu\" }")]
 		[InlineData("new DPD.Controller.Pet(Cat: new DPD.Controller.Cat(Hunts: false, Age: 12))", "{ \"hunts\": false, \"age\": 12 }")]
-		[InlineData("new DPD.Controller.SpecifiedPet(Dog: new DPD.Controller.Dog(Bark: true, Breed: \"Shiba Inu\"))", "{ \"petType\": \"Dog\", \"bark\": true, \"breed\": \"Shiba Inu\" }")]
-		[InlineData("new DPD.Controller.SpecifiedPet(Cat: new DPD.Controller.Cat(Hunts: false, Age: 12))", "{ \"petType\": \"Cat\", \"hunts\": false, \"age\": 12 }")]
+		[InlineData("new DPD.Controller.SpecifiedPet(Dog: new DPD.Controller.Dog(Bark: true, Breed: \"Shiba Inu\"))", "{ \"petType\": \"dog\", \"bark\": true, \"breed\": \"Shiba Inu\" }")]
+		[InlineData("new DPD.Controller.SpecifiedPet(Cat: new DPD.Controller.Cat(Hunts: false, Age: 12))", "{ \"petType\": \"cat\", \"hunts\": false, \"age\": 12 }")]
 		public Task SerializeAOneOfObject(string csharpScript, string json) =>
 			SerializeJsonAsync(
 				"one-of.yaml",
@@ -99,8 +99,8 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc
 		[Theory]
 		[InlineData("DPD.Controller.Pet", "{ \"bark\": true, \"breed\": \"Shiba Inu\" }")]
 		[InlineData("DPD.Controller.Pet", "{ \"hunts\": false, \"age\": 12 }")]
-		[InlineData("DPD.Controller.SpecifiedPet", "{ \"petType\": \"Dog\", \"bark\": true, \"breed\": \"Shiba Inu\" }")]
-		[InlineData("DPD.Controller.SpecifiedPet", "{ \"petType\": \"Cat\", \"hunts\": false, \"age\": 12 }")]
+		[InlineData("DPD.Controller.SpecifiedPet", "{ \"petType\": \"dog\", \"bark\": true, \"breed\": \"Shiba Inu\" }")]
+		[InlineData("DPD.Controller.SpecifiedPet", "{ \"petType\": \"cat\", \"hunts\": false, \"age\": 12 }")]
 		public Task DeserializeAOneOfObject(string csharpType, string json) =>
 			DeserializeJsonAsync(
 				"one-of.yaml",

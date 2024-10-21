@@ -175,6 +175,9 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, DocumentRegistry d
 
 						return ([requestName, requestBody.Content!.Count == 1 ? "" : mimeType, "request"], context.Skip(3).ToArray());
 					}
+				case (["components", "parameters", var paramName], OpenApiParameter) when context.Count >= 1:
+					if (context[1] is not (["schema"], _)) throw new NotImplementedException();
+					return ([paramName], context.Skip(2).ToArray());
 				case (["requestBody"], OpenApiRequestBody requestBody) when context.Count >= 3:
 					{
 						if (context[1] is not (["content", var mimeType], _)) throw new NotImplementedException();

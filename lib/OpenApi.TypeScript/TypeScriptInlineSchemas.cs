@@ -184,6 +184,9 @@ public class TypeScriptInlineSchemas(TypeScriptSchemaOptions options, DocumentRe
 
 						return ([requestBody.Content!.Count == 1 ? "" : mimeType, "request"], context.Skip(3).ToArray());
 					}
+				case (["components", "parameters", var paramName], OpenApiParameter) when context.Count >= 1:
+					if (context[1] is not (["schema"], _)) throw new NotImplementedException();
+					return ([paramName], context.Skip(2).ToArray());
 				case (["parameters", _], OpenApiParameter { Name: string paramName }) when context.Count >= 1:
 					if (context[1] is not (["schema"], _)) throw new NotImplementedException();
 					return ([paramName], context.Skip(2).ToArray());

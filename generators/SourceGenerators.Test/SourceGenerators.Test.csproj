@@ -32,5 +32,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="$(SolutionRoot)lib/OpenApi.Transformations/OpenApi.Transformations.csproj" SpecificVersion="true" />
+		<ProjectReference Include="..\csharp\OpenApiCodegen.CSharp.Base\OpenApiCodegen.CSharp.Base.csproj" />
 	</ItemGroup>
 </Project>

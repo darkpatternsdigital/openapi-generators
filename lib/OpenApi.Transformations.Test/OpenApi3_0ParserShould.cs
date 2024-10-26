@@ -140,4 +140,12 @@ public class OpenApi3_0ParserShould
 		Assert.Contains(result.Diagnostics, (d) => d is CouldNotFindTargetNodeDiagnostic && d.Location.Range?.Start.Line == 75);
 		Assert.Contains(result.Diagnostics, (d) => d is UnableToParseKeyword parseError && parseError.Keyword == "required" && d.Location.Range?.Start.Line == 26);
 	}
+
+	[Fact]
+	public void Reports_diagnostics_for_bad_2_yaml()
+	{
+		var registry = DocumentLoader.CreateRegistry();
+		var result = GetOpenApiDocument("bad.2.yaml", registry);
+		Assert.Empty(result.Diagnostics);
+	}
 }

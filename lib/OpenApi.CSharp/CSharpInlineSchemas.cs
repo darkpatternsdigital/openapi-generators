@@ -8,17 +8,9 @@ using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.OpenApi.Specifications.v3_0;
 using DarkPatterns.Json.Documents;
-using System.IO;
+using DarkPatterns.Json.Diagnostics;
 
 namespace DarkPatterns.OpenApi.CSharp;
-
-
-public record CSharpInlineDefinition(string Text, bool Nullable = false, bool IsEnumerable = false)
-{
-	// Assumes C#8, since it's standard in VS2019+, which is when nullable reference types were introduced
-	public CSharpInlineDefinition MakeNullable() =>
-		Nullable ? this : new(Text + "?", Nullable: true, IsEnumerable: IsEnumerable);
-}
 
 public class CSharpInlineSchemas(CSharpSchemaOptions options, DocumentRegistry documentRegistry)
 {
@@ -45,7 +37,7 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, DocumentRegistry d
 			// Specifically-mapped type
 			{ Type: string type, Format: var format } =>
 				new(options.Find(type, format)),
-			_ => throw new NotSupportedException($"Unable to create inline reference for schema {schema.Metadata.Id}"),
+			_ => throw new DiagnosticException(UnableToCreateInlineSchemaDiagnostic.Builder(schema.Metadata.Id)),
 		};
 		return schema?.TryGetAnnotation<NullableKeyword>() is { IsNullable: true }
 			? result.MakeNullable()

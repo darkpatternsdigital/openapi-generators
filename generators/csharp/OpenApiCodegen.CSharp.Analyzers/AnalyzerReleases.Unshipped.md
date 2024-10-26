@@ -16,6 +16,7 @@ DPD_JSON_2020_12_VAL_002 | DarkPatterns.OpenApiCodegen | Error | TransformationD
 DPD_JSON_2020_12_VAL_003 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
 DPD_OPENAPI_3_0_001 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
 DPD_OPENAPI_3_0_002 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
+DPD_OPENAPI_CS_001 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
 DPD_PARSE_002 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
 DPD_PARSE_003 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
 DPD_PARSE_004 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics

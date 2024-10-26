@@ -11,6 +11,7 @@ public class DiagnosticsShould
 	[Theory]
 	public void Cover_all_DiagnosticBase_subtypes(string typeName)
 	{
+		/// Check to see that there is a mapping of <see cref="TransformationDiagnosticAttribute" /> for every diagnostic
 		Assert.True(TransformationDiagnostics.DiagnosticBy.ContainsKey(typeName), $"Missing diagnostic for '{typeName}'");
 	}
 
@@ -47,6 +48,8 @@ public class DiagnosticsShould
 						typeof(OpenApi.Transformations.Specifications.UnableToParseDiagnostic).Assembly,
 						typeof(OpenApi.Specifications.v3_0.InvalidNode).Assembly,
 						typeof(Json.Loaders.YamlLoadDiagnostic).Assembly,
+						typeof(CSharp.MvcServer.PathControllerTransformerFactory).Assembly,
+						typeof(OpenApi.CSharp.UnableToCreateInlineSchemaDiagnostic).Assembly,
 					]).Distinct()
 			   from type in asm.GetTypes()
 			   where type.IsAssignableTo(target)

@@ -185,6 +185,10 @@
     <value>Unhandled exception occurred: [{0}] {1}</value>
     <comment/>
   </data>
+  <data name="DarkPatterns.OpenApi.CSharp.UnableToCreateInlineSchemaDiagnostic" xml:space="preserve">
+    <value>Could not recognize schema to become a C# type. This could be an unimplemented feature or an error with the schema.</value>
+    <comment/>
+  </data>
   <data name="DarkPatterns.OpenApi.Specifications.v3_0.TypeKeywordMismatch" xml:space="preserve">
     <value>Type did not match {0}</value>
     <comment/>

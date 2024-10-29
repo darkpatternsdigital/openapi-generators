@@ -29,8 +29,10 @@ public class OneOfKeyword(string keyword, IReadOnlyList<JsonSchema> schemas) : I
 	public IReadOnlyList<JsonSchema> Schemas => schemas;
 
 	public IEnumerable<JsonSchema> GetReferencedSchemas() => Schemas;
+	public IEnumerable<IJsonSchemaAnnotation> GetDynamicAnnotations()
+		=> [];
 
-	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchema context, EvaluationContext evaluationContext)
+	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchemaInfo context, EvaluationContext evaluationContext)
 	{
 		var results = Schemas.Select(s => s.Evaluate(nodeMetadata, evaluationContext).ToArray()).ToArray();
 		var matches = results.Count(r => r.Length == 0);

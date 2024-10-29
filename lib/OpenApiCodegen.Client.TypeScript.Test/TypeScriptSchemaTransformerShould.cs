@@ -40,23 +40,23 @@ public class TypeScriptSchemaTransformerShould
 		Assert.NotNull(document);
 		Assert.NotNull(schema);
 
-		var target = ConstructTarget(LoadOptions(), registry);
+		var target = ConstructTarget(LoadOptions(), registry.DocumentRegistry);
 		var actual = target.ProduceSourceEntry(schema!);
 
 		Assert.Equal(expectedInline, actual);
 	}
 
-	private static (DocumentRegistry registry, OpenApiDocument? document, JsonSchema? schema) GetSchema(IDocumentReference docRef, Uri uri)
+	private static (SchemaRegistry registry, OpenApiDocument? document, JsonSchema? schema) GetSchema(IDocumentReference docRef, Uri uri)
 	{
 		var registry = DocumentLoader.CreateRegistry();
 		var docResult = CommonParsers.DefaultParsers.Parse(docRef, registry);
-		Assert.NotNull(docResult.Document);
-		var document = docResult.Document;
+		Assert.NotNull(docResult.Result);
+		var document = docResult.Result;
 
-		var metadata = new ResolvableNode(new NodeMetadata(uri), registry);
+		var metadata = new ResolvableNode(new NodeMetadata(uri), registry.DocumentRegistry);
 		while (metadata.Node is JsonObject obj && obj.TryGetPropertyValue("$ref", out var refNode) && refNode?.GetValue<string>() is string refValue)
 		{
-			metadata = new ResolvableNode(new NodeMetadata(new Uri(metadata.Id, refValue), metadata.Metadata), registry);
+			metadata = new ResolvableNode(new NodeMetadata(new Uri(metadata.Id, refValue), metadata.Metadata), registry.DocumentRegistry);
 		}
 		var schemaResult = registry.ResolveSchema(metadata.Metadata, document.Dialect);
 		return (registry, document, schemaResult);
@@ -88,7 +88,7 @@ public class TypeScriptSchemaTransformerShould
 		Assert.NotNull(document);
 		Assert.NotNull(schema);
 
-		var target = ConstructTarget(LoadOptions(), registry);
+		var target = ConstructTarget(LoadOptions(), registry.DocumentRegistry);
 		var inline = target.ToInlineDataType(schema);
 
 		Assert.Equal(expectedInline, inline.Text);

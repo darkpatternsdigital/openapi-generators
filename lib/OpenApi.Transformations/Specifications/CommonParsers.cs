@@ -18,26 +18,20 @@ public static class CommonParsers
 		// OpenApi3_1Parser,
 	];
 
-	public static ParseResult<TResult> Parse<TResult>(this IEnumerable<IParser<TResult>> parsers, IDocumentReference document, DocumentRegistry documentRegistry)
+	public static ParseResult<TResult> Parse<TResult>(this IEnumerable<IParser<TResult>> parsers, IDocumentReference document, SchemaRegistry schemaRegistry)
 		where TResult : class, IReferenceableDocument
 	{
 		var result = parsers
 			.Where(parser => parser.CanParse(document))
-			.Select(parser => parser.Parse(document, documentRegistry))
+			.Select(parser => parser.Parse(document, schemaRegistry))
 			.FirstOrDefault()
-			?? new ParseResult<TResult>(null, [new UnableToParseDiagnostic(documentRegistry.ResolveLocation(NodeMetadata.FromRoot(document)))]);
-		if (result.Document != null)
+			?? new ParseResult<TResult>(null, [new UnableToParseDiagnostic(schemaRegistry.DocumentRegistry.ResolveLocation(NodeMetadata.FromRoot(document)))]);
+		if (result.Result != null)
 		{
-			documentRegistry.Register(result.Document);
-			var options = new JsonSchemaParserOptions(documentRegistry, result.Document.Dialect);
-			do
-			{
-				var schemas = result.Document.GetNestedNodes(recursive: true).OfType<JsonSchema>().Where(s => !s.IsFixupComplete).ToArray();
-				foreach (var schema in schemas)
-				{
-					schema.FixupInPlace(options);
-				}
-			} while (result.Document.GetNestedNodes(recursive: true).OfType<JsonSchema>().Where(s => !s.IsFixupComplete).Any());
+			schemaRegistry.DocumentRegistry.Register(result.Result);
+			var options = new JsonSchemaParserOptions(schemaRegistry, result.Result.Dialect);
+			var newDiagnostics = schemaRegistry.RecursivelyFixupAll();
+			return result with { Diagnostics = [.. newDiagnostics, .. result.Diagnostics] };
 		}
 		return result;
 	}

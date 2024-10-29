@@ -9,11 +9,11 @@ public interface IParser<TResult>
 	where TResult : class, IReferenceableDocumentNode
 {
 	bool CanParse(IDocumentReference documentReference);
-	ParseResult<TResult> Parse(IDocumentReference documentReference, DocumentRegistry documentRegistry);
+	ParseResult<TResult> Parse(IDocumentReference documentReference, SchemaRegistry schemaRegistry);
 }
 
-public record ParseResult<TResult>(TResult? Document, IReadOnlyList<Diagnostics.DiagnosticBase> Diagnostics)
-	where TResult : class, IReferenceableDocumentNode
+public record ParseResult<TResult>(TResult? Result, IReadOnlyList<Diagnostics.DiagnosticBase> Diagnostics)
+	where TResult : class
 {
-	public bool HasDocument => Document != null;
+	public bool HasResult => Result != null;
 }

@@ -5,6 +5,14 @@ namespace DarkPatterns.OpenApiCodegen;
 
 public partial class TransformationDiagnostics
 {
+	[TransformationDiagnostic("DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation.TypeKeywordMismatch")]
+	public static readonly DiagnosticDescriptor JsonSchemaTypeKeywordMismatch =
+		new DiagnosticDescriptor(id: "DPD_OPENAPI_3_0_001",
+								title: "Type validation failed",
+								messageFormat: DarkPatterns_Json_Specifications_Keywords_Draft2020_12Validation_TypeKeywordMismatch,
+								category: "DarkPatterns.OpenApiCodegen",
+								DiagnosticSeverity.Error,
+								isEnabledByDefault: true);
 	[TransformationDiagnostic("DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation.JsonSchemaPatternMismatchDiagnostic")]
 	public static readonly DiagnosticDescriptor JsonSchemaPatternMismatchDiagnostic =
 		new DiagnosticDescriptor(id: "DPD_JSON_2020_12_VAL_001",

@@ -41,8 +41,10 @@ public class DiscriminatorKeyword(string keyword, string propertyName, IReadOnly
 	public IReadOnlyDictionary<string, Uri>? Mapping => mapping;
 
 	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
+	public IEnumerable<IJsonSchemaAnnotation> GetDynamicAnnotations()
+		=> [];
 
-	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchema context, EvaluationContext evaluationContext)
+	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchemaInfo context, EvaluationContext evaluationContext)
 	{
 		// TODO
 		yield break;

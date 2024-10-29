@@ -97,15 +97,15 @@ overrideNames:
 	{
 		var registry = DocumentLoader.CreateRegistry();
 		var docResult = CommonParsers.DefaultParsers.Parse(docRef, registry);
-		Assert.NotNull(docResult.Document);
-		var document = docResult.Document;
+		Assert.NotNull(docResult.Result);
+		var document = docResult.Result;
 
-		var metadata = new ResolvableNode(new NodeMetadata(new Uri(document.Id, "#" + path)), registry);
+		var metadata = new ResolvableNode(new NodeMetadata(new Uri(document.Id, "#" + path)), registry.DocumentRegistry);
 		while (metadata.Node is JsonObject obj && obj.TryGetPropertyValue("$ref", out var refNode) && refNode?.GetValue<string>() is string refValue)
 		{
-			metadata = new ResolvableNode(new NodeMetadata(new Uri(metadata.Id, refValue), metadata.Metadata), registry);
+			metadata = new ResolvableNode(new NodeMetadata(new Uri(metadata.Id, refValue), metadata.Metadata), registry.DocumentRegistry);
 		}
 		var schemaResult = JsonSchemaParser.Deserialize(metadata, new JsonSchemaParserOptions(registry, OpenApi.Specifications.v3_0.OpenApi3_0DocumentFactory.OpenApiDialect));
-		return (registry, document, schemaResult.Fold<JsonSchema?>(v => v, _ => null));
+		return (registry.DocumentRegistry, document, schemaResult.Fold<JsonSchema?>(v => v, _ => null));
 	}
 }

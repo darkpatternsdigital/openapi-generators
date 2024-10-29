@@ -16,7 +16,7 @@ public class CSharpClientTransformer(TransformSettings settings, OpenApiDocument
 	public SourceEntry TransformOperations(OpenApiTransformDiagnostic diagnostic)
 	{
 		foreach (var schema in document.GetNestedNodes(recursive: true).OfType<JsonSchema>())
-			settings.SchemaRegistry.EnsureSchemasRegistered(schema);
+			settings.SchemaRegistry.EnsureSchemaRegistered(schema);
 		var baseNamespace = options.DefaultNamespace;
 
 		var className = CSharpNaming.ToClassName("operations", options.ReservedIdentifiers());

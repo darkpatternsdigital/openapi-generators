@@ -6,11 +6,13 @@ using Json.Pointer;
 using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.Json.Specifications;
-using DarkPatterns.OpenApi.Specifications.v3_0;
 using DarkPatterns.Json.Documents;
 using DarkPatterns.Json.Diagnostics;
+using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DarkPatterns.OpenApi.CSharp;
+using v3_0 = DarkPatterns.OpenApi.Specifications.v3_0;
 
 public class CSharpInlineSchemas(CSharpSchemaOptions options, DocumentRegistry documentRegistry)
 {
@@ -20,14 +22,23 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, DocumentRegistry d
 	public CSharpInlineDefinition? ToInlineDataType(JsonSchema? schema)
 	{
 		if (schema == null) return null;
+		return ToInlineDataType(schema.ResolveSchemaInfo());
+	}
 
-		CSharpInlineDefinition result = CSharpTypeInfo.From(schema) switch
+	[return: NotNullIfNotNull(nameof(schema))]
+	public CSharpInlineDefinition? ToInlineDataType(JsonSchemaInfo? schema)
+	{
+		if (schema == null) return null;
+		schema = schema with { Original = schema.EffectiveSchema.Metadata };
+
+		var schemaInfo = CSharpTypeInfo.From(schema);
+		CSharpInlineDefinition result = schemaInfo switch
 		{
 			// Dictionary
-			{ Type: "object", Properties: { Count: 0 }, AdditionalProperties: JsonSchema dictionaryValueSchema } =>
+			{ TypeAnnotation: { AllowsObject: true }, Properties: { Count: 0 }, AdditionalProperties: JsonSchema dictionaryValueSchema } =>
 				new(options.ToMapType(ToInlineDataType(dictionaryValueSchema).Text), IsEnumerable: true),
 			// Array
-			{ Type: "array", Items: null } =>
+			{ TypeAnnotation: { AllowsArray: true }, Items: null } =>
 				new(options.ToArrayType(options.FallbackType), IsEnumerable: true),
 			{ Items: JsonSchema items } =>
 				new(options.ToArrayType(ToInlineDataType(items).Text), IsEnumerable: true),
@@ -35,43 +46,59 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, DocumentRegistry d
 			_ when ProduceSourceEntry(schema) =>
 				new($"global::{options.GetNamespace(schema)}.{GetClassName(schema)}"),
 			// Specifically-mapped type
-			{ Type: string type, Format: var format } =>
-				new(options.Find(type, format)),
-			_ => throw new DiagnosticException(UnableToCreateInlineSchemaDiagnostic.Builder(schema.Metadata.Id)),
+			{ TypeAnnotation: v3_0.TypeKeyword { OpenApiType: var primitiveType }, Format: var format } =>
+				new(options.Find(TypeAnnotation.ToPrimitiveTypeString(primitiveType), format)),
+			{ TypeAnnotation.AllowsNumber: true, Format: var format } =>
+				new(options.Find(TypeAnnotation.Common.Number, format)),
+			{ TypeAnnotation.AllowsInteger: true, Format: var format } =>
+				new(options.Find(TypeAnnotation.Common.Integer, format)),
+			{ TypeAnnotation.AllowsString: true, Format: var format } =>
+				new(options.Find(TypeAnnotation.Common.String, format)),
+			{ TypeAnnotation.AllowsBoolean: true, Format: var format } =>
+				new(options.Find(TypeAnnotation.Common.Boolean, format)),
+			{ TypeAnnotation.AllowsObject: true, Format: var format } =>
+				new(options.Find(TypeAnnotation.Common.Object, format)),
+			// TODO: additional reference?
+			_ => throw new DiagnosticException(UnableToCreateInlineSchemaDiagnostic.Builder(schema.Original.Id)),
 		};
-		return schema?.TryGetAnnotation<NullableKeyword>() is { IsNullable: true }
+		return schema.TryGetAnnotation<v3_0.NullableKeyword>() is { IsNullable: true }
 			? result.MakeNullable()
 			: result;
 	}
 
 	public bool ProduceSourceEntry(JsonSchema schema)
 	{
-		var nodes = documentRegistry.GetNodesTo(schema.Metadata.Id);
+		return ProduceSourceEntry(schema.ResolveSchemaInfo());
+	}
+
+	public bool ProduceSourceEntry(JsonSchemaInfo schema)
+	{
+		if (schema.Original.Id.OriginalString != schema.EffectiveSchema.Metadata.Id.OriginalString) return false;
+
+		var nodes = documentRegistry.GetNodesTo(schema.EffectiveSchema.Metadata.Id);
 		if (nodes.LastOrDefault() is (["allOf", _], JsonSchema))
 			return false;
 		// C# can't inline things that must be referenced, and vice versa.
 		// (Except with tuples, but those don't serialize/deserialize reliably yet.)
 		return CSharpTypeInfo.From(schema) switch
 		{
-			{ Type: "object", Properties.Count: 0, AdditionalProperties: JsonSchema } => false,
+			{ TypeAnnotation: { AllowsObject: true }, Properties.Count: 0, AdditionalProperties: JsonSchema } => false,
 			{ AllOf.Count: > 0 } => true,
 			{ AnyOf.Count: > 0 } => true,
 			{ OneOf.Count: > 0 } => true,
-			{ Type: "string", Enum.Count: > 0 } => true,
-			{ Type: "array" } or { Items: JsonSchema } => false,
-			// TODO: why is this testing for "object"?
-			{ Type: string type, Format: var format, Properties.Count: 0, Enum.Count: 0 } => options.Find(type, format) == "object",
-			{ Type: "object", Format: null } => true,
+			{ TypeAnnotation: { AllowsString: true }, Enum.Count: > 0 } => true,
+			{ TypeAnnotation: { AllowsArray: true } } or { Items: JsonSchema } => false,
+			{ TypeAnnotation: { AllowsObject: true }, Format: null } => true,
 			{ Properties.Count: > 0 } => true,
-			{ Type: "string" or "number" or "integer" or "boolean" } => false,
+			{ TypeAnnotation: { AllowsString: true } or { AllowsNumber: true } or { AllowsInteger: true } or { AllowsBoolean: true } } => false,
 			{ } => false,
 			_ => throw new NotSupportedException("Unknown schema"),
 		};
 	}
 
-	private string GetClassName(JsonSchema schema)
+	private string GetClassName(JsonSchemaInfo schema)
 	{
-		return options.ToClassName(schema, UriToClassIdentifier(schema.Metadata.Id));
+		return options.ToClassName(schema, UriToClassIdentifier(schema.EffectiveSchema.Metadata.Id));
 	}
 
 	private static readonly Regex HttpSuccessRegex = new Regex("2[0-9]{2}");

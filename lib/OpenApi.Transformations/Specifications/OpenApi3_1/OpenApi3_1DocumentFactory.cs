@@ -12,13 +12,13 @@ namespace DarkPatterns.OpenApi.Transformations.Specifications.OpenApi3_1;
 
 public class OpenApi3_1DocumentFactory
 {
-	private readonly DocumentRegistry documentRegistry;
+	private readonly SchemaRegistry schemaRegistry;
 
 	public List<DiagnosticBase> Diagnostics { get; }
 
-	public OpenApi3_1DocumentFactory(DocumentRegistry documentRegistry, IEnumerable<DiagnosticBase> initialDiagnostics)
+	public OpenApi3_1DocumentFactory(SchemaRegistry schemaRegistry, IEnumerable<DiagnosticBase> initialDiagnostics)
 	{
-		this.documentRegistry = documentRegistry;
+		this.schemaRegistry = schemaRegistry;
 		this.Diagnostics = initialDiagnostics.ToList();
 	}
 

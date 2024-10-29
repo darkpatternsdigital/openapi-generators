@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Nodes;
 using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.Json.Documents;
@@ -22,13 +23,25 @@ public class AdditionalPropertiesKeyword(string keyword, JsonSchema schema) : IJ
 	public JsonSchema Schema => schema;
 
 	public IEnumerable<JsonSchema> GetReferencedSchemas() => [schema];
+	public IEnumerable<IJsonSchemaAnnotation> GetDynamicAnnotations()
+		=> [];
 
-	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchema context, EvaluationContext evaluationContext)
+	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchemaInfo context, EvaluationContext evaluationContext)
 	{
 		if (nodeMetadata.Node is not JsonObject obj)
 			yield break;
 
 		// TODO - leverage patternProperties (but do not apply to OpenAPI 3.0, which means forking this keyword)
-		// TODO - compare given schema against all properties that do not satisfy `properties`
+		// compare given schema against all properties that do not satisfy `properties`
+		if (context.TryGetAnnotation<PropertiesKeyword>() is { Properties: var properties })
+		{
+			foreach (var diagnostic in from kvp in obj.AsEnumerable()
+									   where !properties.ContainsKey(kvp.Key)
+									   from diag in Schema.Evaluate(nodeMetadata.Navigate(kvp.Key), evaluationContext.WithSchema(context.EffectiveSchema))
+									   select diag)
+			{
+				yield return diagnostic;
+			}
+		}
 	}
 }

@@ -9,6 +9,7 @@ using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator;
 using DarkPatterns.OpenApi.CSharp;
 using DarkPatterns.OpenApiCodegen.CSharp.MvcServer.Templates;
+using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
 
@@ -95,13 +96,14 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 	public override void Visit(OpenApiParameter param, Argument argument)
 	{
 		if (param.Schema != null)
-			schemaRegistry.EnsureSchemasRegistered(param.Schema);
+			schemaRegistry.EnsureSchemaRegistered(param.Schema);
 		var dataType = inlineSchemas.ToInlineDataType(param.Schema) ?? CSharpInlineSchemas.AnyObject;
 		if (!param.Required)
 		{
 			// Path/Query/Header/Cookie parameters can't really be nullable, but rather than using custom ModelBinding on Optional<T>, we use nullability.
 			dataType = dataType.MakeNullable();
 		}
+		var info = param.Schema?.ResolveSchemaInfo();
 		argument.Builder?.SharedParameters.Add(new Templates.OperationParameter(
 			RawName: param.Name,
 			ParamName: CSharpNaming.ToParameterName(param.Name, options.ReservedIdentifiers()),
@@ -116,11 +118,11 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 			IsFormParam: false,
 			Optional: false,
 			Required: param.Required,
-			Pattern: param.Schema?.TryGetAnnotation<PatternKeyword>()?.Pattern,
-			MinLength: param.Schema?.TryGetAnnotation<MinLengthKeyword>()?.Value,
-			MaxLength: param.Schema?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
-			Minimum: param.Schema?.TryGetAnnotation<MinimumKeyword>()?.Value,
-			Maximum: param.Schema?.TryGetAnnotation<MaximumKeyword>()?.Value
+			Pattern: info?.TryGetAnnotation<PatternKeyword>()?.Pattern,
+			MinLength: info?.TryGetAnnotation<MinLengthKeyword>()?.Value,
+			MaxLength: info?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
+			Minimum: info?.TryGetAnnotation<MinimumKeyword>()?.Value,
+			Maximum: info?.TryGetAnnotation<MaximumKeyword>()?.Value
 		));
 	}
 
@@ -151,6 +153,7 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 			Headers: (from entry in response.Headers
 					  let required = entry.Required
 					  let dataType = inlineSchemas.ToInlineDataType(entry.Schema) ?? CSharpInlineSchemas.AnyObject
+					  let info = entry.Schema?.ResolveSchemaInfo()
 					  select new Templates.OperationResponseHeader(
 						RawName: entry.Name,
 						ParamName: CSharpNaming.ToParameterName("header " + entry.Name, options.ReservedIdentifiers()),
@@ -158,11 +161,11 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 						DataType: dataType.Text,
 						DataTypeNullable: dataType.Nullable,
 						Required: entry.Required,
-						Pattern: entry.Schema?.TryGetAnnotation<PatternKeyword>()?.Pattern,
-						MinLength: entry.Schema?.TryGetAnnotation<MinLengthKeyword>()?.Value,
-						MaxLength: entry.Schema?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
-						Minimum: entry.Schema?.TryGetAnnotation<MinimumKeyword>()?.Value,
-						Maximum: entry.Schema?.TryGetAnnotation<MaximumKeyword>()?.Value
+						Pattern: info?.TryGetAnnotation<PatternKeyword>()?.Pattern,
+						MinLength: info?.TryGetAnnotation<MinLengthKeyword>()?.Value,
+						MaxLength: info?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
+						Minimum: info?.TryGetAnnotation<MinimumKeyword>()?.Value,
+						Maximum: info?.TryGetAnnotation<MaximumKeyword>()?.Value
 					  )).ToArray()
 		);
 
@@ -183,11 +186,13 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 
 		var singleContentType = argument.Builder?.Operation.RequestBody?.Content?.Count is not > 1;
 
+		var mediaTypeSchemaInfo = mediaType.Schema?.ResolveSchemaInfo();
 		argument.Builder?.RequestBodies.Add(OperationRequestBodyFactory(argument.Builder?.Operation.OperationId + (singleContentType ? "" : mimeType), mimeType, isForm ? GetFormParams() : GetStandardParams()));
 
 		IEnumerable<OperationParameter> GetFormParams() =>
-			from param in mediaType.Schema?.TryGetAnnotation<PropertiesKeyword>()?.Properties
-			let required = mediaType.Schema?.TryGetAnnotation<RequiredKeyword>()?.RequiredProperties.Contains(param.Key) ?? false
+			from param in mediaTypeSchemaInfo?.TryGetAnnotation<PropertiesKeyword>()?.Properties
+			let required = mediaTypeSchemaInfo?.TryGetAnnotation<RequiredKeyword>()?.RequiredProperties.Contains(param.Key) ?? false
+			let info = param.Value?.ResolveSchemaInfo()
 			let dataType = inlineSchemas.ToInlineDataType(param.Value)
 			select new Templates.OperationParameter(
 				RawName: param.Key,
@@ -203,14 +208,15 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 				IsFormParam: true,
 				Required: required,
 				Optional: !required,
-				Pattern: param.Value?.TryGetAnnotation<PatternKeyword>()?.Pattern,
-				MinLength: param.Value?.TryGetAnnotation<MinLengthKeyword>()?.Value,
-				MaxLength: param.Value?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
-				Minimum: param.Value?.TryGetAnnotation<MinimumKeyword>()?.Value,
-				Maximum: param.Value?.TryGetAnnotation<MaximumKeyword>()?.Value
+				Pattern: info?.TryGetAnnotation<PatternKeyword>()?.Pattern,
+				MinLength: info?.TryGetAnnotation<MinLengthKeyword>()?.Value,
+				MaxLength: info?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
+				Minimum: info?.TryGetAnnotation<MinimumKeyword>()?.Value,
+				Maximum: info?.TryGetAnnotation<MaximumKeyword>()?.Value
 			);
 		IEnumerable<OperationParameter> GetStandardParams() =>
 			from ct in new[] { mediaType }
+			let info = ct.Schema?.ResolveSchemaInfo()
 			let dataType = inlineSchemas.ToInlineDataType(ct.Schema)
 			select new Templates.OperationParameter(
 				RawName: null,
@@ -226,11 +232,11 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 				IsFormParam: false,
 				Required: true,
 				Optional: false,
-				Pattern: mediaType.Schema?.TryGetAnnotation<PatternKeyword>()?.Pattern,
-				MinLength: mediaType.Schema?.TryGetAnnotation<MinLengthKeyword>()?.Value,
-				MaxLength: mediaType.Schema?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
-				Minimum: mediaType.Schema?.TryGetAnnotation<MinimumKeyword>()?.Value,
-				Maximum: mediaType.Schema?.TryGetAnnotation<MaximumKeyword>()?.Value
+				Pattern: info?.TryGetAnnotation<PatternKeyword>()?.Pattern,
+				MinLength: info?.TryGetAnnotation<MinLengthKeyword>()?.Value,
+				MaxLength: info?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
+				Minimum: info?.TryGetAnnotation<MinimumKeyword>()?.Value,
+				Maximum: info?.TryGetAnnotation<MaximumKeyword>()?.Value
 			);
 	}
 

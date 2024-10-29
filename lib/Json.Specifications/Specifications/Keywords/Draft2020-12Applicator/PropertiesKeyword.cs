@@ -18,30 +18,21 @@ public class PropertiesKeyword(string keyword, IReadOnlyDictionary<string, JsonS
 		if (nodeInfo.Node is not JsonObject obj)
 			return DiagnosableResult<IJsonSchemaAnnotation>.Fail(new UnableToParseKeyword(keyword, options.Registry.ResolveLocation(nodeInfo)));
 
-		var results = obj.ToDictionary(
-				(kvp) => kvp.Key,
-				(kvp) => JsonSchemaParser.Deserialize(nodeInfo.Navigate(kvp.Key), options)
-			);
-		var failures = results.Values.OfType<DiagnosableResult<JsonSchema>.Failure>().ToArray();
-		if (failures.Length > 0)
-			return DiagnosableResult<IJsonSchemaAnnotation>.Fail(failures.SelectMany(v => v.Diagnostics).ToArray());
-
-		return DiagnosableResult<IJsonSchemaAnnotation>.Pass(new PropertiesKeyword(
+		return DiagnosableResult<IJsonSchemaAnnotation>.Pass(new UnresolvedPropertiesAnnotation(
 			keyword,
-			results.ToDictionary(
-				(kvp) => kvp.Key,
-				(kvp) => ((DiagnosableResult<JsonSchema>.Success)kvp.Value).Value
-			)
+			obj.ToDictionary(kvp => kvp.Key, kvp => nodeInfo.Navigate(kvp.Key))
 		));
 	}
 
 	public string Keyword => keyword;
 
 	public IReadOnlyDictionary<string, JsonSchema> Properties => properties;
+	public IEnumerable<IJsonSchemaAnnotation> GetDynamicAnnotations()
+		=> [];
 
 	public IEnumerable<JsonSchema> GetReferencedSchemas() => Properties.Values;
 
-	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchema context, EvaluationContext evaluationContext)
+	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchemaInfo context, EvaluationContext evaluationContext)
 	{
 		if (nodeMetadata.Node is not JsonObject obj) yield break;
 
@@ -50,8 +41,42 @@ public class PropertiesKeyword(string keyword, IReadOnlyDictionary<string, JsonS
 			if (!properties.TryGetValue(kvp.Key, out var valueSchema))
 				// Ignore properties not defined
 				continue;
-			foreach (var entry in valueSchema.Evaluate(nodeMetadata.Navigate(kvp.Key), evaluationContext))
+			foreach (var entry in valueSchema.Evaluate(nodeMetadata.Navigate(kvp.Key), evaluationContext.WithSchema(context.EffectiveSchema)))
 				yield return entry;
 		}
+	}
+
+	class UnresolvedPropertiesAnnotation(string keyword, IReadOnlyDictionary<string, ResolvableNode> properties) : IJsonSchemaFixupAnnotation
+	{
+		public string Keyword => keyword;
+		public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
+
+		public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchemaInfo context, EvaluationContext evaluationContext) => [];
+		public IEnumerable<IJsonSchemaAnnotation> GetDynamicAnnotations()
+			=> [];
+
+		public void FixupInPlace(JsonSchema schema, IJsonSchemaModifier modifier, JsonSchemaParserOptions options)
+		{
+			var results = properties.ToDictionary(
+					(kvp) => kvp.Key,
+					(kvp) => JsonSchemaParser.Deserialize(kvp.Value, options)
+				);
+			var failures = results.Values.OfType<DiagnosableResult<JsonSchema>.Failure>().ToArray();
+			if (failures.Length > 0)
+				modifier.AddDiagnostics(failures.SelectMany(r => r.Diagnostics));
+
+			modifier.ReplaceAnnotations(
+				schema.Annotations.Except([this]).Concat(
+					[new PropertiesKeyword(
+						keyword,
+						results.Where((kvp) => kvp.Value is DiagnosableResult<JsonSchema>.Success).ToDictionary(
+							(kvp) => kvp.Key,
+							(kvp) => ((DiagnosableResult<JsonSchema>.Success)kvp.Value).Value
+						)
+					)]
+				),
+				needsFixup: true);
+		}
+
 	}
 }

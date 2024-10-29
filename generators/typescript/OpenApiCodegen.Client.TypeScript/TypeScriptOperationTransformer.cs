@@ -31,7 +31,7 @@ public class TypeScriptOperationTransformer(
 	public SourceEntry TransformOperation(OpenApiPath path, string method, OpenApiOperation operation, OpenApiTransformDiagnostic diagnostic)
 	{
 		foreach (var schema in operation.GetNestedNodes(recursive: true).OfType<JsonSchema>())
-			settings.SchemaRegistry.EnsureSchemasRegistered(schema);
+			settings.SchemaRegistry.EnsureSchemaRegistered(schema);
 
 		var template = new Templates.OperationTemplate(
 			Header: settings.Header(operation.Id),

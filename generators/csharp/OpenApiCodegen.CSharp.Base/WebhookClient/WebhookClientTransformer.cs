@@ -16,7 +16,7 @@ public class WebhookClientTransformer(TransformSettings settings, OpenApiDocumen
 	public SourceEntry TransformOperations(OpenApiTransformDiagnostic diagnostic)
 	{
 		foreach (var schema in document.GetNestedNodes(recursive: true).OfType<JsonSchema>())
-			settings.SchemaRegistry.EnsureSchemasRegistered(schema);
+			settings.SchemaRegistry.EnsureSchemaRegistered(schema);
 		var baseNamespace = options.DefaultNamespace;
 
 		var className = CSharpNaming.ToClassName("webhook operations", options.ReservedIdentifiers());

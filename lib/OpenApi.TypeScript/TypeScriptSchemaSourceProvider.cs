@@ -53,12 +53,13 @@ public class TypeScriptSchemaSourceProvider(
 		var typeInfo = TypeScriptTypeInfo.From(schema);
 		Templates.Model? model = typeInfo switch
 		{
-			{ Type: "array" } or { Items: JsonSchema _ } => ToArrayModel(className, typeInfo),
-			{ Enum: { Count: > 0 }, Type: "string" } => ToEnumModel(className, typeInfo),
-			{ OneOf: { Count: > 0 } } => ToOneOfModel(className, typeInfo),
-			_ => BuildObjectModel(schema) switch
+			{ TypeAnnotation: { AllowsArray: true } } or { Items: JsonSchema _ } => ToArrayModel(className, typeInfo),
+			// TODO: strings aren't the only enum values
+			{ Enum.Count: > 0, TypeAnnotation: { AllowsString: true } } => ToEnumModel(className, typeInfo),
+			{ OneOf.Count: > 0 } => ToOneOfModel(className, typeInfo),
+			_ => BuildObjectModel(typeInfo.Info) switch
 			{
-				ObjectModel objectModel => ToObjectModel(className, schema, objectModel, diagnostic)(),
+				ObjectModel objectModel => ToObjectModel(className, typeInfo.Info, objectModel, diagnostic)(),
 				_ => null
 			}
 		};
@@ -94,7 +95,7 @@ public class TypeScriptSchemaSourceProvider(
 			schema.Description,
 			className,
 			Item: dataType.Text,
-			Imports: inlineSchemas.GetImportStatements([schema.Items], [schema.Schema], "./models/").ToArray()
+			Imports: inlineSchemas.GetImportStatements([schema.Items], [schema.Info.EffectiveSchema], "./models/").ToArray()
 		);
 	}
 
@@ -104,7 +105,8 @@ public class TypeScriptSchemaSourceProvider(
 			schema.Description,
 			className,
 			TypeScriptNaming.ToPropertyName(className, options.ReservedIdentifiers()),
-			IsString: schema.Type == "string",
+			// TODO: allow mixed-type enum models
+			IsString: schema.TypeAnnotation is { AllowsString: true },
 			EnumVars: (from entry in schema.Enum
 					   select new Templates.EnumVar(PrimitiveToJsonValue.GetPrimitiveValue(entry))).ToArray()
 		);
@@ -112,7 +114,7 @@ public class TypeScriptSchemaSourceProvider(
 
 	private Templates.TypeUnionModel ToOneOfModel(string className, TypeScriptTypeInfo schema)
 	{
-		var discriminator = schema.Schema.TryGetAnnotation<Specifications.v3_0.DiscriminatorKeyword>();
+		var discriminator = schema.Info.TryGetAnnotation<Specifications.v3_0.DiscriminatorKeyword>();
 		return new Templates.TypeUnionModel(
 			Imports: inlineSchemas.GetImportStatements(schema.OneOf ?? [], [], "./models/").ToArray(),
 			Description: schema.Description,
@@ -122,10 +124,11 @@ public class TypeScriptSchemaSourceProvider(
 			TypeEntries: schema.OneOf
 				.Select((e, index) =>
 				{
-					var id = e.Metadata.Id;
+					var s = e.ResolveSchemaInfo();
+					var id = s.EffectiveSchema.Metadata.Id;
 					string? discriminatorValue = e.GetLastContextPart();
 					if (discriminator?.Mapping?.FirstOrDefault(
-							kvp => new Uri(schema.Schema.Metadata.Id, kvp.Value).OriginalString == id.OriginalString
+							kvp => new Uri(schema.Info.EffectiveSchema.Metadata.Id, kvp.Value).OriginalString == id.OriginalString
 						) is { Key: string key, Value: var relativeId })
 					{
 						discriminatorValue = key;
@@ -142,10 +145,10 @@ public class TypeScriptSchemaSourceProvider(
 
 	record ObjectModel(Func<IReadOnlyDictionary<string, JsonSchema>> Properties, Func<IEnumerable<string>> Required, bool LegacyOptionalBehavior);
 
-	private ObjectModel? BuildObjectModel(JsonSchema schema) =>
+	private ObjectModel? BuildObjectModel(JsonSchemaInfo schema) =>
 		TypeScriptTypeInfo.From(schema) switch
 		{
-			{ AllOf: { Count: > 0 } allOf } => allOf.Select(BuildObjectModel).ToArray() switch
+			{ AllOf: { Count: > 0 } allOf } => allOf.Select(s => s.ResolveSchemaInfo()).Select(BuildObjectModel).ToArray() switch
 			{
 				ObjectModel[] models when models.All(v => v != null) =>
 					new ObjectModel(
@@ -159,7 +162,7 @@ public class TypeScriptSchemaSourceProvider(
 					),
 				_ => null
 			},
-			{ Type: "object" } or { Properties: { Count: > 0 } } => new ObjectModel(
+			{ TypeAnnotation: { AllowsObject: true } } or { Properties: { Count: > 0 } } => new ObjectModel(
 				Properties: () => schema.TryGetAnnotation<PropertiesKeyword>()?.Properties ?? new Dictionary<string, JsonSchema>(),
 				Required: () => schema.TryGetAnnotation<RequiredKeyword>()?.RequiredProperties ?? Enumerable.Empty<string>(),
 				LegacyOptionalBehavior: schema.UseOptionalAsNullable()
@@ -167,7 +170,7 @@ public class TypeScriptSchemaSourceProvider(
 			_ => null,
 		};
 
-	private Func<Templates.ObjectModel> ToObjectModel(string className, JsonSchema schema, ObjectModel objectModel, OpenApiTransformDiagnostic diagnostic)
+	private Func<Templates.ObjectModel> ToObjectModel(string className, JsonSchemaInfo schema, ObjectModel objectModel, OpenApiTransformDiagnostic diagnostic)
 	{
 		if (objectModel == null)
 			throw new ArgumentNullException(nameof(objectModel));
@@ -189,7 +192,7 @@ public class TypeScriptSchemaSourceProvider(
 											))).ToArray();
 
 		return () => new Templates.ObjectModel(
-			Imports: inlineSchemas.GetImportStatements(properties.Values, [schema], "./models/").ToArray(),
+			Imports: inlineSchemas.GetImportStatements(properties.Values, [schema.EffectiveSchema], "./models/").ToArray(),
 			Description: schema.TryGetAnnotation<DescriptionKeyword>()?.Description,
 			ClassName: className,
 			Parent: null, // TODO - if "all of" and only one was a reference, we should be able to use inheritance.

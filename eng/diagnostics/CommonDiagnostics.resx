@@ -157,6 +157,10 @@
     <value>Value did not match pattern: {0}</value>
     <comment/>
   </data>
+  <data name="DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation.TypeKeywordMismatch" xml:space="preserve">
+    <value>Type did not match {0}</value>
+    <comment/>
+  </data>
   <data name="DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation.MissingRequiredProperties" xml:space="preserve">
     <value>The following properties are required but missing: {0}</value>
     <comment/>

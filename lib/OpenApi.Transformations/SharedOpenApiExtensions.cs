@@ -6,7 +6,8 @@ namespace DarkPatterns.OpenApi.Transformations;
 
 public static class SharedOpenApiExtensions
 {
-	public static bool UseOptionalAsNullable(this JsonSchema objectSchema, bool useLegacyByDefault = false)
+	// TODO: use configuration options instead of hard-coded keyword
+	public static bool UseOptionalAsNullable(this JsonSchemaInfo objectSchema, bool useLegacyByDefault = false)
 	{
 		if (objectSchema.TryGetAnnotation<UnknownKeyword>("x-ps-optional-as-nullable") is UnknownKeyword k
 			&& k.Value is JsonValue n && n.TryGetValue<bool>(out var result))

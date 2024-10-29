@@ -39,7 +39,7 @@ internal class DynamicCompilation
 	{
 		var registry = DocumentLoader.CreateRegistry();
 		var docResult = GetOpenApiDocument(documentName, registry);
-		Assert.NotNull(docResult.Document);
+		Assert.NotNull(docResult.Result);
 		var options = LoadOptions();
 		configureOptions?.Invoke(options);
 

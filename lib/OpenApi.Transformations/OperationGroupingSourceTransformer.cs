@@ -38,7 +38,7 @@ public class OperationGroupingSourceTransformer(
 			if (resultList.Description != description)
 				resultList.Description = null;
 			foreach (var referencedSchema in operation.GetNestedNodes(recursive: true).OfType<JsonSchema>())
-				schemaRegistry.EnsureSchemasRegistered(referencedSchema);
+				schemaRegistry.EnsureSchemaRegistered(referencedSchema);
 			resultList.Operations.Add((operation, method, path));
 		}, diagnostic));
 		return result;

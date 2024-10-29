@@ -62,6 +62,7 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 
 		public override void Visit(OpenApiParameter param, Argument argument)
 		{
+			var info = param.Schema?.ResolveSchemaInfo();
 			var dataType = inlineSchemas.ToInlineDataType(param.Schema);
 			argument.Builder?.SharedParameters.Add(new Templates.OperationParameter(
 				RawName: param.Name,
@@ -78,11 +79,11 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 				IsBodyParam: false,
 				IsFormParam: false,
 				Required: param.Required,
-				Pattern: param.Schema?.TryGetAnnotation<PatternKeyword>()?.Pattern,
-				MinLength: param.Schema?.TryGetAnnotation<MinLengthKeyword>()?.Value,
-				MaxLength: param.Schema?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
-				Minimum: param.Schema?.TryGetAnnotation<MinimumKeyword>()?.Value,
-				Maximum: param.Schema?.TryGetAnnotation<MaximumKeyword>()?.Value
+				Pattern: info?.TryGetAnnotation<PatternKeyword>()?.Pattern,
+				MinLength: info?.TryGetAnnotation<MinLengthKeyword>()?.Value,
+				MaxLength: info?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
+				Minimum: info?.TryGetAnnotation<MinimumKeyword>()?.Value,
+				Maximum: info?.TryGetAnnotation<MaximumKeyword>()?.Value
 			));
 		}
 
@@ -160,6 +161,7 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 				Headers: (from entry in response.Headers
 						  let required = entry.Required
 						  let dataType = inlineSchemas.ToInlineDataType(entry.Schema) ?? TypeScriptInlineSchemas.AnyObject
+						  let info = entry.Schema?.ResolveSchemaInfo()
 						  select new Templates.OperationResponseHeader(
 							  RawName: entry.Name,
 							  ParamName: TypeScriptNaming.ToParameterName("header " + entry.Name, options.ReservedIdentifiers()),
@@ -167,11 +169,11 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 							  DataType: dataType.Text,
 							  DataTypeNullable: dataType.Nullable,
 							  Required: entry.Required,
-							  Pattern: entry.Schema?.TryGetAnnotation<PatternKeyword>()?.Pattern,
-							  MinLength: entry.Schema?.TryGetAnnotation<MinLengthKeyword>()?.Value,
-							  MaxLength: entry.Schema?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
-							  Minimum: entry.Schema?.TryGetAnnotation<MinimumKeyword>()?.Value,
-							  Maximum: entry.Schema?.TryGetAnnotation<MaximumKeyword>()?.Value
+							  Pattern: info?.TryGetAnnotation<PatternKeyword>()?.Pattern,
+							  MinLength: info?.TryGetAnnotation<MinLengthKeyword>()?.Value,
+							  MaxLength: info?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
+							  Minimum: info?.TryGetAnnotation<MinimumKeyword>()?.Value,
+							  Maximum: info?.TryGetAnnotation<MaximumKeyword>()?.Value
 						  )).ToArray()
 			);
 
@@ -192,11 +194,13 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 
 			var singleContentType = argument.Builder?.Operation.RequestBody?.Content?.Count is not > 1;
 
+			var mediaTypeSchemaInfo = mediaType.Schema?.ResolveSchemaInfo();
 			argument.Builder?.RequestBodies.Add(OperationRequestBody(mimeType, isForm, isForm ? GetFormParams() : GetStandardParams()));
 
 			IEnumerable<OperationParameter> GetFormParams() =>
-				from param in mediaType.Schema?.TryGetAnnotation<PropertiesKeyword>()?.Properties
-				let required = mediaType.Schema?.TryGetAnnotation<RequiredKeyword>()?.RequiredProperties.Contains(param.Key) ?? false
+				from param in mediaTypeSchemaInfo?.TryGetAnnotation<PropertiesKeyword>()?.Properties
+				let required = mediaTypeSchemaInfo?.TryGetAnnotation<RequiredKeyword>()?.RequiredProperties.Contains(param.Key) ?? false
+				let info = param.Value.ResolveSchemaInfo()
 				let dataType = inlineSchemas.ToInlineDataType(param.Value)
 				select new Templates.OperationParameter(
 					RawName: param.Key,
@@ -213,15 +217,16 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 					IsBodyParam: false,
 					IsFormParam: true,
 					Required: required,
-					Pattern: param.Value?.TryGetAnnotation<PatternKeyword>()?.Pattern,
-					MinLength: param.Value?.TryGetAnnotation<MinLengthKeyword>()?.Value,
-					MaxLength: param.Value?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
-					Minimum: param.Value?.TryGetAnnotation<MinimumKeyword>()?.Value,
-					Maximum: param.Value?.TryGetAnnotation<MaximumKeyword>()?.Value
+					Pattern: info.TryGetAnnotation<PatternKeyword>()?.Pattern,
+					MinLength: info.TryGetAnnotation<MinLengthKeyword>()?.Value,
+					MaxLength: info.TryGetAnnotation<MaxLengthKeyword>()?.Value,
+					Minimum: info.TryGetAnnotation<MinimumKeyword>()?.Value,
+					Maximum: info.TryGetAnnotation<MaximumKeyword>()?.Value
 				);
 			IEnumerable<OperationParameter> GetStandardParams() =>
 				from ct in new[] { mediaType }
 				let dataType = inlineSchemas.ToInlineDataType(ct.Schema)
+				let ctInfo = ct.Schema?.ResolveSchemaInfo()
 				select new Templates.OperationParameter(
 				   RawName: null,
 				   RawNameWithCurly: null,
@@ -237,11 +242,11 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 				   IsBodyParam: true,
 				   IsFormParam: false,
 				   Required: true,
-				   Pattern: mediaType.Schema?.TryGetAnnotation<PatternKeyword>()?.Pattern,
-				   MinLength: mediaType.Schema?.TryGetAnnotation<MinLengthKeyword>()?.Value,
-				   MaxLength: mediaType.Schema?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
-				   Minimum: mediaType.Schema?.TryGetAnnotation<MinimumKeyword>()?.Value,
-				   Maximum: mediaType.Schema?.TryGetAnnotation<MaximumKeyword>()?.Value
+				   Pattern: ctInfo?.TryGetAnnotation<PatternKeyword>()?.Pattern,
+				   MinLength: ctInfo?.TryGetAnnotation<MinLengthKeyword>()?.Value,
+				   MaxLength: ctInfo?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
+				   Minimum: ctInfo?.TryGetAnnotation<MinimumKeyword>()?.Value,
+				   Maximum: ctInfo?.TryGetAnnotation<MaximumKeyword>()?.Value
 			   );
 		}
 

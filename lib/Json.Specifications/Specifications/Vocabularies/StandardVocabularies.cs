@@ -36,7 +36,7 @@ public static class StandardVocabularies
 			// ("contains", null),
 			("additionalProperties", AdditionalPropertiesKeyword.Instance),
 			("properties", PropertiesKeyword.Instance),
-			// ("patternProperties", null),
+			("patternProperties", PatternPropertiesKeyword.Instance),
 			// ("dependentSchemas", null),
 			// ("propertyNames", null),
 			// ("if", null),
@@ -64,7 +64,7 @@ public static class StandardVocabularies
 		new Uri("https://json-schema.org/draft/2020-12/vocab/validation"),
 		// TODO
 		[
-			// ("type", null),
+			("type", TypeAnnotation.Instance),
 			// ("const", null),
 			("enum", EnumKeyword.Instance),
 			("multipleOf", MultipleOfKeyword.Instance),

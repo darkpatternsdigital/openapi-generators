@@ -48,7 +48,7 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 					return 3;
 				}
 
-				if (parseResult.Document is not { } document)
+				if (parseResult.Result is not { } document)
 					return 2;
 
 				var transformer = TransformSettings.BuildComposite(registry, GetVersionInfo(), [
@@ -105,7 +105,7 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 		private static Uri ToInternalUri(string documentPath) =>
 			new Uri(new Uri(documentPath).AbsoluteUri);
 
-		private static (IDocumentReference, DocumentRegistry) LoadDocument(string documentPath, TypeScriptSchemaOptions options)
+		private static (IDocumentReference, SchemaRegistry) LoadDocument(string documentPath, TypeScriptSchemaOptions options)
 		{
 			return DocumentResolverFactory.FromInitialDocumentInMemory(
 				ToInternalUri(Path.Combine(Directory.GetCurrentDirectory(), documentPath)),
@@ -117,7 +117,7 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 		private static DocumentRegistryOptions ToResolverOptions(TypeScriptSchemaOptions options) =>
 			new DocumentRegistryOptions([
 			// TODO: use the `options` to determine how to resolve additional documents
-			]);
+			], OpenApiTransforms.Matchers);
 
 		private static string GetVersionInfo()
 		{

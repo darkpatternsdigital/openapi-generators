@@ -34,6 +34,7 @@ public class ComprehensiveTransformsShould
 	[InlineData("annotations.yaml")]
 	[InlineData("request-ref.yaml")]
 	[InlineData("response-ref.yaml")]
+	[InlineData("openapi-3.0-callbacks.yaml")]
 	[Theory]
 	public void Compile_api_documents_included_in_the_TestApp(string name)
 	{
@@ -44,7 +45,7 @@ public class ComprehensiveTransformsShould
 	{
 		var registry = DocumentLoader.CreateRegistry();
 		var docResult = GetOpenApiDocument(name, registry);
-		Assert.NotNull(docResult.Document);
+		Assert.NotNull(docResult.Result);
 		var options = LoadOptions();
 
 		var transformer = TransformSettings.BuildComposite(registry, "", [

@@ -9,13 +9,15 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 using DarkPatterns.Json.Documents;
+using DarkPatterns.Json.Specifications.Dialects;
+using DarkPatterns.OpenApi.Specifications.v3_0;
 
 namespace DarkPatterns.OpenApi.Transformations;
 
 public class DocumentRegistryShould
 {
 	private static Bogus.DataSets.Internet internetDataSet = new Bogus.DataSets.Internet();
-	private DocumentRegistryOptions DefaultOptions() => new([]);
+	private DocumentRegistryOptions DefaultOptions() => new([], OpenApiTransforms.Matchers);
 
 	[Fact]
 	public void Throws_if_a_document_cannot_be_located_without_a_fetch_function()

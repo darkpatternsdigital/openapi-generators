@@ -15,6 +15,8 @@ public class RequiredKeyword(string keyword, IReadOnlyList<string> requiredPrope
 	public IReadOnlyList<string> RequiredProperties => requiredProperties;
 
 	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
+	public IEnumerable<IJsonSchemaAnnotation> GetDynamicAnnotations()
+		=> [];
 
 	private static DiagnosableResult<IJsonSchemaAnnotation> Parse(string keyword, ResolvableNode nodeInfo, JsonSchemaParserOptions options)
 	{
@@ -34,7 +36,7 @@ public class RequiredKeyword(string keyword, IReadOnlyList<string> requiredPrope
 		));
 	}
 
-	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchema context, EvaluationContext evaluationContext)
+	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchemaInfo context, EvaluationContext evaluationContext)
 	{
 		if (nodeMetadata.Node is not JsonObject obj) yield break;
 

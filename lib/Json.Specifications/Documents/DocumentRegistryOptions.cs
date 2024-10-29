@@ -3,5 +3,6 @@
 namespace DarkPatterns.Json.Documents;
 
 public record DocumentRegistryOptions(
-	IReadOnlyList<DocumentResolver> Resolvers
+	IReadOnlyList<DocumentResolver> Resolvers,
+	IReadOnlyList<DialectMatcher> DialectMatchers
 );

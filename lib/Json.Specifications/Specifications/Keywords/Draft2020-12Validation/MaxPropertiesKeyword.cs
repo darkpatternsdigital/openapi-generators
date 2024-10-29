@@ -22,8 +22,10 @@ public class MaxPropertiesKeyword(string keyword, int value) : IJsonSchemaAnnota
 	public string Keyword => keyword;
 
 	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
+	public IEnumerable<IJsonSchemaAnnotation> GetDynamicAnnotations()
+		=> [];
 
-	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchema context, EvaluationContext evaluationContext)
+	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchemaInfo context, EvaluationContext evaluationContext)
 	{
 		// TODO
 		throw new System.NotImplementedException($"Not implemented: limit max properties to {value}");

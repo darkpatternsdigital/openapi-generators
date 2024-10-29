@@ -9,6 +9,7 @@ using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
 using DarkPatterns.OpenApiCodegen.TestUtils;
 using DarkPatterns.OpenApiCodegen.Handlebars;
 using DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
+using DarkPatterns.Json.Specifications;
 
 namespace DarkPatterns.OpenApiCodegen.CSharp;
 
@@ -43,13 +44,16 @@ internal class DynamicCompilation
 	{
 		var registry = DocumentLoader.CreateRegistry();
 		var docResult = GetOpenApiDocument(documentName, registry);
-		Assert.NotNull(docResult.Document);
+		Assert.NotNull(docResult.Result);
 		var options = LoadOptions();
 
 		var transformer = TransformSettings.BuildComposite(registry, "", [
 			(s) => new PathControllerTransformerFactory(s).Build(docResult, options),
 			(s) => new CSharpSchemaSourceProvider(s, options)
 		]);
+		registry.DocumentRegistry.Register(docResult.Result);
+		var newDiagnostics = registry.RecursivelyFixupAll();
+		Assert.Empty(newDiagnostics);
 
 		var generated = transformer.GetSources();
 

@@ -27,15 +27,16 @@ public class CSharpSchemaSourceProvider(
 
 	protected override SourceEntry? GetSourceEntry(JsonSchema entry, OpenApiTransformDiagnostic diagnostic)
 	{
-		if (!inlineSchemas.ProduceSourceEntry(entry)) return null;
-		var targetNamespace = options.GetNamespace(entry);
-		var className = GetClassName(entry);
+		var info = entry.ResolveSchemaInfo();
+		if (!inlineSchemas.ProduceSourceEntry(info)) return null;
+		var targetNamespace = options.GetNamespace(info);
+		var className = GetClassName(info);
 
-		Templates.Model? model = GetModel(entry, diagnostic, className);
+		Templates.Model? model = GetModel(info, diagnostic, className);
 		if (model == null)
 			return null;
 		var sourceText = CSharpHandlebarsCommon.ProcessModel(
-			header: settings.Header(entry.Metadata.Id),
+			header: settings.Header(info.EffectiveSchema.Metadata.Id),
 			packageName: targetNamespace,
 			schemaId: entry.Metadata.Id,
 			model: model,
@@ -47,10 +48,11 @@ public class CSharpSchemaSourceProvider(
 		);
 	}
 
-	private Templates.Model? GetModel(JsonSchema entry, OpenApiTransformDiagnostic diagnostic, string className)
+	private Templates.Model? GetModel(JsonSchemaInfo entry, OpenApiTransformDiagnostic diagnostic, string className)
 	{
 		if (entry.TryGetAnnotation<EnumKeyword>() != null
-			&& entry.TryGetAnnotation<TypeKeyword>() is { Value: TypeKeyword.Common.String })
+			&& entry.TryGetAnnotation<TypeAnnotation>() is { AllowsString: true })
+			// TODO: this is not correct - any value could be a enum in OpenAPI
 			return ToEnumModel(className, entry);
 		if (entry.TryGetAnnotation<OneOfKeyword>() != null)
 			return ToOneOfModel(className, entry);
@@ -59,14 +61,14 @@ public class CSharpSchemaSourceProvider(
 		return null;
 	}
 
-	private ObjectModel? BuildObjectModel(JsonSchema schema)
+	private ObjectModel? BuildObjectModel(JsonSchemaInfo schema)
 	{
 		if (schema.TryGetAnnotation<AllOfKeyword>() is AllOfKeyword allOf && allOf.Schemas.Count > 0)
 		{
-			var models = allOf.Schemas.Select(BuildObjectModel).ToArray();
+			var models = allOf.Schemas.Select(s => s.ResolveSchemaInfo()).Select(BuildObjectModel).ToArray();
 			if (!models.All(v => v != null)) return null;
 			return new ObjectModel(
-				Properties: () => models.SelectMany(m => m!.Properties()).Aggregate(new Dictionary<string, JsonSchema>(), (prev, kvp) =>
+				Properties: () => models.SelectMany(m => m!.Properties()).Aggregate(new Dictionary<string, JsonSchemaInfo>(), (prev, kvp) =>
 				{
 					prev[kvp.Key] = kvp.Value;
 					return prev;
@@ -76,10 +78,10 @@ public class CSharpSchemaSourceProvider(
 			);
 		}
 
-		if (schema.TryGetAnnotation<TypeKeyword>() is { Value: "object" } ||
+		if (schema.TryGetAnnotation<TypeAnnotation>() is { AllowsObject: true } ||
 			schema.TryGetAnnotation<PropertiesKeyword>() != null)
 			return new ObjectModel(
-				Properties: () => schema.TryGetAnnotation<PropertiesKeyword>()?.Properties ?? new Dictionary<string, JsonSchema>(),
+				Properties: () => schema.TryGetAnnotation<PropertiesKeyword>()?.Properties?.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ResolveSchemaInfo()) ?? [],
 				Required: () => schema.TryGetAnnotation<RequiredKeyword>()?.RequiredProperties ?? Enumerable.Empty<string>(),
 				LegacyOptionalBehavior: schema.UseOptionalAsNullable()
 			);
@@ -87,12 +89,12 @@ public class CSharpSchemaSourceProvider(
 		return null;
 	}
 
-	private string GetClassName(JsonSchema schema) =>
-		options.ToClassName(schema, inlineSchemas.UriToClassIdentifier(schema.Metadata.Id));
+	private string GetClassName(JsonSchemaInfo schema) =>
+		options.ToClassName(schema, inlineSchemas.UriToClassIdentifier(schema.EffectiveSchema.Metadata.Id));
 
-	record ObjectModel(Func<IReadOnlyDictionary<string, JsonSchema>> Properties, Func<IEnumerable<string>> Required, bool LegacyOptionalBehavior);
+	record ObjectModel(Func<IReadOnlyDictionary<string, JsonSchemaInfo>> Properties, Func<IEnumerable<string>> Required, bool LegacyOptionalBehavior);
 
-	private Templates.ObjectModel ToObjectModel(string className, JsonSchema schema, ObjectModel objectModel, OpenApiTransformDiagnostic diagnostic)
+	private Templates.ObjectModel ToObjectModel(string className, JsonSchemaInfo schema, ObjectModel objectModel, OpenApiTransformDiagnostic diagnostic)
 	{
 		if (objectModel == null)
 			throw new ArgumentNullException(nameof(objectModel));
@@ -101,7 +103,7 @@ public class CSharpSchemaSourceProvider(
 
 		Templates.ModelVar[] vars = (from entry in properties
 									 let req = required.Contains(entry.Key)
-									 let dataType = inlineSchemas.ToInlineDataType(entry.Value)
+									 let dataType = inlineSchemas.ToInlineDataType(entry.Value.EffectiveSchema)
 									 let resolved = objectModel.LegacyOptionalBehavior && !req ? dataType.MakeNullable() : dataType
 									 select new Templates.ModelVar(
 										 BaseName: entry.Key,
@@ -126,12 +128,12 @@ public class CSharpSchemaSourceProvider(
 		);
 	}
 
-	private Templates.EnumModel ToEnumModel(string className, JsonSchema schema)
+	private Templates.EnumModel ToEnumModel(string className, JsonSchemaInfo schema)
 	{
 		return new Templates.EnumModel(
 			schema.TryGetAnnotation<DescriptionKeyword>()?.Description,
 			className,
-			IsString: schema.TryGetAnnotation<TypeKeyword>()?.Value == TypeKeyword.Common.String,
+			IsString: schema.TryGetAnnotation<TypeAnnotation>() is { AllowsString: true },
 			EnumVars: (from entry in schema.TryGetAnnotation<EnumKeyword>()?.Values
 					   select entry switch
 					   {
@@ -141,7 +143,7 @@ public class CSharpSchemaSourceProvider(
 		);
 	}
 
-	private Templates.TypeUnionModel ToOneOfModel(string className, JsonSchema schema)
+	private Templates.TypeUnionModel ToOneOfModel(string className, JsonSchemaInfo schema)
 	{
 		var discriminator = schema.TryGetAnnotation<DiscriminatorKeyword>();
 		var oneOf = schema.TryGetAnnotation<OneOfKeyword>()!;
@@ -154,10 +156,11 @@ public class CSharpSchemaSourceProvider(
 			TypeEntries: oneOf.Schemas
 				.Select((e, index) =>
 				{
-					var id = e.Metadata.Id;
-					string? discriminatorValue = e.GetLastContextPart();
+					var s = e.ResolveSchemaInfo();
+					var id = s.EffectiveSchema.Metadata.Id;
+					string? discriminatorValue = s.EffectiveSchema.GetLastContextPart();
 					if (discriminator?.Mapping?.FirstOrDefault(
-							kvp => new Uri(schema.Metadata.Id, kvp.Value).OriginalString == id.OriginalString
+							kvp => new Uri(schema.EffectiveSchema.Metadata.Id, kvp.Value).OriginalString == id.OriginalString
 						) is { Key: string key, Value: var relativeId })
 					{
 						discriminatorValue = key;

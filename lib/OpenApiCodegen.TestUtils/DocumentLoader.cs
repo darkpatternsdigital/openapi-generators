@@ -3,6 +3,8 @@ using DarkPatterns.Json.Specifications;
 using System.IO;
 using DarkPatterns.Json.Documents;
 using DarkPatterns.Json.Loaders;
+using DarkPatterns.OpenApi.Specifications.v3_0;
+using DarkPatterns.Json.Specifications.Dialects;
 
 namespace DarkPatterns.OpenApiCodegen.TestUtils;
 
@@ -38,8 +40,11 @@ public class DocumentLoader
 		return typeof(DocumentHelpers).Assembly.GetManifestResourceStream($"DarkPatterns.OpenApiCodegen.TestUtils.schemas.{baseUri.LocalPath.Substring(1)}");
 	}
 
-	public static DocumentRegistry CreateRegistry()
+	public static SchemaRegistry CreateRegistry()
 	{
-		return new DocumentRegistry(new([DocumentResolver]));
+		return new SchemaRegistry(new DocumentRegistry(new([DocumentResolver], [
+			OpenApi3_0DocumentFactory.JsonSchemaDialectMatcher,
+			.. StandardDialects.StandardMatchers
+		])));
 	}
 }

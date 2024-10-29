@@ -10,7 +10,7 @@ public class PathControllerTransformerFactory(TransformSettings settings)
 {
 	public ISourceProvider Build(ParseResult<OpenApiDocument> parseResult, CSharpServerSchemaOptions options)
 	{
-		if (parseResult.Document is not { } document) return new DiagnosticOnlySourceProvider(parseResult.Diagnostics);
+		if (parseResult.Result is not { } document) return new DiagnosticOnlySourceProvider(parseResult.Diagnostics);
 		var handlebarsFactory = new HandlebarsFactory(ControllerHandlebarsTemplateProcess.CreateHandlebars);
 		var controllerTransformer = new CSharpControllerTransformer(settings, document, options, handlebarsFactory);
 

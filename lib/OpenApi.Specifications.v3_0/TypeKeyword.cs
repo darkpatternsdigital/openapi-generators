@@ -1,70 +1,41 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Nodes;
 using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.Json.Documents;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.Json.Specifications.Keywords;
+using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
+using static DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation.TypeAnnotation;
 
 namespace DarkPatterns.OpenApi.Specifications.v3_0;
 
 // This follows OpenApi 3.0 TypeKeyword, not the actual standard at https://json-schema.org/draft/2020-12/json-schema-validation#name-type
 
-public class TypeKeyword(string keyword, string value) : IJsonSchemaAnnotation
+public class TypeKeyword(string keyword, IReadOnlyList<PrimitiveType> allowedTypes, PrimitiveType openApiType) : TypeAnnotation(keyword, allowedTypes)
 {
-	public static readonly IJsonSchemaKeyword Instance = new JsonSchemaKeyword(Parse);
+	public new static readonly IJsonSchemaKeyword Instance = new JsonSchemaKeyword(Parse);
+
+	public PrimitiveType OpenApiType => openApiType;
 
 	private static DiagnosableResult<IJsonSchemaAnnotation> Parse(string keyword, ResolvableNode nodeInfo, JsonSchemaParserOptions options)
 	{
-		if (nodeInfo.Node is JsonValue val && val.TryGetValue<string>(out var s))
-			return DiagnosableResult<IJsonSchemaAnnotation>.Pass(new TypeKeyword(keyword, s));
-		return DiagnosableResult<IJsonSchemaAnnotation>.Fail(new UnableToParseKeyword(keyword, options.Registry.ResolveLocation(nodeInfo)));
-	}
+		return ParseType(nodeInfo).Select(pt => ToTypeKeyword(pt));
 
-	public string Keyword => keyword;
-
-	public string Value => value;
-
-	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
-
-	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchema context, EvaluationContext evaluationContext)
-	{
-		switch (value)
+		DiagnosableResult<PrimitiveType> ParseType(ResolvableNode nodeInfo)
 		{
-			case Common.Array:
-				if (nodeMetadata.Node is JsonArray) yield break;
-				break;
-			case Common.Object:
-				if (nodeMetadata.Node is JsonObject) yield break;
-				break;
-			case Common.Boolean:
-				if ((nodeMetadata.Node as JsonValue)?.TryGetValue<bool>(out var _) ?? false) yield break;
-				break;
-			case Common.String:
-				if ((nodeMetadata.Node as JsonValue)?.TryGetValue<string>(out var _) ?? false) yield break;
-				break;
-			case Common.Number:
-				if ((nodeMetadata.Node as JsonValue)?.TryGetValue<double>(out var _) ?? false) yield break;
-				break;
-			case Common.Integer:
-				if ((nodeMetadata.Node as JsonValue)?.TryGetValue<int>(out var _) ?? false) yield break;
-				break;
+			// TODO: incorporate null
+			if (nodeInfo.Node is JsonValue val && val.TryGetValue<string>(out var s) && TryParsePrimitiveType(s, out var pt))
+				return DiagnosableResult<PrimitiveType>.Pass(pt);
+			return DiagnosableResult<PrimitiveType>.Fail(new UnableToParseKeyword(keyword, options.Registry.ResolveLocation(nodeInfo)));
 		}
-		yield return new TypeKeywordMismatch(Value, evaluationContext.DocumentRegistry.ResolveLocation(nodeMetadata));
-	}
 
-	public static class Common
-	{
-#pragma warning disable CA1720 // Identifier contains type name
-		public const string Array = "array";
-		public const string Object = "object";
-		public const string Boolean = "boolean";
-		public const string String = "string";
-		public const string Number = "number";
-		public const string Integer = "integer";
-		public const string Null = "null";
-#pragma warning restore CA1720 // Identifier contains type name
+		IJsonSchemaAnnotation ToTypeKeyword(PrimitiveType allowedType)
+		{
+			return new TypeKeyword(keyword, [allowedType], allowedType);
+		}
 	}
 }
 

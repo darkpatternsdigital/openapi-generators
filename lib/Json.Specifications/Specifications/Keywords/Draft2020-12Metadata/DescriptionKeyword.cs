@@ -22,8 +22,10 @@ public class DescriptionKeyword(string keyword, string description) : IJsonSchem
 	public string Description => description;
 
 	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
+	public IEnumerable<IJsonSchemaAnnotation> GetDynamicAnnotations()
+		=> [];
 
-	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchema context, EvaluationContext evaluationContext)
+	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchemaInfo context, EvaluationContext evaluationContext)
 	{
 		yield break;
 	}

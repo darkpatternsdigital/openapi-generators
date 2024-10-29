@@ -54,11 +54,11 @@ public static class DocumentResolverFactory
 		return registry;
 	}
 
-	public static (IDocumentReference, DocumentRegistry) FromInitialDocumentInMemory(Uri uri, string documentContents, DocumentRegistryOptions resolverOptions)
+	public static (IDocumentReference, SchemaRegistry) FromInitialDocumentInMemory(Uri uri, string documentContents, DocumentRegistryOptions resolverOptions)
 	{
 		using var sr = new StringReader(documentContents);
 		var doc = docLoader.LoadDocument(uri, sr, null);
 
-		return (doc, From([doc], resolverOptions));
+		return (doc, new SchemaRegistry(From([doc], resolverOptions)));
 	}
 }

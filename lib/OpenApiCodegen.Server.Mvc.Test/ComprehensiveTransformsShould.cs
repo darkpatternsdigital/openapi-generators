@@ -34,6 +34,7 @@ public class ComprehensiveTransformsShould
 	[InlineData("annotations.yaml")]
 	[InlineData("request-ref.yaml")]
 	[InlineData("response-ref.yaml")]
+	[InlineData("openapi-3.0-callbacks.yaml")]
 	[Theory]
 	public void Compile_api_documents_included_in_the_TestApp(string name)
 	{
@@ -44,7 +45,7 @@ public class ComprehensiveTransformsShould
 	{
 		var registry = DocumentLoader.CreateRegistry();
 		var docResult = GetOpenApiDocument(name, registry);
-		Assert.NotNull(docResult.Document);
+		Assert.NotNull(docResult.Result);
 		var options = LoadOptions();
 
 		var transformer = TransformSettings.BuildComposite(registry, "", [
@@ -64,7 +65,7 @@ public class ComprehensiveTransformsShould
 	}
 
 	[Fact]
-	public void Report_unresolved_external_references()
+	public void Reports_diagnostics_for_bad_yaml()
 	{
 		var diagnostics = GetDocumentDiagnostics("bad.yaml");
 
@@ -83,6 +84,22 @@ public class ComprehensiveTransformsShould
 				Assert.Equal(75, diag.Location.Range?.Start.Line);
 				Assert.Equal(17, diag.Location.Range?.Start.Column);
 				Assert.Equal("proj://embedded/petstore.yaml#/Pet", targetNodeDiagnostic.Uri.OriginalString);
+			}
+		);
+	}
+
+	[Fact]
+	public void Reports_diagnostics_for_bad_2_yaml()
+	{
+		var diagnostics = GetDocumentDiagnostics("bad.2.yaml");
+
+		Assert.Collection(diagnostics,
+			(DiagnosticBase diag) =>
+			{
+				Assert.IsType<UnableToCreateInlineSchemaDiagnostic>(diag);
+				Assert.Equal("proj://embedded/bad.2.yaml", diag.Location.RetrievalUri.OriginalString);
+				Assert.Equal(16, diag.Location.Range?.Start.Line);
+				Assert.Equal(17, diag.Location.Range?.Start.Column);
 			}
 		);
 	}

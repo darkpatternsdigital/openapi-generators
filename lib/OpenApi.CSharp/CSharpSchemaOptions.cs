@@ -51,9 +51,9 @@ namespace DarkPatterns.OpenApi.CSharp
 				extraReserved
 			);
 
-		internal string GetNamespace(JsonSchema schema)
+		internal string GetNamespace(JsonSchemaInfo schema)
 		{
-			var schemaId = schema.Metadata.Id;
+			var schemaId = schema.EffectiveSchema.Metadata.Id;
 			// This is a hack to avoid lack of support for https://github.com/dotnet/runtime/issues/67616
 			if (OverrideNames.TryGetValue(schemaId.OriginalString.Replace(':', '#'), out var fullName)) return fullName.Substring(0, fullName.LastIndexOf('.'));
 			if (schema.TryGetAnnotation<UnknownKeyword>($"x-{Extensions.NamespaceOverride}") is { } nsOverride
@@ -63,9 +63,9 @@ namespace DarkPatterns.OpenApi.CSharp
 			return DefaultNamespace;
 		}
 
-		internal string ToClassName(JsonSchema schema, string nameFromFragment)
+		internal string ToClassName(JsonSchemaInfo schema, string nameFromFragment)
 		{
-			var schemaId = schema.Metadata.Id;
+			var schemaId = schema.EffectiveSchema.Metadata.Id;
 			// This is a hack to avoid lack of support for https://github.com/dotnet/runtime/issues/67616
 			if (OverrideNames.TryGetValue(schemaId.OriginalString.Replace(':', '#'), out var fullName)) return fullName.Substring(fullName.LastIndexOf('.') + 1);
 			if (schema.TryGetAnnotation<UnknownKeyword>($"x-{Extensions.TypeNameOverride}") is { } typeNameOverride

@@ -10,45 +10,6 @@ using System.Text.Json.Nodes;
 namespace DarkPatterns.Json.Documents;
 
 public delegate IDocumentReference? DocumentResolver(Uri baseUri, IDocumentReference? currentDocument);
-public record NodeMetadata(Uri Id, NodeMetadata? Context = null)
-{
-	public static NodeMetadata FromRoot(IDocumentReference documentReference)
-	{
-		return new NodeMetadata(documentReference.BaseUri);
-	}
-
-}
-
-public class ResolvableNode(NodeMetadata metadata, DocumentRegistry registry)
-{
-	private readonly Lazy<IDocumentReference> documentReference = new(() => registry.ResolveDocumentFromMetadata(metadata));
-	private readonly Lazy<JsonNode?> node = new(() => registry.ResolveNodeFromMetadata(metadata));
-
-	public ResolvableNode(NodeMetadata metadata, DocumentRegistry registry, IDocumentReference document) : this(metadata, registry)
-	{
-		this.documentReference = new Lazy<IDocumentReference>(() => document);
-	}
-
-	public ResolvableNode(NodeMetadata metadata, DocumentRegistry registry, IDocumentReference document, JsonNode? node) : this(metadata, registry)
-	{
-		this.documentReference = new(() => document);
-		this.node = new(() => node);
-	}
-
-	public static ResolvableNode FromRoot(DocumentRegistry registry, IDocumentReference documentReference)
-	{
-		return new ResolvableNode(NodeMetadata.FromRoot(documentReference), registry, documentReference);
-	}
-
-	public Location ToLocation() =>
-		registry.ResolveLocation(metadata);
-
-	public Uri Id => metadata.Id;
-	public DocumentRegistry Registry => registry;
-	public NodeMetadata Metadata => metadata;
-	public IDocumentReference Document => documentReference.Value;
-	public JsonNode? Node => node.Value;
-}
 
 public class DocumentRegistry(DocumentRegistryOptions registryOptions)
 {
@@ -72,6 +33,10 @@ public class DocumentRegistry(DocumentRegistryOptions registryOptions)
 
 	private DocumentRegistryEntry InternalAddDocument(IDocumentReference document)
 	{
+		if (TryResolveDialect(document.RootNode, out var dialect))
+		{
+			document.Dialect = dialect;
+		}
 		var uri = document.BaseUri;
 		if (uri.Fragment is { Length: > 0 }) throw new DiagnosticException(InvalidDocumentBaseUri.Builder(retrievalUri: document.RetrievalUri, baseUri: document.BaseUri));
 
@@ -91,15 +56,25 @@ public class DocumentRegistry(DocumentRegistryOptions registryOptions)
 		return entries.Any(doc => doc.Document.BaseUri == uri);
 	}
 
+	public IEnumerable<IJsonDocumentNode> GetAllRegisteredNodes() =>
+		from entry in entries
+		from node in entry.Parsed.Values
+		select node;
+
 	public void Register(IJsonDocumentNode node)
 	{
-		var entry = entries.FirstOrDefault(doc => doc.Document.BaseUri == node.Metadata.Id);
+		var set = new HashSet<string>();
 		var stack = new Stack<IJsonDocumentNode>([node]);
 		while (stack.Count > 0)
 		{
 			var next = stack.Pop();
-			if (entry.Parsed.ContainsKey(next.Metadata.Id.Fragment)) continue;
-			entry.Parsed[next.Metadata.Id.Fragment] = next;
+			if (set.Contains(next.Metadata.Id.OriginalString))
+				continue;
+			else
+				set.Add(next.Metadata.Id.OriginalString);
+			var entry = entries.FirstOrDefault(doc => doc.Document.BaseUri == node.Metadata.Id);
+			if (!entry.Parsed.ContainsKey(next.Metadata.Id.Fragment))
+				entry.Parsed[next.Metadata.Id.Fragment] = next;
 			foreach (var n in next.GetNestedNodes()) stack.Push(n);
 		}
 	}
@@ -233,21 +208,6 @@ public class DocumentRegistry(DocumentRegistryOptions registryOptions)
 		return InternalAddDocument(document);
 	}
 
-	public JsonSchema? ResolveSchema(NodeMetadata nodeMetadata, IJsonSchemaDialect dialect)
-	{
-		if (!TryGetNode<JsonSchema>(nodeMetadata.Id, out var result))
-		{
-			var deserialized = JsonSchemaParser.Deserialize(
-				ResolveMetadataNode(nodeMetadata),
-				new JsonSchemaParserOptions(this, dialect)
-			).Fold<JsonSchema?>(s => s, _ => null);
-			if (deserialized != null)
-				Register(deserialized);
-			result = deserialized;
-		}
-		return result;
-	}
-
 	public Location ResolveLocation(ResolvableNode node) => ResolveLocation(node.Metadata);
 
 	public Location ResolveLocation(NodeMetadata key) => ResolveLocation(key.Id);
@@ -257,6 +217,18 @@ public class DocumentRegistry(DocumentRegistryOptions registryOptions)
 		var registryEntry = InternalResolveDocumentEntry(id, null);
 		var fileLocation = registryEntry.Document.GetLocation(ResolvePointer(id, registryEntry));
 		return new Location(registryEntry.Document.RetrievalUri, fileLocation);
+	}
+
+	private bool TryResolveDialect(JsonNode? rootNode, [NotNullWhen(true)] out IJsonSchemaDialect? result)
+	{
+		if (rootNode is JsonObject obj)
+			if (registryOptions.DialectMatchers.FirstOrDefault(matcher => matcher.MatchesDocument(obj)) is { Dialect: var dialect })
+			{
+				result = dialect;
+				return true;
+			}
+		result = null;
+		return false;
 	}
 
 	private class DocumentRefVisitor : JsonNodeVisitor

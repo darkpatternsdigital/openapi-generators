@@ -1,7 +1,9 @@
 ﻿using DarkPatterns.Json.Diagnostics;
+using DarkPatterns.Json.Documents;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.OpenApiCodegen;
 using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace DarkPatterns.OpenApi.Transformations;
@@ -11,13 +13,19 @@ public abstract class SchemaSourceProvider(ISchemaRegistry schemaRegistry) : ISo
 	public SourcesResult GetSources()
 	{
 		var diagnostic = new OpenApiTransformDiagnostic();
-		return SourcesResult.Combine([
-			new SourcesResult([
+		SourceEntry[] sources = [
 				.. from entry in schemaRegistry.GetSchemas()
 				   let e = SafeGetSourceEntry(entry, diagnostic)
 				   where e != null
 				   select e,
-			], [.. diagnostic.Diagnostics]),
+		];
+		var groups = sources.GroupBy(s => s.Key).ToArray();
+		var duplicateSources = groups.Where(g => g.Count() > 1).ToArray();
+		if (duplicateSources.Length != 0)
+			Debugger.Break();
+
+		return SourcesResult.Combine([
+			new SourcesResult(sources, [.. diagnostic.Diagnostics]),
 			GetAdditionalSources()
 		]);
 	}

@@ -1,0 +1,22 @@
+openapi: "3.0.3"
+info:
+  version: 1.0.0
+  title: Bad Demo
+  description: A sample API document that intentionally has issues to see if errors are reported helpfully
+paths:
+  /:
+    get:
+      operationId: getValue
+      responses:
+        200:
+          description: Returns a value
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name: { '#/components/schemas/Name' }
+components:
+  schemas:
+    Name:
+      type: string

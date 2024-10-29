@@ -29,14 +29,14 @@ public class DiagnosticsReportingShould
 	{
 		var registry = DocumentLoader.CreateRegistry();
 		var docResult = GetOpenApiDocument(name, registry);
-		if (docResult.Document == null) return docResult.Diagnostics;
-		Assert.NotNull(docResult.Document);
-		var document = docResult.Document;
+		if (docResult.Result == null) return docResult.Diagnostics;
+		Assert.NotNull(docResult.Result);
+		var document = docResult.Result;
 
-		var settings = new Handlebars.TransformSettings(new SchemaRegistry(registry), "");
+		var settings = new Handlebars.TransformSettings(registry, "");
 		var options = LoadOptions();
 
-		var transformer = new OperationTransformerFactory(settings).Build(docResult.Document, options);
+		var transformer = new OperationTransformerFactory(settings).Build(docResult.Result, options);
 
 		var result = transformer.GetSources();
 		return docResult.Diagnostics.Concat(result.Diagnostics);

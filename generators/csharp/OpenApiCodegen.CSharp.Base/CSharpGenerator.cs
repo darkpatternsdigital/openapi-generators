@@ -12,6 +12,7 @@ using DarkPatterns.OpenApiCodegen.CSharp.Client;
 using System.IO;
 using System.Text;
 using DarkPatterns.OpenApiCodegen.CSharp.WebhookClient;
+using Microsoft.Extensions.FileSystemGlobbing;
 
 namespace DarkPatterns.OpenApiCodegen.CSharp;
 
@@ -60,17 +61,17 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 		var mvcServerTransforms =
 			(from e in docs
 			 where e.document.Types.Contains(typeMvcServer)
-			 let parseResult = CommonParsers.DefaultParsers.Parse(e.loaded, registry)
+			 let parseResult = CommonParsers.DefaultParsers.Parse(e.loaded, schemaRegistry)
 			 select new PathControllerTransformerFactory(settings).Build(parseResult, e.options)).ToArray();
 		var clientTransforms =
 			(from e in docs
 			 where e.document.Types.Contains(typeClient)
-			 let parseResult = CommonParsers.DefaultParsers.Parse(e.loaded, registry)
+			 let parseResult = CommonParsers.DefaultParsers.Parse(e.loaded, schemaRegistry)
 			 select new ClientTransformerFactory(settings).Build(parseResult, e.options)).ToArray();
 		var webhookTransforms =
 			(from e in docs
 			 where e.document.Types.Contains(typeWebhookClient)
-			 let parseResult = CommonParsers.DefaultParsers.Parse(e.loaded, registry)
+			 let parseResult = CommonParsers.DefaultParsers.Parse(e.loaded, schemaRegistry)
 			 select new WebhookClientTransformerFactory(settings).Build(parseResult, e.options)).ToArray();
 
 		var allSchemasOptions = LoadOptionsFromMetadata(additionalTextInfos);
@@ -174,6 +175,7 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 		new DocumentRegistryOptions(
 			additionalSchemas
 				.Select(doc => DocumentResolverFactory.LoadAs(ToInternalUri(doc), doc.Contents))
-				.ToArray()
+				.ToArray(),
+			OpenApiTransforms.Matchers
 		);
 }

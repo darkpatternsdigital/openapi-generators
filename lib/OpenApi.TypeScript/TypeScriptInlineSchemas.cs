@@ -7,10 +7,12 @@ using Json.Pointer;
 using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.Json.Specifications;
-using DarkPatterns.OpenApi.Specifications.v3_0;
 using DarkPatterns.Json.Documents;
+using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DarkPatterns.OpenApi.TypeScript;
+using v3_0 = DarkPatterns.OpenApi.Specifications.v3_0;
 
 public record TypeScriptImportReference(JsonSchema Schema, string Member, string File);
 
@@ -26,7 +28,14 @@ public class TypeScriptInlineSchemas(TypeScriptSchemaOptions options, DocumentRe
 
 	public bool ProduceSourceEntry(JsonSchema schema)
 	{
-		var nodes = documentRegistry.GetNodesTo(schema.Metadata.Id);
+		return ProduceSourceEntry(schema.ResolveSchemaInfo());
+	}
+
+	public bool ProduceSourceEntry(JsonSchemaInfo schema)
+	{
+		if (schema.Original.Id.OriginalString != schema.EffectiveSchema.Metadata.Id.OriginalString) return false;
+
+		var nodes = documentRegistry.GetNodesTo(schema.EffectiveSchema.Metadata.Id);
 		if (nodes.LastOrDefault() is (["allOf", _], JsonSchema))
 			return false;
 		if (nodes.Length == 2 && nodes[1] is (["components", "schemas", _], JsonSchema))
@@ -35,40 +44,57 @@ public class TypeScriptInlineSchemas(TypeScriptSchemaOptions options, DocumentRe
 		// We're going to inline much less than TS allows because it makes things easier for developers
 		return TypeScriptTypeInfo.From(schema) switch
 		{
-			{ Type: "object", Properties.Count: 0, AdditionalProperties: JsonSchema } => true,
+			{ TypeAnnotation.AllowsObject: true, Properties.Count: 0, AdditionalProperties: JsonSchema } => true,
 			{ AllOf.Count: > 0 } => true,
 			{ AnyOf.Count: > 0 } => true,
 			{ OneOf.Count: > 0 } => true,
-			{ Type: "string", Enum.Count: > 0 } => true,
-			{ Type: "array" } or { Items: JsonSchema _ } => false,
-			// TODO: why is this testing for "object"?
-			{ Type: string type, Format: var format, Properties.Count: 0, Enum.Count: 0 } => options.Find(type, format) == "object",
-			{ Type: "object", Format: null } => true,
+			{ TypeAnnotation.AllowsString: true, Enum.Count: > 0 } => true,
+			{ TypeAnnotation.AllowsArray: true } or { Items: JsonSchema _ } => false,
+			{ TypeAnnotation.AllowsObject: true, Format: null } => true,
 			{ Properties.Count: > 0 } => true,
-			{ Type: "string" or "number" or "integer" or "boolean" } => false,
+			{ TypeAnnotation: { AllowsString: true } or { AllowsNumber: true } or { AllowsInteger: true } or { AllowsBoolean: true } } => false,
 			{ } => false,
-			_ => throw new NotSupportedException($"Unknown schema: {schema.Metadata.Id}"),
+			_ => throw new NotSupportedException($"Unknown schema: {schema.Original.Id}"),
 		};
 	}
 
 	public TypeScriptInlineDefinition ToInlineDataType(JsonSchema? schema)
 	{
 		if (schema == null) return new TypeScriptInlineDefinition("unknown", [], true, false);
+		var schemaInfo = schema.ResolveSchemaInfo();
+		return ToInlineDataType(schemaInfo);
+	}
 
-		var typeInfo = TypeScriptTypeInfo.From(schema);
+	[return: NotNullIfNotNull(nameof(schemaInfo))]
+	private TypeScriptInlineDefinition? ToInlineDataType(JsonSchemaInfo? schemaInfo)
+	{
+		if (schemaInfo == null) return null;
+		schemaInfo = schemaInfo with { Original = schemaInfo.EffectiveSchema.Metadata };
+
+		var typeInfo = TypeScriptTypeInfo.From(schemaInfo);
 		TypeScriptInlineDefinition result = typeInfo switch
 		{
-			_ when ProduceSourceEntry(schema) =>
-				new(UseReferenceName(schema), [ToImportReference(schema)]),
-			{ Type: "array", Items: null } => ArrayToInline(null),
+			_ when ProduceSourceEntry(schemaInfo) =>
+				new(UseReferenceName(schemaInfo.EffectiveSchema), [ToImportReference(schemaInfo.EffectiveSchema)]),
+			{ TypeAnnotation.AllowsArray: true, Items: null } => ArrayToInline(null),
 			{ Items: JsonSchema items } => ArrayToInline(items),
-			{ Schema: { BoolValue: false } } => new TypeScriptInlineDefinition("never", [], false, false),
-			{ Schema: { BoolValue: true } } => new TypeScriptInlineDefinition("unknown", [], true, false),
-			{ Type: string type, Format: var format } =>
-				new(options.Find(type, format), []),
-			_ => throw new NotSupportedException($"Unknown schema: {schema.Metadata.Id}"),
+			{ Info.EffectiveSchema.BoolValue: false } => new TypeScriptInlineDefinition("never", [], false, false),
+			{ Info.EffectiveSchema.BoolValue: true } => new TypeScriptInlineDefinition("unknown", [], true, false),
+			{ TypeAnnotation: v3_0.TypeKeyword { OpenApiType: var primitiveType }, Format: var format } =>
+				new(options.Find(TypeAnnotation.ToPrimitiveTypeString(primitiveType), format), []),
+			{ TypeAnnotation.AllowsNumber: true, Format: var format } =>
+				new(options.Find(TypeAnnotation.Common.Number, format), []),
+			{ TypeAnnotation.AllowsInteger: true, Format: var format } =>
+				new(options.Find(TypeAnnotation.Common.Integer, format), []),
+			{ TypeAnnotation.AllowsString: true, Format: var format } =>
+				new(options.Find(TypeAnnotation.Common.String, format), []),
+			{ TypeAnnotation.AllowsBoolean: true, Format: var format } =>
+				new(options.Find(TypeAnnotation.Common.Boolean, format), []),
+			{ TypeAnnotation.AllowsObject: true, Format: var format } =>
+				new(options.Find(TypeAnnotation.Common.Object, format), []),
+			_ => throw new NotSupportedException($"Unknown schema: {schemaInfo.Original.Id}"),
 		};
-		return schema?.TryGetAnnotation<NullableKeyword>() is { IsNullable: true }
+		return schemaInfo.TryGetAnnotation<v3_0.NullableKeyword>() is { IsNullable: true }
 			? result.MakeNullable()
 			: result;
 
@@ -129,7 +155,19 @@ public class TypeScriptInlineSchemas(TypeScriptSchemaOptions options, DocumentRe
 					}
 				case ([], OpenApiDocument) when context.Count >= 2 && context[1] is (["components", _, string componentName], JsonSchema):
 					return ([componentName], context.Skip(2).ToArray());
-				case (_, OpenApiDocument or OpenApiPath):
+				case (_, OpenApiDocument):
+					return (Enumerable.Empty<string>(), context.Skip(1).ToArray());
+				case (["callbacks", var callbackName, _], OpenApiPath):
+					switch (context[1])
+					{
+						case ([var method], OpenApiOperation { OperationId: null }):
+							return ([$"{method} {callbackName}"], context.Skip(2).ToArray());
+						case (_, OpenApiOperation { OperationId: string opId }):
+							return ([opId], context.Skip(2).ToArray());
+						default:
+							throw new NotImplementedException();
+					}
+				case (_, OpenApiPath):
 					return (Enumerable.Empty<string>(), context.Skip(1).ToArray());
 				case (["responses"], OpenApiResponses responses) when context.Count >= 4:
 					{
@@ -199,7 +237,7 @@ public class TypeScriptInlineSchemas(TypeScriptSchemaOptions options, DocumentRe
 				case (var parts, JsonSchema):
 					return (parts, context.Skip(1).ToArray());
 				case (var parts, var t):
-					throw new NotImplementedException($"{string.Join(", ", parts)} {t.GetType().FullName}");
+					throw new NotImplementedException($"Could not name section '{string.Join(", ", parts)} {t.GetType().FullName}' when naming {uri.OriginalString}");
 				default:
 					throw new NotImplementedException();
 			};

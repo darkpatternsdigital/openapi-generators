@@ -15,6 +15,9 @@ public abstract record DiagnosableResult<T>
 	public static DiagnosableResult<T> Fail(NodeMetadata nodeInfo, DocumentRegistry registry, params DiagnosticException.ToDiagnostic[] diagnostics) =>
 		new DiagnosableResult<T>.Failure(diagnostics.Select(d => d(registry.ResolveLocation(nodeInfo))).ToArray());
 
+	public static DiagnosableResult<T> Fail(IReadOnlyList<DiagnosticBase> diagnostics) =>
+		new DiagnosableResult<T>.Failure(diagnostics);
+
 	public static DiagnosableResult<T> Fail(params DiagnosticBase[] diagnostics) =>
 		new DiagnosableResult<T>.Failure(diagnostics);
 #pragma warning restore CA1000 // Do not declare static members on generic types

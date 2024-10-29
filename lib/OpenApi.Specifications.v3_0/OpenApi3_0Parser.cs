@@ -19,21 +19,21 @@ public class OpenApi3_0Parser : SchemaValidatingParser<OpenApiDocument>
 	{
 	}
 
-	private static IDocumentReference LoadSchemaDocumentDirectly(DocumentRegistry registry)
+	private static IDocumentReference LoadSchemaDocumentDirectly(SchemaRegistry schemaRegistry)
 	{
 		using var schemaStream = typeof(OpenApi3_0Parser).Assembly.GetManifestResourceStream($"{typeof(OpenApi3_0Parser).Namespace}.Schemas.schema.yaml");
 		using var sr = new StreamReader(schemaStream);
 		var yamlDocument = new YamlDocumentLoader().LoadDocument(schemaUri, sr, OpenApi3_0DocumentFactory.OpenApiDialect);
-		registry.AddDocument(yamlDocument);
+		schemaRegistry.DocumentRegistry.AddDocument(yamlDocument);
 		return yamlDocument;
 	}
 
-	private static JsonSchema LoadOpenApi3_0Schema(DocumentRegistry registry)
+	private static JsonSchema LoadOpenApi3_0Schema(SchemaRegistry schemaRegistry)
 	{
-		var yamlDocument = registry.TryGetDocument(schemaUri, out var doc) ? doc : LoadSchemaDocumentDirectly(registry);
-		var metadata = ResolvableNode.FromRoot(registry, yamlDocument);
+		var yamlDocument = schemaRegistry.DocumentRegistry.TryGetDocument(schemaUri, out var doc) ? doc : LoadSchemaDocumentDirectly(schemaRegistry);
+		var metadata = ResolvableNode.FromRoot(schemaRegistry.DocumentRegistry, yamlDocument);
 
-		var result = JsonSchemaParser.Deserialize(metadata, new JsonSchemaParserOptions(registry, OpenApi3_0DocumentFactory.OpenApiDialect));
+		var result = JsonSchemaParser.Deserialize(metadata, new JsonSchemaParserOptions(schemaRegistry, OpenApi3_0DocumentFactory.OpenApiDialect));
 		return result is DiagnosableResult<JsonSchema>.Success { Value: var schema }
 			? schema
 			: throw new InvalidOperationException(Errors.FailedToParseEmbeddedSchema);
@@ -49,9 +49,9 @@ public class OpenApi3_0Parser : SchemaValidatingParser<OpenApiDocument>
 		return true;
 	}
 
-	protected override ParseResult<OpenApiDocument> Construct(IDocumentReference documentReference, IEnumerable<DiagnosticBase> diagnostics, DocumentRegistry documentRegistry)
+	protected override ParseResult<OpenApiDocument> Construct(IDocumentReference documentReference, IEnumerable<DiagnosticBase> diagnostics, SchemaRegistry schemaRegistry)
 	{
-		var factory = new OpenApi3_0DocumentFactory(documentRegistry, diagnostics);
+		var factory = new OpenApi3_0DocumentFactory(schemaRegistry, diagnostics);
 		var result = factory.ConstructDocument(documentReference);
 		return new ParseResult<OpenApiDocument>(
 			result,

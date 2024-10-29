@@ -28,9 +28,9 @@ internal class OpenApi3_1Parser : SchemaValidatingParser<OpenApiDocument>
 		return true;
 	}
 
-	protected override ParseResult<OpenApiDocument> Construct(IDocumentReference documentReference, IEnumerable<DiagnosticBase> diagnostics, DocumentRegistry documentRegistry)
+	protected override ParseResult<OpenApiDocument> Construct(IDocumentReference documentReference, IEnumerable<DiagnosticBase> diagnostics, SchemaRegistry schemaRegistry)
 	{
-		var factory = new OpenApi3_1DocumentFactory(documentRegistry, diagnostics);
+		var factory = new OpenApi3_1DocumentFactory(schemaRegistry, diagnostics);
 		var result = factory.ConstructDocument(documentReference.BaseUri, documentReference.RootNode ?? throw new InvalidOperationException(Errors.InvalidOpenApiRootNode));
 		return new ParseResult<OpenApiDocument>(
 			result,

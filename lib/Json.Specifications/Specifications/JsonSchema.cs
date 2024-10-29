@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
 using DarkPatterns.Json.Diagnostics;
@@ -46,6 +47,7 @@ public sealed class JsonSchema : IJsonDocumentNode
 
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, EvaluationContext evaluationContext)
 	{
+		var context = this.ResolveSchemaInfo();
 		switch (value)
 		{
 			case true: return Enumerable.Empty<DiagnosticBase>();
@@ -53,24 +55,26 @@ public sealed class JsonSchema : IJsonDocumentNode
 			default:
 
 				return from keyword in Annotations
-					   let keywordResults = keyword.Evaluate(nodeMetadata, this, evaluationContext)
+					   let keywordResults = keyword.Evaluate(nodeMetadata, context, evaluationContext)
 					   from result in keywordResults
 					   select result;
 		}
 	}
 
-	public void FixupInPlace(JsonSchemaParserOptions options)
+	internal IEnumerable<DiagnosticBase> FixupInPlace(JsonSchemaParserOptions options)
 	{
-		if (isFinalized) return;
+		if (isFinalized) return [];
 		var stack = new Stack<IJsonSchemaFixupAnnotation>(Annotations.OfType<IJsonSchemaFixupAnnotation>());
 		var fixupRan = new HashSet<IJsonSchemaFixupAnnotation>();
+		var resultDiagnostics = new List<DiagnosticBase>();
 		var modifier = new JsonSchemaModifier(this,
 			onReplace: (items) => stack = new(items.OfType<IJsonSchemaFixupAnnotation>()),
 			onAdd: (items) =>
 			{
 				foreach (var item in items.OfType<IJsonSchemaFixupAnnotation>()) stack.Push(item);
 			},
-			onStop: () => stack.Clear()
+			onStop: () => stack.Clear(),
+			resultDiagnostics.AddRange
 		);
 		while (stack.Count > 0)
 		{
@@ -79,9 +83,30 @@ public sealed class JsonSchema : IJsonDocumentNode
 				next.FixupInPlace(this, modifier, options);
 		}
 		isFinalized = true;
+		return [.. resultDiagnostics];
 	}
 
-	class JsonSchemaModifier(JsonSchema original, Action<IEnumerable<IJsonSchemaAnnotation>> onReplace, Action<IEnumerable<IJsonSchemaAnnotation>> onAdd, Action onStop) : IJsonSchemaModifier
+	public IReadOnlyList<IJsonSchemaAnnotation> GetAllAnnotations()
+	{
+		var set = new List<IJsonSchemaAnnotation>(Annotations);
+		var stack = new Stack<IJsonSchemaAnnotation>(Annotations);
+		while (stack.Count > 0)
+		{
+			var annotation = stack.Pop();
+			var dynamicAnnotations = annotation.GetDynamicAnnotations();
+			set.AddRange(dynamicAnnotations);
+			foreach (var entry in dynamicAnnotations)
+				stack.Push(entry);
+		}
+		return [.. set];
+	}
+
+	class JsonSchemaModifier(
+		JsonSchema original,
+		Action<IEnumerable<IJsonSchemaAnnotation>> onReplace,
+		Action<IEnumerable<IJsonSchemaAnnotation>> onAdd,
+		Action onStop,
+		Action<IEnumerable<DiagnosticBase>> addDiagnostics) : IJsonSchemaModifier
 	{
 		public void AddAnnotations(IEnumerable<IJsonSchemaAnnotation> annotations)
 		{
@@ -89,12 +114,18 @@ public sealed class JsonSchema : IJsonDocumentNode
 			original.keywords.AddRange(annotations);
 		}
 
+		public void AddDiagnostics(IEnumerable<DiagnosticBase> diagnostics)
+		{
+			addDiagnostics(diagnostics);
+		}
+
 		public void ReplaceAnnotations(IEnumerable<IJsonSchemaAnnotation> annotations, bool needsFixup)
 		{
-			if (needsFixup) onReplace(annotations);
+			var newRange = annotations.ToArray();
+			if (needsFixup) onReplace(newRange);
 			else onStop();
 			original.keywords.Clear();
-			original.keywords.AddRange(annotations);
+			original.keywords.AddRange(newRange);
 		}
 
 		public void SetBooleanSchemaValue(bool value)
@@ -116,9 +147,35 @@ public interface IJsonSchemaModifier
 	void AddAnnotations(IEnumerable<IJsonSchemaAnnotation> annotations);
 	void ReplaceAnnotations(IEnumerable<IJsonSchemaAnnotation> annotations, bool needsFixup);
 	void SetBooleanSchemaValue(bool value);
+	void AddDiagnostics(IEnumerable<DiagnosticBase> diagnostics);
 }
 
-public record EvaluationContext(DocumentRegistry DocumentRegistry);
+public record EvaluationContext(DocumentRegistry DocumentRegistry, IReadOnlyList<JsonSchema> SchemaStack)
+{
+	public EvaluationContext(DocumentRegistry DocumentRegistry) : this(DocumentRegistry, [])
+	{
+	}
+
+	public EvaluationContext WithSchema(JsonSchema context)
+	{
+		return this with { SchemaStack = [.. SchemaStack, context] };
+	}
+
+	public bool TryPopSchema([NotNullWhen(true)] out JsonSchema? schema, [NotNullWhen(true)] out EvaluationContext? innerContext)
+	{
+		if (SchemaStack.Count == 0)
+		{
+			schema = null;
+			innerContext = null;
+			return false;
+		}
+
+		schema = SchemaStack[0];
+		innerContext = this with { SchemaStack = SchemaStack.Skip(1).ToArray() };
+		return true;
+	}
+
+}
 
 public record FalseJsonSchemasFailDiagnostic(Uri OriginalSchema, Location Location) : DiagnosticBase(Location);
 
@@ -143,7 +200,14 @@ public interface IJsonSchemaAnnotation
 
 	IEnumerable<JsonSchema> GetReferencedSchemas();
 
-	IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchema context, EvaluationContext evaluationContext);
+	IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchemaInfo context, EvaluationContext evaluationContext);
+
+	IEnumerable<IJsonSchemaAnnotation> GetDynamicAnnotations();
+}
+
+public interface IJsonSchemaRefAnnotation : IJsonSchemaAnnotation
+{
+	JsonSchema? ReferencedSchema { get; }
 }
 
 public interface IJsonSchemaFixupAnnotation : IJsonSchemaAnnotation

@@ -8,23 +8,23 @@ namespace DarkPatterns.Json.Specifications;
 public abstract class SchemaValidatingParser<TInterface> : IParser<TInterface>
 	where TInterface : class, IReferenceableDocumentNode
 {
-	private readonly Func<DocumentRegistry, JsonSchema> schemaResolver;
+	private readonly Func<SchemaRegistry, JsonSchema> schemaResolver;
 
-	protected SchemaValidatingParser(Func<DocumentRegistry, JsonSchema> schemaResolver)
+	protected SchemaValidatingParser(Func<SchemaRegistry, JsonSchema> schemaResolver)
 	{
 		this.schemaResolver = schemaResolver;
 	}
 
 	public abstract bool CanParse(IDocumentReference documentReference);
 
-	public ParseResult<TInterface> Parse(IDocumentReference documentReference, DocumentRegistry documentRegistry)
+	public ParseResult<TInterface> Parse(IDocumentReference documentReference, SchemaRegistry schemaRegistry)
 	{
 		if (!CanParse(documentReference)) throw new ArgumentException(Errors.ParserCannotHandleDocument, nameof(documentReference));
 
-		var schema = schemaResolver(documentRegistry);
-		var evaluationResults = schema.Evaluate(ResolvableNode.FromRoot(documentRegistry, documentReference), new EvaluationContext(documentRegistry));
-		return Construct(documentReference, evaluationResults, documentRegistry);
+		var schema = schemaResolver(schemaRegistry);
+		var evaluationResults = schema.Evaluate(ResolvableNode.FromRoot(schemaRegistry.DocumentRegistry, documentReference), new EvaluationContext(schemaRegistry.DocumentRegistry));
+		return Construct(documentReference, evaluationResults, schemaRegistry);
 	}
 
-	protected abstract ParseResult<TInterface> Construct(IDocumentReference documentReference, IEnumerable<DiagnosticBase> diagnostics, DocumentRegistry documentRegistry);
+	protected abstract ParseResult<TInterface> Construct(IDocumentReference documentReference, IEnumerable<DiagnosticBase> diagnostics, SchemaRegistry schemaRegistry);
 }

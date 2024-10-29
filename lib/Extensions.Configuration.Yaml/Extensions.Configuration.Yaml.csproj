@@ -19,7 +19,4 @@
 		<PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="8.0.0" />
 		<PackageReference Include="YamlDotNet" Version="15.1.2" />
 	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="$(SolutionRoot)lib\OpenApi.Abstractions\OpenApi.Abstractions.csproj" />
-	</ItemGroup>
 </Project>

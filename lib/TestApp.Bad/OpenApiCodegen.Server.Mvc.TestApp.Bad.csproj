@@ -11,7 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\bad.yaml" Link="Bad\bad.yaml" PathPrefix="/bad" SchemaId="proj://darkpatterns-openapi/bad.yaml" />
+    <!-- <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\bad.yaml" Link="Bad\bad.yaml" PathPrefix="/bad" SchemaId="proj://darkpatterns-openapi/bad.yaml" /> -->
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\bad.2.yaml" Link="Bad\bad.2.yaml" PathPrefix="/bad" SchemaId="proj://darkpatterns-openapi/bad.2.yaml" />
 
     <Compile Remove="generated/**/*" />
     <Clean Include="generated/**/*" />

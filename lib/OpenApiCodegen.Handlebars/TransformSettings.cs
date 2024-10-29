@@ -10,11 +10,11 @@ namespace DarkPatterns.OpenApiCodegen.Handlebars;
 public record TransformSettings(SchemaRegistry SchemaRegistry, string CodeGeneratorVersionInfo)
 {
 	public static CompositeOpenApiSourceProvider BuildComposite(
-		DocumentRegistry documentRegistry,
+		SchemaRegistry schemaRegistry,
 		string versionInfo,
 		System.Func<TransformSettings, ISourceProvider>[] factories)
 	{
-		var settings = new TransformSettings(new SchemaRegistry(documentRegistry), versionInfo);
+		var settings = new TransformSettings(schemaRegistry, versionInfo);
 
 		return new CompositeOpenApiSourceProvider(
 			factories.Select(factory => factory(settings)).ToArray()

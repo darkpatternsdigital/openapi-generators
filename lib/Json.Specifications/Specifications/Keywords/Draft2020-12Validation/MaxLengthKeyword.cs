@@ -23,8 +23,10 @@ public class MaxLengthKeyword(string keyword, int value) : IJsonSchemaAnnotation
 	public int Value => value;
 
 	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
+	public IEnumerable<IJsonSchemaAnnotation> GetDynamicAnnotations()
+		=> [];
 
-	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchema context, EvaluationContext evaluationContext)
+	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchemaInfo context, EvaluationContext evaluationContext)
 	{
 		// TODO
 		throw new System.NotImplementedException($"Not implemented: limit max length to {value}");

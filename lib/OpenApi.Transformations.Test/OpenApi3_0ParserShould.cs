@@ -5,6 +5,7 @@ using System.Linq;
 using Xunit;
 using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
 using DarkPatterns.Json.Documents;
+using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
 
 namespace DarkPatterns.OpenApi.Transformations;
 
@@ -30,7 +31,7 @@ public class OpenApi3_0ParserShould
 		var result = GetOpenApiDocument(yamlName, registry);
 
 		Assert.Empty(result.Diagnostics);
-		Assert.NotNull(result.Document);
+		Assert.NotNull(result.Result);
 	}
 
 	[Fact]
@@ -40,15 +41,15 @@ public class OpenApi3_0ParserShould
 		var result = GetOpenApiDocument("petstore.yaml", registry);
 
 		Assert.Empty(result.Diagnostics);
-		Assert.NotNull(result.Document);
+		Assert.NotNull(result.Result);
 		// .NET URI does not compare fragments, so we need to use OriginalString here
-		Assert.Equal("proj://embedded/petstore.yaml#/info", result.Document.Info.Id.OriginalString);
-		Assert.Equal("Swagger Petstore", result.Document.Info.Title);
-		Assert.Equal("proj://embedded/petstore.yaml#/info/contact", result.Document.Info.Contact?.Id.OriginalString);
-		Assert.Equal("apiteam@swagger.io", result.Document.Info.Contact?.Email);
-		Assert.Equal("proj://embedded/petstore.yaml#/info/license", result.Document.Info.License?.Id.OriginalString);
-		Assert.Equal("https://www.apache.org/licenses/LICENSE-2.0.html", result.Document.Info.License?.Url?.OriginalString);
-		Assert.Collection(result.Document.Paths,
+		Assert.Equal("proj://embedded/petstore.yaml#/info", result.Result.Info.Id.OriginalString);
+		Assert.Equal("Swagger Petstore", result.Result.Info.Title);
+		Assert.Equal("proj://embedded/petstore.yaml#/info/contact", result.Result.Info.Contact?.Id.OriginalString);
+		Assert.Equal("apiteam@swagger.io", result.Result.Info.Contact?.Email);
+		Assert.Equal("proj://embedded/petstore.yaml#/info/license", result.Result.Info.License?.Id.OriginalString);
+		Assert.Equal("https://www.apache.org/licenses/LICENSE-2.0.html", result.Result.Info.License?.Url?.OriginalString);
+		Assert.Collection(result.Result.Paths,
 			(path) =>
 			{
 				Assert.Equal("/pets", path.Key);
@@ -72,12 +73,12 @@ public class OpenApi3_0ParserShould
 								Assert.Equal("proj://embedded/petstore.yaml#/paths/~1pets/get/parameters/0/schema", param.Schema.Metadata.Id.OriginalString);
 								Assert.NotNull(param.Schema.Annotations);
 								var schemaType = Assert.Single(param.Schema.Annotations.OfType<TypeKeyword>());
-								Assert.Equal(TypeKeyword.Common.Array, schemaType.Value);
+								Assert.Collection(schemaType.AllowedTypes, (v) => Assert.Equal(TypeAnnotation.PrimitiveType.Array, v));
 								var itemsType = Assert.Single(param.Schema.Annotations.OfType<Json.Specifications.Keywords.Draft2020_12Applicator.ItemsKeyword>());
 								Assert.NotNull(itemsType.Schema?.Annotations);
 								Assert.Equal("proj://embedded/petstore.yaml#/paths/~1pets/get/parameters/0/schema/items", itemsType.Schema.Metadata.Id.OriginalString);
-								var itemSchemaType = Assert.Single(itemsType.Schema.Annotations.OfType<TypeKeyword>());
-								Assert.Equal(TypeKeyword.Common.String, itemSchemaType.Value);
+								var itemSchemaType = Assert.Single(itemsType.Schema.Annotations.OfType<TypeAnnotation>());
+								Assert.Collection(itemSchemaType.AllowedTypes, (v) => Assert.Equal(TypeAnnotation.PrimitiveType.String, v));
 							},
 							(param) =>
 							{
@@ -139,5 +140,13 @@ public class OpenApi3_0ParserShould
 		var result = GetOpenApiDocument("bad.yaml", registry);
 		Assert.Contains(result.Diagnostics, (d) => d is CouldNotFindTargetNodeDiagnostic && d.Location.Range?.Start.Line == 75);
 		Assert.Contains(result.Diagnostics, (d) => d is UnableToParseKeyword parseError && parseError.Keyword == "required" && d.Location.Range?.Start.Line == 26);
+	}
+
+	[Fact]
+	public void Reports_diagnostics_for_bad_2_yaml()
+	{
+		var registry = DocumentLoader.CreateRegistry();
+		var result = GetOpenApiDocument("bad.2.yaml", registry);
+		Assert.Empty(result.Diagnostics);
 	}
 }

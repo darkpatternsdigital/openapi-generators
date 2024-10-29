@@ -9,10 +9,10 @@ namespace DarkPatterns.OpenApiCodegen.TestUtils
 {
 	public static class DocumentHelpers
 	{
-		public static ParseResult<OpenApiDocument> GetOpenApiDocument(string name, DocumentRegistry registry)
+		public static ParseResult<OpenApiDocument> GetOpenApiDocument(string name, SchemaRegistry schemaRegistry)
 		{
-			var documentReference = GetDocumentReference(registry, name);
-			var parseResult = CommonParsers.DefaultParsers.Parse(documentReference, registry);
+			var documentReference = GetDocumentReference(schemaRegistry, name);
+			var parseResult = CommonParsers.DefaultParsers.Parse(documentReference, schemaRegistry);
 			if (parseResult == null)
 				throw new InvalidOperationException("No parser found");
 
@@ -22,10 +22,10 @@ namespace DarkPatterns.OpenApiCodegen.TestUtils
 		public static IDocumentReference GetDocumentReference(string name)
 			=> GetDocumentReference(DocumentLoader.CreateRegistry(), name);
 
-		public static IDocumentReference GetDocumentReference(DocumentRegistry registry, string name)
+		public static IDocumentReference GetDocumentReference(SchemaRegistry schemaRegistry, string name)
 		{
 			var uri = new Uri(DocumentLoader.Embedded, name);
-			return GetDocumentByUri(registry, uri);
+			return GetDocumentByUri(schemaRegistry, uri);
 		}
 
 		public static IDocumentReference GetDocumentByUri(Uri uri)
@@ -33,9 +33,9 @@ namespace DarkPatterns.OpenApiCodegen.TestUtils
 			return GetDocumentByUri(DocumentLoader.CreateRegistry(), uri);
 		}
 
-		public static IDocumentReference GetDocumentByUri(DocumentRegistry registry, Uri uri)
+		public static IDocumentReference GetDocumentByUri(SchemaRegistry schemaRegistry, Uri uri)
 		{
-			return registry.ResolveDocument(uri, null) ?? throw new InvalidOperationException("Embeded document not found");
+			return schemaRegistry.DocumentRegistry.ResolveDocument(uri, null) ?? throw new InvalidOperationException("Embeded document not found");
 		}
 	}
 }

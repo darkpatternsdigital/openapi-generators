@@ -37,12 +37,13 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 
 	public static readonly Uri jsonSchemaMeta = new Uri("https://spec.openapis.example.org/oas/3.0/meta/base");
 	public static readonly Uri jsonSchemaDialect = new Uri("https://spec.openapis.example.org/oas/3.0/dialect/base");
-	private readonly DocumentRegistry documentRegistry;
+	private readonly SchemaRegistry schemaRegistry;
 	private readonly List<DiagnosticBase> diagnostics;
 
 	public ICollection<DiagnosticBase> Diagnostics => diagnostics;
 	public static IJsonSchemaVocabulary Vocabulary { get; }
 	public static IJsonSchemaDialect OpenApiDialect { get; }
+	public static DialectMatcher JsonSchemaDialectMatcher { get; }
 
 	static OpenApi3_0DocumentFactory()
 	{
@@ -108,6 +109,10 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 				UnknownKeyword.Instance,
 				GetInfoDefinition: OpenApi3_0DocumentInfo
 			);
+		JsonSchemaDialectMatcher = new DialectMatcher(
+			n => n?["openapi"]?.GetValue<string>().StartsWith("3.0.") ?? false,
+			OpenApiDialect
+		);
 	}
 
 	private static DocumentInfo OpenApi3_0DocumentInfo(IDocumentReference doc)
@@ -131,9 +136,9 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 		);
 	}
 
-	public OpenApi3_0DocumentFactory(DocumentRegistry documentRegistry, IEnumerable<DiagnosticBase> initialDiagnostics)
+	public OpenApi3_0DocumentFactory(SchemaRegistry schemaRegistry, IEnumerable<DiagnosticBase> initialDiagnostics)
 	{
-		this.documentRegistry = documentRegistry;
+		this.schemaRegistry = schemaRegistry;
 		this.diagnostics = initialDiagnostics.ToList();
 	}
 
@@ -141,7 +146,7 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 	public OpenApiDocument ConstructDocument(IDocumentReference documentReference)
 	{
 		documentReference.Dialect = OpenApiDialect;
-		return ConstructDocument(ResolvableNode.FromRoot(documentRegistry, documentReference));
+		return ConstructDocument(ResolvableNode.FromRoot(schemaRegistry.DocumentRegistry, documentReference));
 	}
 
 	private OpenApiDocument ConstructDocument(ResolvableNode key)
@@ -368,7 +373,7 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 		CatchDiagnostic(AllowReference(AllowNull(InternalConstructSchema)), (_) => null)(key);
 	private JsonSchema InternalConstructSchema(ResolvableNode key)
 	{
-		var resolved = JsonSchemaParser.Deserialize(key, new JsonSchemaParserOptions(documentRegistry, OpenApiDialect));
+		var resolved = JsonSchemaParser.Deserialize(key, new JsonSchemaParserOptions(schemaRegistry, OpenApiDialect));
 		return resolved.Fold(
 			schema => schema,
 			diagnostics => throw new MultipleDiagnosticException(diagnostics)
@@ -519,7 +524,7 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 			if (!Uri.TryCreate(refName, UriKind.RelativeOrAbsolute, out var uri))
 				throw new DiagnosticException(InvalidRefDiagnostic.Builder(refName));
 
-			var newKey = documentRegistry.ResolveMetadataNode(new Uri(key.Metadata.Id, uri), key.Metadata);
+			var newKey = schemaRegistry.DocumentRegistry.ResolveMetadataNode(new Uri(key.Metadata.Id, uri), key.Metadata);
 			return toItem(newKey);
 		};
 	}
@@ -535,7 +540,7 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 #pragma warning disable CA1031 // Catching a general exception type here to turn it into a diagnostic for reporting
 			catch (Exception ex)
 			{
-				diagnostics.AddRange(ex.ToDiagnostics(documentRegistry, key.Metadata));
+				diagnostics.AddRange(ex.ToDiagnostics(schemaRegistry.DocumentRegistry, key.Metadata));
 			}
 #pragma warning restore CA1031 // Do not catch general exception types
 			return constructDefault(key.Id);

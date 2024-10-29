@@ -11,7 +11,7 @@ public class WebhookClientTransformerFactory(TransformSettings settings)
 {
 	public ISourceProvider Build(ParseResult<OpenApiDocument> parseResult, CSharpSchemaOptions options)
 	{
-		if (parseResult.Document is not { } document) return new DiagnosticOnlySourceProvider(parseResult.Diagnostics);
+		if (parseResult.Result is not { } document) return new DiagnosticOnlySourceProvider(parseResult.Diagnostics);
 		var handlebarsFactory = new HandlebarsFactory(WebhookClientHandlebarsTemplateProcess.CreateHandlebars);
 
 		var result = new CompositeOpenApiSourceProvider([

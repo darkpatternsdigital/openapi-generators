@@ -10,7 +10,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public const string {{{Scheme.PropertyName}}} = "{{{Scheme.Scheme}}}";
         {{/each}}
 
-        public static IReadOnlyList<string> AllPolicies { get; } = new[]
+        public static global::System.Collections.Generic.IReadOnlyList<string> AllPolicies { get; } = new[]
         {
             {{#each Schemes as |Scheme|}}
             {{{Scheme.PropertyName}}},

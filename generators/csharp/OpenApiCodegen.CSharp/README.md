@@ -117,6 +117,7 @@ types:
     default: double
 overrideNames:
   proj://darkpatterns-openapi/multi-file-ref-types.yaml#/BadRequest: My.Common.BadRequest
+securityAttribute: My.SecurityAttribute
 ```
 
 - `extensions.controllerName` specifies the extension (for example,
@@ -149,6 +150,10 @@ overrideNames:
 - `overrideNames` is a dictionary of schema URIs to the namespace-qualified C#
   type name to use for the generated class. (Note: this feature is still
   experimental and may change or be removed in a later relaese.)
+- `securityAttribute`, if provided, specifies an additional attribute to add to every
+  MVC Controller action that has a `security` property in the corresponding operation.
+  One parameter is passed: a string containing the JSON representing the security
+  property.
 
 Configurations may be specified with the following setting:
 

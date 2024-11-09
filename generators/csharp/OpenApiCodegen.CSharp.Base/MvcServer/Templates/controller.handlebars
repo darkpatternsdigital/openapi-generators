@@ -41,6 +41,9 @@ namespace {{PackageName}}
         }}{{#each Operation.SecurityRequirements}}{{#if Schemes.Length}}
         [global::Microsoft.AspNetCore.Authorization.Authorize(Policy = "{{#each Schemes}}{{SchemeName}}{{#unless @last}},{{/unless}}{{/each}}")]{{else}}
         [global::Microsoft.AspNetCore.Authorization.AllowAnonymous]{{/if}}{{/each}}
+        {{#if Operation.SecurityRequirements}}{{#if @root.SecurityAttribute~}}
+        [{{{@root.SecurityAttribute}}}({{{jsonString Operation.SecurityRequirements}}})]
+        {{~/if}}{{/if}}
         public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.IActionResult> {{RequestBody.Name}}TypeSafeEntry(
             {{#each RequestBody.AllParams}}{{#unless IsCookieParam}}[{{!
             }}{{#if IsPathParam}}global::Microsoft.AspNetCore.Mvc.FromRoute(Name = "{{RawName}}"){{/if}}{{!

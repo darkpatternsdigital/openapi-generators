@@ -5,6 +5,7 @@ namespace DarkPatterns.OpenApiCodegen.CSharp.MvcServer.Templates;
 
 public record ControllerTemplate(
 	PartialHeader Header,
+	string? SecurityAttribute,
 
 	string PackageName,
 	string ClassName,

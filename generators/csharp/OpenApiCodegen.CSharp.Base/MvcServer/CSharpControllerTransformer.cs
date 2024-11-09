@@ -25,6 +25,7 @@ public class CSharpControllerTransformer(TransformSettings settings, OpenApiDocu
 
 		var template = new Templates.ControllerTemplate(
 			Header: settings.Header(document.Id),
+			SecurityAttribute: options.SecurityAttribute,
 
 			PackageName: baseNamespace,
 			ClassName: className,

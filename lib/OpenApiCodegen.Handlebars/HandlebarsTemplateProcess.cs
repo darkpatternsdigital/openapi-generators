@@ -31,6 +31,13 @@ public static class HandlebarsTemplateProcess
 			}
 		);
 
+		result.RegisterHelper(
+			"jsonString",
+			(context, parameters) =>
+				// Double-serialized JSON is compatible with C#
+				System.Text.Json.JsonSerializer.Serialize(System.Text.Json.JsonSerializer.Serialize(parameters[0]))
+		);
+
 		result.AddTemplatesFromAssembly(typeof(HandlebarsTemplateProcess).Assembly);
 
 		return result;

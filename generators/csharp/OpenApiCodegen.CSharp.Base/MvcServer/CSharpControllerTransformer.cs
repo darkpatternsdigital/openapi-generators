@@ -1,4 +1,4 @@
-﻿using DarkPatterns.OpenApi.Abstractions;
+using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.OpenApi.Transformations;
 using System;
 using System.Collections.Generic;
@@ -56,6 +56,7 @@ public class CSharpControllerTransformer(TransformSettings settings, OpenApiDocu
 			Key: $"{baseNamespace}.{addServicesClassName}.cs",
 			SourceText: handlebarsFactory.Handlebars.ProcessAddServices(new Templates.AddServicesModel(
 				Header: settings.Header("Add MVC Services, useful for ensuring all controllers are mapped"),
+				ClassName: addServicesClassName,
 				MethodName: CSharpNaming.ToMethodName(document.Info.Title, options.ReservedIdentifiers()),
 				PackageName: baseNamespace,
 				Controllers: (from p in groups

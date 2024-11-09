@@ -67,4 +67,26 @@ public class CSharpControllerTransformer(TransformSettings settings, OpenApiDocu
 			))
 		);
 	}
+
+	internal IEnumerable<SourceEntry> TransformSecurityPoliciesHelper(IEnumerable<string> initialSecuritySchemes, OpenApiTransformDiagnostic diagnostic)
+	{
+		var baseNamespace = options.DefaultNamespace;
+		var securitySchemesClassName = CSharpNaming.ToClassName(document.Info.Title + " security schemes", options.ReservedIdentifiers());
+		var schemes = initialSecuritySchemes.Distinct().ToArray();
+		if (schemes.Length == 0)
+			return Enumerable.Empty<SourceEntry>();
+		return [new SourceEntry(
+			Key: $"{baseNamespace}.{securitySchemesClassName}.cs",
+			SourceText: handlebarsFactory.Handlebars.ProcessSecuritySchemes(new Templates.SecuritySchemesModel(
+				Header: settings.Header("Lists security schemes to be used as policies for the API"),
+				ClassName: securitySchemesClassName,
+				PackageName: baseNamespace,
+				Schemes: [
+					.. from scheme in schemes.Distinct()
+					   let propertyName = CSharpNaming.ToPropertyName(scheme, [.. options.ReservedIdentifiers(), "AllPolicies"])
+					   select new Templates.SecuritySchemeReference(propertyName, scheme)
+				]
+			))
+		)];
+	}
 }

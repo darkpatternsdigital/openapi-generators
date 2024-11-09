@@ -1,0 +1,21 @@
+{{>partial_header Header}}
+#pragma warning disable
+
+{{#with this as |Root|}}
+namespace Microsoft.Extensions.DependencyInjection
+{
+    public static partial class {{ClassName}}
+    {
+        {{#each Schemes as |Scheme|}}
+        public const string {{{Scheme.PropertyName}}} = "{{{Scheme.Scheme}}}";
+        {{/each}}
+
+        public static IReadOnlyList<string> AllPolicies { get; } = new[]
+        {
+            {{#each Schemes as |Scheme|}}
+            {{{Scheme.PropertyName}}},
+            {{/each}}
+        };
+    }
+}
+{{/with}}

@@ -36,4 +36,14 @@ public static class ControllerHandlebarsTemplateProcess
 		template(sr, dict);
 		return sr.ToString();
 	}
+
+	public static string ProcessSecuritySchemes(this IHandlebars handlebars, SecuritySchemesModel securitySchemes)
+	{
+		var template = handlebars.Configuration.RegisteredTemplates["securitySchemes"];
+
+		using var sr = new StringWriter();
+		var dict = HandlebarsTemplateProcess.ToDictionary(securitySchemes);
+		template(sr, dict);
+		return sr.ToString();
+	}
 }

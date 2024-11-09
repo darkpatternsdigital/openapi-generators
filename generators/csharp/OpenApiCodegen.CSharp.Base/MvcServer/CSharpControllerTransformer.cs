@@ -1,4 +1,4 @@
-﻿using DarkPatterns.OpenApi.Abstractions;
+using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.OpenApi.Transformations;
 using System;
 using System.Collections.Generic;
@@ -25,6 +25,7 @@ public class CSharpControllerTransformer(TransformSettings settings, OpenApiDocu
 
 		var template = new Templates.ControllerTemplate(
 			Header: settings.Header(document.Id),
+			SecurityAttribute: options.SecurityAttribute,
 
 			PackageName: baseNamespace,
 			ClassName: className,
@@ -50,10 +51,12 @@ public class CSharpControllerTransformer(TransformSettings settings, OpenApiDocu
 	internal SourceEntry TransformAddServicesHelper(IEnumerable<string> groups, OpenApiTransformDiagnostic diagnostic)
 	{
 		var baseNamespace = options.DefaultNamespace;
+		var addServicesClassName = CSharpNaming.ToClassName(document.Info.Title + " extensions", options.ReservedIdentifiers());
 		return new SourceEntry(
-			Key: $"{baseNamespace}.AddServicesExtensions.cs",
+			Key: $"{baseNamespace}.{addServicesClassName}.cs",
 			SourceText: handlebarsFactory.Handlebars.ProcessAddServices(new Templates.AddServicesModel(
 				Header: settings.Header("Add MVC Services, useful for ensuring all controllers are mapped"),
+				ClassName: addServicesClassName,
 				MethodName: CSharpNaming.ToMethodName(document.Info.Title, options.ReservedIdentifiers()),
 				PackageName: baseNamespace,
 				Controllers: (from p in groups
@@ -63,5 +66,27 @@ public class CSharpControllerTransformer(TransformSettings settings, OpenApiDocu
 							  ).ToArray()
 			))
 		);
+	}
+
+	internal IEnumerable<SourceEntry> TransformSecurityPoliciesHelper(IEnumerable<string> initialSecuritySchemes, OpenApiTransformDiagnostic diagnostic)
+	{
+		var baseNamespace = options.DefaultNamespace;
+		var securitySchemesClassName = CSharpNaming.ToClassName(document.Info.Title + " security schemes", options.ReservedIdentifiers());
+		var schemes = initialSecuritySchemes.Distinct().ToArray();
+		if (schemes.Length == 0)
+			return Enumerable.Empty<SourceEntry>();
+		return [new SourceEntry(
+			Key: $"{baseNamespace}.{securitySchemesClassName}.cs",
+			SourceText: handlebarsFactory.Handlebars.ProcessSecuritySchemes(new Templates.SecuritySchemesModel(
+				Header: settings.Header("Lists security schemes to be used as policies for the API"),
+				ClassName: securitySchemesClassName,
+				PackageName: baseNamespace,
+				Schemes: [
+					.. from scheme in schemes.Distinct()
+					   let propertyName = CSharpNaming.ToPropertyName(scheme, [.. options.ReservedIdentifiers(), "AllPolicies"])
+					   select new Templates.SecuritySchemeReference(propertyName, scheme)
+				]
+			))
+		)];
 	}
 }

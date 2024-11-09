@@ -26,7 +26,8 @@ public class PathControllerTransformerFactory(TransformSettings settings)
 		var result = new CompositeOpenApiSourceProvider([
 			new DiagnosticOnlySourceProvider(parseResult.Diagnostics),
 			operationGrouping,
-			new DotNetMvcAddServicesHelperTransformer(controllerTransformer, operationGrouping)
+			new DotNetMvcAddServicesHelperTransformer(controllerTransformer, operationGrouping),
+			new DotNetMvcSecurityPoliciesTransformer(controllerTransformer, document),
 		]);
 
 		return new SafeSourceProvider(result, (ex) =>

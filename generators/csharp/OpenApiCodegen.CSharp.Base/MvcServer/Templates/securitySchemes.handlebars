@@ -1,0 +1,21 @@
+{{>partial_header Header}}
+#pragma warning disable
+
+{{#with this as |Root|}}
+namespace {{PackageName}}
+{
+    public static partial class {{ClassName}}
+    {
+        {{#each Schemes as |Scheme|}}
+        public const string {{{Scheme.PropertyName}}} = "{{{Scheme.Scheme}}}";
+        {{/each}}
+
+        public static global::System.Collections.Generic.IReadOnlyList<string> AllPolicies { get; } = new[]
+        {
+            {{#each Schemes as |Scheme|}}
+            {{{Scheme.PropertyName}}},
+            {{/each}}
+        };
+    }
+}
+{{/with}}

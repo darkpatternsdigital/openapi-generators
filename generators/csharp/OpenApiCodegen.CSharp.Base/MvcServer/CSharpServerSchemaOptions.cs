@@ -16,6 +16,7 @@ public class CSharpServerSchemaOptions : CSharpSchemaOptions
 		set { base.Extensions = value; }
 	}
 	public string PathPrefix { get; set; } = "";
+	public string? SecurityAttribute { get; set; }
 
 
 	public static Stream GetServerDefaultOptionsJson() =>

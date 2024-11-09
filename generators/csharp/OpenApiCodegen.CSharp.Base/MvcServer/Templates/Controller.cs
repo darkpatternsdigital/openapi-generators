@@ -5,6 +5,7 @@ namespace DarkPatterns.OpenApiCodegen.CSharp.MvcServer.Templates;
 
 public record ControllerTemplate(
 	PartialHeader Header,
+	string? SecurityAttribute,
 
 	string PackageName,
 	string ClassName,
@@ -24,7 +25,8 @@ public record ControllerOperation(
 	string Path,
 	OperationRequestBody[] RequestBodies,
 	OperationResponses Responses,
-	OperationSecurityRequirement[] SecurityRequirements
+	OperationSecurityRequirement[] SecurityRequirements,
+	Dictionary<string, string[]>[] RawSecurityRequirements
 );
 
 public record OperationParameter(

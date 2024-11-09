@@ -31,6 +31,13 @@ public static class HandlebarsTemplateProcess
 			}
 		);
 
+		result.RegisterHelper(
+			"jsonString",
+			(Context context, Arguments parameters) =>
+				// Double-serialized JSON is compatible with C#
+				System.Text.Json.JsonSerializer.Serialize(System.Text.Json.JsonSerializer.Serialize(parameters[0]))
+		);
+
 		result.AddTemplatesFromAssembly(typeof(HandlebarsTemplateProcess).Assembly);
 
 		return result;
@@ -54,7 +61,8 @@ public static class HandlebarsTemplateProcess
 		using var stream = assembly.GetManifestResourceStream(resourceName)!;
 		using var reader = new StreamReader(stream);
 		var templateName = Path.GetFileNameWithoutExtension(resourceName).Split('.').Last();
-		result.RegisterTemplate(templateName: templateName, template: reader.ReadToEnd());
+		var templateContents = reader.ReadToEnd();
+		result.RegisterTemplate(templateName: templateName, template: templateContents);
 	}
 
 	public static IDictionary<string, object?> ToDictionary<T>(T model)

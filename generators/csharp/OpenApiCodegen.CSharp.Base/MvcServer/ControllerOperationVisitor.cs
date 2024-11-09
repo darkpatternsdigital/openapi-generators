@@ -35,12 +35,13 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 			Operation = operation;
 		}
 
-		public List<Func<OperationParameter[], OperationRequestBody>> RequestBodies { get; } = new();
+		public List<Func<OperationParameter[], OperationRequestBody>> RequestBodies { get; } = [];
 
 		public OperationResponse? DefaultResponse { get; set; }
-		public Dictionary<int, OperationResponse> StatusResponses { get; } = new();
-		public List<OperationSecurityRequirement> SecurityRequirements { get; } = new();
-		public List<OperationParameter> SharedParameters { get; } = new();
+		public Dictionary<int, OperationResponse> StatusResponses { get; } = [];
+		public List<OperationSecurityRequirement> SecurityRequirements { get; } = [];
+		public List<Dictionary<string, string[]>> RawSecurityRequirements { get; } = [];
+		public List<OperationParameter> SharedParameters { get; } = [];
 		public OpenApiOperation Operation { get; }
 	}
 
@@ -89,7 +90,8 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 					DefaultResponse: builder.DefaultResponse,
 					StatusResponse: new(builder.StatusResponses)
 				),
-				SecurityRequirements: builder.SecurityRequirements.ToArray()
+				SecurityRequirements: [.. builder.SecurityRequirements],
+				RawSecurityRequirements: [.. builder.RawSecurityRequirements]
 			));
 	}
 
@@ -255,5 +257,8 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 							 (from scheme in securityRequirement.SchemeRequirements
 							  select new Templates.OperationSecuritySchemeRequirement(scheme.SchemeName, scheme.ScopeNames.ToArray())).ToArray())
 						 );
+		argument.Builder?.RawSecurityRequirements.Add(
+			securityRequirement.SchemeRequirements.ToDictionary(req => req.SchemeName, req => req.ScopeNames.ToArray())
+		);
 	}
 }

@@ -51,8 +51,9 @@ public class CSharpControllerTransformer(TransformSettings settings, OpenApiDocu
 	internal SourceEntry TransformAddServicesHelper(IEnumerable<string> groups, OpenApiTransformDiagnostic diagnostic)
 	{
 		var baseNamespace = options.DefaultNamespace;
+		var addServicesClassName = CSharpNaming.ToClassName(document.Info.Title + " extensions", options.ReservedIdentifiers());
 		return new SourceEntry(
-			Key: $"{baseNamespace}.AddServicesExtensions.cs",
+			Key: $"{baseNamespace}.{addServicesClassName}.cs",
 			SourceText: handlebarsFactory.Handlebars.ProcessAddServices(new Templates.AddServicesModel(
 				Header: settings.Header("Add MVC Services, useful for ensuring all controllers are mapped"),
 				MethodName: CSharpNaming.ToMethodName(document.Info.Title, options.ReservedIdentifiers()),

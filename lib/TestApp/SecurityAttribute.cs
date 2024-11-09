@@ -6,6 +6,7 @@ public class SecurityActionFilterAttribute(string securityRequirements) : Action
 {
 	public void OnAuthorization(AuthorizationFilterContext context)
 	{
-
+		// TODO: it would be good to write a test for this.
+		Console.Write(securityRequirements);
 	}
 }

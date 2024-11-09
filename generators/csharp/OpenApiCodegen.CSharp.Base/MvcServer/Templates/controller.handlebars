@@ -42,7 +42,7 @@ namespace {{PackageName}}
         [global::Microsoft.AspNetCore.Authorization.Authorize(Policy = "{{#each Schemes}}{{SchemeName}}{{#unless @last}},{{/unless}}{{/each}}")]{{else}}
         [global::Microsoft.AspNetCore.Authorization.AllowAnonymous]{{/if}}{{/each}}
         {{#if Operation.SecurityRequirements}}{{#if @root.SecurityAttribute~}}
-        [{{{@root.SecurityAttribute}}}({{{jsonString Operation.SecurityRequirements}}})]
+        [{{{@root.SecurityAttribute}}}({{{jsonString Operation.RawSecurityRequirements}}})]
         {{~/if}}{{/if}}
         public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.IActionResult> {{RequestBody.Name}}TypeSafeEntry(
             {{#each RequestBody.AllParams}}{{#unless IsCookieParam}}[{{!

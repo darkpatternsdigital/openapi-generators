@@ -25,7 +25,8 @@ public record ControllerOperation(
 	string Path,
 	OperationRequestBody[] RequestBodies,
 	OperationResponses Responses,
-	OperationSecurityRequirement[] SecurityRequirements
+	OperationSecurityRequirement[] SecurityRequirements,
+	Dictionary<string, string[]>[] RawSecurityRequirements
 );
 
 public record OperationParameter(

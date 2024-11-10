@@ -57,15 +57,12 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 				]);
 
 				var sourcesResult = transformer.GetSources();
-				foreach (var error in sourcesResult.Diagnostics)
+				foreach (var error in sourcesResult.Diagnostics.Distinct())
 				{
-#pragma warning disable CA2241 // CommandLineApplication does not follow standard format string format
+					var formattedText = string.Format(CommonDiagnostics.ResourceManager.GetString(error.GetType().FullName!)!, [.. error.GetTextArguments()]);
 					commandLineApplication.Error.WriteLine(
-						"{subcategory}{errorCode}: {helpKeyword} {file}({lineNumber},{columnNumber}-{endLineNumber},{endColumnNumber}) {message}",
-						null, "DPDOPENAPI000", null, error.Location.RetrievalUri.LocalPath, error.Location.Range?.Start.Line ?? 0, error.Location.Range?.Start.Column ?? 0, error.Location.Range?.End.Line ?? 0, error.Location.Range?.End.Column ?? 0,
-						string.Format(CommonDiagnostics.ResourceManager.GetString(error.GetType().FullName!)!, error.GetTextArguments())
+						$"{null}{"DPDOPENAPI000"}: {null} {error.Location.RetrievalUri.LocalPath}({error.Location.Range?.Start.Line ?? 0},{error.Location.Range?.Start.Column ?? 0}-{error.Location.Range?.Start.Line ?? 0},{error.Location.Range?.Start.Column ?? 0}) {formattedText}"
 					);
-#pragma warning restore CA2241
 				}
 				if (clean && System.IO.Directory.Exists(outputPath))
 				{

@@ -1,0 +1,33 @@
+openapi: "3.0.3"
+info:
+  version: 1.0.0
+  title: Simple Types
+  description: |
+    A sample API that demonstrates a handful of very simple types used as
+    components
+paths:
+  /data:
+    post:
+      operationId: getData
+      responses:
+        '200':
+          description: Gets any kind of JSON data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  String: { $ref: '#/components/schemas/String' }
+                  UnknownString: { $ref: '#/components/schemas/UnknownString' }
+                  Integer: { $ref: '#/components/schemas/Integer' }
+                  UnknownInteger: { $ref: '#/components/schemas/UnknownInteger' }
+                  Record: { $ref: '#/components/schemas/Record' }
+
+components:
+  schemas:
+    String: { type: string }
+    UnknownString: { type: string, format: unknown-string }
+    Integer: { type: integer }
+    UnknownInteger: { type: integer, format: unknown-integer }
+    Record: { type: object, additionalProperties: { type: string } }
+

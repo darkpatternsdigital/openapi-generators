@@ -209,4 +209,8 @@
     <value>Unable to group operations: {0}</value>
     <comment/>
   </data>
+  <data name="DarkPatterns.OpenApi.TypeScript.UnableToGenerateSchema" xml:space="preserve">
+    <value>Unable to generate TypeScript file for schema {0}</value>
+    <comment/>
+  </data>
 </root>

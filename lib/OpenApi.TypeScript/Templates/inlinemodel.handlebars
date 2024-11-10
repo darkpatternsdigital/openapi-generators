@@ -1,0 +1,17 @@
+{{>partial_header Header}}
+{{#with Model}}
+{{#each Imports}}
+import {
+{{#each Members}}
+    {{{.}}},
+{{/each}}
+} from '{{Path}}';
+{{/each}}
+
+/**{{#if Description}}
+ * {{{Description}}}{{/if}}
+ * @export
+ * @interface {{{ClassName}}}
+ */
+export type {{{ClassName}}} = {{{Content}}};
+{{/with}}

@@ -31,6 +31,11 @@ public class TypeScriptSchemaTransformerShould
 	[InlineData(true, "proj://embedded/no-refs.yaml#/paths/~1address/post/requestBody/content/application~1json/schema/properties/location")]
 	[InlineData(true, "proj://embedded/enum.yaml#/paths/~1rock-paper-scissors/post/responses/200/content/application~1json/schema")]
 	[InlineData(true, "proj://embedded/array.yaml#/components/schemas/Colors")]
+	[InlineData(true, "proj://embedded/simple-types.yaml#/components/schemas/String")]
+	[InlineData(true, "proj://embedded/simple-types.yaml#/components/schemas/UnknownString")]
+	[InlineData(true, "proj://embedded/simple-types.yaml#/components/schemas/Integer")]
+	[InlineData(true, "proj://embedded/simple-types.yaml#/components/schemas/UnknownInteger")]
+	[InlineData(true, "proj://embedded/simple-types.yaml#/components/schemas/Record")]
 	public void Know_when_to_generate_source(bool expectedInline, string schemaUriString)
 	{
 		var schemaUri = new Uri(schemaUriString);

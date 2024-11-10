@@ -65,17 +65,44 @@ public class TypeScriptInlineSchemas(TypeScriptSchemaOptions options, DocumentRe
 		return ToInlineDataType(schemaInfo);
 	}
 
+	/// <summary>
+	/// Gets the inline data type for the schema, skipping the self-reference. May be unable to handle complex data types.
+	/// </summary>
+	public TypeScriptInlineDefinition GetInlineDataType(JsonSchema? schema)
+	{
+		if (schema == null) return new TypeScriptInlineDefinition("unknown", [], true, false);
+		var schemaInfo = schema.ResolveSchemaInfo();
+		return ForceConvertIntoInlineDataType(schemaInfo);
+	}
+
+
 	[return: NotNullIfNotNull(nameof(schemaInfo))]
 	private TypeScriptInlineDefinition? ToInlineDataType(JsonSchemaInfo? schemaInfo)
 	{
 		if (schemaInfo == null) return null;
 		schemaInfo = schemaInfo with { Original = schemaInfo.EffectiveSchema.Metadata };
 
+		if (ProduceSourceEntry(schemaInfo))
+			return new(UseReferenceName(schemaInfo.EffectiveSchema), [ToImportReference(schemaInfo.EffectiveSchema)]);
+
+		var result = ForceConvertIntoInlineDataType(schemaInfo);
+		return schemaInfo.TryGetAnnotation<v3_0.NullableKeyword>() is { IsNullable: true }
+			? result.MakeNullable()
+			: result;
+	}
+
+	/// <summary>
+	/// Attempt to convert schema into an inline type even if it would normally be
+	/// a reference. Allows simpler-than-usual reference types to be converted
+	/// without custom Handlebars files.
+	/// </summary>
+	private TypeScriptInlineDefinition ForceConvertIntoInlineDataType(JsonSchemaInfo schemaInfo)
+	{
+		schemaInfo = schemaInfo with { Original = schemaInfo.EffectiveSchema.Metadata };
+
 		var typeInfo = TypeScriptTypeInfo.From(schemaInfo);
 		TypeScriptInlineDefinition result = typeInfo switch
 		{
-			_ when ProduceSourceEntry(schemaInfo) =>
-				new(UseReferenceName(schemaInfo.EffectiveSchema), [ToImportReference(schemaInfo.EffectiveSchema)]),
 			{ TypeAnnotation.AllowsArray: true, Items: null } => ArrayToInline(null),
 			{ Items: JsonSchema items } => ArrayToInline(items),
 			{ Info.EffectiveSchema.BoolValue: false } => new TypeScriptInlineDefinition("never", [], false, false),

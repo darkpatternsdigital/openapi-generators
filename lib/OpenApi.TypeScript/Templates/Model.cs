@@ -78,4 +78,11 @@ namespace DarkPatterns.OpenApi.TypeScript.Templates
 		bool Required,
 		bool Optional
 	);
+
+	public record InlineModel(
+		ImportStatement[] Imports,
+		string? Description,
+		string ClassName,
+		string Content
+	) : Model(Description, ClassName);
 }

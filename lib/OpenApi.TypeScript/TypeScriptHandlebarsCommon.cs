@@ -34,6 +34,7 @@ public static class TypeScriptHandlebarsCommon
 			EnumModel m => ("enummodel", ToTemplate(m)),
 			ArrayModel m => ("arraymodel", ToTemplate(m)),
 			TypeUnionModel m => ("typeUnionModel", ToTemplate(m)),
+			InlineModel m => ("inlinemodel", ToTemplate(m)),
 			_ => throw new NotImplementedException()
 		};
 		var template = handlebars.Configuration.RegisteredTemplates[templateName];

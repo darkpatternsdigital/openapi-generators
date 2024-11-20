@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -10,18 +8,28 @@ namespace DarkPatterns.OpenApiCodegen.Json.Extensions;
 public static class Optional
 {
 	public static Optional<T> Create<T>(T value) => new Optional<T>.Present(value);
-	public static T GetValueOrThrow<T>(Optional<T> input) =>
+	public static T GetValueOrThrow<T>(IOptional<T> input) =>
 		input.TryGet(out var result) ? result : throw new InvalidOperationException();
 }
 
 [JsonConverter(typeof(OptionalJsonConverterFactory))]
-public abstract record Optional<T>
+public interface IOptional<out T>
+{
+	T Value { get; }
+}
+
+[JsonConverter(typeof(OptionalJsonConverterFactory))]
+public abstract record Optional<T> : IOptional<T>
 {
 	private Optional() { }
 
 	public static readonly Optional<T>? None = null;
 
-	public sealed record Present(T Value) : Optional<T>;
+	public abstract T Value { get; init; }
+
+	public sealed record Present(T Value) : Optional<T>, IOptional<T>
+	{
+	}
 
 	public class Serializer : JsonConverter<Optional<T>>
 	{
@@ -52,7 +60,8 @@ public class OptionalJsonConverterFactory : JsonConverterFactory
 {
 	public override bool CanConvert(Type typeToConvert)
 	{
-		return typeToConvert.IsGenericType && typeToConvert.GetGenericTypeDefinition() == typeof(Optional<>);
+		return typeToConvert.IsGenericType
+			&& (typeToConvert.GetGenericTypeDefinition() == typeof(Optional<>) || typeToConvert.GetGenericTypeDefinition() == typeof(IOptional<>));
 	}
 
 	public override JsonConverter? CreateConverter(Type typeToConvert, JsonSerializerOptions options)

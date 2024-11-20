@@ -19,14 +19,14 @@ namespace {{PackageName}}
         /// <param name="{{ParamName}}">{{Description}}</param>{{/each}}
         public static async global::System.Threading.Tasks.Task<{{Operation.Name}}ReturnType> {{Operation.Name}}(
             this global::System.Net.Http.HttpMessageInvoker client,
-            {{#each RequestBody.AllParams}}{{#unless Required}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional<{{/unless}}{{{DataType}}}{{#unless Required}}>?{{/unless}} {{ParamName}},
+            {{#each RequestBody.AllParams}}{{#unless Required}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.IOptional<{{/unless}}{{{DataType}}}{{#unless Required}}>?{{/unless}} {{ParamName}},
             {{/each}}
             global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken)
         ) => await (await client.SendAsync({{Operation.Name}}({{#each RequestBody.AllParams}}{{ParamName}}{{#unless @last}},{{/unless}}{{/each}}), cancellationToken).ConfigureAwait(false))
             .Parse{{Operation.Name}}().ConfigureAwait(false);
 
         public static global::System.Net.Http.HttpRequestMessage {{Operation.Name}}(
-            {{#each RequestBody.AllParams}}{{#unless Required}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional<{{/unless}}{{{DataType}}}{{#unless Required}}>?{{/unless}} {{ParamName}}{{#unless @last}},{{/unless}}
+            {{#each RequestBody.AllParams}}{{#unless Required}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.IOptional<{{/unless}}{{{DataType}}}{{#unless Required}}>?{{/unless}} {{ParamName}}{{#unless @last}},{{/unless}}
             {{/each}})
         {
 {{#if RequestBody.HasQueryParam}}

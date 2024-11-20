@@ -140,6 +140,36 @@ public class OptionalShould
 	}
 
 	[Fact]
+	public void AllowPatternMatchingOfOptional()
+	{
+		Optional<string> sample = Optional.Create("foo");
+		if (sample is { Value: var actual })
+			Assert.Equal("foo", actual);
+		else
+			Assert.Fail("Pattern match failed");
+	}
+
+	[Fact]
+	public void AllowPatternMatchingOfIOptional()
+	{
+		IOptional<string> sample = Optional.Create("foo");
+		if (sample is { Value: var actual })
+			Assert.Equal("foo", actual);
+		else
+			Assert.Fail("Pattern match failed");
+	}
+
+	[Fact]
+	public void AllowCovarianceOfIOptional()
+	{
+		IOptional<object> sample = Optional.Create("foo");
+		if (sample is { Value: var actual })
+			Assert.Equal("foo", actual);
+		else
+			Assert.Fail("Pattern match failed");
+	}
+
+	[Fact]
 	public void AllowCreationOfOptionalWithEnumerables()
 	{
 		Optional<IEnumerable<string>> actual = Optional.Create(Enumerable.Empty<string>());

@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using DarkPatterns.OpenApiCodegen.Json.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Json;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -25,8 +21,8 @@ public class OptionalYamlShould
 			{
 				Assert.True(controller.ModelState.IsValid);
 				Assert.Equal<int?>(2, request.NullableOnly);
-				Assert.Equal<Optional<int>?>(Optional.Create(3), request.OptionalOnly);
-				Assert.Equal<Optional<int?>?>(Optional.Create<int?>(5), request.OptionalOrNullable);
+				Assert.Equal<IOptional<int>?>(Optional.Create(3), request.OptionalOnly);
+				Assert.Equal<IOptional<int?>?>(Optional.Create<int?>(5), request.OptionalOrNullable);
 			},
 			AssertResponseMessage = VerifyResponse(200, new { nullableOnly = 2, optionalOnly = 3, optionalOrNullable = 5 }),
 		});

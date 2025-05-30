@@ -12,6 +12,15 @@ paths:
           description: Gets any kind of JSON data
           content:
             application/json:
-              schema:
-                type: object
-                format: any
+              schema: {}
+    put:
+      operationId: putData
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {}
+      responses:
+        '200':
+          description: Data received
+

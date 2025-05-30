@@ -32,8 +32,8 @@
 		<OpenApiAbstractionsVersion>0.3.0</OpenApiAbstractionsVersion>
 		<OpenApiJsonExtensionsVersion>0.18.0</OpenApiJsonExtensionsVersion>
 		<OpenApiLoadersVersion>0.2.0</OpenApiLoadersVersion>
-		<OpenApiCSharpVersion>0.25.0</OpenApiCSharpVersion>
-		<OpenApiTypeScriptClientVersion>0.12.1</OpenApiTypeScriptClientVersion>
+		<OpenApiCSharpVersion>0.25.1</OpenApiCSharpVersion>
+		<OpenApiTypeScriptClientVersion>0.12.2</OpenApiTypeScriptClientVersion>
 		<OpenApiTypeScriptRxjsClientVersion>0.9.0</OpenApiTypeScriptRxjsClientVersion>
 		<OpenApiTypeScriptMswVersion>0.9.0</OpenApiTypeScriptMswVersion>
 		<OpenApiTypeScriptFetchVersion>0.9.0</OpenApiTypeScriptFetchVersion>

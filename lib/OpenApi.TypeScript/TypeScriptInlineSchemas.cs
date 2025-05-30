@@ -103,10 +103,13 @@ public class TypeScriptInlineSchemas(TypeScriptSchemaOptions options, DocumentRe
 		var typeInfo = TypeScriptTypeInfo.From(schemaInfo);
 		TypeScriptInlineDefinition result = typeInfo switch
 		{
-			{ TypeAnnotation.AllowsArray: true, Items: null } => ArrayToInline(null),
-			{ Items: JsonSchema items } => ArrayToInline(items),
 			{ Info.EffectiveSchema.BoolValue: false } => new TypeScriptInlineDefinition("never", [], false, false),
 			{ Info.EffectiveSchema.BoolValue: true } => new TypeScriptInlineDefinition("unknown", [], true, false),
+			{ Info.Annotations.Count: 0 } =>
+				new TypeScriptInlineDefinition("unknown", [], true, false),
+
+			{ TypeAnnotation.AllowsArray: true, Items: null } => ArrayToInline(null),
+			{ Items: JsonSchema items } => ArrayToInline(items),
 			{ TypeAnnotation: v3_0.TypeKeyword { OpenApiType: var primitiveType }, Format: var format } =>
 				new(options.Find(TypeAnnotation.ToPrimitiveTypeString(primitiveType), format), []),
 			{ TypeAnnotation.AllowsNumber: true, Format: var format } =>

@@ -34,6 +34,10 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, DocumentRegistry d
 		var schemaInfo = CSharpTypeInfo.From(schema);
 		CSharpInlineDefinition result = schemaInfo switch
 		{
+			{ Info.EffectiveSchema.BoolValue: false } => new(options.Find(TypeAnnotation.Common.Object, "never")),
+			{ Info.EffectiveSchema.BoolValue: true } => new(options.Find(TypeAnnotation.Common.Object, "any")),
+			{ Info.Annotations.Count: 0 } => new(options.Find(TypeAnnotation.Common.Object, "any")),
+
 			// Dictionary
 			{ TypeAnnotation: { AllowsObject: true }, Properties: { Count: 0 }, AdditionalProperties: JsonSchema dictionaryValueSchema } =>
 				new(options.ToMapType(ToInlineDataType(dictionaryValueSchema).Text), IsEnumerable: true),

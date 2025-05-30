@@ -13,6 +13,7 @@
   <ItemGroup>
     <OpenApiSchemaClient Include="$(SolutionRoot)schemas\all-of.yaml" Link="Clients\AllOf\all-of.yaml" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\all-of.yaml" Link="AllOf\all-of.yaml" PathPrefix="/all-of" />
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\any.yaml" Link="Any\any.yaml" PathPrefix="/any" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\enum.yaml" Link="Enum\enum.yaml" PathPrefix="/enum" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\controller-extension.yaml" Link="ControllerExtensions\controller-extension.yaml" PathPrefix="/controller-extensions" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\csharp-name-override.yaml" Link="CSharpNameOverride\csharp-name-override.yaml" PathPrefix="/csharp-name-override" />

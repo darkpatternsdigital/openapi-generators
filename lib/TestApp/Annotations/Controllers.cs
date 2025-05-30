@@ -1,6 +1,4 @@
-﻿using static DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.PetControllerBase;
-
-namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Annotations
+﻿namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Annotations
 {
 	public class DogController : DogControllerBase
 	{

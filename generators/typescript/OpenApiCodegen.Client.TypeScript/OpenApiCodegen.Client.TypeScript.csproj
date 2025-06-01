@@ -5,6 +5,11 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<UseAppHost>false</UseAppHost>
 		<VersionPrefix>$(OpenApiTypeScriptClientVersion)</VersionPrefix>
+
+		<IsPackable>true</IsPackable>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<PackAsTool>true</PackAsTool>
+		<ToolCommandName>openapi-codegen-typescript</ToolCommandName>
 	</PropertyGroup>
 	<Import Project="$(RepositoryEngineeringDir)diagnostics/includes.targets" />
 

@@ -37,25 +37,31 @@
 				<DPDInclude>true</DPDInclude>
 
 				<DPDJsonSchema>@(JsonSchemaDocument->'true')</DPDJsonSchema>
-				<Namespace>@(JsonSchemaDocument->'%(Namespace)')</Namespace>
-				<SchemaId>@(JsonSchemaDocument->'%(SchemaId)')</SchemaId>
 				<Link>@(JsonSchemaDocument->'%(Link)')</Link>
+				<Namespace>@(JsonSchemaDocument->'%(Namespace)')</Namespace>
+				<PathPrefix>@(JsonSchemaDocument->'%(PathPrefix)')</PathPrefix>
+				<Configuration>@(JsonSchemaDocument->'%(Configuration)')</Configuration>
+				<SchemaId>@(JsonSchemaDocument->'%(SchemaId)')</SchemaId>
 
 				<DPDGenerateMvcServer>@(OpenApiSchemaMvcServer->'true')</DPDGenerateMvcServer>
 				<Link Condition="'%(AdditionalFiles.Link)' == ''">@(OpenApiSchemaMvcServer->'%(Link)')</Link>
 				<Namespace Condition="'%(AdditionalFiles.Namespace)' == ''">@(OpenApiSchemaMvcServer->'%(Namespace)')</Namespace>
-				<PathPrefix>@(OpenApiSchemaMvcServer->'%(PathPrefix)')</PathPrefix>
-				<Configuration>@(OpenApiSchemaMvcServer->'%(Configuration)')</Configuration>
+				<PathPrefix Condition="'%(AdditionalFiles.PathPrefix)' == ''">@(OpenApiSchemaMvcServer->'%(PathPrefix)')</PathPrefix>
+				<Configuration Condition="'%(AdditionalFiles.Configuration)' == ''">@(OpenApiSchemaMvcServer->'%(Configuration)')</Configuration>
 				<SchemaId Condition="'%(AdditionalFiles.SchemaId)' == ''">@(OpenApiSchemaMvcServer->'%(SchemaId)')</SchemaId>
 
 				<DPDGenerateClient>@(OpenApiSchemaClient->'true')</DPDGenerateClient>
 				<Link Condition="'%(AdditionalFiles.Link)' == ''">@(OpenApiSchemaClient->'%(Link)')</Link>
 				<Namespace Condition="'%(AdditionalFiles.Namespace)' == ''">@(OpenApiSchemaClient->'%(Namespace)')</Namespace>
+				<PathPrefix Condition="'%(AdditionalFiles.PathPrefix)' == ''">@(OpenApiSchemaClient->'%(PathPrefix)')</PathPrefix>
+				<Configuration Condition="'%(AdditionalFiles.Configuration)' == ''">@(OpenApiSchemaClient->'%(Configuration)')</Configuration>
 				<SchemaId Condition="'%(AdditionalFiles.SchemaId)' == ''">@(OpenApiSchemaClient->'%(SchemaId)')</SchemaId>
 
 				<DPDGenerateWebhookClient>@(OpenApiSchemaWebhookClient->'true')</DPDGenerateWebhookClient>
 				<Link Condition="'%(AdditionalFiles.Link)' == ''">@(OpenApiSchemaWebhookClient->'%(Link)')</Link>
 				<Namespace Condition="'%(AdditionalFiles.Namespace)' == ''">@(OpenApiSchemaWebhookClient->'%(Namespace)')</Namespace>
+				<PathPrefix Condition="'%(AdditionalFiles.PathPrefix)' == ''">@(OpenApiSchemaWebhookClient->'%(PathPrefix)')</PathPrefix>
+				<Configuration Condition="'%(AdditionalFiles.Configuration)' == ''">@(OpenApiSchemaWebhookClient->'%(Configuration)')</Configuration>
 				<SchemaId Condition="'%(AdditionalFiles.SchemaId)' == ''">@(OpenApiSchemaWebhookClient->'%(SchemaId)')</SchemaId>
 
 				<DPDSchemaOptions>@(OpenApiSchemaOptions->'true')</DPDSchemaOptions>

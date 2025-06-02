@@ -45,4 +45,8 @@ class Program
 			});
 	}
 
+	public static string GetVersionInfo()
+	{
+		return $"{typeof(Program).Namespace} v{typeof(Program).Assembly.GetName().Version}";
+	}
 }

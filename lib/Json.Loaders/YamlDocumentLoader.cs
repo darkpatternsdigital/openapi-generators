@@ -1,19 +1,16 @@
-﻿using Json.Pointer;
-using DarkPatterns.Json.Specifications;
-using DarkPatterns.Json.Diagnostics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Xml;
+using DarkPatterns.Json.Diagnostics;
+using DarkPatterns.Json.Documents;
+using DarkPatterns.Json.Specifications;
+using Json.Pointer;
 using Yaml2JsonNode;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
-using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.Json.Loaders;
 

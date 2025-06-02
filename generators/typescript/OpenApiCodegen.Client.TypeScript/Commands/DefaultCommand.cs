@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -44,7 +45,15 @@ internal class DefaultCommand : ICommandBase<DefaultOptions>
 
 		var options = LoadOptions(optionsPath);
 
-		var (baseDocument, registry) = LoadDocument(inputPath, options);
+		var documentRegistry = new DocumentRegistry(ToResolverOptions(options, [
+			ToResolver(inputPath),
+			DocumentResolverFactory.RelativePathResolver
+		]));
+		var baseDocument = documentRegistry.ResolveDocument(
+			ToInternalUri(Path.Combine(Directory.GetCurrentDirectory(), inputPath)),
+			relativeDocument: null
+		);
+		var registry = new SchemaRegistry(documentRegistry);
 		var parseResult = CommonParsers.DefaultParsers.Parse(baseDocument, registry);
 		if (parseResult.Diagnostics.Count > 0)
 		{
@@ -56,7 +65,7 @@ internal class DefaultCommand : ICommandBase<DefaultOptions>
 		if (parseResult.Result is not { } document)
 			return Task.FromResult(2);
 
-		var transformer = TransformSettings.BuildComposite(registry, GetVersionInfo(), [
+		var transformer = TransformSettings.BuildComposite(registry, Program.GetVersionInfo(), [
 			(s) => new OperationTransformerFactory(s).Build(document, options),
 					(s) => new TypeScriptSchemaSourceProvider(s, options)
 		]);
@@ -69,25 +78,9 @@ internal class DefaultCommand : ICommandBase<DefaultOptions>
 				$"{null}{"DPDOPENAPI000"}: {null} {error.Location.RetrievalUri.LocalPath}({error.Location.Range?.Start.Line ?? 0},{error.Location.Range?.Start.Column ?? 0}-{error.Location.Range?.Start.Line ?? 0},{error.Location.Range?.Start.Column ?? 0}) {formattedText}"
 			);
 		}
-		if (clean && System.IO.Directory.Exists(outputPath))
-		{
-			foreach (var entry in System.IO.Directory.GetFiles(outputPath))
-				System.IO.File.Delete(entry);
-			foreach (var entry in System.IO.Directory.GetDirectories(outputPath))
-				System.IO.Directory.Delete(entry, true);
-		}
-		foreach (var entry in sourcesResult.Sources)
-		{
-			var path = System.IO.Path.Combine(outputPath, entry.Key);
-			if (System.IO.Path.GetDirectoryName(path) is string dir)
-				System.IO.Directory.CreateDirectory(dir);
-			System.IO.File.WriteAllText(path, entry.SourceText);
-		}
-		if (!excludeGitignore)
-		{
-			var path = System.IO.Path.Combine(outputPath, ".gitignore");
-			System.IO.File.WriteAllText(path, "*");
-		}
+		if (clean)
+			TypeScriptSourceFileUtils.Clean(outputPath);
+		TypeScriptSourceFileUtils.WriteSource(outputPath, excludeGitignore, sourcesResult.Sources);
 
 		return Task.FromResult(0);
 	}
@@ -105,24 +98,16 @@ internal class DefaultCommand : ICommandBase<DefaultOptions>
 	private static Uri ToInternalUri(string documentPath) =>
 		new Uri(new Uri(documentPath).AbsoluteUri);
 
-	private static (IDocumentReference, SchemaRegistry) LoadDocument(string documentPath, TypeScriptSchemaOptions options)
+	private static DocumentResolver ToResolver(string documentPath)
 	{
-		return DocumentResolverFactory.FromInitialDocumentInMemory(
-			ToInternalUri(Path.Combine(Directory.GetCurrentDirectory(), documentPath)),
-			File.ReadAllText(documentPath),
-			ToResolverOptions(options)
-		);
+		return DocumentResolverFactory.LoadAs(
+				ToInternalUri(Path.Combine(Directory.GetCurrentDirectory(), documentPath)),
+				File.ReadAllText(documentPath)
+			);
 	}
 
-	private static DocumentRegistryOptions ToResolverOptions(TypeScriptSchemaOptions options) =>
-		new DocumentRegistryOptions([
-		// TODO: use the `options` to determine how to resolve additional documents
-		], OpenApiTransforms.Matchers);
-
-	private static string GetVersionInfo()
-	{
-		return $"{typeof(Program).Namespace} v{typeof(Program).Assembly.GetName().Version}";
-	}
+	private static DocumentRegistryOptions ToResolverOptions(TypeScriptSchemaOptions options, IReadOnlyList<DocumentResolver> resolvers) =>
+		new DocumentRegistryOptions(resolvers, OpenApiTransforms.Matchers);
 
 	private static TypeScriptSchemaOptions LoadOptions(string? optionsPath)
 	{

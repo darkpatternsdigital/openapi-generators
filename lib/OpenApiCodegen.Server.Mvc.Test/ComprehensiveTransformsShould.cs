@@ -98,8 +98,10 @@ public class ComprehensiveTransformsShould
 			{
 				Assert.IsType<UnableToCreateInlineSchemaDiagnostic>(diag);
 				Assert.Equal("proj://embedded/bad.2.yaml", diag.Location.RetrievalUri.OriginalString);
-				Assert.Equal(16, diag.Location.Range?.Start.Line);
-				Assert.Equal(17, diag.Location.Range?.Start.Column);
+				Assert.Equal(18, diag.Location.Range?.Start.Line);
+				Assert.Equal(25, diag.Location.Range?.Start.Column);
+				Assert.Equal(18, diag.Location.Range?.End.Line);
+				Assert.Equal(55, diag.Location.Range?.End.Column);
 			}
 		);
 	}

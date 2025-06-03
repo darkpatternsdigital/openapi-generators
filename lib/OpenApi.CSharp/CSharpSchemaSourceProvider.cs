@@ -103,7 +103,7 @@ public class CSharpSchemaSourceProvider(
 
 		Templates.ModelVar[] vars = (from entry in properties
 									 let req = required.Contains(entry.Key)
-									 let dataType = inlineSchemas.ToInlineDataType(entry.Value.EffectiveSchema)
+									 let dataType = inlineSchemas.SafeToInlineDataType(entry.Value.EffectiveSchema, diagnostic)
 									 let resolved = objectModel.LegacyOptionalBehavior && !req ? dataType.MakeNullable() : dataType
 									 select new Templates.ModelVar(
 										 BaseName: entry.Key,

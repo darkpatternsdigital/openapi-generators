@@ -43,31 +43,28 @@ internal class DefaultCommand : ICommandBase<DefaultOptions>
 		var excludeGitignore = opts.ExcludeGitignore;
 		var clean = opts.Clean;
 
-		var options = LoadOptions(optionsPath);
+		var options = TypeScriptSourceFileUtils.LoadOptions(optionsPath);
 
-		var documentRegistry = new DocumentRegistry(ToResolverOptions(options, [
+		var documentRegistry = new DocumentRegistry(ToResolverOptions([
 			ToResolver(inputPath),
 			DocumentResolverFactory.RelativePathResolver
 		]));
+		var registry = new SchemaRegistry(documentRegistry);
+
 		var baseDocument = documentRegistry.ResolveDocument(
-			ToInternalUri(Path.Combine(Directory.GetCurrentDirectory(), inputPath)),
+			TypeScriptSourceFileUtils.ToFileUri(inputPath),
 			relativeDocument: null
 		);
-		var registry = new SchemaRegistry(documentRegistry);
 		var parseResult = CommonParsers.DefaultParsers.Parse(baseDocument, registry);
-		if (parseResult.Diagnostics.Count > 0)
-		{
-			foreach (var d in parseResult.Diagnostics)
-				Console.Error.WriteLine(ToDiagnosticMessage(d));
-			return Task.FromResult(3);
-		}
+		foreach (var d in parseResult.Diagnostics)
+			Console.Error.WriteLine(ToDiagnosticMessage(d));
 
 		if (parseResult.Result is not { } document)
 			return Task.FromResult(2);
 
 		var transformer = TransformSettings.BuildComposite(registry, Program.GetVersionInfo(), [
 			(s) => new OperationTransformerFactory(s).Build(document, options),
-					(s) => new TypeScriptSchemaSourceProvider(s, options)
+			(s) => new TypeScriptSchemaSourceProvider(s, options)
 		]);
 
 		var sourcesResult = transformer.GetSources();
@@ -95,24 +92,14 @@ internal class DefaultCommand : ICommandBase<DefaultOptions>
 		return $"{d.Location.RetrievalUri.LocalPath}{position}: {message}";
 	}
 
-	private static Uri ToInternalUri(string documentPath) =>
-		new Uri(new Uri(documentPath).AbsoluteUri);
-
 	private static DocumentResolver ToResolver(string documentPath)
 	{
 		return DocumentResolverFactory.LoadAs(
-				ToInternalUri(Path.Combine(Directory.GetCurrentDirectory(), documentPath)),
-				File.ReadAllText(documentPath)
-			);
+			TypeScriptSourceFileUtils.ToFileUri(documentPath),
+			File.ReadAllText(documentPath)
+		);
 	}
 
-	private static DocumentRegistryOptions ToResolverOptions(TypeScriptSchemaOptions options, IReadOnlyList<DocumentResolver> resolvers) =>
+	private static DocumentRegistryOptions ToResolverOptions(IReadOnlyList<DocumentResolver> resolvers) =>
 		new DocumentRegistryOptions(resolvers, OpenApiTransforms.Matchers);
-
-	private static TypeScriptSchemaOptions LoadOptions(string? optionsPath)
-	{
-		using var defaultJsonStream = TypeScriptSchemaOptions.GetDefaultOptionsJson();
-		return OptionsLoader.LoadOptions<TypeScriptSchemaOptions>([defaultJsonStream], optionsPath is { Length: > 0 } ? [optionsPath] : []);
-	}
 }
-

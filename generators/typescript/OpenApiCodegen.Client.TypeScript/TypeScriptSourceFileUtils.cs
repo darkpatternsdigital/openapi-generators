@@ -1,9 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using DarkPatterns.OpenApi.TypeScript;
 
 namespace DarkPatterns.OpenApiCodegen.Client.TypeScript;
 
 internal static class TypeScriptSourceFileUtils
 {
+	public static Uri ToFileUri(string filePath) =>
+		new Uri(Path.Combine(Directory.GetCurrentDirectory(), filePath));
+
 	public static void WriteSource(string outputPath, bool excludeGitignore, IReadOnlyList<SourceEntry> sources)
 	{
 		foreach (var entry in sources)
@@ -31,4 +37,9 @@ internal static class TypeScriptSourceFileUtils
 		}
 	}
 
+	public static TypeScriptSchemaOptions LoadOptions(string? optionsPath)
+	{
+		using var defaultJsonStream = TypeScriptSchemaOptions.GetDefaultOptionsJson();
+		return OptionsLoader.LoadOptions<TypeScriptSchemaOptions>([defaultJsonStream], optionsPath is { Length: > 0 } ? [optionsPath] : []);
+	}
 }

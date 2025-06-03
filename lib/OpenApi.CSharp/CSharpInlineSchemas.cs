@@ -22,7 +22,33 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, DocumentRegistry d
 	public CSharpInlineDefinition? ToInlineDataType(JsonSchema? schema)
 	{
 		if (schema == null) return null;
-		return ToInlineDataType(schema.ResolveSchemaInfo());
+		try
+		{
+			return ToInlineDataType(schema.ResolveSchemaInfo());
+		}
+		catch (Exception ex)
+		{
+			throw new MultipleDiagnosticException([
+				.. ex.ToDiagnostics(documentRegistry, schema.Metadata),
+			]);
+		}
+	}
+
+	[return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull(nameof(schema))]
+	public CSharpInlineDefinition? SafeToInlineDataType(JsonSchema? schema, OpenApiTransformDiagnostic diagnostic)
+	{
+		if (schema == null) return null;
+		try
+		{
+			return ToInlineDataType(schema.ResolveSchemaInfo());
+		}
+		catch (Exception ex)
+		{
+			diagnostic.Diagnostics.AddRange([
+				.. ex.ToDiagnostics(documentRegistry, schema.Metadata),
+			]);
+			return CSharpInlineSchemas.AnyObject;
+		}
 	}
 
 	[return: NotNullIfNotNull(nameof(schema))]

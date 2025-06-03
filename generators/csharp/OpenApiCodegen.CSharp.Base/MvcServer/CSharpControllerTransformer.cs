@@ -6,6 +6,7 @@ using System.Linq;
 using DarkPatterns.OpenApiCodegen.Handlebars;
 using DarkPatterns.OpenApi.CSharp;
 using DarkPatterns.OpenApiCodegen.CSharp.MvcServer.Templates;
+using DarkPatterns.Json.Diagnostics;
 
 namespace DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
 
@@ -21,7 +22,16 @@ public class CSharpControllerTransformer(TransformSettings settings, OpenApiDocu
 		var resultOperations = new List<ControllerOperation>();
 		var visitor = new ControllerOperationVisitor(settings.SchemaRegistry, options, controllerClassName: className);
 		foreach (var (operation, method, path) in operations)
-			visitor.Visit(operation, method, new ControllerOperationVisitor.Argument(diagnostic, resultOperations.Add, CurrentPath: path));
+		{
+			try
+			{
+				visitor.Visit(operation, method, new ControllerOperationVisitor.Argument(diagnostic, resultOperations.Add, CurrentPath: path));
+			}
+			catch (Exception ex)
+			{
+				diagnostic.Diagnostics.AddRange(ex.ToDiagnostics(settings.SchemaRegistry.DocumentRegistry, operation.Metadata));
+			}
+		}
 
 		var template = new Templates.ControllerTemplate(
 			Header: settings.Header(document.Id),

@@ -95,7 +95,7 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 	public override void Visit(OpenApiParameter param, Argument argument)
 	{
 		var info = param.Schema?.ResolveSchemaInfo();
-		var dataType = inlineSchemas.ToInlineDataType(param.Schema) ?? CSharpInlineSchemas.AnyObject;
+		var dataType = inlineSchemas.SafeToInlineDataType(param.Schema, argument.Diagnostic) ?? CSharpInlineSchemas.AnyObject;
 		argument.Builder?.SharedParameters.Add(new OperationParameter(
 			RawName: param.Name,
 			ParamName: CSharpNaming.ToParameterName(param.Name, options.ReservedIdentifiers()),
@@ -133,7 +133,7 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 			Description: response.Description,
 			Content: (from entry in (from c in content ?? Enumerable.Empty<KeyValuePair<string, OpenApiMediaTypeObject>>()
 									 select (c.Key, c.Value.Schema)).DefaultIfEmpty((Key: "", Schema: null))
-					  let dataType = entry.Schema != null ? inlineSchemas.ToInlineDataType(entry.Schema) : null
+					  let dataType = entry.Schema != null ? inlineSchemas.SafeToInlineDataType(entry.Schema, argument.Diagnostic) : null
 					  where entry.Key != "application/xml" // exclude xml, since we don't support it
 					  select new OperationResponseContentOption(
 						  MediaType: entry.Key,
@@ -143,7 +143,7 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 			Headers: (from entry in response.Headers
 					  let required = entry.Required
 					  let info = entry.Schema?.ResolveSchemaInfo()
-					  let dataType = inlineSchemas.ToInlineDataType(entry.Schema)
+					  let dataType = inlineSchemas.SafeToInlineDataType(entry.Schema, argument.Diagnostic)
 					  select new OperationResponseHeader(
 						  RawName: entry.Name,
 						  ParamName: CSharpNaming.ToParameterName("header " + entry.Name, options.ReservedIdentifiers()),
@@ -183,7 +183,7 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 			from param in mediaTypeSchemaInfo?.TryGetAnnotation<PropertiesKeyword>()?.Properties
 			let required = mediaTypeSchemaInfo?.TryGetAnnotation<RequiredKeyword>()?.RequiredProperties.Contains(param.Key) ?? false
 			let info = param.Value?.ResolveSchemaInfo()
-			let dataType = inlineSchemas.ToInlineDataType(param.Value)
+			let dataType = inlineSchemas.SafeToInlineDataType(param.Value, argument.Diagnostic)
 			select new OperationParameter(
 				RawName: param.Key,
 				ParamName: CSharpNaming.ToParameterName(param.Key, options.ReservedIdentifiers()),
@@ -207,7 +207,7 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 		IEnumerable<OperationParameter> GetStandardParams() =>
 			from ct in new[] { mediaType }
 			let info = ct.Schema?.ResolveSchemaInfo()
-			let dataType = inlineSchemas.ToInlineDataType(ct.Schema)
+			let dataType = inlineSchemas.SafeToInlineDataType(ct.Schema, argument.Diagnostic)
 			select new OperationParameter(
 				RawName: null,
 				ParamName: CSharpNaming.ToParameterName(argument.Builder?.Operation.OperationId + " body", options.ReservedIdentifiers()),

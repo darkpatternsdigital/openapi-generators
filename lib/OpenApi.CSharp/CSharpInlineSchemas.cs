@@ -34,6 +34,23 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, DocumentRegistry d
 		}
 	}
 
+	[return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull(nameof(schema))]
+	public CSharpInlineDefinition? SafeToInlineDataType(JsonSchema? schema, OpenApiTransformDiagnostic diagnostic)
+	{
+		if (schema == null) return null;
+		try
+		{
+			return ToInlineDataType(schema.ResolveSchemaInfo());
+		}
+		catch (Exception ex)
+		{
+			diagnostic.Diagnostics.AddRange([
+				.. ex.ToDiagnostics(documentRegistry, schema.Metadata),
+			]);
+			return CSharpInlineSchemas.AnyObject;
+		}
+	}
+
 	[return: NotNullIfNotNull(nameof(schema))]
 	public CSharpInlineDefinition? ToInlineDataType(JsonSchemaInfo? schema)
 	{

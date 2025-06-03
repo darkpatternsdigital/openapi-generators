@@ -22,7 +22,16 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, DocumentRegistry d
 	public CSharpInlineDefinition? ToInlineDataType(JsonSchema? schema)
 	{
 		if (schema == null) return null;
-		return ToInlineDataType(schema.ResolveSchemaInfo());
+		try
+		{
+			return ToInlineDataType(schema.ResolveSchemaInfo());
+		}
+		catch (Exception ex)
+		{
+			throw new MultipleDiagnosticException([
+				.. ex.ToDiagnostics(documentRegistry, schema.Metadata),
+			]);
+		}
 	}
 
 	[return: NotNullIfNotNull(nameof(schema))]

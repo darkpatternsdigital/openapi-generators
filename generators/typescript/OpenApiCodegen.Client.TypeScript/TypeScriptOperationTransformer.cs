@@ -15,8 +15,6 @@ public class TypeScriptOperationTransformer(
 	HandlebarsFactory handlebarsFactory
 ) : IOpenApiOperationTransformer
 {
-	private readonly TypeScriptInlineSchemas inlineSchemas = new TypeScriptInlineSchemas(options, settings.SchemaRegistry.DocumentRegistry);
-
 	public string OperationName(OpenApiOperation operation, string httpMethod, string path)
 	{
 		return TypeScriptNaming.ToMethodName(operation.OperationId ?? $"{httpMethod} {path}", options.ReservedIdentifiers());

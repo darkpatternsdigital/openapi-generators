@@ -13,6 +13,7 @@ public static class JsonSchemaExtensions
 		var annotations = schema.GetAllAnnotations();
 		if (annotations.IsRefOnly(out var refSchema))
 			return ResolveSchemaInfo(refSchema, originalMetadata);
+		// TODO: if the dialect allows it, combine refSchema andexisting annotations
 		return new JsonSchemaInfo(originalMetadata, schema, annotations);
 	}
 
@@ -25,7 +26,7 @@ public static class JsonSchemaExtensions
 			return true;
 		}
 
-		refSchema = null;
+		refSchema = annotations.OfType<IJsonSchemaRefAnnotation>().FirstOrDefault()?.ReferencedSchema;
 		return false;
 	}
 }

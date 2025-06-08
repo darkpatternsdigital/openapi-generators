@@ -21,7 +21,7 @@ public record TypeScriptInlineDefinition(string Text, IReadOnlyList<TypeScriptIm
 		Nullable ? this : this with { Text = Text + " | null", Nullable = true };
 }
 
-public class TypeScriptInlineSchemas(TypeScriptSchemaOptions options, DocumentRegistry documentRegistry)
+public class TypeScriptInlineSchemas(TypeScriptSchemaOptions defaultOptions, DocumentRegistry documentRegistry)
 {
 	public static readonly TypeScriptInlineDefinition AnyObject = new("any", [], Nullable: true);
 
@@ -97,6 +97,8 @@ public class TypeScriptInlineSchemas(TypeScriptSchemaOptions options, DocumentRe
 	/// </summary>
 	private TypeScriptInlineDefinition ForceConvertIntoInlineDataType(JsonSchemaInfo schemaInfo)
 	{
+		if (!documentRegistry.TryGetDocumentSettings<TypeScriptSchemaOptions>(schemaInfo.EffectiveSchema.Metadata.Id, out var options))
+			options = defaultOptions;
 		schemaInfo = schemaInfo with { Original = schemaInfo.EffectiveSchema.Metadata };
 
 		var typeInfo = TypeScriptTypeInfo.From(schemaInfo);
@@ -141,6 +143,8 @@ public class TypeScriptInlineSchemas(TypeScriptSchemaOptions options, DocumentRe
 
 	private string UseReferenceName(JsonSchema schema)
 	{
+		if (!documentRegistry.TryGetDocumentSettings<TypeScriptSchemaOptions>(schema.Metadata.Id, out var options))
+			options = defaultOptions;
 		return TypeScriptNaming.ToClassName(UriToClassIdentifier(schema.Metadata.Id), options.ReservedIdentifiers());
 	}
 

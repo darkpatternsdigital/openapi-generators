@@ -1,0 +1,4 @@
+outputPath: manifest-testing
+removeOutdated: true
+inputs:
+  - path: ../../schemas/any.yaml

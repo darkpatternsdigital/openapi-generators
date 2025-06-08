@@ -13,7 +13,7 @@ using DarkPatterns.OpenApiCodegen.Handlebars;
 
 namespace DarkPatterns.OpenApiCodegen.Client.TypeScript.Commands;
 
-[Verb("single-file", isDefault: true, HelpText = "Get information about your current environment")]
+[Verb("single-file", isDefault: true, HelpText = "Generate TypeScript outputs from a single OpenAPI starting file")]
 public class DefaultOptions
 {
 	[Option('o', "options", HelpText = "Path to the options file")]
@@ -57,7 +57,7 @@ internal class DefaultCommand : ICommandBase<DefaultOptions>
 		);
 		var parseResult = CommonParsers.DefaultParsers.Parse(baseDocument, registry);
 		foreach (var d in parseResult.Diagnostics)
-			Console.Error.WriteLine(ToDiagnosticMessage(d));
+			Console.Error.WriteLine(TypeScriptSourceFileUtils.ToDiagnosticMessage(d));
 
 		if (parseResult.Result is not { } document)
 			return Task.FromResult(2);
@@ -80,16 +80,6 @@ internal class DefaultCommand : ICommandBase<DefaultOptions>
 		TypeScriptSourceFileUtils.WriteSource(outputPath, excludeGitignore, sourcesResult.Sources);
 
 		return Task.FromResult(0);
-	}
-
-	private static string ToDiagnosticMessage(DiagnosticBase d)
-	{
-		var position = d.Location.Range is FileLocationRange { Start: var start }
-			? $"({start.Line},{start.Column})"
-			: "";
-		var messageFormat = CommonDiagnostics.ResourceManager.GetString(d.GetType().FullName!)!;
-		var message = string.Format(messageFormat, d.GetTextArguments().ToArray());
-		return $"{d.Location.RetrievalUri.LocalPath}{position}: {message}";
 	}
 
 	private static DocumentResolver ToResolver(string documentPath)

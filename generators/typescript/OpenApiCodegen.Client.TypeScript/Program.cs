@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using CommandLine;
@@ -10,7 +11,6 @@ class Program
 {
 	static async Task<int> Main(string[] args)
 	{
-
 		var commands = (from type in typeof(ICommandBase<>).Assembly.GetTypes()
 						where type.IsAssignableTo(typeof(ICommandBase))
 						let optionsType = (from iface in type.GetInterfaces()

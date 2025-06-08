@@ -1,9 +1,8 @@
-﻿using DarkPatterns.Json.Documents;
-using DarkPatterns.OpenApi.Abstractions;
+﻿using System;
 using System.Linq;
+using DarkPatterns.Json.Documents;
 using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApiCodegen.Handlebars.Templates;
-using System;
 
 namespace DarkPatterns.OpenApiCodegen.Handlebars;
 
@@ -12,7 +11,7 @@ public record TransformSettings(SchemaRegistry SchemaRegistry, string CodeGenera
 	public static CompositeOpenApiSourceProvider BuildComposite(
 		SchemaRegistry schemaRegistry,
 		string versionInfo,
-		System.Func<TransformSettings, ISourceProvider>[] factories)
+		Func<TransformSettings, ISourceProvider>[] factories)
 	{
 		var settings = new TransformSettings(schemaRegistry, versionInfo);
 

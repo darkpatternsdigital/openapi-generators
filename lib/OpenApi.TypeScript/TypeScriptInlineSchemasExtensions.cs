@@ -9,18 +9,18 @@ namespace DarkPatterns.OpenApi.TypeScript;
 
 public static class TypeScriptInlineSchemasExtensions
 {
-	public static IEnumerable<Templates.ExportStatement> GetExportStatements(this TypeScriptInlineSchemas inlineSchemas, IEnumerable<JsonSchema> schemasReferenced, TypeScriptSchemaOptions options, string path)
+	public static IEnumerable<Templates.ExportFromStatement> GetExportStatements(this TypeScriptInlineSchemas inlineSchemas, IEnumerable<JsonSchema> schemasReferenced, TypeScriptSchemaOptions options, string path)
 	{
 		// FIXME: this is very hacked together; this accesses the "inline" data type to determine what should be exported
 		return from entry in schemasReferenced
 			   let t = inlineSchemas.ToInlineDataType(entry)
 			   from import in t.Imports
 			   from refName in new[] { new Templates.ExportMember(import.Member, IsType: true) }.Concat(GetAdditionalModuleMembers(t, TypeScriptTypeInfo.From(entry), options))
-			   let fileName = import.File
+			   let fileName = inlineSchemas.GetFilePath(import)
 			   group refName by fileName into imports
-			   let nodePath = imports.Key.ToNodePath(path)
+			   let nodePath = imports.Key.ToRelativeNodePath(path)
 			   orderby nodePath
-			   select new Templates.ExportStatement(imports.Distinct().OrderBy(a => a.MemberName).ToArray(), nodePath);
+			   select new Templates.ExportFromStatement(imports.Distinct().OrderBy(a => a.MemberName).ToArray(), nodePath);
 	}
 
 
@@ -38,9 +38,9 @@ public static class TypeScriptInlineSchemasExtensions
 		return from import in importReferences
 			   where !excludedSchemaIds.Contains(import.Schema.Metadata.Id.OriginalString)
 			   let refName = import.Member
-			   let fileName = import.File
+			   let fileName = inlineSchemas.GetFilePath(import)
 			   group refName by fileName into imports
-			   let nodePath = imports.Key.ToNodePath(path)
+			   let nodePath = imports.Key.ToRelativeNodePath(path)
 			   orderby nodePath
 			   select new Templates.ImportStatement(imports.Distinct().OrderBy(a => a).ToArray(), nodePath);
 	}
@@ -59,7 +59,7 @@ public static class TypeScriptInlineSchemasExtensions
 		}
 	}
 
-	public static string ToNodePath(this string path, string fromPath)
+	public static string ToRelativeNodePath(this string path, string fromPath)
 	{
 		if (path.StartsWith("..")) throw new ArgumentException("Cannot start with ..", nameof(path));
 		if (fromPath.StartsWith("..")) throw new ArgumentException("Cannot start with ..", nameof(fromPath));

@@ -64,7 +64,7 @@ public class TypeScriptOperationTransformer(
 				Header: settings.Header("All operations"),
 				Operations: (from op in operations
 							 let operationName = OperationName(op.Operation, op.Method, op.Path.GetLastContextPart())
-							 select new Templates.OperationReference(OperationFileName(operationName).ToNodePath(thisPath), operationName)
+							 select new Templates.OperationReference(OperationFileName(operationName).ToRelativeNodePath(thisPath), operationName)
 							 ).ToArray()
 			))
 		);

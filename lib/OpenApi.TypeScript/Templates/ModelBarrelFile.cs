@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using DarkPatterns.OpenApiCodegen.Handlebars.Templates;
+﻿using DarkPatterns.OpenApiCodegen.Handlebars.Templates;
 
 namespace DarkPatterns.OpenApi.TypeScript.Templates;
 
@@ -16,9 +13,9 @@ public record ExportMember(
 	bool IsType
 );
 
-public record ExportStatement(
+public record ExportFromStatement(
 	ExportMember[] Members,
 	string Path
 );
 
-public record ModelBarrelFile(PartialHeader Header, ExportStatement[] Exports);
+public record ModelBarrelFile(PartialHeader Header, ExportFromStatement[] Exports);

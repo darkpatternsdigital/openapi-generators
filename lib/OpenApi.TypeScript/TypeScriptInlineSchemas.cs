@@ -1,20 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json.Nodes;
-using System.Text.RegularExpressions;
-using Json.Pointer;
-using DarkPatterns.OpenApi.Transformations;
-using DarkPatterns.OpenApi.Abstractions;
-using DarkPatterns.Json.Specifications;
-using DarkPatterns.Json.Documents;
-using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Text.RegularExpressions;
+using DarkPatterns.Json.Documents;
+using DarkPatterns.Json.Specifications;
+using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
+using DarkPatterns.OpenApi.Abstractions;
+using DarkPatterns.OpenApi.Transformations;
+using Json.Pointer;
 
 namespace DarkPatterns.OpenApi.TypeScript;
 using v3_0 = DarkPatterns.OpenApi.Specifications.v3_0;
 
-public record TypeScriptImportReference(JsonSchema Schema, string Member, string File);
+public record TypeScriptImportReference(JsonSchema Schema, string Member);
 
 public record TypeScriptInlineDefinition(string Text, IReadOnlyList<TypeScriptImportReference> Imports, bool Nullable = false, bool IsEnumerable = false)
 {
@@ -135,15 +134,9 @@ public class TypeScriptInlineSchemas(TypeScriptSchemaOptions options, DocumentRe
 		}
 	}
 
-	public string ToSourceEntryKey(JsonSchema schema)
-	{
-		var className = UseReferenceName(schema);
-		return $"models/{className}.ts";
-	}
-
 	public TypeScriptImportReference ToImportReference(JsonSchema schema)
 	{
-		return new TypeScriptImportReference(schema, UseReferenceName(schema), ToSourceEntryKey(schema));
+		return new TypeScriptImportReference(schema, UseReferenceName(schema));
 	}
 
 	private string UseReferenceName(JsonSchema schema)
@@ -272,5 +265,11 @@ public class TypeScriptInlineSchemas(TypeScriptSchemaOptions options, DocumentRe
 					throw new NotImplementedException();
 			};
 		}
+	}
+
+	internal string GetFilePath(TypeScriptImportReference import)
+	{
+		var className = UseReferenceName(import.Schema);
+		return $"models/{className}.ts";
 	}
 }

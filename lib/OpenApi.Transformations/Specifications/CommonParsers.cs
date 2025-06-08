@@ -29,7 +29,7 @@ public static class CommonParsers
 		if (result.Result != null)
 		{
 			schemaRegistry.DocumentRegistry.Register(result.Result);
-			var options = new JsonSchemaParserOptions(schemaRegistry, result.Result.Dialect);
+			var options = new JsonSchemaParserOptions(schemaRegistry, result.Result.Settings.GetDialect());
 			var newDiagnostics = schemaRegistry.RecursivelyFixupAll();
 			return result with { Diagnostics = [.. newDiagnostics, .. result.Diagnostics] };
 		}

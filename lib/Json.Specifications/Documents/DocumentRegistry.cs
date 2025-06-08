@@ -35,7 +35,7 @@ public class DocumentRegistry(DocumentRegistryOptions registryOptions)
 	{
 		if (TryResolveDialect(document.RootNode, out var dialect))
 		{
-			document.Dialect = dialect;
+			document.Settings.SetDialect(dialect);
 		}
 		var uri = document.BaseUri;
 		if (uri.Fragment is { Length: > 0 }) throw new DiagnosticException(InvalidDocumentBaseUri.Builder(retrievalUri: document.RetrievalUri, baseUri: document.BaseUri));
@@ -250,7 +250,7 @@ public class DocumentRegistry(DocumentRegistryOptions registryOptions)
 public static class JsonDocumentUtils
 {
 	public static Uri GetDocumentBaseUri(IDocumentReference document) =>
-		document.RootNode.GetBaseUri(document.RetrievalUri, document.Dialect);
+		document.RootNode.GetBaseUri(document.RetrievalUri, document.Settings.GetDialect());
 
 
 	public static Uri GetBaseUri(this JsonNode? jsonNode, Uri retrievalUri, IJsonSchemaDialect dialect) =>

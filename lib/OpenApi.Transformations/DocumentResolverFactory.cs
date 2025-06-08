@@ -28,6 +28,6 @@ public static class DocumentResolverFactory
 		if (path.Scheme != "file") return null;
 		if (!File.Exists(path.LocalPath)) return null;
 		using var sr = new StreamReader(path.LocalPath);
-		return docLoader.LoadDocument(baseUri, sr, documentReference.Dialect);
+		return docLoader.LoadDocument(baseUri, sr, documentReference.Settings.SettingObjects);
 	};
 }

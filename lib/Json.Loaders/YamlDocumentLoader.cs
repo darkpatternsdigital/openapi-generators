@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text.Json.Nodes;
 using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.Json.Documents;
-using DarkPatterns.Json.Specifications;
 using Json.Pointer;
 using Yaml2JsonNode;
 using YamlDotNet.Core;
@@ -16,7 +15,7 @@ namespace DarkPatterns.Json.Loaders;
 
 public class YamlDocumentLoader : IDocumentTypeLoader
 {
-	public IDocumentReference LoadDocument(Uri retrievalUri, TextReader textReader, IJsonSchemaDialect? dialect)
+	public IDocumentReference LoadDocument(Uri retrievalUri, TextReader textReader, IEnumerable<object>? settings = null)
 	{
 		var yamlStream = new YamlStream();
 		try
@@ -29,19 +28,19 @@ public class YamlDocumentLoader : IDocumentTypeLoader
 		}
 
 		// TODO: check $ top-level variables for vocabulary overrides
-		return new YamlDocument(retrievalUri, yamlStream, dialect ?? Json.Specifications.Dialects.StandardDialects.CoreNext);
+		return new YamlDocument(retrievalUri, yamlStream, documentSettings: new DocumentSettings(settings ?? []));
 	}
 
 	private class YamlDocument : IDocumentReference
 	{
 		private YamlStream yamlStream;
 
-		public YamlDocument(Uri retrievalUri, YamlStream yamlStream, IJsonSchemaDialect dialect)
+		public YamlDocument(Uri retrievalUri, YamlStream yamlStream, DocumentSettings documentSettings)
 		{
 			this.RetrievalUri = retrievalUri;
 			this.yamlStream = yamlStream;
 			this.RootNode = yamlStream.Documents[0].ToJsonNode();
-			this.Dialect = dialect;
+			this.Settings = documentSettings;
 		}
 
 		public Uri BaseUri => JsonDocumentUtils.GetDocumentBaseUri(this);
@@ -50,7 +49,7 @@ public class YamlDocumentLoader : IDocumentTypeLoader
 
 		public JsonNode? RootNode { get; }
 
-		public IJsonSchemaDialect Dialect { get; set; }
+		public DocumentSettings Settings { get; set; }
 
 		string IDocumentReference.OriginalPath => RetrievalUri.OriginalString;
 

@@ -63,7 +63,7 @@ public class TypeScriptSchemaTransformerShould
 		{
 			metadata = new ResolvableNode(new NodeMetadata(new Uri(metadata.Id, refValue), metadata.Metadata), registry.DocumentRegistry);
 		}
-		var schemaResult = registry.ResolveSchema(metadata.Metadata, document.Dialect);
+		var schemaResult = registry.ResolveSchema(metadata.Metadata, document.Settings.GetDialect());
 		return (registry, document, schemaResult);
 	}
 

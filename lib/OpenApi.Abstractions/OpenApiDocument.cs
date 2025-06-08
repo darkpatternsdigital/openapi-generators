@@ -14,7 +14,7 @@ public record OpenApiDocument(
 	Uri Id,
 	OpenApiSpecVersion OpenApiSpecVersion,
 	OpenApiInfo Info,
-	IJsonSchemaDialect Dialect,
+	DocumentSettings Settings,
 	IReadOnlyDictionary<string, OpenApiPath> Paths,
 	IReadOnlyList<OpenApiSecurityRequirement> SecurityRequirements,
 	IReadOnlyList<OpenApiServer> Servers,

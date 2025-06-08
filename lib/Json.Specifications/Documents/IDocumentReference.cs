@@ -2,6 +2,7 @@
 using DarkPatterns.Json.Specifications;
 using System;
 using DarkPatterns.Json.Diagnostics;
+using System.Linq;
 
 namespace DarkPatterns.Json.Documents;
 
@@ -23,9 +24,9 @@ public interface IDocumentReference : IBaseDocument
 	string OriginalPath { get; }
 
 	/// <summary>
-	/// The json schema dialect to use for this document
+	/// The settings, including the dialect, for this document
 	/// </summary>
-	IJsonSchemaDialect Dialect { get; set; }
+	DocumentSettings Settings { get; }
 
 	FileLocationRange? GetLocation(JsonPointer path);
 }

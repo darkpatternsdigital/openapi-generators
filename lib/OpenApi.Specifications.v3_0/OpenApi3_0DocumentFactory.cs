@@ -145,17 +145,19 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 
 	public OpenApiDocument ConstructDocument(IDocumentReference documentReference)
 	{
-		documentReference.Dialect = OpenApiDialect;
+		documentReference.Settings.SetDialect(OpenApiDialect);
 		return ConstructDocument(ResolvableNode.FromRoot(schemaRegistry.DocumentRegistry, documentReference));
 	}
 
 	private OpenApiDocument ConstructDocument(ResolvableNode key)
 	{
 		if (key.Node is not JsonObject obj) throw new InvalidOperationException(Errors.InvalidOpenApiRootNode);
+		var settings = new DocumentSettings();
+		settings.SetDialect(OpenApiDialect);
 		return new OpenApiDocument(key.Id,
 			OpenApiSpecVersion: new OpenApiSpecVersion("openapi", obj["openapi"]?.GetValue<string>() ?? "3.0.3"),
 			Info: ConstructInfo(key.Navigate("info")),
-			Dialect: OpenApiDialect,
+			Settings: settings,
 			Paths: ConstructPaths(key.Navigate("paths")),
 			SecurityRequirements: ReadArray(key.Navigate("security"), ConstructSecurityRequirement),
 			Servers: ReadArray(key.Navigate("servers"), ConstructServer),

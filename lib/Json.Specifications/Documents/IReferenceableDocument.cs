@@ -6,7 +6,7 @@ namespace DarkPatterns.Json.Documents;
 
 public interface IReferenceableDocument : IReferenceableDocumentNode
 {
-	IJsonSchemaDialect Dialect { get; }
+	DocumentSettings Settings { get; }
 }
 
 public interface IReferenceableDocumentNode : IJsonDocumentNode

@@ -73,7 +73,7 @@ public class SchemaRegistry(DocumentRegistry documentRegistry) : ISchemaRegistry
 			if (nextNode is JsonSchema schema && schema.IsFixupComplete == false)
 			{
 				var doc = documentRegistry.ResolveDocumentFromMetadata(schema.Metadata);
-				var options = new JsonSchemaParserOptions(this, doc.Dialect);
+				var options = new JsonSchemaParserOptions(this, doc.Settings.GetDialect());
 				var newDiagnostics = schema.FixupInPlace(options);
 				AddDiagnostics(schema, newDiagnostics);
 				finalResult.AddRange(newDiagnostics);

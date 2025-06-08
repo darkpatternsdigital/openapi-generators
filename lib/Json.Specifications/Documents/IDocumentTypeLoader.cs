@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using DarkPatterns.Json.Specifications;
 
 namespace DarkPatterns.Json.Documents;
 
 public interface IDocumentTypeLoader
 {
-	IDocumentReference LoadDocument(Uri retrievalUri, TextReader textReader, IJsonSchemaDialect? dialect);
+	IDocumentReference LoadDocument(Uri retrievalUri, TextReader textReader, IEnumerable<object>? settings = null);
 }

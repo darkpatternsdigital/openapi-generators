@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using DarkPatterns.Json.Documents;
+using DarkPatterns.Json.Specifications;
 using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApiCodegen.Handlebars.Templates;
 
@@ -26,7 +27,7 @@ public record TransformSettings(SchemaRegistry SchemaRegistry, string CodeGenera
 		{
 			return new PartialHeader(null, null, CodeGeneratorVersionInfo);
 		}
-		var info = doc.Dialect.GetInfo(doc);
+		var info = doc.Settings.GetDialect().GetInfo(doc);
 		return Header(info.Title, info.Description);
 	}
 

@@ -5,6 +5,7 @@ using DarkPatterns.Json.Documents;
 using DarkPatterns.Json.Loaders;
 using DarkPatterns.OpenApi.Specifications.v3_0;
 using DarkPatterns.Json.Specifications.Dialects;
+using System.Collections.Generic;
 
 namespace DarkPatterns.OpenApiCodegen.TestUtils;
 
@@ -18,18 +19,18 @@ public class DocumentLoader
 		switch (baseUri)
 		{
 			case { Scheme: "proj", Host: "embedded" }:
-				return LoadEmbeddedDocument(baseUri, currentDocument?.Dialect);
+				return LoadEmbeddedDocument(baseUri, currentDocument?.Settings.SettingObjects ?? []);
 			default:
 				return null;
 		}
 	}
 
 
-	private static IDocumentReference LoadEmbeddedDocument(Uri baseUri, IJsonSchemaDialect? dialect)
+	private static IDocumentReference LoadEmbeddedDocument(Uri baseUri, IEnumerable<object> settings)
 	{
 		using var documentStream = GetEmbeddedDocumentStream(baseUri);
 		using var sr = new StreamReader(documentStream);
-		var result = docLoader.LoadDocument(baseUri, sr, dialect);
+		var result = docLoader.LoadDocument(baseUri, sr, settings);
 		return result;
 	}
 

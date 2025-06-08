@@ -3,6 +3,7 @@
   "version": "0.8.0",
   "private": true,
   "devDependencies": {
-    "@darkpatternsdigital/openapi-codegen-typescript": "workspace:*"
+    "@darkpatternsdigital/openapi-codegen-typescript": "workspace:*",
+    "ts-node": "^10.9.2"
   }
 }

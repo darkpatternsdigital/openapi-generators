@@ -1,6 +1,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.Json.Specifications;
@@ -25,10 +26,10 @@ public class TypeScriptSchemaSourceProvider(
 
 	protected override SourcesResult GetAdditionalSources()
 	{
-		var exportStatements = inlineSchemas.GetExportStatements(settings.SchemaRegistry.GetSchemas(), options, "./models/").ToArray();
+		var exportStatements = inlineSchemas.GetExportStatements(settings.SchemaRegistry.GetSchemas(), options, options.SchemasFolder).ToArray();
 		if (exportStatements.Length > 0)
 			return new([new SourceEntry(
-				Key: "models/index.ts",
+				Key: System.IO.Path.Combine(options.SchemasFolder, "index.ts"),
 				SourceText: TypeScriptHandlebarsCommon.ProcessModelBarrelFile(
 					new Templates.ModelBarrelFile(new OpenApiCodegen.Handlebars.Templates.PartialHeader(
 						"All models",
@@ -89,7 +90,7 @@ public class TypeScriptSchemaSourceProvider(
 	public string ToSourceEntryKey(JsonSchema schema)
 	{
 		var className = UseReferenceName(schema);
-		return $"models/{className}.ts";
+		return Path.Combine(options.SchemasFolder, $"{className}.ts");
 	}
 
 	private Templates.ArrayModel ToArrayModel(string className, TypeScriptTypeInfo schema)
@@ -99,7 +100,7 @@ public class TypeScriptSchemaSourceProvider(
 			schema.Description,
 			className,
 			Item: dataType.Text,
-			Imports: inlineSchemas.GetImportStatements([schema.Items], [schema.Info.EffectiveSchema], "./models/").ToArray()
+			Imports: inlineSchemas.GetImportStatements([schema.Items], [schema.Info.EffectiveSchema], options.SchemasFolder).ToArray()
 		);
 	}
 
@@ -120,7 +121,7 @@ public class TypeScriptSchemaSourceProvider(
 	{
 		var discriminator = schema.Info.TryGetAnnotation<Specifications.v3_0.DiscriminatorKeyword>();
 		return new Templates.TypeUnionModel(
-			Imports: inlineSchemas.GetImportStatements(schema.OneOf ?? [], [], "./models/").ToArray(),
+			Imports: inlineSchemas.GetImportStatements(schema.OneOf ?? [], [], options.SchemasFolder).ToArray(),
 			Description: schema.Description,
 			ClassName: className,
 			AllowAnyOf: false,
@@ -196,7 +197,7 @@ public class TypeScriptSchemaSourceProvider(
 											))).ToArray();
 
 		return () => new Templates.ObjectModel(
-			Imports: inlineSchemas.GetImportStatements(properties.Values, [schema.EffectiveSchema], "./models/").ToArray(),
+			Imports: inlineSchemas.GetImportStatements(properties.Values, [schema.EffectiveSchema], options.SchemasFolder).ToArray(),
 			Description: schema.TryGetAnnotation<DescriptionKeyword>()?.Description,
 			ClassName: className,
 			Parent: null, // TODO - if "all of" and only one was a reference, we should be able to use inheritance.
@@ -208,7 +209,7 @@ public class TypeScriptSchemaSourceProvider(
 	{
 		var inlineDefinition = inlineSchemas.GetInlineDataType(schema.EffectiveSchema);
 		return new Templates.InlineModel(
-			Imports: inlineSchemas.ToImportStatements(inlineDefinition.Imports, [schema.EffectiveSchema], "./models/").ToArray(),
+			Imports: inlineSchemas.ToImportStatements(inlineDefinition.Imports, [schema.EffectiveSchema], options.SchemasFolder).ToArray(),
 			Description: schema.TryGetAnnotation<DescriptionKeyword>()?.Description,
 			ClassName: className,
 			Content: inlineDefinition.Text

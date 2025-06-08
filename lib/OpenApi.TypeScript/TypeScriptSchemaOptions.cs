@@ -15,6 +15,8 @@ namespace DarkPatterns.OpenApi.TypeScript
 		public string FallbackType { get; set; } = "any";
 		public Dictionary<string, OpenApiTypeFormats> Types { get; } = new();
 
+		public string SchemasFolder { get; set; } = "models";
+
 		internal string Find(string type, string? format)
 		{
 			if (!Types.TryGetValue(type, out var formats))

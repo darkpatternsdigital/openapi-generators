@@ -1,18 +1,15 @@
-﻿using DarkPatterns.OpenApi.Transformations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using DarkPatterns.Json.Documents;
+using DarkPatterns.OpenApi.CSharp;
+using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApi.Transformations.Diagnostics;
 using DarkPatterns.OpenApi.Transformations.Specifications;
-using DarkPatterns.OpenApiCodegen.Handlebars;
-using DarkPatterns.OpenApi.CSharp;
-using DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
 using DarkPatterns.OpenApiCodegen.CSharp.Client;
-using System.IO;
-using System.Text;
+using DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
 using DarkPatterns.OpenApiCodegen.CSharp.WebhookClient;
-using Microsoft.Extensions.FileSystemGlobbing;
+using DarkPatterns.OpenApiCodegen.Handlebars;
 
 namespace DarkPatterns.OpenApiCodegen.CSharp;
 

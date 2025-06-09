@@ -93,16 +93,15 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 
 	private static CSharpServerSchemaOptions LoadOptionsFromMetadata(IEnumerable<AdditionalTextInfo> additionalSchemas)
 	{
-		using var defaultJsonStream = CSharpSchemaOptions.GetDefaultOptionsJson();
-		using var serverJsonStream = CSharpServerSchemaOptions.GetServerDefaultOptionsJson();
+		var defaultJson = CSharpSchemaOptions.DefaultOptionsJson.Value;
+		var serverJson = CSharpServerSchemaOptions.ServerDefaultOptionsJson.Value;
 
 		var result = OptionsLoader.LoadOptions<CSharpServerSchemaOptions>(
 			[
-				defaultJsonStream,
-				serverJsonStream,
-				.. additionalSchemas.Where(s => s.Types.Contains(typeConfig)).Select(f => new MemoryStream(Encoding.UTF8.GetBytes(f.Contents))),
-			],
-			[]
+				defaultJson,
+				serverJson,
+				.. additionalSchemas.Where(s => s.Types.Contains(typeConfig)).Select(f => OptionsLoader.LoadYaml(f.Contents)),
+			]
 		);
 
 		foreach (var entry in additionalSchemas)
@@ -119,16 +118,18 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 	{
 		entrypointMetadata.TryGetValue(propConfig, out var optionsFiles);
 		entrypointMetadata.TryGetValue(propPathPrefix, out var pathPrefix);
-		using var defaultJsonStream = CSharpSchemaOptions.GetDefaultOptionsJson();
-		using var serverJsonStream = CSharpServerSchemaOptions.GetServerDefaultOptionsJson();
+		var defaultJson = CSharpSchemaOptions.DefaultOptionsJson.Value;
+		var serverJson = CSharpServerSchemaOptions.ServerDefaultOptionsJson.Value;
 
 		var result = OptionsLoader.LoadOptions<CSharpServerSchemaOptions>(
 			[
-				defaultJsonStream,
-				serverJsonStream,
-				.. additionalSchemas.Where(s => s.Types.Contains(typeConfig)).Select(f => new MemoryStream(Encoding.UTF8.GetBytes(f.Contents))),
-			],
-			optionsFiles is { Length: > 0 } s ? s.Split(';') : []
+				defaultJson,
+				serverJson,
+				.. additionalSchemas.Where(s => s.Types.Contains(typeConfig)).Select(f => OptionsLoader.LoadYaml(f.Contents)),
+				.. optionsFiles is { Length: > 0 } s
+					? s.Split(';').Select(OptionsLoader.LoadYamlFromFile)
+					: []
+			]
 		);
 
 		if (pathPrefix != null)

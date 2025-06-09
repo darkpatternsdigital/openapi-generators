@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.Text.Json.Nodes;
 using DarkPatterns.OpenApi.CSharp;
 
 namespace DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
@@ -19,6 +20,7 @@ public class CSharpServerSchemaOptions : CSharpSchemaOptions
 	public string? SecurityAttribute { get; set; }
 
 
-	public static Stream GetServerDefaultOptionsJson() =>
-		typeof(CSharpServerSchemaOptions).Assembly.GetManifestResourceStream($"{typeof(CSharpServerSchemaOptions).Namespace}.csharp.config.yaml");
+	public static readonly Lazy<JsonNode> ServerDefaultOptionsJson = new Lazy<JsonNode>(() =>
+		typeof(CSharpServerSchemaOptions).Assembly.GetManifestResourceStream($"{typeof(CSharpServerSchemaOptions).Namespace}.csharp.config.yaml").LoadYaml()
+	);
 }

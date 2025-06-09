@@ -67,8 +67,11 @@ internal static class TypeScriptSourceFileUtils
 
 	public static TypeScriptSchemaOptions LoadOptions(string? optionsPath)
 	{
-		using var defaultJsonStream = TypeScriptSchemaOptions.GetDefaultOptionsJson();
-		return OptionsLoader.LoadOptions<TypeScriptSchemaOptions>([defaultJsonStream], optionsPath is { Length: > 0 } ? [optionsPath] : []);
+		var defaultJson = TypeScriptSchemaOptions.DefaultOptionsJson.Value;
+		return OptionsLoader.LoadOptions<TypeScriptSchemaOptions>([
+			defaultJson,
+			.. optionsPath is { Length: > 0 } ? new[] { OptionsLoader.LoadYamlFromFile(optionsPath) } : [],
+		]);
 	}
 
 	public static string ToDiagnosticMessage(DiagnosticBase d)

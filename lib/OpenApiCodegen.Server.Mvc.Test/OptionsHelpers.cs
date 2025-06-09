@@ -1,16 +1,16 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Collections.Generic;
+using System.Text.Json.Nodes;
 using DarkPatterns.OpenApi.CSharp;
-using System;
 using DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
 
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc;
 
 public static class OptionsHelpers
 {
-	public static CSharpServerSchemaOptions LoadOptions(Action<IConfigurationBuilder>? configureBuilder = null)
+	public static CSharpServerSchemaOptions LoadOptions(IEnumerable<JsonNode>? nodes = null)
 	{
-		using var defaultJsonStream = CSharpSchemaOptions.GetDefaultOptionsJson();
-		var result = OptionsLoader.LoadOptions<CSharpServerSchemaOptions>([defaultJsonStream], [], configureBuilder);
+		var defaultJsonStream = CSharpSchemaOptions.DefaultOptionsJson.Value;
+		var result = OptionsLoader.LoadOptions<CSharpServerSchemaOptions>([defaultJsonStream, .. nodes ?? []]);
 		result.DefaultNamespace = "DPD.Controller";
 		return result;
 	}

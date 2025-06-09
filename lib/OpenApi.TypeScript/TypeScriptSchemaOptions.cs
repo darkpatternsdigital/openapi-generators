@@ -2,18 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Nodes;
+using DarkPatterns.OpenApiCodegen;
 
 namespace DarkPatterns.OpenApi.TypeScript
 {
 	public class TypeScriptSchemaOptions
 	{
-		public List<string> AllowedMimeTypes { get; } = new();
-		public List<string> GlobalReservedIdentifiers { get; } = new();
-		public Dictionary<string, List<string>> ContextualReservedIdentifiers { get; } = new();
+		public List<string> AllowedMimeTypes { get; set; } = new();
+		public List<string> GlobalReservedIdentifiers { get; set; } = new();
+		public Dictionary<string, List<string>> ContextualReservedIdentifiers { get; set; } = new();
 		public string MapType { get; set; } = "Record<string, {}>";
 		public string ArrayType { get; set; } = "Array<{}>";
 		public string FallbackType { get; set; } = "any";
-		public Dictionary<string, OpenApiTypeFormats> Types { get; } = new();
+		public Dictionary<string, OpenApiTypeFormats> Types { get; set; } = new();
 
 		public string SchemasFolder { get; set; } = "models";
 
@@ -36,8 +38,9 @@ namespace DarkPatterns.OpenApi.TypeScript
 			return MapType.Replace("{}", type);
 		}
 
-		public static System.IO.Stream GetDefaultOptionsJson() =>
-			typeof(TypeScriptSchemaOptions).Assembly.GetManifestResourceStream($"{typeof(TypeScriptSchemaOptions).Namespace}.typescript.config.yaml")!;
+		public static readonly Lazy<JsonNode> DefaultOptionsJson = new Lazy<JsonNode>(() =>
+			typeof(TypeScriptSchemaOptions).Assembly.GetManifestResourceStream($"{typeof(TypeScriptSchemaOptions).Namespace}.typescript.config.yaml").LoadYaml()
+		);
 
 		public IEnumerable<string> ReservedIdentifiers(string? scope = null, params string[] extraReserved) =>
 			(
@@ -52,6 +55,6 @@ namespace DarkPatterns.OpenApi.TypeScript
 	public class OpenApiTypeFormats
 	{
 		public string Default { get; set; } = "object";
-		public Dictionary<string, string> Formats { get; } = new();
+		public Dictionary<string, string> Formats { get; set; } = new();
 	}
 }

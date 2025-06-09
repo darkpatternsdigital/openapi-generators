@@ -77,13 +77,10 @@ public class CSharpSchemaTransformerShould
 		var docResult = GetDocumentReference(documentName);
 		Assert.NotNull(docResult);
 		var (registry, document, schema) = GetSchema(docResult, path);
-		var opt = LoadOptions(configurationBuilder =>
-		{
-			configurationBuilder.AddYamlStream(new MemoryStream(Encoding.UTF8.GetBytes($@"
+		var opt = LoadOptions([OptionsLoader.LoadYaml($@"
 overrideNames:
   {schema!.Metadata.Id.OriginalString}: My.TestEnum
-")));
-		});
+")]);
 		var target = CreateTarget(opt, registry);
 
 		Assert.NotNull(schema);

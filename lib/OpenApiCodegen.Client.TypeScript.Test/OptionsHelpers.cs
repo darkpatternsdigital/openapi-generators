@@ -1,21 +1,13 @@
-﻿using Microsoft.Extensions.Configuration;
-using DarkPatterns.OpenApi.TypeScript;
-using System;
+﻿using DarkPatterns.OpenApi.TypeScript;
 
 namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 {
 	public static class OptionsHelpers
 	{
-		public static TypeScriptSchemaOptions LoadOptions(Action<IConfigurationBuilder>? configureBuilder = null)
+		public static TypeScriptSchemaOptions LoadOptions()
 		{
-			using var defaultJsonStream = TypeScriptSchemaOptions.GetDefaultOptionsJson();
-			var builder = new ConfigurationBuilder();
-			builder.AddYamlStream(defaultJsonStream);
-			configureBuilder?.Invoke(builder);
-			var result = builder.Build().Get<TypeScriptSchemaOptions>()
-					?? throw new InvalidOperationException("Could not construct options");
-			return result;
+			var defaultJson = TypeScriptSchemaOptions.DefaultOptionsJson.Value;
+			return OptionsLoader.LoadOptions<TypeScriptSchemaOptions>([defaultJson]);
 		}
-
 	}
 }

@@ -1,24 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text.Json.Nodes;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.Json.Specifications.Keywords;
+using DarkPatterns.OpenApiCodegen;
 
 namespace DarkPatterns.OpenApi.CSharp
 {
 	public class CSharpSchemaOptions
 	{
 		public virtual CSharpSchemaExtensionsOptions Extensions { get; set; } = new();
-		public List<string> GlobalReservedIdentifiers { get; } = new();
-		public Dictionary<string, List<string>> ContextualReservedIdentifiers { get; } = new();
+		public List<string> GlobalReservedIdentifiers { get; set; } = new();
+		public Dictionary<string, List<string>> ContextualReservedIdentifiers { get; set; } = new();
 		public string MapType { get; set; } = "global::System.Collections.Generic.Dictionary<string, {}>";
 		public string ArrayType { get; set; } = "global::System.Collections.Generic.IEnumerable<{}>";
 		public string FallbackType { get; set; } = "object";
 		public string DefaultNamespace { get; set; } = "";
 		public Dictionary<string, string> OverrideNames { get; set; } = new();
 		public Dictionary<Uri, string> NamespacesBySchema { get; set; } = new();
-		public Dictionary<string, OpenApiTypeFormats> Types { get; } = new();
+		public Dictionary<string, OpenApiTypeFormats> Types { get; set; } = new();
 
 		internal string Find(string type, string? format)
 		{
@@ -39,8 +40,9 @@ namespace DarkPatterns.OpenApi.CSharp
 			return MapType.Replace("{}", type);
 		}
 
-		public static System.IO.Stream GetDefaultOptionsJson() =>
-			typeof(CSharpSchemaOptions).Assembly.GetManifestResourceStream($"{typeof(CSharpSchemaOptions).Namespace}.csharp.config.yaml");
+		public static readonly Lazy<JsonNode> DefaultOptionsJson = new Lazy<JsonNode>(() =>
+			typeof(CSharpSchemaOptions).Assembly.GetManifestResourceStream($"{typeof(CSharpSchemaOptions).Namespace}.csharp.config.yaml").LoadYaml()
+		);
 
 		public IEnumerable<string> ReservedIdentifiers(string? scope = null, params string[] extraReserved) =>
 			(
@@ -55,7 +57,7 @@ namespace DarkPatterns.OpenApi.CSharp
 		{
 			var schemaId = schema.EffectiveSchema.Metadata.Id;
 			// This is a hack to avoid lack of support for https://github.com/dotnet/runtime/issues/67616
-			if (OverrideNames.TryGetValue(schemaId.OriginalString.Replace(':', '#'), out var fullName)) return fullName.Substring(0, fullName.LastIndexOf('.'));
+			if (OverrideNames.TryGetValue(schemaId.OriginalString, out var fullName)) return fullName.Substring(0, fullName.LastIndexOf('.'));
 			if (schema.TryGetAnnotation<UnknownKeyword>($"x-{Extensions.NamespaceOverride}") is { } nsOverride
 				&& nsOverride.Value?.GetValueKind() == System.Text.Json.JsonValueKind.String)
 				return nsOverride.Value.GetValue<string>();
@@ -67,7 +69,7 @@ namespace DarkPatterns.OpenApi.CSharp
 		{
 			var schemaId = schema.EffectiveSchema.Metadata.Id;
 			// This is a hack to avoid lack of support for https://github.com/dotnet/runtime/issues/67616
-			if (OverrideNames.TryGetValue(schemaId.OriginalString.Replace(':', '#'), out var fullName)) return fullName.Substring(fullName.LastIndexOf('.') + 1);
+			if (OverrideNames.TryGetValue(schemaId.OriginalString, out var fullName)) return fullName.Substring(fullName.LastIndexOf('.') + 1);
 			if (schema.TryGetAnnotation<UnknownKeyword>($"x-{Extensions.TypeNameOverride}") is { } typeNameOverride
 				&& typeNameOverride.Value?.GetValueKind() == System.Text.Json.JsonValueKind.String)
 				return typeNameOverride.Value.GetValue<string>();
@@ -78,6 +80,6 @@ namespace DarkPatterns.OpenApi.CSharp
 	public class OpenApiTypeFormats
 	{
 		public string Default { get; set; } = "object";
-		public Dictionary<string, string> Formats { get; } = new();
+		public Dictionary<string, string> Formats { get; set; } = new();
 	}
 }

@@ -53,9 +53,11 @@ internal class ManifestCommand : ICommandBase<ManifestOptions>
 				.Select(x => x.Result)
 				.OfType<OpenApiDocument>()
 				.Select<OpenApiDocument, Func<TransformSettings, ISourceProvider>>(document =>
-					s => new OperationTransformerFactory(s).Build(document, options)
-				));
-		sourceProviders.Add(s => new TypeScriptSchemaSourceProvider(s, options));
+					s =>
+					{
+						return new OperationTransformerFactory(s).Build(document);
+					}));
+		sourceProviders.Add(s => new TypeScriptSchemaSourceProvider(s));
 		sourceProviders.Add(_ => new GitIgnoreSourceProvider());
 		var transformer = TransformSettings.BuildComposite(registry, Program.GetVersionInfo(), sourceProviders.ToArray());
 

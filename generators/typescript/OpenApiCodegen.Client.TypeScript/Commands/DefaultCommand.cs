@@ -63,8 +63,8 @@ internal class DefaultCommand : ICommandBase<DefaultOptions>
 			return Task.FromResult(2);
 
 		var transformer = TransformSettings.BuildComposite(registry, Program.GetVersionInfo(), [
-			(s) => new OperationTransformerFactory(s).Build(document, options),
-			(s) => new TypeScriptSchemaSourceProvider(s, options)
+			(s) => new OperationTransformerFactory(s).Build(document),
+			(s) => new TypeScriptSchemaSourceProvider(s)
 		]);
 
 		var sourcesResult = transformer.GetSources();

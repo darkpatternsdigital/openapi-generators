@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DarkPatterns.Json.Diagnostics;
+using DarkPatterns.Json.Documents;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Metadata;
@@ -17,29 +18,33 @@ namespace DarkPatterns.OpenApi.TypeScript;
 
 public class TypeScriptSchemaSourceProvider(
 	TransformSettings settings,
-	TypeScriptSchemaOptions options,
 	HandlebarsFactory? handlebarsFactory = null
 ) : SchemaSourceProvider(settings.SchemaRegistry)
 {
 	private readonly HandlebarsFactory handlebarsFactory = handlebarsFactory ?? HandlebarsFactoryDefaults.Default;
-	private readonly TypeScriptInlineSchemas inlineSchemas = new TypeScriptInlineSchemas(options, settings.SchemaRegistry.DocumentRegistry);
+	private readonly TypeScriptInlineSchemas inlineSchemas = new TypeScriptInlineSchemas(settings.SchemaRegistry.DocumentRegistry);
 
 	protected override SourcesResult GetAdditionalSources()
 	{
-		var exportStatements = inlineSchemas.GetExportStatements(settings.SchemaRegistry.GetSchemas(), options, options.SchemasFolder).ToArray();
-		if (exportStatements.Length > 0)
-			return new([new SourceEntry(
-				Key: System.IO.Path.Combine(options.SchemasFolder, "index.ts"),
-				SourceText: TypeScriptHandlebarsCommon.ProcessModelBarrelFile(
-					new Templates.ModelBarrelFile(new OpenApiCodegen.Handlebars.Templates.PartialHeader(
-						"All models",
-						null,
-						settings.CodeGeneratorVersionInfo
-					), exportStatements),
-					handlebarsFactory.Handlebars
-				)
-			)], []);
-		return SourcesResult.Empty;
+		var sourceEntries =
+			from schema in settings.SchemaRegistry.GetSchemas()
+			let options = settings.SchemaRegistry.DocumentRegistry.GetDocumentSettings<TypeScriptSchemaOptions>(schema.Metadata.Id)
+			where options != null
+			from exportStatement in inlineSchemas.GetExportStatements([schema], options, options.SchemasFolder).ToArray()
+			group exportStatement by options.SchemasFolder into exportStatements
+			let thisPath = System.IO.Path.Combine(exportStatements.Key, "index.ts")
+			select new SourceEntry(
+					Key: thisPath,
+					SourceText: TypeScriptHandlebarsCommon.ProcessModelBarrelFile(
+						new Templates.ModelBarrelFile(new OpenApiCodegen.Handlebars.Templates.PartialHeader(
+							"All models",
+							null,
+							settings.CodeGeneratorVersionInfo
+						), [.. exportStatements]),
+						handlebarsFactory.Handlebars
+					)
+				);
+		return new([.. sourceEntries], []);
 	}
 
 	protected override SourceEntry? GetSourceEntry(JsonSchema entry, OpenApiTransformDiagnostic diagnostic)
@@ -84,17 +89,23 @@ public class TypeScriptSchemaSourceProvider(
 
 	public string UseReferenceName(JsonSchema schema)
 	{
+		if (!settings.SchemaRegistry.DocumentRegistry.TryGetDocumentSettings<TypeScriptSchemaOptions>(schema.Metadata.Id, out var options))
+			throw new DiagnosticException(MissingTypeScriptSchemaOptionsDiagnostic.Builder(schema.Metadata.Id));
 		return TypeScriptNaming.ToClassName(inlineSchemas.UriToClassIdentifier(schema.Metadata.Id), options.ReservedIdentifiers());
 	}
 
 	public string ToSourceEntryKey(JsonSchema schema)
 	{
+		if (!settings.SchemaRegistry.DocumentRegistry.TryGetDocumentSettings<TypeScriptSchemaOptions>(schema.Metadata.Id, out var options))
+			throw new DiagnosticException(MissingTypeScriptSchemaOptionsDiagnostic.Builder(schema.Metadata.Id));
 		var className = UseReferenceName(schema);
 		return Path.Combine(options.SchemasFolder, $"{className}.ts");
 	}
 
 	private Templates.ArrayModel ToArrayModel(string className, TypeScriptTypeInfo schema)
 	{
+		if (!settings.SchemaRegistry.DocumentRegistry.TryGetDocumentSettings<TypeScriptSchemaOptions>(schema.Info.EffectiveSchema.Metadata.Id, out var options))
+			throw new DiagnosticException(MissingTypeScriptSchemaOptionsDiagnostic.Builder(schema.Info.EffectiveSchema.Metadata.Id));
 		var dataType = inlineSchemas.ToInlineDataType(schema.Items);
 		return new Templates.ArrayModel(
 			schema.Description,
@@ -106,6 +117,8 @@ public class TypeScriptSchemaSourceProvider(
 
 	private Templates.EnumModel ToEnumModel(string className, TypeScriptTypeInfo schema)
 	{
+		if (!settings.SchemaRegistry.DocumentRegistry.TryGetDocumentSettings<TypeScriptSchemaOptions>(schema.Info.EffectiveSchema.Metadata.Id, out var options))
+			throw new DiagnosticException(MissingTypeScriptSchemaOptionsDiagnostic.Builder(schema.Info.EffectiveSchema.Metadata.Id));
 		return new Templates.EnumModel(
 			schema.Description,
 			className,
@@ -119,6 +132,8 @@ public class TypeScriptSchemaSourceProvider(
 
 	private Templates.TypeUnionModel ToOneOfModel(string className, TypeScriptTypeInfo schema)
 	{
+		if (!settings.SchemaRegistry.DocumentRegistry.TryGetDocumentSettings<TypeScriptSchemaOptions>(schema.Info.EffectiveSchema.Metadata.Id, out var options))
+			throw new DiagnosticException(MissingTypeScriptSchemaOptionsDiagnostic.Builder(schema.Info.EffectiveSchema.Metadata.Id));
 		var discriminator = schema.Info.TryGetAnnotation<Specifications.v3_0.DiscriminatorKeyword>();
 		return new Templates.TypeUnionModel(
 			Imports: inlineSchemas.GetImportStatements(schema.OneOf ?? [], [], options.SchemasFolder).ToArray(),
@@ -177,6 +192,8 @@ public class TypeScriptSchemaSourceProvider(
 
 	private Func<Templates.ObjectModel> ToObjectModel(string className, JsonSchemaInfo schema, ObjectModel objectModel, OpenApiTransformDiagnostic diagnostic)
 	{
+		if (!settings.SchemaRegistry.DocumentRegistry.TryGetDocumentSettings<TypeScriptSchemaOptions>(schema.EffectiveSchema.Metadata.Id, out var options))
+			throw new DiagnosticException(MissingTypeScriptSchemaOptionsDiagnostic.Builder(schema.EffectiveSchema.Metadata.Id));
 		if (objectModel == null)
 			throw new ArgumentNullException(nameof(objectModel));
 		var properties = objectModel.Properties();
@@ -207,6 +224,8 @@ public class TypeScriptSchemaSourceProvider(
 
 	private Templates.InlineModel ToInlineSchemaModel(string className, JsonSchemaInfo schema, OpenApiTransformDiagnostic diagnostic)
 	{
+		if (!settings.SchemaRegistry.DocumentRegistry.TryGetDocumentSettings<TypeScriptSchemaOptions>(schema.EffectiveSchema.Metadata.Id, out var options))
+			throw new DiagnosticException(MissingTypeScriptSchemaOptionsDiagnostic.Builder(schema.EffectiveSchema.Metadata.Id));
 		var inlineDefinition = inlineSchemas.GetInlineDataType(schema.EffectiveSchema);
 		return new Templates.InlineModel(
 			Imports: inlineSchemas.ToImportStatements(inlineDefinition.Imports, [schema.EffectiveSchema], options.SchemasFolder).ToArray(),

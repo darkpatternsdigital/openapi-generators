@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
+using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.Json.Documents;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
 using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.OpenApi.Transformations;
 using Json.Pointer;
+using YamlDotNet.Serialization;
 
 namespace DarkPatterns.OpenApi.TypeScript;
 using v3_0 = DarkPatterns.OpenApi.Specifications.v3_0;
@@ -21,7 +23,7 @@ public record TypeScriptInlineDefinition(string Text, IReadOnlyList<TypeScriptIm
 		Nullable ? this : this with { Text = Text + " | null", Nullable = true };
 }
 
-public class TypeScriptInlineSchemas(TypeScriptSchemaOptions defaultOptions, DocumentRegistry documentRegistry)
+public class TypeScriptInlineSchemas(DocumentRegistry documentRegistry)
 {
 	public static readonly TypeScriptInlineDefinition AnyObject = new("any", [], Nullable: true);
 
@@ -98,7 +100,7 @@ public class TypeScriptInlineSchemas(TypeScriptSchemaOptions defaultOptions, Doc
 	private TypeScriptInlineDefinition ForceConvertIntoInlineDataType(JsonSchemaInfo schemaInfo)
 	{
 		if (!documentRegistry.TryGetDocumentSettings<TypeScriptSchemaOptions>(schemaInfo.EffectiveSchema.Metadata.Id, out var options))
-			options = defaultOptions;
+			throw new DiagnosticException(MissingTypeScriptSchemaOptionsDiagnostic.Builder(schemaInfo.EffectiveSchema.Metadata.Id));
 		schemaInfo = schemaInfo with { Original = schemaInfo.EffectiveSchema.Metadata };
 
 		var typeInfo = TypeScriptTypeInfo.From(schemaInfo);
@@ -144,7 +146,7 @@ public class TypeScriptInlineSchemas(TypeScriptSchemaOptions defaultOptions, Doc
 	private string UseReferenceName(JsonSchema schema)
 	{
 		if (!documentRegistry.TryGetDocumentSettings<TypeScriptSchemaOptions>(schema.Metadata.Id, out var options))
-			options = defaultOptions;
+			throw new DiagnosticException(MissingTypeScriptSchemaOptionsDiagnostic.Builder(schema.Metadata.Id));
 		return TypeScriptNaming.ToClassName(UriToClassIdentifier(schema.Metadata.Id), options.ReservedIdentifiers());
 	}
 

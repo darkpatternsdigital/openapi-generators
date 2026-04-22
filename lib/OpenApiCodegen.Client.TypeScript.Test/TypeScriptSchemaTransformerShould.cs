@@ -101,6 +101,6 @@ public class TypeScriptSchemaTransformerShould
 
 	private TypeScriptInlineSchemas ConstructTarget(TypeScriptSchemaOptions options, DocumentRegistry registry)
 	{
-		return new(options, registry);
+		return new(registry);
 	}
 }

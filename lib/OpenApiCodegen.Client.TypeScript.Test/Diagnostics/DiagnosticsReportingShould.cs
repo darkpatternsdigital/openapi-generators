@@ -36,7 +36,7 @@ public class DiagnosticsReportingShould
 		var settings = new Handlebars.TransformSettings(registry, "");
 		var options = LoadOptions();
 
-		var transformer = new OperationTransformerFactory(settings).Build(docResult.Result, options);
+		var transformer = new OperationTransformerFactory(settings).Build(docResult.Result);
 
 		var result = transformer.GetSources();
 		return docResult.Diagnostics.Concat(result.Diagnostics);

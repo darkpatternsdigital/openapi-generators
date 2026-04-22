@@ -18,4 +18,10 @@ public static class DocumentRegistryExtensions
 		settings = document.Settings.SettingObjects.OfType<T>().FirstOrDefault();
 		return settings != null;
 	}
+
+	public static T? GetDocumentSettings<T>(this DocumentRegistry registry, Uri documentUri)
+		where T : class
+	{
+		return registry.TryGetDocumentSettings<T>(documentUri, out var result) ? result : null;
+	}
 }

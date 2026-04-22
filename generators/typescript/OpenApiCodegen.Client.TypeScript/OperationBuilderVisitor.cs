@@ -43,7 +43,7 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 
 		public OperationBuilderVisitor(DocumentRegistry registry, TypeScriptSchemaOptions options)
 		{
-			this.inlineSchemas = new TypeScriptInlineSchemas(options, registry);
+			this.inlineSchemas = new TypeScriptInlineSchemas(registry);
 			this.options = options;
 		}
 

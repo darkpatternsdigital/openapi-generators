@@ -16,6 +16,8 @@ public class AllOperationsBarrelTransformer : ISourceProvider
 	public SourcesResult GetSources()
 	{
 		OpenApiTransformDiagnostic diagnostic = new();
-		return new([operationTransformer.TransformBarrelFileHelper(operationsSourceProvider.GetOperations(diagnostic), diagnostic)], [.. diagnostic.Diagnostics]);
+		return new([
+			.. operationTransformer.TransformBarrelFileHelper(operationsSourceProvider.GetOperations(diagnostic), diagnostic)
+		], [.. diagnostic.Diagnostics]);
 	}
 }

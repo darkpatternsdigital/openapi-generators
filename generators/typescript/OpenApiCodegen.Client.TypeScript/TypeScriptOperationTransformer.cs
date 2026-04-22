@@ -6,17 +6,20 @@ using System.Collections.Generic;
 using System.Linq;
 using DarkPatterns.Json.Documents;
 using DarkPatterns.OpenApiCodegen.Handlebars;
+using DarkPatterns.Json.Diagnostics;
+using System.IO;
 
 namespace DarkPatterns.OpenApiCodegen.Client.TypeScript;
 
 public class TypeScriptOperationTransformer(
 	TransformSettings settings,
-	TypeScriptSchemaOptions options,
 	HandlebarsFactory handlebarsFactory
 ) : IOpenApiOperationTransformer
 {
 	public string OperationName(OpenApiOperation operation, string httpMethod, string path)
 	{
+		if (!settings.SchemaRegistry.DocumentRegistry.TryGetDocumentSettings<TypeScriptSchemaOptions>(operation.Metadata.Id, out var options))
+			throw new DiagnosticException(MissingTypeScriptSchemaOptionsDiagnostic.Builder(operation.Metadata.Id));
 		return TypeScriptNaming.ToMethodName(operation.OperationId ?? $"{httpMethod} {path}", options.ReservedIdentifiers());
 	}
 
@@ -46,6 +49,8 @@ public class TypeScriptOperationTransformer(
 
 	private Templates.Operation ToOperation(OpenApiPath path, string httpMethod, OpenApiOperation operation, OpenApiTransformDiagnostic diagnostic)
 	{
+		if (!settings.SchemaRegistry.DocumentRegistry.TryGetDocumentSettings<TypeScriptSchemaOptions>(operation.Metadata.Id, out var options))
+			throw new DiagnosticException(MissingTypeScriptSchemaOptionsDiagnostic.Builder(operation.Metadata.Id));
 		var builder = new OperationBuilderVisitor.OperationBuilder(operation);
 		var visitor = new OperationBuilderVisitor(settings.SchemaRegistry.DocumentRegistry, options);
 		visitor.Visit(operation, httpMethod, new OperationBuilderVisitor.Argument(diagnostic, builder, path));
@@ -53,18 +58,22 @@ public class TypeScriptOperationTransformer(
 		return visitor.ToOperationTemplate(operation, httpMethod.ToUpper(), path.GetLastContextPart(), builder);
 	}
 
-	internal SourceEntry TransformBarrelFileHelper(IEnumerable<OperationDetail> operations, OpenApiTransformDiagnostic diagnostic)
+	internal IEnumerable<SourceEntry> TransformBarrelFileHelper(IEnumerable<OperationDetail> operations, OpenApiTransformDiagnostic diagnostic)
 	{
-		var thisPath = $"operations/index.ts";
-		return new SourceEntry(
-			Key: thisPath,
-			SourceText: handlebarsFactory.Handlebars.ProcessBarrelFile(new Templates.OperationBarrelFileModel(
-				Header: settings.Header("All operations"),
-				Operations: (from op in operations
-							 let operationName = OperationName(op.Operation, op.Method, op.Path.GetLastContextPart())
-							 select new Templates.OperationReference(OperationFileName(operationName).ToRelativeNodePath(thisPath), operationName)
-							 ).ToArray()
-			))
-		);
+		return from operation in operations
+			   let options = settings.SchemaRegistry.DocumentRegistry.GetDocumentSettings<TypeScriptSchemaOptions>(operation.Operation.Metadata.Id)
+			   where options != null
+			   group operation by options.OperationsFolder into operationsByFolder
+			   let thisPath = Path.Join(operationsByFolder.Key, "index.ts")
+			   select new SourceEntry(
+				 Key: thisPath,
+				 SourceText: handlebarsFactory.Handlebars.ProcessBarrelFile(new Templates.OperationBarrelFileModel(
+					 Header: settings.Header("All operations"),
+					 Operations: (from op in operationsByFolder
+								  let operationName = OperationName(op.Operation, op.Method, op.Path.GetLastContextPart())
+								  select new Templates.OperationReference(OperationFileName(operationName).ToRelativeNodePath(thisPath), operationName)
+								  ).ToArray()
+				 ))
+			 );
 	}
 }

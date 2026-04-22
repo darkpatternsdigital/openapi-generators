@@ -1,4 +1,11 @@
 outputPath: manifest-testing
 removeOutdated: true
 inputs:
+  - path: ../../schemas/all-of.yaml
+    output: manifest-testing/all-of/
+  - path: ../../schemas/annotations.yaml
+    output: manifest-testing/annotations/
   - path: ../../schemas/any.yaml
+    output: manifest-testing/any/
+  - path: ../../schemas/array.yaml
+    output: manifest-testing/array/

@@ -20,4 +20,6 @@ public class ManifestFileProperties
 public class ManifestInputOptions
 {
 	[YamlMember(Alias = "path")] public required string Path { get; set; }
+	[YamlMember(Alias = "output")] public required string Output { get; set; }
+
 }

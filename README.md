@@ -33,10 +33,10 @@ Generators currently available:
 
 * ![DarkPatterns.OpenApiCodegen.CSharp NuGet](https://img.shields.io/nuget/v/DarkPatterns.OpenApiCodegen.CSharp)
   [C# Source generation from OpenAPI](./generators/csharp), including .NET Core Server MVC Interfaces for the modern C# MVC server approach and .NET Standard Client extension methods.
-* ![DarkPatterns.OpenApiCodegen.Json.Extensions NuGet](https://img.shields.io/nuget/v/DarkPatterns.OpenApiCodegen.Client)
+* ![DarkPatterns.OpenApiCodegen.Json.Extensions NuGet](https://img.shields.io/nuget/v/DarkPatterns.OpenApiCodegen.Json.Extensions)
   [OpenAPI Codegen Extensions](./lib/OpenApiCodegen.Json.Extensions/), a set of System.Text.Json-compatible extensions supporting Optional parameters and enum serialization.
 * ![@darkpatternsdigital/openapi-codegen-typescript at npm](https://img.shields.io/npm/v/@darkpatternsdigital/openapi-codegen-typescript)
-  [TypeScript](./generators/typescript), for a TypeScript client that is agnostic about how you fetch data.
+  [TypeScript](./generators/typescript), for a TypeScript client that is agnostic about how you fetch data. Also available as the `DarkPatterns.OpenApiCodegen.Client.TypeScript` .NET tool.
 * ![@darkpatternsdigital/openapi-codegen-typescript-fetch at npm](https://img.shields.io/npm/v/@darkpatternsdigital/openapi-codegen-typescript-fetch)
   [TypeScript Fetch](./generators/typescript-fetch), for a TypeScript client that leverages the fetch API.
 * ![@darkpatternsdigital/openapi-codegen-typescript-rxjs at npm](https://img.shields.io/npm/v/@darkpatternsdigital/openapi-codegen-typescript-rxjs)

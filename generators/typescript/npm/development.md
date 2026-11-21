@@ -1,21 +1,22 @@
 
 # Working with this source code
 
-This packages only new templates, tests via Jest (to be consistent with
-the snapshot tests we do elsewhere in this repository), and delivers via npm (for easy
-use for the C# projects for which this is designed) to work with the existing
-`@openapitools/openapi-generator-cli` npm package.
+This package bundles the `OpenApiCodegen.Client.TypeScript` .NET console app
+(copied into `dotnet/` at build time) along with TypeScript runtime helpers, and
+tests via vitest.
 
 Prerequisites:
 
-    Node/npm
+    .NET 8 SDK, Node, pnpm
 
-No build needed!
+Build (also regenerates `tests/generated/` from the shared `schemas/`):
 
-To update Jest snapshots: (pay attention to slash types, it's important)
+    dotnet build
 
-    npm test -- -u
+To test:
 
-To package:
+    dotnet test
 
-    npm pack
+To package (output in `artifacts/package/release/`):
+
+    dotnet build -c Release

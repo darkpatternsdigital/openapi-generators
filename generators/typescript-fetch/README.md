@@ -35,6 +35,7 @@ To use with `node-fetch`, a fully-qualified URL must be provided.  See the follo
 
 ```typescript
 import fetch from 'node-fetch';
+import { toFetchApi, type FetchImplementation } from '@darkpatternsdigital/openapi-codegen-typescript-fetch';
 import operations from './api-generated/operations';
 
 const baseDomain = 'http://localhost/';

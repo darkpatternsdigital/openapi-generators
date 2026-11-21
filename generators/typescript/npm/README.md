@@ -63,4 +63,6 @@ types:
 - `fallbackType` specifies the type to use when a schema is unable to be emitted. Other recommended options are `unknown` and `never`.
 - `types` must be an object with keys that correspond to the JSON Schema `type`
   properties. Within, the configuration may specify either the `default` (for if
-  the format is either not specified or not found) or custom `formats`. Note that this only changes the type of the generated
+  the format is either not specified or not found) or custom `formats`. Note
+  that this only changes the type of the generated TypeScript, not how values
+  are serialized at runtime.

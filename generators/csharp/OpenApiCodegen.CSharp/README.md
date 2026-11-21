@@ -4,8 +4,8 @@ Adds C# source generators from an OpenAPI specification file.
 
     ```xml
     <ItemGroup>
-        <PackageReference Include="DarkPatterns.OpenApiCodegen.Json.Extensions" Version="0.17.1" />
-        <PackageReference Include="DarkPatterns.OpenApiCodegen.CSharp" Version="0.20.0" PrivateAssets="All" />
+        <PackageReference Include="DarkPatterns.OpenApiCodegen.Json.Extensions" Version="0.18.0" />
+        <PackageReference Include="DarkPatterns.OpenApiCodegen.CSharp" Version="0.25.3" PrivateAssets="All" />
     </ItemGroup>
     ```
 
@@ -149,7 +149,7 @@ securityAttribute: My.SecurityAttribute
     ```
 - `overrideNames` is a dictionary of schema URIs to the namespace-qualified C#
   type name to use for the generated class. (Note: this feature is still
-  experimental and may change or be removed in a later relaese.)
+  experimental and may change or be removed in a later release.)
 - `securityAttribute`, if provided, specifies an additional attribute to add to every
   MVC Controller action that has a `security` property in the corresponding operation.
   One parameter is passed: a string containing the JSON representing the security

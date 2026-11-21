@@ -3,9 +3,29 @@ name: All packages build
 on:
   push:
     branches: [ main ]
+    paths:
+      - '**'
+      # Documentation-only changes don't need a build...
+      - '!**/*.md'
+      - '!adr/**'
+      - '!docs/**'
+      # ...except analyzer release tracking, which is an input to the build
+      - '**/AnalyzerReleases.*.md'
   pull_request:
     branches:
       - '**/*'
+    # Keep in sync with the push paths above
+    paths:
+      - '**'
+      - '!**/*.md'
+      - '!adr/**'
+      - '!docs/**'
+      - '**/AnalyzerReleases.*.md'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # Cancel superseded PR runs, but never cancel a publish from main
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
@@ -39,6 +59,15 @@ jobs:
         dotnet build --no-restore --configuration Release ${VERSION_SUFFIX_PARAM}
       env:
         VERSION_SUFFIX: ${{ github.ref != 'refs/heads/main' && github.sha || '' }}
+
+    ###########
+    # LINT
+    - name: Prepare for linting
+      run: dotnet build --no-restore --configuration Release -t:PrepareLint
+    - name: Run JS lint checks
+      run: pnpm lint
+    - name: Ensure npm versions are correct
+      run: git diff --stat --exit-code
 
     ###########
     # TEST

@@ -26,7 +26,18 @@ pnpm lint                            # tsc -b + eslint + prettier
 pnpm lint:fix
 ```
 
-CI (`.github/workflows/es-lint.yml`) also runs `git diff --exit-code` after building, so npm `package.json` versions must stay in sync with the MSBuild version properties (see Versioning).
+## Before suggesting a commit
+
+Run each CI check (`.github/workflows/`) that your change could break, and say which ones you ran. What each check catches:
+
+- **Release build** (`dotnet build -c Release`): warnings, including code analysis, are errors. Any change to C#, templates, `.props`/`.targets`, or `schemas/` can break it, because TestApp and the npm projects generate code from schemas during the build.
+- **Tests** (`dotnet test -c Release`, or just the affected project): behavior changes in parsers, transforms, templates, or schemas.
+- **JS lint** (`dotnet build -t:PrepareLint`, then `pnpm lint`):
+  - `tsc -b` and eslint cover TS sources plus generated test code, so changes to TS templates or generators can break them.
+  - Prettier covers every `*.{cjs,mjs,js,mts,cts,ts,tsx,yaml,json}` in the repo, including `.claude/settings.json` and `schemas/*.yaml`, and expects tab indentation. `pnpm lint:fix` repairs formatting.
+- **Version sync** (`git diff --exit-code` after the build): when you change a version property in `Directory.Build.props`, the build rewrites the matching npm `package.json` `version`. Commit the rewritten files.
+
+`dotnet format` isn't a PR check. Its workflow is disabled because on .NET 8 it can't see source-generated types.
 
 ## Architecture
 

@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DarkPatterns.Json.Documents;
+using DarkPatterns.Json.Specifications;
+using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.OpenApi.Transformations.Diagnostics;
 using DarkPatterns.OpenApi.Transformations.Specifications;
 using DarkPatterns.OpenApiCodegen.Handlebars;
@@ -11,6 +13,7 @@ using DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
 using DarkPatterns.OpenApiCodegen.CSharp.Client;
 using System.IO;
 using System.Text;
+using System.Text.Json.Nodes;
 using DarkPatterns.OpenApiCodegen.CSharp.WebhookClient;
 using Microsoft.Extensions.FileSystemGlobbing;
 
@@ -29,6 +32,7 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 	const string typeMvcServer = "MvcServer";
 	const string typeClient = "Client";
 	const string typeWebhookClient = "WebhookClient";
+	const string typeModels = "Models";
 	const string typeConfig = "Config";
 	const string sharedSourceGroup = "JsonSchema";
 	private readonly IEnumerable<string> metadataKeys =
@@ -75,6 +79,10 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 			 where e.document.Types.Contains(typeWebhookClient)
 			 let parseResult = CommonParsers.DefaultParsers.Parse(e.loaded, schemaRegistry)
 			 select new WebhookClientTransformerFactory(settings).Build(parseResult, e.options)).ToArray();
+		var modelsDiagnostics =
+			(from e in docs
+			 where e.document.Types.Contains(typeModels)
+			 select RegisterModels(e.loaded, CommonParsers.DefaultParsers.Parse(e.loaded, schemaRegistry), schemaRegistry)).ToArray();
 
 		var allSchemasOptions = LoadOptionsFromMetadata(additionalTextInfos);
 
@@ -82,6 +90,7 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 			.. mvcServerTransforms,
 			.. clientTransforms,
 			.. webhookTransforms,
+			.. modelsDiagnostics,
 			new CSharpSchemaSourceProvider(settings, allSchemasOptions),
 		]);
 
@@ -145,6 +154,27 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 		}
 
 		return result;
+	}
+
+	/// <summary>
+	/// Models output: parsing the document as OpenAPI gives its schemas the same names as in a server
+	/// document. Each named schema (<c>#/components/schemas/*</c>) is registered so that
+	/// <see cref="CSharpSchemaSourceProvider"/> generates it, even though no operation references it.
+	/// </summary>
+	private static DiagnosticOnlySourceProvider RegisterModels(IDocumentReference loaded, ParseResult<OpenApiDocument> parseResult, SchemaRegistry schemaRegistry)
+	{
+		if (parseResult.Result is { } document && loaded.RootNode?["components"]?["schemas"] is JsonObject schemas)
+		{
+			foreach (var name in schemas.Select(entry => entry.Key))
+			{
+				var id = new Uri(document.Id, "#/components/schemas/" + name.Replace("~", "~0").Replace("/", "~1"));
+				if (schemaRegistry.ResolveSchema(new NodeMetadata(id), document.Dialect) is { } schema)
+					schemaRegistry.EnsureSchemaRegistered(schema);
+			}
+			// Parsing only fixed up the nodes known at the time; complete the newly resolved schemas
+			return new DiagnosticOnlySourceProvider([.. parseResult.Diagnostics, .. schemaRegistry.RecursivelyFixupAll()]);
+		}
+		return new DiagnosticOnlySourceProvider(parseResult.Diagnostics);
 	}
 
 	private static Uri? GetProjectDirectory(IEnumerable<AdditionalTextInfo> additionalTextInfos)

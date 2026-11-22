@@ -11,6 +11,7 @@
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDGenerateMvcServer" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDGenerateClient" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDGenerateWebhookClient" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDGenerateModels" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDSchemaOptions" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="Configuration" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="Namespace" />
@@ -24,9 +25,11 @@
 		<AvailableItemName Include="OpenApiSchemaMvcServer" DisplayName="Open API Schema MVC Server (OpenApiCodeGen)" />
 		<AvailableItemName Include="OpenApiSchemaClient" DisplayName="Open API Schema Client (OpenApiCodeGen)" />
 		<AvailableItemName Include="OpenApiSchemaWebhookClient" DisplayName="Open API Schema Webhook Client (OpenApiCodeGen)" />
+		<AvailableItemName Include="OpenApiSchemaModels" DisplayName="Open API Schema Models only (OpenApiCodeGen)" />
 		<Watch Include="@(OpenApiSchemaClient)" />
 		<Watch Include="@(OpenApiSchemaWebhookClient)" />
 		<Watch Include="@(OpenApiSchemaMvcServer)" />
+		<Watch Include="@(OpenApiSchemaModels)" />
 		<Watch Include="@(JsonSchemaDocument)" />
 		<Watch Include="@(OpenApiSchemaOptions)" />
 	</ItemGroup>
@@ -63,6 +66,12 @@
 				<PathPrefix Condition="'%(AdditionalFiles.PathPrefix)' == ''">@(OpenApiSchemaWebhookClient->'%(PathPrefix)')</PathPrefix>
 				<Configuration Condition="'%(AdditionalFiles.Configuration)' == ''">@(OpenApiSchemaWebhookClient->'%(Configuration)')</Configuration>
 				<SchemaId Condition="'%(AdditionalFiles.SchemaId)' == ''">@(OpenApiSchemaWebhookClient->'%(SchemaId)')</SchemaId>
+
+				<DPDGenerateModels>@(OpenApiSchemaModels->'true')</DPDGenerateModels>
+				<Link Condition="'%(AdditionalFiles.Link)' == ''">@(OpenApiSchemaModels->'%(Link)')</Link>
+				<Namespace Condition="'%(AdditionalFiles.Namespace)' == ''">@(OpenApiSchemaModels->'%(Namespace)')</Namespace>
+				<Configuration Condition="'%(AdditionalFiles.Configuration)' == ''">@(OpenApiSchemaModels->'%(Configuration)')</Configuration>
+				<SchemaId Condition="'%(AdditionalFiles.SchemaId)' == ''">@(OpenApiSchemaModels->'%(SchemaId)')</SchemaId>
 
 				<DPDSchemaOptions>@(OpenApiSchemaOptions->'true')</DPDSchemaOptions>
 			</AdditionalFiles>

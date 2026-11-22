@@ -1,0 +1,23 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Models only
+  description: A document that only supplies shared schemas, generated with the Models output
+paths: {}
+components:
+  schemas:
+    Gadget:
+      type: object
+      required:
+        - id
+        - kind
+      properties:
+        id:
+          type: string
+        kind:
+          $ref: '#/components/schemas/GadgetKind'
+    GadgetKind:
+      type: string
+      enum:
+        - small
+        - large

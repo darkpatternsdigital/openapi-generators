@@ -19,6 +19,7 @@
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\csharp-name-override.yaml" Link="CSharpNameOverride\csharp-name-override.yaml" PathPrefix="/csharp-name-override" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\validation-min-max.yaml" Link="ValidationMinMax\validation-min-max.yaml" PathPrefix="/validation-min-max" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\validation-optional.yaml" Link="ValidationOptional\validation-optional.yaml" PathPrefix="/validation-optional" />
+    <OpenApiSchemaModels Include="$(SolutionRoot)schemas\models-only.yaml" Link="ModelsOnly\models-only.yaml" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\path-level-parameters.yaml" Link="PathLevelParameters\path-level-parameters.yaml" PathPrefix="/path-level-parameters" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\regex-escape.yaml" Link="RegexEscape\regex-escape.yaml" PathPrefix="/regex-escape" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\headers.yaml" Link="Headers\headers.yaml" PathPrefix="/headers" />

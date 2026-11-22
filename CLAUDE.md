@@ -64,6 +64,8 @@ Generators:
 
 Lib-level shared assemblies (Json.*, OpenApi.*) are versioned together; bump `SharedAnalyzerLibrariesVersion` in `Directory.Build.props` whenever any internal library changes.
 
+Consumers reference `OpenApiCodegen.Json.Extensions` themselves; the C# package doesn't depend on it. When C# templates start using a newer `Json.Extensions` API, raise `MinimumJsonExtensionsVersion` in `OpenApiCSharpGenerator.cs`, so older references get warning `DPDAPI002` instead of a compile error.
+
 ## Testing conventions
 
 - `schemas/` holds the shared OpenAPI fixtures used by every test suite. Adding a feature usually means adding a schema here and wiring it into the relevant consumers.

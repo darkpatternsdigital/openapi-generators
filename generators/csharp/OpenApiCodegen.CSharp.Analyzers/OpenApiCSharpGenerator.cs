@@ -26,12 +26,27 @@ public sealed class OpenApiCSharpGenerator() : BaseGenerator("DarkPatterns.OpenA
 																								DiagnosticSeverity.Warning,
 																								isEnabledByDefault: true);
 
+	// Generated code uses Json.Extensions APIs added in this version. Raise it whenever templates
+	// start using newer Json.Extensions APIs.
+	private static readonly Version MinimumJsonExtensionsVersion = new Version(0, 19, 0, 0);
+	private static readonly DiagnosticDescriptor UpdateDependentDll = new DiagnosticDescriptor(id: "DPDAPI002",
+																								title: "Update the reference to DarkPatterns.OpenApiCodegen.Json.Extensions",
+																								messageFormat: "Generated code requires DarkPatterns.OpenApiCodegen.Json.Extensions {0} or later, but version {1} is referenced",
+																								category: "DarkPatterns.OpenApiCodegen.CSharp",
+																								DiagnosticSeverity.Warning,
+																								isEnabledByDefault: true);
+
 	protected override void ReportCompilationDiagnostics(Compilation compilation, CompilerApis apis)
 	{
 		// check that the users compilation references the expected library
-		if (!compilation.ReferencedAssemblyNames.Any(static ai => ai.Name.Equals("DarkPatterns.OpenApiCodegen.Json.Extensions", StringComparison.OrdinalIgnoreCase)))
+		var jsonExtensions = compilation.ReferencedAssemblyNames.FirstOrDefault(static ai => ai.Name.Equals("DarkPatterns.OpenApiCodegen.Json.Extensions", StringComparison.OrdinalIgnoreCase));
+		if (jsonExtensions == null)
 		{
 			apis.ReportDiagnostic(Diagnostic.Create(IncludeDependentDll, Location.None));
+		}
+		else if (jsonExtensions.Version < MinimumJsonExtensionsVersion)
+		{
+			apis.ReportDiagnostic(Diagnostic.Create(UpdateDependentDll, Location.None, MinimumJsonExtensionsVersion.ToString(3), jsonExtensions.Version.ToString(3)));
 		}
 	}
 

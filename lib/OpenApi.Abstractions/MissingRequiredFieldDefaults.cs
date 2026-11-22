@@ -42,6 +42,7 @@ public static class MissingRequiredFieldDefaults
 		Id,
 		Summary: null,
 		Description: null,
+		Parameters: [],
 		Operations: new Dictionary<string, OpenApiOperation>(),
 		Extensions: new Dictionary<string, JsonNode?>()
 	);

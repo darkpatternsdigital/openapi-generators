@@ -284,10 +284,10 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 		return new OpenApiMediaTypeObject(key.Id, Schema: schema);
 	}
 
-	private OpenApiOperation ConstructOperation(ResolvableNode key) =>
-		CatchDiagnostic(InternalConstructOperation, MissingRequiredFieldDefaults.ConstructPlaceholderOperation)(key);
+	private OpenApiOperation ConstructOperation(ResolvableNode key, IReadOnlyList<OpenApiParameter> pathParameters) =>
+		CatchDiagnostic((ResolvableNode k) => InternalConstructOperation(k, pathParameters), MissingRequiredFieldDefaults.ConstructPlaceholderOperation)(key);
 	// https://spec.openapis.org/oas/v3.0.0#operationObject
-	private OpenApiOperation InternalConstructOperation(ResolvableNode key)
+	private OpenApiOperation InternalConstructOperation(ResolvableNode key, IReadOnlyList<OpenApiParameter> pathParameters)
 	{
 		if (key.Node is not JsonObject obj) throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiOperation)));
 		return new OpenApiOperation(key.Id,
@@ -295,7 +295,7 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 			Summary: obj["summary"]?.GetValue<string>(),
 			Description: obj["description"]?.GetValue<string>(),
 			OperationId: obj["operationId"]?.GetValue<string>(),
-			Parameters: ReadArray(key.Navigate("parameters"), ConstructParameter),
+			Parameters: OpenApiPath.MergeParameters(pathParameters, ReadArray(key.Navigate("parameters"), ConstructParameter)),
 			SecurityRequirements: ReadArray(key.Navigate("security"), ConstructSecurityRequirement),
 			RequestBody: ConstructRequestBody(key.Navigate("requestBody")),
 			Responses: ConstructResponses(key.Navigate("responses")),
@@ -408,10 +408,12 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 	private OpenApiPath InternalConstructPath(ResolvableNode key)
 	{
 		if (key.Node is not JsonObject obj) throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiPath)));
+		var parameters = ReadArray(key.Navigate("parameters"), ConstructParameter);
 		return new OpenApiPath(key.Id,
 			Summary: obj["summary"]?.GetValue<string>(),
 			Description: obj["description"]?.GetValue<string>(),
-			Operations: ReadDictionary(key, validMethods.Contains, toKeyValuePair: (method, key) => (Key: method, Value: ConstructOperation(key))),
+			Parameters: parameters,
+			Operations: ReadDictionary(key, validMethods.Contains, toKeyValuePair: (method, key) => (Key: method, Value: ConstructOperation(key, parameters))),
 			Extensions: GetExtensions(obj)
 		);
 	}

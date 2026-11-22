@@ -107,6 +107,15 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 	}
 
 	[Fact]
+	public async Task IncludePathLevelParameters()
+	{
+		var actualMessage = await GetRequestMessage("path-level-parameters.yaml", @"DeleteWidget(widgetId: ""w-1"", verbose: true, reason: Optional.Create(""old""))");
+
+		Assert.Equal("DELETE", actualMessage.Method.Method);
+		Assert.Equal("widgets/w-1?verbose=True&reason=old", actualMessage.RequestUri?.OriginalString);
+	}
+
+	[Fact]
 	public async Task HandleInlineObjects()
 	{
 		var actualMessage = await GetRequestMessage("no-refs.yaml", @"LookupRecord(lookupRecordBody: new(FormattedAddress: ""123 Main St, Richardson, TX 75081"", Location: new (Latitude: 32.9494998, Longitude: -96.7331253)))");

@@ -1,0 +1,24 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Shared models consumer
+  description: A server document that references schemas from a shared part document
+paths:
+  /widgets/{id}:
+    get:
+      operationId: getWidget
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The widget
+          content:
+            application/json:
+              schema:
+                $ref: 'compat-parts/Widgets.yaml#/components/schemas/Widget'
+        '404':
+          description: Not found

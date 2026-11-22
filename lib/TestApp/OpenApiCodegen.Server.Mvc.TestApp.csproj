@@ -34,7 +34,31 @@
     <JsonSchemaDocument Include="$(SolutionRoot)schemas\multi-file-ref-types.yaml" Link="MultiFileRef\Types\multi-file-ref-types.yaml" SchemaId="proj://darkpatterns-openapi/multi-file-ref-types.yaml" />
     <JsonSchemaDocument Include="$(SolutionRoot)schemas\multi-file-ref-responses.yaml" Link="MultiFileRef\Responses\multi-file-ref-responses.yaml" SchemaId="proj://darkpatterns-openapi/multi-file-ref-responses.yaml" />
     <JsonSchemaDocument Include="$(SolutionRoot)schemas\multi-file-ref-endpoints.yaml" Link="MultiFileRef\Endpoints\multi-file-ref-endpoints.yaml" SchemaId="proj://darkpatterns-openapi/multi-file-ref-endpoints.yaml" />
-    <OpenApiSchemaOptions Include="security.yaml" />
+    <OpenApiSchemaOptions Include="security.yaml" Link="Options\security.yaml" />
+  </ItemGroup>
+
+  <!--
+    Compatibility fixtures: configuration patterns used by real-world projects (planning #11).
+    Each one uses schema files not registered above, because the props merge metadata per file.
+    Their output is snapshotted by TestApp.Test/GeneratedCodeShould.
+  -->
+  <ItemGroup>
+    <!-- Namespace derived from Link only, where the Link also renames the file -->
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\petstore.yaml" Link="Compat\LinkRename\pets.yaml" PathPrefix="/compat/link-rename" />
+    <!-- Glob items with a namespace per file -->
+    <OpenApiSchemaClient Include="$(SolutionRoot)schemas\tr*.yaml;$(SolutionRoot)schemas\arr*.yaml" Namespace="$(RootNamespace).Compat.Glob.%(Filename)" Visible="false" />
+    <!-- The same file as both Client and MvcServer, with the same Link -->
+    <OpenApiSchemaClient Include="$(SolutionRoot)schemas\no-refs.yaml" Link="Compat\ClientAndServer\no-refs.yaml" />
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\no-refs.yaml" Link="Compat\ClientAndServer\no-refs.yaml" PathPrefix="/compat/client-and-server" />
+    <!-- Per-item Configuration alongside the project-wide OpenApiSchemaOptions (which has a cosmetic Link) -->
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\dictionary-ref.yaml" Link="Compat\Configured\dictionary-ref.yaml" PathPrefix="/compat/configured" Configuration="$(MSBuildThisFileDirectory)compat-options.yaml" />
+    <!-- Shared "part" document registered as MvcServer with a dummy PathPrefix, to get model names (workaround for planning #9) -->
+    <CompatPartialSchema Include="..\..\schemas\compat-parts\*.yaml" Namespace="$(RootNamespace).Compat.Parts.%(Filename)" PathPrefix="/compat/parts" />
+    <OpenApiSchemaMvcServer Include="@(CompatPartialSchema)" Visible="false" PathPrefix="/_Incorrect" />
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\compat-part-consumer.yaml" Link="Compat\Parts\compat-part-consumer.yaml" PathPrefix="/compat/parts" />
+  </ItemGroup>
+
+  <ItemGroup>
 
 
     <Compile Remove="generated/**/*" />

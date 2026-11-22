@@ -1,0 +1,22 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Shared models part
+  description: A document that only supplies shared schemas to other documents
+paths: {}
+components:
+  schemas:
+    Widget:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+        size:
+          $ref: '#/components/schemas/WidgetSize'
+    WidgetSize:
+      type: string
+      enum:
+        - small
+        - large

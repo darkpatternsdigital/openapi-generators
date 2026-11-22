@@ -68,6 +68,8 @@ Lib-level shared assemblies (Json.*, OpenApi.*) are versioned together; bump `Sh
 
 - `schemas/` holds the shared OpenAPI fixtures used by every test suite. Adding a feature usually means adding a schema here and wiring it into the relevant consumers.
 - `lib/TestApp` is a real ASP.NET app that consumes the source generator (referenced as an analyzer) on many schemas; `lib/TestApp.Test` exercises it over HTTP. Generated files are emitted to `lib/TestApp/generated/` for inspection. `lib/TestApp.Bad` covers schemas that should produce diagnostics.
+- `lib/TestApp.Test/GeneratedCodeShould` snapshots everything in `lib/TestApp/generated/` with [Verify](https://github.com/VerifyTests/Verify), replacing the repo path and generator version with placeholders. Any change to generated output fails it and leaves `*.received.cs` files next to the `*.verified.cs` snapshots. Review the diff, then rename the received files to `.verified.cs`. `generated/` isn't cleaned automatically, so delete it before rebuilding if outputs were removed or renamed.
+- The "Compatibility fixtures" item group in `lib/TestApp`'s csproj recreates MSBuild configuration patterns from real-world projects. Expect their snapshots to change only when a change is meant to affect existing users.
 - `lib/OpenApiCodegen.Server.Mvc.Test/ComprehensiveTransformsShould` generates and dynamically compiles each schema; add new schemas to its `InlineData` list when they're added to the TestApp.
 - `lib/OpenApiCodegen.Client.TypeScript.Test` generates TS and runs it in `testing/` via node.
 - `generators/SourceGenerators.Test` checks diagnostics reported by the Roslyn generator.

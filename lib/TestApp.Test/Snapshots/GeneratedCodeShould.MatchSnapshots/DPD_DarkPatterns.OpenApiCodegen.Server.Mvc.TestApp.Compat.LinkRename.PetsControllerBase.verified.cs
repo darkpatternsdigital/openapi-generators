@@ -45,6 +45,13 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename
         {
             public readonly global::Microsoft.AspNetCore.Mvc.IActionResult ActionResult;
 
+            /// <summary>The result before the response headers are added: an ObjectResult, a StatusCodeResult, or the result passed to Unsafe</summary>
+            public global::Microsoft.AspNetCore.Mvc.IActionResult UnderlyingResult => (ActionResult as HeaderActionResult)?.Original;
+
+            /// <summary>The response headers this result adds</summary>
+            public global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<string, string>> Headers =>
+                (ActionResult as HeaderActionResult)?.Headers ?? global::System.Linq.Enumerable.Empty<global::System.Collections.Generic.KeyValuePair<string, string>>();
+
             private class HeaderActionResult : global::Microsoft.AspNetCore.Mvc.IActionResult
             {
                 private readonly global::Microsoft.AspNetCore.Mvc.IActionResult original;
@@ -55,6 +62,9 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename
                     this.original = original;
                     this.headers = headers;
                 }
+
+                public global::Microsoft.AspNetCore.Mvc.IActionResult Original => original;
+                public global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<string, string>> Headers => headers;
 
                 public global::System.Threading.Tasks.Task ExecuteResultAsync(global::Microsoft.AspNetCore.Mvc.ActionContext context)
                 {
@@ -123,6 +133,13 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename
         {
             public readonly global::Microsoft.AspNetCore.Mvc.IActionResult ActionResult;
 
+            /// <summary>The result before the response headers are added: an ObjectResult, a StatusCodeResult, or the result passed to Unsafe</summary>
+            public global::Microsoft.AspNetCore.Mvc.IActionResult UnderlyingResult => (ActionResult as HeaderActionResult)?.Original;
+
+            /// <summary>The response headers this result adds</summary>
+            public global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<string, string>> Headers =>
+                (ActionResult as HeaderActionResult)?.Headers ?? global::System.Linq.Enumerable.Empty<global::System.Collections.Generic.KeyValuePair<string, string>>();
+
             private class HeaderActionResult : global::Microsoft.AspNetCore.Mvc.IActionResult
             {
                 private readonly global::Microsoft.AspNetCore.Mvc.IActionResult original;
@@ -133,6 +150,9 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename
                     this.original = original;
                     this.headers = headers;
                 }
+
+                public global::Microsoft.AspNetCore.Mvc.IActionResult Original => original;
+                public global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<string, string>> Headers => headers;
 
                 public global::System.Threading.Tasks.Task ExecuteResultAsync(global::Microsoft.AspNetCore.Mvc.ActionContext context)
                 {
@@ -200,6 +220,13 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename
         {
             public readonly global::Microsoft.AspNetCore.Mvc.IActionResult ActionResult;
 
+            /// <summary>The result before the response headers are added: an ObjectResult, a StatusCodeResult, or the result passed to Unsafe</summary>
+            public global::Microsoft.AspNetCore.Mvc.IActionResult UnderlyingResult => (ActionResult as HeaderActionResult)?.Original;
+
+            /// <summary>The response headers this result adds</summary>
+            public global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<string, string>> Headers =>
+                (ActionResult as HeaderActionResult)?.Headers ?? global::System.Linq.Enumerable.Empty<global::System.Collections.Generic.KeyValuePair<string, string>>();
+
             private class HeaderActionResult : global::Microsoft.AspNetCore.Mvc.IActionResult
             {
                 private readonly global::Microsoft.AspNetCore.Mvc.IActionResult original;
@@ -210,6 +237,9 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename
                     this.original = original;
                     this.headers = headers;
                 }
+
+                public global::Microsoft.AspNetCore.Mvc.IActionResult Original => original;
+                public global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<string, string>> Headers => headers;
 
                 public global::System.Threading.Tasks.Task ExecuteResultAsync(global::Microsoft.AspNetCore.Mvc.ActionContext context)
                 {
@@ -277,6 +307,13 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename
         {
             public readonly global::Microsoft.AspNetCore.Mvc.IActionResult ActionResult;
 
+            /// <summary>The result before the response headers are added: an ObjectResult, a StatusCodeResult, or the result passed to Unsafe</summary>
+            public global::Microsoft.AspNetCore.Mvc.IActionResult UnderlyingResult => (ActionResult as HeaderActionResult)?.Original;
+
+            /// <summary>The response headers this result adds</summary>
+            public global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<string, string>> Headers =>
+                (ActionResult as HeaderActionResult)?.Headers ?? global::System.Linq.Enumerable.Empty<global::System.Collections.Generic.KeyValuePair<string, string>>();
+
             private class HeaderActionResult : global::Microsoft.AspNetCore.Mvc.IActionResult
             {
                 private readonly global::Microsoft.AspNetCore.Mvc.IActionResult original;
@@ -287,6 +324,9 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename
                     this.original = original;
                     this.headers = headers;
                 }
+
+                public global::Microsoft.AspNetCore.Mvc.IActionResult Original => original;
+                public global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<string, string>> Headers => headers;
 
                 public global::System.Threading.Tasks.Task ExecuteResultAsync(global::Microsoft.AspNetCore.Mvc.ActionContext context)
                 {

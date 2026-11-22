@@ -13,7 +13,7 @@ using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.OpenApiCodegen.CSharp.Client;
 
-class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions options, string controllerClassName) : OpenApiDocumentVisitor<OperationVisitor.Argument>
+class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions options, string controllerClassName, Func<Uri, string> toSourceReference) : OpenApiDocumentVisitor<OperationVisitor.Argument>
 {
 	private readonly CSharpInlineSchemas inlineSchemas = new(options, schemaRegistry.DocumentRegistry);
 
@@ -87,7 +87,8 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 					 DefaultResponse: builder.DefaultResponse,
 					 StatusResponse: new(builder.StatusResponses)
 				 ),
-				 SecurityRequirements: builder.SecurityRequirements.ToArray()
+				 SecurityRequirements: builder.SecurityRequirements.ToArray(),
+				 SourceReference: toSourceReference(operation.Id)
 			 ));
 		}
 	}

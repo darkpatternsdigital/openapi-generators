@@ -18,6 +18,7 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 		private const string formMimeType = "application/x-www-form-urlencoded";
 		private readonly TypeScriptInlineSchemas inlineSchemas;
 		private readonly TypeScriptSchemaOptions options;
+		private readonly Func<Uri, string> toSourceReference;
 
 		public record Argument(
 			OpenApiTransformDiagnostic Diagnostic,
@@ -41,10 +42,11 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 			public OpenApiOperation Operation { get; }
 		}
 
-		public OperationBuilderVisitor(DocumentRegistry registry, TypeScriptSchemaOptions options)
+		public OperationBuilderVisitor(DocumentRegistry registry, TypeScriptSchemaOptions options, Func<Uri, string> toSourceReference)
 		{
 			this.inlineSchemas = new TypeScriptInlineSchemas(options, registry);
 			this.options = options;
+			this.toSourceReference = toSourceReference;
 		}
 
 		public override void Visit(OpenApiPath path, Argument argument)
@@ -108,7 +110,8 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 						StatusResponse: new(builder.StatusResponses)
 					),
 					SecurityRequirements: builder.SecurityRequirements.ToArray(),
-					HasQueryParams: operation.Parameters.Any(p => p.In == ParameterLocation.Query)
+					HasQueryParams: operation.Parameters.Any(p => p.In == ParameterLocation.Query),
+					SourceReference: toSourceReference(operation.Id)
 				));
 
 			IEnumerable<JsonSchema> GetSchemas()

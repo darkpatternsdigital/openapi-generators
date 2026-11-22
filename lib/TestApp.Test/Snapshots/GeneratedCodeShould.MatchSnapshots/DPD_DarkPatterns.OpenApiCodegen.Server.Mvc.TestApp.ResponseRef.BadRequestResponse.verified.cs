@@ -9,7 +9,7 @@
 #nullable enable
 #nullable disable warnings
 
-// Generated from schema: {RepoRoot}/schemas/response-ref.yaml#/components/responses/BadRequest/content/application~1json/schema
+// Generated from schema: ../../schemas/response-ref.yaml#/components/responses/BadRequest/content/application~1json/schema
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ResponseRef
 {
     public partial record BadRequestResponse(

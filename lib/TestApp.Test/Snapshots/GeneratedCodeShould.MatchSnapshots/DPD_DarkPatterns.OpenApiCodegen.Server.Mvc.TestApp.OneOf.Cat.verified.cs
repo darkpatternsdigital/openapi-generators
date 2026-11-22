@@ -7,7 +7,7 @@
 #nullable enable
 #nullable disable warnings
 
-// Generated from schema: {RepoRoot}/schemas/one-of.yaml#/components/schemas/Cat
+// Generated from schema: ../../schemas/one-of.yaml#/components/schemas/Cat
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf
 {
     public partial record Cat(

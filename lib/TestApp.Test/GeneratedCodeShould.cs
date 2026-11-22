@@ -29,19 +29,13 @@ public partial class GeneratedCodeShould
 
 		return Verifier.VerifyDirectory(generatorOutput)
 			.UseDirectory("Snapshots")
-			.AddScrubber(ScrubMachineSpecifics);
+			.AddScrubber(ScrubGeneratorVersion);
 	}
 
-	private static void ScrubMachineSpecifics(StringBuilder text)
+	// The generator version changes with every release
+	private static void ScrubGeneratorVersion(StringBuilder text)
 	{
-		// Schemas without a SchemaId are identified by their absolute file URI. Named schemas use
-		// `file:///C:/...` but inline schemas currently use `file://C:/...`, and Linux paths differ,
-		// so match any number of slashes.
-		var repoRootPath = new Uri(RepoRoot + Path.DirectorySeparatorChar).AbsolutePath.TrimStart('/');
-		var repoRootUri = new Regex("file:/*" + Regex.Escape(repoRootPath), RegexOptions.IgnoreCase);
-		var result = repoRootUri.Replace(text.ToString(), "{RepoRoot}/");
-		// The generator version changes with every release
-		result = GeneratorVersion().Replace(result, " v{Version})");
+		var result = GeneratorVersion().Replace(text.ToString(), " v{Version})");
 		text.Clear().Append(result);
 	}
 

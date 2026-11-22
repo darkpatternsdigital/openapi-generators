@@ -31,7 +31,7 @@ public static class CSharpHandlebarsCommon
 	public static string ProcessModel(
 		PartialHeader header,
 		string packageName,
-		Uri schemaId,
+		string sourceSchemaId,
 		Model model,
 		IHandlebars? handlebars = null
 	)
@@ -53,7 +53,7 @@ public static class CSharpHandlebarsCommon
 		IDictionary<string, object?> ToTemplate<TModel>(TModel m)
 			where TModel : Model
 		{
-			return BaseProcess.ToDictionary<ModelTemplate<TModel>>(new(Header: header, PackageName: packageName, SourceSchemaId: schemaId.OriginalString, Model: m));
+			return BaseProcess.ToDictionary<ModelTemplate<TModel>>(new(Header: header, PackageName: packageName, SourceSchemaId: sourceSchemaId, Model: m));
 		}
 	}
 }

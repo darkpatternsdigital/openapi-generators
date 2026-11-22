@@ -25,6 +25,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename
         /// </remarks>
         /// <param name="tags">tags to filter by</param>
         /// <param name="limit">maximum number of results to return</param>
+        // Generated from operation: ../../schemas/petstore.yaml#/paths/~1pets/get
         [global::Microsoft.AspNetCore.Mvc.HttpGet]
         [global::Microsoft.AspNetCore.Mvc.Route("/compat/link-rename/pets")]
         // unexpected error
@@ -114,6 +115,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename
         /// Creates a new pet in the store. Duplicates are allowed
         /// </remarks>
         /// <param name="addPetBody"></param>
+        // Generated from operation: ../../schemas/petstore.yaml#/paths/~1pets/post
         [global::Microsoft.AspNetCore.Mvc.HttpPost]
         [global::Microsoft.AspNetCore.Mvc.Route("/compat/link-rename/pets")]
         [global::Microsoft.AspNetCore.Mvc.Consumes("application/json")]
@@ -202,6 +204,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename
         /// Returns a user based on a single ID, if the user does not have access to the pet
         /// </remarks>
         /// <param name="id">ID of pet to fetch</param>
+        // Generated from operation: ../../schemas/petstore.yaml#/paths/~1pets~1{id}/get
         [global::Microsoft.AspNetCore.Mvc.HttpGet]
         [global::Microsoft.AspNetCore.Mvc.Route("/compat/link-rename/pets/{id}")]
         // unexpected error
@@ -289,6 +292,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename
         /// deletes a single pet based on the ID supplied
         /// </remarks>
         /// <param name="id">ID of pet to delete</param>
+        // Generated from operation: ../../schemas/petstore.yaml#/paths/~1pets~1{id}/delete
         [global::Microsoft.AspNetCore.Mvc.HttpDelete]
         [global::Microsoft.AspNetCore.Mvc.Route("/compat/link-rename/pets/{id}")]
         // unexpected error

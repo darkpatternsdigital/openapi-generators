@@ -9,7 +9,7 @@
 #nullable enable
 #nullable disable warnings
 
-// Generated from schema: {RepoRoot}/schemas/csharp-name-override.yaml#/components/schemas/Node
+// Generated from schema: ../../schemas/csharp-name-override.yaml#/components/schemas/Node
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.CSharpNameOverride
 {
     public partial record TreeNode(

@@ -15,6 +15,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.Configured
     {
         
         /// <param name="lookupRecordBody"></param>
+        // Generated from operation: ../../schemas/dictionary-ref.yaml#/paths/~1address/post
         [global::Microsoft.AspNetCore.Mvc.HttpPost]
         [global::Microsoft.AspNetCore.Mvc.Route("/compat/configured/address")]
         [global::Microsoft.AspNetCore.Mvc.Consumes("application/json")]

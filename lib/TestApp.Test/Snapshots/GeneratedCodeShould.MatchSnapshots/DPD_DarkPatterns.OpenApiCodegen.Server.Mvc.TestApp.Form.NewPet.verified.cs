@@ -9,7 +9,7 @@
 #nullable enable
 #nullable disable warnings
 
-// Generated from schema: {RepoRoot}/schemas/form.yaml#/components/schemas/NewPet
+// Generated from schema: ../../schemas/form.yaml#/components/schemas/NewPet
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Form
 {
     public partial record NewPet(

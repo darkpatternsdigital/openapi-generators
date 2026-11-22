@@ -14,6 +14,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.Glob.array
     public static class Operations
     {
         
+        // Generated from operation: ../../schemas/array.yaml#/paths/~1colors/post
         public static async global::System.Threading.Tasks.Task<GetColorsReturnType> GetColors(
             this global::System.Net.Http.HttpMessageInvoker client,
                         global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken)
@@ -71,6 +72,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.Glob.array
             
         }
 
+        // Generated from operation: ../../schemas/array.yaml#/paths/~1palette/post
         public static async global::System.Threading.Tasks.Task<GetPalettesReturnType> GetPalettes(
             this global::System.Net.Http.HttpMessageInvoker client,
                         global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken)

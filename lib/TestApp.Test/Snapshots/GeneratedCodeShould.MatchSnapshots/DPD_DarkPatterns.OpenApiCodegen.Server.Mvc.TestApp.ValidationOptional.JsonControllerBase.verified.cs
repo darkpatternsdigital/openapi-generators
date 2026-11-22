@@ -15,6 +15,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ValidationOptional
     {
         
         /// <param name="postJsonBody"></param>
+        // Generated from operation: ../../schemas/validation-optional.yaml#/paths/~1json/post
         [global::Microsoft.AspNetCore.Mvc.HttpPost]
         [global::Microsoft.AspNetCore.Mvc.Route("/validation-optional/json")]
         [global::Microsoft.AspNetCore.Mvc.Consumes("application/json")]

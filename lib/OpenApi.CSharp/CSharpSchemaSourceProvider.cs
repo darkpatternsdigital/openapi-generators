@@ -38,7 +38,7 @@ public class CSharpSchemaSourceProvider(
 		var sourceText = CSharpHandlebarsCommon.ProcessModel(
 			header: settings.Header(info.EffectiveSchema.Metadata.Id),
 			packageName: targetNamespace,
-			schemaId: entry.Metadata.Id,
+			sourceSchemaId: settings.ToSourceReference(entry.Metadata.Id),
 			model: model,
 			handlebarsFactory.Handlebars
 		);

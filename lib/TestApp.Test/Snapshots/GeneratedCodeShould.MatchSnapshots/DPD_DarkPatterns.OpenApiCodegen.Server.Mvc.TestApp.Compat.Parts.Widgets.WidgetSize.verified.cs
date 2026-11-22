@@ -9,7 +9,7 @@
 #nullable disable warnings
 #pragma warning disable
 
-// Generated from schema: {RepoRoot}/schemas/compat-parts/Widgets.yaml#/components/schemas/WidgetSize
+// Generated from schema: ../../schemas/compat-parts/Widgets.yaml#/components/schemas/WidgetSize
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.Parts.Widgets
 { 
     [global::System.Text.Json.Serialization.JsonConverter(typeof(global::DarkPatterns.OpenApiCodegen.Json.Extensions.JsonStringEnumPropertyNameConverter))]

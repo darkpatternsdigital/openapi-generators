@@ -17,6 +17,7 @@ namespace {{PackageName}}
         /// "}}
         /// </remarks>{{/if}}{{#each RequestBody.AllParams}}
         /// <param name="{{ParamName}}">{{Description}}</param>{{/each}}
+        // Generated from operation: {{{Operation.SourceReference}}}
         public static async global::System.Threading.Tasks.Task<{{Operation.Name}}ReturnType> {{Operation.Name}}(
             this global::System.Net.Http.HttpMessageInvoker client,
             global::System.Uri uri,

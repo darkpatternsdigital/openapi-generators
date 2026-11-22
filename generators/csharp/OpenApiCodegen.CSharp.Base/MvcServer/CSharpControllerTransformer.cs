@@ -20,7 +20,7 @@ public class CSharpControllerTransformer(TransformSettings settings, OpenApiDocu
 		var className = CSharpNaming.ToClassName(groupName + " base", options.ReservedIdentifiers());
 
 		var resultOperations = new List<ControllerOperation>();
-		var visitor = new ControllerOperationVisitor(settings.SchemaRegistry, options, controllerClassName: className);
+		var visitor = new ControllerOperationVisitor(settings.SchemaRegistry, options, controllerClassName: className, toSourceReference: settings.ToSourceReference);
 		foreach (var (operation, method, path) in operations)
 		{
 			try

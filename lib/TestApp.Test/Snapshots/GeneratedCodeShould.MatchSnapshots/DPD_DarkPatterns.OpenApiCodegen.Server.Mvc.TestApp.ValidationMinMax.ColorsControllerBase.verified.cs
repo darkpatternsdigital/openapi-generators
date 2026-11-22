@@ -15,6 +15,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ValidationMinMax
     {
         
         /// <param name="id">id of the color to retrieve</param>
+        // Generated from operation: ../../schemas/validation-min-max.yaml#/paths/~1colors/get
         [global::Microsoft.AspNetCore.Mvc.HttpGet]
         [global::Microsoft.AspNetCore.Mvc.Route("/validation-min-max/colors")]
         // Adds one or more colors

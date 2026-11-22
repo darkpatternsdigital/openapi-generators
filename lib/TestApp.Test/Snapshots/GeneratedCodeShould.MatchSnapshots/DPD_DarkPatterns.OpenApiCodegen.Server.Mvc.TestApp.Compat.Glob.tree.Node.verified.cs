@@ -9,7 +9,7 @@
 #nullable enable
 #nullable disable warnings
 
-// Generated from schema: {RepoRoot}/schemas/tree.yaml#/components/schemas/Node
+// Generated from schema: ../../schemas/tree.yaml#/components/schemas/Node
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.Glob.tree
 {
     public partial record Node(

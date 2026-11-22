@@ -16,6 +16,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Enum
         
         /// <param name="player1"></param>
         /// <param name="player2"></param>
+        // Generated from operation: ../../schemas/enum.yaml#/paths/~1rock-paper-scissors-query/get
         [global::Microsoft.AspNetCore.Mvc.HttpGet]
         [global::Microsoft.AspNetCore.Mvc.Route("/enum/rock-paper-scissors-query")]
         // One player won

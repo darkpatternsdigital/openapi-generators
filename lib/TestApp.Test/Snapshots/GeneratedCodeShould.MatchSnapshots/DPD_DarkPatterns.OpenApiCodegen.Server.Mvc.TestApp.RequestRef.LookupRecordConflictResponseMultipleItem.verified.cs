@@ -9,7 +9,7 @@
 #nullable enable
 #nullable disable warnings
 
-// Generated from schema: {RepoRoot}/schemas/request-ref.yaml#/paths/~1address/post/responses/409/content/application~1json/schema/properties/multiple/items
+// Generated from schema: ../../schemas/request-ref.yaml#/paths/~1address/post/responses/409/content/application~1json/schema/properties/multiple/items
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.RequestRef
 {
     public partial record LookupRecordConflictResponseMultipleItem(

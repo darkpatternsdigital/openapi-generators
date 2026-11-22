@@ -13,6 +13,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Annotations
     {
         
         /// <param name="addDogBody"></param>
+        // Generated from operation: ../../schemas/annotations.yaml#/paths/~1dog/post
         [global::Microsoft.AspNetCore.Mvc.HttpPost]
         [global::Microsoft.AspNetCore.Mvc.Route("/annotations/dog")]
         [global::Microsoft.AspNetCore.Mvc.Consumes("application/json")]

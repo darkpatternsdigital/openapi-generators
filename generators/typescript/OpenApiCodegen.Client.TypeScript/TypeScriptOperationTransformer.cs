@@ -49,7 +49,7 @@ public class TypeScriptOperationTransformer(
 	private Templates.Operation ToOperation(OpenApiPath path, string httpMethod, OpenApiOperation operation, OpenApiTransformDiagnostic diagnostic)
 	{
 		var builder = new OperationBuilderVisitor.OperationBuilder(operation);
-		var visitor = new OperationBuilderVisitor(settings.SchemaRegistry.DocumentRegistry, options);
+		var visitor = new OperationBuilderVisitor(settings.SchemaRegistry.DocumentRegistry, options, settings.ToSourceReference);
 		visitor.Visit(operation, httpMethod, new OperationBuilderVisitor.Argument(diagnostic, builder, path));
 
 		return visitor.ToOperationTemplate(operation, httpMethod.ToUpper(), path.GetLastContextPart(), builder);

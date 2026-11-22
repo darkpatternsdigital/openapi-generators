@@ -7,7 +7,7 @@
 #nullable enable
 #nullable disable warnings
 
-// Generated from schema: {RepoRoot}/schemas/all-of.yaml#/components/schemas/ContactWithId
+// Generated from schema: ../../schemas/all-of.yaml#/components/schemas/ContactWithId
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.AllOf
 {
     public partial record ContactWithId(

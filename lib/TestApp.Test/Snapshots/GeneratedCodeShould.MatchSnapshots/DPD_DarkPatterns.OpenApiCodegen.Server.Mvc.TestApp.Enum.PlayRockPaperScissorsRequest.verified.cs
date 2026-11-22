@@ -9,7 +9,7 @@
 #nullable enable
 #nullable disable warnings
 
-// Generated from schema: {RepoRoot}/schemas/enum.yaml#/paths/~1rock-paper-scissors/post/requestBody/content/application~1json/schema
+// Generated from schema: ../../schemas/enum.yaml#/paths/~1rock-paper-scissors/post/requestBody/content/application~1json/schema
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Enum
 {
     public partial record PlayRockPaperScissorsRequest(

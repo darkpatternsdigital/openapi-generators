@@ -15,6 +15,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.NullableVsOptional
     {
         
         /// <param name="searchBody"></param>
+        // Generated from operation: ../../schemas/nullable-vs-optional.yaml#/paths/~1search/post
         [global::Microsoft.AspNetCore.Mvc.HttpPost]
         [global::Microsoft.AspNetCore.Mvc.Route("/nullable-vs-optional/search")]
         [global::Microsoft.AspNetCore.Mvc.Consumes("application/json")]

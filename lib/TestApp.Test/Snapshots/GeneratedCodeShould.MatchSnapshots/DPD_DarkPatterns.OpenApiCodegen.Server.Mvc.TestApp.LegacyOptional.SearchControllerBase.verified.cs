@@ -15,6 +15,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.LegacyOptional
     {
         
         /// <param name="searchBody"></param>
+        // Generated from operation: ../../schemas/nullable-vs-optional-legacy.yaml#/paths/~1search/post
         [global::Microsoft.AspNetCore.Mvc.HttpPost]
         [global::Microsoft.AspNetCore.Mvc.Route("/nullable-vs-optional-legacy/search")]
         [global::Microsoft.AspNetCore.Mvc.Consumes("application/json")]

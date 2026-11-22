@@ -9,7 +9,7 @@
 #nullable enable
 #nullable disable warnings
 
-// Generated from schema: {RepoRoot}/schemas/nullable-vs-optional.yaml#/paths/~1search/post/requestBody/content/application~1json/schema
+// Generated from schema: ../../schemas/nullable-vs-optional.yaml#/paths/~1search/post/requestBody/content/application~1json/schema
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.NullableVsOptional
 {
     public partial record SearchRequest(

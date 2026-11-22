@@ -20,6 +20,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Form
         /// <param name="name"></param>
         /// <param name="tag"></param>
         /// <param name="hasIdTag"></param>
+        // Generated from operation: ../../schemas/form.yaml#/paths/~1basic/post
         [global::Microsoft.AspNetCore.Mvc.HttpPost]
         [global::Microsoft.AspNetCore.Mvc.Route("/form/basic")]
         [global::Microsoft.AspNetCore.Mvc.Consumes("application/x-www-form-urlencoded")]

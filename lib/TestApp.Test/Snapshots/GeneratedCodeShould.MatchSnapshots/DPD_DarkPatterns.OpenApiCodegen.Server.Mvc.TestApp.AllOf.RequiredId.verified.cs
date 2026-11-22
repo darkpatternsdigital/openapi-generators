@@ -7,7 +7,7 @@
 #nullable enable
 #nullable disable warnings
 
-// Generated from schema: {RepoRoot}/schemas/all-of.yaml#/components/schemas/RequiredId
+// Generated from schema: ../../schemas/all-of.yaml#/components/schemas/RequiredId
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.AllOf
 {
     public partial record RequiredId(

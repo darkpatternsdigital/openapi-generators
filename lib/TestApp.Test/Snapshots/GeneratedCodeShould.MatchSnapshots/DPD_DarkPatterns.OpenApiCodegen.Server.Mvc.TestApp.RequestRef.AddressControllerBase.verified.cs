@@ -15,6 +15,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.RequestRef
     {
         
         /// <param name="lookupRecordBody"></param>
+        // Generated from operation: ../../schemas/request-ref.yaml#/paths/~1address/post
         [global::Microsoft.AspNetCore.Mvc.HttpPost]
         [global::Microsoft.AspNetCore.Mvc.Route("/request-ref/address")]
         [global::Microsoft.AspNetCore.Mvc.Consumes("application/json")]

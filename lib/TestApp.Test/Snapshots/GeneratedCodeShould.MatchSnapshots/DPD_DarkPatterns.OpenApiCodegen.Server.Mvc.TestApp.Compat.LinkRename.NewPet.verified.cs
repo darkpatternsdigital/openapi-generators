@@ -11,7 +11,7 @@
 #nullable enable
 #nullable disable warnings
 
-// Generated from schema: {RepoRoot}/schemas/petstore.yaml#/components/schemas/NewPet
+// Generated from schema: ../../schemas/petstore.yaml#/components/schemas/NewPet
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename
 {
     public partial record NewPet(

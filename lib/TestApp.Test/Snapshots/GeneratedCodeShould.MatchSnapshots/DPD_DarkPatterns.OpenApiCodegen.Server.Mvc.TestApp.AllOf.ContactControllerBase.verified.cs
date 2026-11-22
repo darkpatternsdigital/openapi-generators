@@ -12,6 +12,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.AllOf
     public abstract class ContactControllerBase : global::Microsoft.AspNetCore.Mvc.ControllerBase
     {
         
+        // Generated from operation: ../../schemas/all-of.yaml#/paths/~1contact/get
         [global::Microsoft.AspNetCore.Mvc.HttpGet]
         [global::Microsoft.AspNetCore.Mvc.Route("/all-of/contact")]
         // OK

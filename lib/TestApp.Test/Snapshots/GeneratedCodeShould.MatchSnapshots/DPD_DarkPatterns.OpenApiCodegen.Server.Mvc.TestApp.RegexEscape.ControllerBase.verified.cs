@@ -15,6 +15,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.RegexEscape
     {
         
         /// <param name="testForRegexBody"></param>
+        // Generated from operation: ../../schemas/regex-escape.yaml#/paths/~1/post
         [global::Microsoft.AspNetCore.Mvc.HttpPost]
         [global::Microsoft.AspNetCore.Mvc.Route("/regex-escape/")]
         [global::Microsoft.AspNetCore.Mvc.Consumes("application/json")]

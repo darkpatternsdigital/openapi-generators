@@ -9,7 +9,7 @@
 #nullable enable
 #nullable disable warnings
 
-// Generated from schema: {RepoRoot}/schemas/no-refs.yaml#/paths/~1address/post/responses/409/content/application~1json/schema
+// Generated from schema: ../../schemas/no-refs.yaml#/paths/~1address/post/responses/409/content/application~1json/schema
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.ClientAndServer
 {
     public partial record LookupRecordConflictResponse(

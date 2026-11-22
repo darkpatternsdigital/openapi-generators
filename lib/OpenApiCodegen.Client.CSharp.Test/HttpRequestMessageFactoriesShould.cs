@@ -99,6 +99,14 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 	}
 
 	[Fact]
+	public async Task SendHeaderParametersByName()
+	{
+		var actualMessage = await GetRequestMessage("headers.yaml", "GetInfo(xData: new byte[] { 1, 2, 3 })");
+
+		Assert.True(actualMessage.Headers.Contains("X-Data"));
+	}
+
+	[Fact]
 	public async Task HandleInlineObjects()
 	{
 		var actualMessage = await GetRequestMessage("no-refs.yaml", @"LookupRecord(lookupRecordBody: new(FormattedAddress: ""123 Main St, Richardson, TX 75081"", Location: new (Latitude: 32.9494998, Longitude: -96.7331253)))");

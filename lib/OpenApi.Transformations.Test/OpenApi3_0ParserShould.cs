@@ -35,6 +35,31 @@ public class OpenApi3_0ParserShould
 	}
 
 	[Fact]
+	public void Apply_path_level_parameters_to_each_operation()
+	{
+		var registry = DocumentLoader.CreateRegistry();
+		var result = GetOpenApiDocument("path-level-parameters.yaml", registry);
+
+		Assert.Empty(result.Diagnostics);
+		Assert.NotNull(result.Result);
+		var path = result.Result.Paths["/widgets/{widgetId}"];
+		Assert.Collection(path.Parameters,
+			p => Assert.Equal("widgetId", p.Name),
+			p => Assert.Equal("verbose", p.Name));
+
+		// Inherits both path-level parameters
+		Assert.Collection(path.Operations["get"].Parameters,
+			p => Assert.Equal(("widgetId", Abstractions.ParameterLocation.Path, "#/paths/~1widgets~1%7BwidgetId%7D/parameters/0"), (p.Name, p.In, p.Id.Fragment)),
+			p => Assert.Equal(("verbose", Abstractions.ParameterLocation.Query, false), (p.Name, p.In, p.Required)));
+
+		// The operation's own `verbose` replaces the path-level one
+		Assert.Collection(path.Operations["delete"].Parameters,
+			p => Assert.Equal("widgetId", p.Name),
+			p => Assert.Equal(("verbose", true, "#/paths/~1widgets~1%7BwidgetId%7D/delete/parameters/0"), (p.Name, p.Required, p.Id.Fragment)),
+			p => Assert.Equal("reason", p.Name));
+	}
+
+	[Fact]
 	public void Loads_petstore_yaml()
 	{
 		var registry = DocumentLoader.CreateRegistry();

@@ -5,7 +5,7 @@ Adds C# source generators from an OpenAPI specification file.
     ```xml
     <ItemGroup>
         <PackageReference Include="DarkPatterns.OpenApiCodegen.Json.Extensions" Version="0.19.0" />
-        <PackageReference Include="DarkPatterns.OpenApiCodegen.CSharp" Version="0.27.0" PrivateAssets="All" />
+        <PackageReference Include="DarkPatterns.OpenApiCodegen.CSharp" Version="0.28.0" PrivateAssets="All" />
     </ItemGroup>
     ```
 

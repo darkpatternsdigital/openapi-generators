@@ -63,7 +63,7 @@ namespace {{PackageName}}
             requestMessage.Content = global::System.Net.Http.Json.JsonContent.Create<{{{DataType}}}>({{ParamName}}, global::System.Net.Http.Headers.MediaTypeHeaderValue.Parse("{{{RequestBody.RequestBodyType}}}"));
 {{/if}}{{/if}}{{/each}}{{/if}}
 {{#each RequestBody.AllParams}}{{#if IsHeaderParam}}
-            requestMessage.Headers.Add("{{BaseName}}", {{#if Required}}{{ParamName}}{{else}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.GetValueOrThrow({{ParamName}}){{/if}}{{#if DataTypeEnumerable}}.Select(v => v.ToString()){{else}}.ToString(){{/if}});{{/if}}{{/each}}
+            requestMessage.Headers.Add("{{RawName}}", {{#if Required}}{{ParamName}}{{else}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.GetValueOrThrow({{ParamName}}){{/if}}{{#if DataTypeEnumerable}}.Select(v => v.ToString()){{else}}.ToString(){{/if}});{{/if}}{{/each}}
             return requestMessage;
         }
 

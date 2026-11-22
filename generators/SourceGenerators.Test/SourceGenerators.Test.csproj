@@ -34,5 +34,7 @@
 		<ProjectReference Include="$(SolutionRoot)lib/OpenApi.Transformations/OpenApi.Transformations.csproj" SpecificVersion="true" />
 		<ProjectReference Include="..\csharp\OpenApiCodegen.CSharp.Base\OpenApiCodegen.CSharp.Base.csproj" />
 		<ProjectReference Include="..\typescript\OpenApiCodegen.Client.TypeScript\OpenApiCodegen.Client.TypeScript.csproj" />
+		<!-- Build order only: JsonExtensionsReferenceShould loads the built analyzer -->
+		<ProjectReference Include="..\csharp\OpenApiCodegen.CSharp.Analyzers\OpenApiCodegen.CSharp.Roslyn4.1.csproj" ReferenceOutputAssembly="false" />
 	</ItemGroup>
 </Project>

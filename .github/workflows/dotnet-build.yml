@@ -33,6 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       packages: write
+      id-token: write # NuGet trusted publishing (OIDC)
 
     steps:
     - uses: actions/checkout@v4
@@ -108,11 +109,17 @@ jobs:
       continue-on-error: true # Dependabot and other outside contributors can't push to our GitHub packages
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: NuGet login (OIDC trusted publishing → temporary API key)
+      if: ${{ github.ref == 'refs/heads/main' }}
+      uses: NuGet/login@v1
+      id: nuget-login
+      with:
+        user: ${{ secrets.NUGET_USER }}
     - name: Publish NuGet packages to NuGet registry if new version number
       if: ${{ github.ref == 'refs/heads/main' }}
       run: dotnet nuget push ./artifacts/package/release/*.nupkg -k ${NUGET_API_KEY} -s https://api.nuget.org/v3/index.json --skip-duplicate --no-symbols
       env:
-        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
 
     - name: Set publish NPM registry
       if: ${{ github.ref != 'refs/heads/main' }}

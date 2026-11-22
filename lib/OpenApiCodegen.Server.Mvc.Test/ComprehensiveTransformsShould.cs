@@ -25,6 +25,7 @@ public class ComprehensiveTransformsShould
 	[InlineData("controller-extension.yaml")]
 	[InlineData("regex-escape.yaml")]
 	[InlineData("validation-min-max.yaml")]
+	[InlineData("validation-optional.yaml")]
 	[InlineData("headers.yaml")]
 	[InlineData("oauth.yaml")]
 	[InlineData("form.yaml")]

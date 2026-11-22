@@ -1,0 +1,46 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Optional Validation
+  description: Validation keywords on values that are not required
+paths:
+  /json:
+    post:
+      operationId: postJson
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OptionalValues'
+      responses:
+        '204':
+          description: Accepted
+  /form:
+    post:
+      operationId: postForm
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OptionalValues'
+      responses:
+        '204':
+          description: Accepted
+components:
+  schemas:
+    OptionalValues:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 4
+        code:
+          type: string
+          pattern: '^[A-Z]+$'
+        count:
+          type: integer
+          minimum: 1
+          maximum: 10

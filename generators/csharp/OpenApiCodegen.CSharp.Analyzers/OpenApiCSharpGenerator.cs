@@ -18,6 +18,7 @@ public sealed class OpenApiCSharpGenerator() : BaseGenerator("DarkPatterns.OpenA
 	private const string mvcServerType = "DPDGenerateMvcServer";
 	private const string clientType = "DPDGenerateClient";
 	private const string webhookClientType = "DPDGenerateWebhookClient";
+	private const string modelsType = "DPDGenerateModels";
 	private const string configType = "DPDSchemaOptions";
 	private static readonly DiagnosticDescriptor IncludeDependentDll = new DiagnosticDescriptor(id: "DPDAPI001",
 																								title: "Include a reference to DarkPatterns.OpenApiCodegen.Json.Extensions",
@@ -58,6 +59,7 @@ public sealed class OpenApiCSharpGenerator() : BaseGenerator("DarkPatterns.OpenA
 			.. IfHasProperty(mvcServerType, "MvcServer"),
 			.. IfHasProperty(webhookClientType, "WebhookClient"),
 			.. IfHasProperty(clientType, "Client"),
+			.. IfHasProperty(modelsType, "Models"),
 			.. IfHasProperty(configType, "Config"),
 		];
 

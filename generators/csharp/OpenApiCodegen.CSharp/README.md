@@ -5,7 +5,7 @@ Adds C# source generators from an OpenAPI specification file.
     ```xml
     <ItemGroup>
         <PackageReference Include="DarkPatterns.OpenApiCodegen.Json.Extensions" Version="0.19.0" />
-        <PackageReference Include="DarkPatterns.OpenApiCodegen.CSharp" Version="0.28.1" PrivateAssets="All" />
+        <PackageReference Include="DarkPatterns.OpenApiCodegen.CSharp" Version="0.29.0" PrivateAssets="All" />
     </ItemGroup>
     ```
 
@@ -31,7 +31,8 @@ Adds C# source generators from an OpenAPI specification file.
 
 Additional yaml files referenced via `$ref` in your OpenAPI documents should be
 specified as the build action `JsonSchemaDocument` to be included in watch mode
-and to control the Namespace.
+and to control the Namespace. If a referenced file is an OpenAPI document (with
+`components/schemas`), use `OpenApiSchemaModels` instead; see [Models](#models).
 
 ## Requirements
 
@@ -88,6 +89,29 @@ Generates extension methods off of `HttpClient` to access the API as defined.
 ```
 
 Generates extension methods off of `HttpClient` to access webhooks and callbacks.
+
+- `Namespace` - Overrides the namespace detected by the default namespace and
+  path of the schema file
+- `Configuration` - Additional configuration settings specific to this schema.
+  See the configuration yaml documentation below.
+- `SchemaId` - Specifies the "retrieval URI" used when resolving relative paths
+  to external files. Otherwise, the absolute file-scheme URL will be used.
+
+### Models
+
+```xml
+<OpenApiSchemaModels Include="schemas/shared-models.yaml" Namespace="My.Models" />
+```
+
+Generates only the models in an OpenAPI document's `components/schemas`, named
+the same way as for an MVC server or client. Use it for OpenAPI documents that
+other documents reference for shared schemas. Registering those as
+`JsonSchemaDocument` produces names like `ComponentsSchemasWidget`.
+
+This replaces registering a shared document as `OpenApiSchemaMvcServer` with a
+dummy `PathPrefix` (such as `/_Incorrect`) just to get model names. That
+workaround also generates unused controllers. Switching keeps the model names
+and namespace, as long as the item keeps the same `Namespace` or `Link`.
 
 - `Namespace` - Overrides the namespace detected by the default namespace and
   path of the schema file

@@ -15,6 +15,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.ClientAndServer
     {
         
         /// <param name="id"></param>
+        // Generated from operation: ../../schemas/no-refs.yaml#/paths/~1photo~1{id}/get
         [global::Microsoft.AspNetCore.Mvc.HttpGet]
         [global::Microsoft.AspNetCore.Mvc.Route("/compat/client-and-server/photo/{id}")]
         // unexpected error

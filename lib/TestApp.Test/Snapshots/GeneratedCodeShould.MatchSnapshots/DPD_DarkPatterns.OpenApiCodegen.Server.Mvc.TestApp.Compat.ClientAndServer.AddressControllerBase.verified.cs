@@ -15,6 +15,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.ClientAndServer
     {
         
         /// <param name="lookupRecordBody"></param>
+        // Generated from operation: ../../schemas/no-refs.yaml#/paths/~1address/post
         [global::Microsoft.AspNetCore.Mvc.HttpPost]
         [global::Microsoft.AspNetCore.Mvc.Route("/compat/client-and-server/address")]
         [global::Microsoft.AspNetCore.Mvc.Consumes("application/json")]

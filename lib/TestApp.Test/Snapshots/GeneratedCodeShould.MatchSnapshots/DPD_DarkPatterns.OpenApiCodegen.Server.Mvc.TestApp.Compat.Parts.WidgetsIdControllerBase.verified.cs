@@ -15,6 +15,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.Parts
     {
         
         /// <param name="id"></param>
+        // Generated from operation: ../../schemas/compat-part-consumer.yaml#/paths/~1widgets~1{id}/get
         [global::Microsoft.AspNetCore.Mvc.HttpGet]
         [global::Microsoft.AspNetCore.Mvc.Route("/compat/parts/widgets/{id}")]
         // The widget

@@ -9,7 +9,7 @@
 #nullable enable
 #nullable disable warnings
 
-// Generated from schema: {RepoRoot}/schemas/nullable-vs-optional.yaml#/components/schemas/Error
+// Generated from schema: ../../schemas/nullable-vs-optional.yaml#/components/schemas/Error
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.NullableVsOptional
 {
     public partial record Error(

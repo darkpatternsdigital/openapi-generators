@@ -15,6 +15,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Enum
     {
         
         /// <param name="_enum"></param>
+        // Generated from operation: ../../schemas/enum.yaml#/paths/~1difficult-enum/get
         [global::Microsoft.AspNetCore.Mvc.HttpGet]
         [global::Microsoft.AspNetCore.Mvc.Route("/enum/difficult-enum")]
         // Success

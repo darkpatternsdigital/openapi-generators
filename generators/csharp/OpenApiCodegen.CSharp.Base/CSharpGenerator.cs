@@ -24,6 +24,7 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 	const string propLink = "link";
 	const string propPathPrefix = "pathPrefix";
 	const string propSchemaId = "schemaId";
+	const string propProjectDir = "build_property.projectdir";
 
 	const string typeMvcServer = "MvcServer";
 	const string typeClient = "Client";
@@ -38,6 +39,7 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 		propLink,
 		propPathPrefix,
 		propSchemaId,
+		propProjectDir,
 	];
 
 	public IEnumerable<string> MetadataKeys => metadataKeys;
@@ -51,7 +53,7 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 	{
 		var registry = new DocumentRegistry(ToRegistryOptions(additionalTextInfos));
 		var schemaRegistry = new SchemaRegistry(registry);
-		var settings = new TransformSettings(schemaRegistry, GetVersionInfo());
+		var settings = new TransformSettings(schemaRegistry, GetVersionInfo(), GetProjectDirectory(additionalTextInfos));
 
 		var docs = (from document in additionalTextInfos
 					let loaded = registry.ResolveDocument(ToInternalUri(document), relativeDocument: null)
@@ -143,6 +145,18 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 		}
 
 		return result;
+	}
+
+	private static Uri? GetProjectDirectory(IEnumerable<AdditionalTextInfo> additionalTextInfos)
+	{
+		// ProjectDir is a global build property, so every file has the same value
+		var projectDir = additionalTextInfos
+			.Select(doc => doc.Metadata.TryGetValue(propProjectDir, out var dir) ? dir : null)
+			.FirstOrDefault(dir => dir is { Length: > 0 });
+		if (projectDir == null) return null;
+		if (!projectDir.EndsWith("/") && !projectDir.EndsWith("\\"))
+			projectDir += Path.DirectorySeparatorChar;
+		return new Uri(projectDir);
 	}
 
 	private static string GetVersionInfo()

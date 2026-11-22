@@ -23,7 +23,8 @@ public record Operation(
 	ImportStatement[] Imports,
 	OperationRequestBody[] RequestBodies,
 	OperationResponses Responses,
-	OperationSecurityRequirement[] SecurityRequirements
+	OperationSecurityRequirement[] SecurityRequirements,
+	string SourceReference
 )
 {
 	public bool HasQueryInPath => Path.Contains('?');

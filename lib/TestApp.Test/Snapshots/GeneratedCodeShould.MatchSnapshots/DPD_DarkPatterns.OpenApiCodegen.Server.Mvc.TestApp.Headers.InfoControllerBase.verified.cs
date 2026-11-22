@@ -15,6 +15,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Headers
     {
         
         /// <param name="xData">base-64 encoded data</param>
+        // Generated from operation: ../../schemas/headers.yaml#/paths/~1info/get
         [global::Microsoft.AspNetCore.Mvc.HttpGet]
         [global::Microsoft.AspNetCore.Mvc.Route("/headers/info")]
         // Another Response

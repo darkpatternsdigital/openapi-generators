@@ -15,6 +15,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ControllerExtensions
     {
         
         /// <param name="data">base-64 encoded data</param>
+        // Generated from operation: ../../schemas/controller-extension.yaml#/paths/~1api~1info/get
         [global::Microsoft.AspNetCore.Mvc.HttpGet]
         [global::Microsoft.AspNetCore.Mvc.Route("/controller-extensions/api/info")]
         // Sample Response

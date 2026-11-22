@@ -9,7 +9,7 @@
 #nullable disable warnings
 #pragma warning disable
 
-// Generated from schema: {RepoRoot}/schemas/enum.yaml#/paths/~1rock-paper-scissors-query/get/responses/200/content/application~1json/schema
+// Generated from schema: ../../schemas/enum.yaml#/paths/~1rock-paper-scissors-query/get/responses/200/content/application~1json/schema
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Enum
 { 
     [global::System.Text.Json.Serialization.JsonConverter(typeof(global::DarkPatterns.OpenApiCodegen.Json.Extensions.JsonStringEnumPropertyNameConverter))]

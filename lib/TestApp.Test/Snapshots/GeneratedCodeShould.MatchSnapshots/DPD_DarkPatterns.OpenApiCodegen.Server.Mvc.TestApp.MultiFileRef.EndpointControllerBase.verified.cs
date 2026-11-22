@@ -14,6 +14,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.MultiFileRef
     public abstract class EndpointControllerBase : global::Microsoft.AspNetCore.Mvc.ControllerBase
     {
         
+        // Generated from operation: proj://darkpatterns-openapi/multi-file-ref-endpoints.yaml#/components/endpoints/~1endpoint/get
         [global::Microsoft.AspNetCore.Mvc.HttpGet]
         [global::Microsoft.AspNetCore.Mvc.Route("/multi-file-ref/endpoint")]
         // OK

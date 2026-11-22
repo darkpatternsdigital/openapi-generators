@@ -12,6 +12,8 @@ namespace DarkPatterns.OpenApi.TypeScript.Templates
 
 		string PackageName,
 
+		string SourceSchemaId,
+
 		TModel Model
 	) where TModel : Model;
 

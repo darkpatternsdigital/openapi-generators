@@ -23,6 +23,7 @@ public static class TypeScriptHandlebarsCommon
 	public static string ProcessModel(
 		PartialHeader header,
 		string packageName,
+		string sourceSchemaId,
 		Model model,
 		IHandlebars? handlebars = null
 	)
@@ -46,7 +47,7 @@ public static class TypeScriptHandlebarsCommon
 		IDictionary<string, object?> ToTemplate<TModel>(TModel m)
 			where TModel : Model
 		{
-			return BaseProcess.ToDictionary<ModelTemplate<TModel>>(new(Header: header, PackageName: packageName, Model: m));
+			return BaseProcess.ToDictionary<ModelTemplate<TModel>>(new(Header: header, PackageName: packageName, SourceSchemaId: sourceSchemaId, Model: m));
 		}
 	}
 

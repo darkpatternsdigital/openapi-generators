@@ -19,6 +19,7 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 	private readonly CSharpServerSchemaOptions options;
 	private readonly CSharpInlineSchemas inlineSchemas;
 	private readonly string controllerClassName;
+	private readonly Func<Uri, string> toSourceReference;
 
 	public record Argument(
 		OpenApiTransformDiagnostic Diagnostic,
@@ -45,12 +46,13 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 		public OpenApiOperation Operation { get; }
 	}
 
-	public ControllerOperationVisitor(ISchemaRegistry schemaRegistry, CSharpServerSchemaOptions options, string controllerClassName)
+	public ControllerOperationVisitor(ISchemaRegistry schemaRegistry, CSharpServerSchemaOptions options, string controllerClassName, Func<Uri, string> toSourceReference)
 	{
 		this.schemaRegistry = schemaRegistry;
 		this.options = options;
 		this.inlineSchemas = new CSharpInlineSchemas(options, schemaRegistry.DocumentRegistry);
 		this.controllerClassName = controllerClassName;
+		this.toSourceReference = toSourceReference;
 	}
 
 	public override void Visit(OpenApiPath path, Argument argument)
@@ -91,7 +93,8 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 					StatusResponse: new(builder.StatusResponses)
 				),
 				SecurityRequirements: [.. builder.SecurityRequirements],
-				RawSecurityRequirements: [.. builder.RawSecurityRequirements]
+				RawSecurityRequirements: [.. builder.RawSecurityRequirements],
+				SourceReference: toSourceReference(operation.Id)
 			));
 	}
 

@@ -17,6 +17,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ValidationOptional
         /// <param name="name"></param>
         /// <param name="code"></param>
         /// <param name="count"></param>
+        // Generated from operation: ../../schemas/validation-optional.yaml#/paths/~1form/post
         [global::Microsoft.AspNetCore.Mvc.HttpPost]
         [global::Microsoft.AspNetCore.Mvc.Route("/validation-optional/form")]
         [global::Microsoft.AspNetCore.Mvc.Consumes("application/x-www-form-urlencoded")]

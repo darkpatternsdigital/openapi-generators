@@ -9,7 +9,7 @@
 #nullable enable
 #nullable disable warnings
 
-// Generated from schema: {RepoRoot}/schemas/compat-parts/Widgets.yaml#/components/schemas/Widget
+// Generated from schema: ../../schemas/compat-parts/Widgets.yaml#/components/schemas/Widget
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.Parts.Widgets
 {
     public partial record Widget(

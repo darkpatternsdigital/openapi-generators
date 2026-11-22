@@ -14,6 +14,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.Glob.tree
     public static class Operations
     {
         
+        // Generated from operation: ../../schemas/tree.yaml#/paths/~1tree/post
         public static async global::System.Threading.Tasks.Task<GetTreeReturnType> GetTree(
             this global::System.Net.Http.HttpMessageInvoker client,
                         global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken)

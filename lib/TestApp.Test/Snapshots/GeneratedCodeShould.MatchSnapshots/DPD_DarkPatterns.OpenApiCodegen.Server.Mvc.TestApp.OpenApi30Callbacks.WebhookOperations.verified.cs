@@ -12,6 +12,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OpenApi30Callbacks
     public static class WebhookOperations
     {
         
+        // Generated from operation: proj://darkpatterns-openapi/openapi-3.0-callbacks.yaml#/paths/~1streams/post/callbacks/onData/%7B$request.query.callbackUrl%7D~1data/post
         public static async global::System.Threading.Tasks.Task<PostOnDataReturnType> PostOnData(
             this global::System.Net.Http.HttpMessageInvoker client,
             global::System.Uri uri,
@@ -33,6 +34,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OpenApi30Callbacks
 
 
         /// <param name="body"></param>
+        // Generated from operation: proj://darkpatterns-openapi/openapi-3.0-callbacks.yaml#/paths/~1streams/post/callbacks/onData/%7B$request.query.callbackUrl%7D~1data/post
         public static async global::System.Threading.Tasks.Task<PostOnDataReturnType> PostOnData(
             this global::System.Net.Http.HttpMessageInvoker client,
             global::System.Uri uri,

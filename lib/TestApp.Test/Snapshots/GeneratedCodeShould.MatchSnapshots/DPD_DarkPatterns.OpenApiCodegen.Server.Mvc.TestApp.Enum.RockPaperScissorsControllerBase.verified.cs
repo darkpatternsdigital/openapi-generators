@@ -15,6 +15,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Enum
     {
         
         /// <param name="playRockPaperScissorsBody"></param>
+        // Generated from operation: ../../schemas/enum.yaml#/paths/~1rock-paper-scissors/post
         [global::Microsoft.AspNetCore.Mvc.HttpPost]
         [global::Microsoft.AspNetCore.Mvc.Route("/enum/rock-paper-scissors")]
         [global::Microsoft.AspNetCore.Mvc.Consumes("application/json")]

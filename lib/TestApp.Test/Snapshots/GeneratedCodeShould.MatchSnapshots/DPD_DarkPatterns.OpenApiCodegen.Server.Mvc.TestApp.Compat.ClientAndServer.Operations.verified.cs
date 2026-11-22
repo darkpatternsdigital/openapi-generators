@@ -15,6 +15,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.ClientAndServer
     {
         
         /// <param name="lookupRecordBody"></param>
+        // Generated from operation: ../../schemas/no-refs.yaml#/paths/~1address/post
         public static async global::System.Threading.Tasks.Task<LookupRecordReturnType> LookupRecord(
             this global::System.Net.Http.HttpMessageInvoker client,
             global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.ClientAndServer.LookupRecordRequest lookupRecordBody,
@@ -108,6 +109,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.ClientAndServer
         }
 
         /// <param name="id"></param>
+        // Generated from operation: ../../schemas/no-refs.yaml#/paths/~1photo~1{id}/get
         public static async global::System.Threading.Tasks.Task<GetPhotoReturnType> GetPhoto(
             this global::System.Net.Http.HttpMessageInvoker client,
             string id,

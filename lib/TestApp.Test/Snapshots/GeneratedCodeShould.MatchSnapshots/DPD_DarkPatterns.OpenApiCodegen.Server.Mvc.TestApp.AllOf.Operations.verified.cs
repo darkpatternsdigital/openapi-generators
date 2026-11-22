@@ -12,6 +12,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.AllOf
     public static class Operations
     {
         
+        // Generated from operation: ../../schemas/all-of.yaml#/paths/~1contact/get
         public static async global::System.Threading.Tasks.Task<GetContactReturnType> GetContact(
             this global::System.Net.Http.HttpMessageInvoker client,
                         global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken)

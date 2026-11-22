@@ -14,6 +14,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.CSharpNameOverride
     public abstract class TreeControllerBase : global::Microsoft.AspNetCore.Mvc.ControllerBase
     {
         
+        // Generated from operation: ../../schemas/csharp-name-override.yaml#/paths/~1tree/post
         [global::Microsoft.AspNetCore.Mvc.HttpPost]
         [global::Microsoft.AspNetCore.Mvc.Route("/csharp-name-override/tree")]
         // A tree

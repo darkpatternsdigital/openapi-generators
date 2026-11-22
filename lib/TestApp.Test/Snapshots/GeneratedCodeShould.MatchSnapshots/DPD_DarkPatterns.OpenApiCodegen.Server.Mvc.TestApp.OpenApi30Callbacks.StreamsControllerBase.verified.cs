@@ -18,6 +18,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OpenApi30Callbacks
         /// <param name="callbackUrl">the location where data will be sent.  Must be network accessible
         /// by the source server
         /// </param>
+        // Generated from operation: proj://darkpatterns-openapi/openapi-3.0-callbacks.yaml#/paths/~1streams/post
         [global::Microsoft.AspNetCore.Mvc.HttpPost]
         [global::Microsoft.AspNetCore.Mvc.Route("/openapi-3.0-callbacks/streams")]
         // subscription successfully created

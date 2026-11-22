@@ -7,7 +7,7 @@
 #nullable enable
 #nullable disable warnings
 
-// Generated from schema: {RepoRoot}/schemas/annotations.yaml#/components/schemas/Dog
+// Generated from schema: ../../schemas/annotations.yaml#/components/schemas/Dog
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Annotations
 {
     public partial record Dog(

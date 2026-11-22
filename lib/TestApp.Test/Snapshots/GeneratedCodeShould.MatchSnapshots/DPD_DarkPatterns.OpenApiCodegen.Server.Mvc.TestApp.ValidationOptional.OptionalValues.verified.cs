@@ -9,7 +9,7 @@
 #nullable enable
 #nullable disable warnings
 
-// Generated from schema: {RepoRoot}/schemas/validation-optional.yaml#/components/schemas/OptionalValues
+// Generated from schema: ../../schemas/validation-optional.yaml#/components/schemas/OptionalValues
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ValidationOptional
 {
     public partial record OptionalValues(

@@ -73,6 +73,7 @@ public class TypeScriptSchemaSourceProvider(
 		var entry = TypeScriptHandlebarsCommon.ProcessModel(
 			header: settings.Header(schema.Metadata.Id),
 			packageName: "",
+			sourceSchemaId: settings.ToSourceReference(schema.Metadata.Id),
 			model: model,
 			handlebarsFactory.Handlebars
 		);

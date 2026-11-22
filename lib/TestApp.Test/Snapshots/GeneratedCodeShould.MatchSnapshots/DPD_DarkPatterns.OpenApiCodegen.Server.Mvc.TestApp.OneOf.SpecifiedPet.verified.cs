@@ -7,7 +7,7 @@
 #nullable disable warnings
 #pragma warning disable
 
-// Generated from schema: {RepoRoot}/schemas/one-of.yaml#/components/schemas/SpecifiedPet
+// Generated from schema: ../../schemas/one-of.yaml#/components/schemas/SpecifiedPet
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf
 { 
     [global::System.Text.Json.Serialization.JsonConverter(typeof(SpecifiedPet.JsonConverter))]

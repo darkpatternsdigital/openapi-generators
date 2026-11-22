@@ -14,6 +14,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.MultiFileRef
     public abstract class RandomControllerBase : global::Microsoft.AspNetCore.Mvc.ControllerBase
     {
         
+        // Generated from operation: proj://darkpatterns-openapi/multi-file-ref.yaml#/paths/~1random/get
         [global::Microsoft.AspNetCore.Mvc.HttpGet]
         [global::Microsoft.AspNetCore.Mvc.Route("/multi-file-ref/random")]
         // unexpected error

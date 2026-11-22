@@ -14,6 +14,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Any
     public abstract class DataControllerBase : global::Microsoft.AspNetCore.Mvc.ControllerBase
     {
         
+        // Generated from operation: ../../schemas/any.yaml#/paths/~1data/post
         [global::Microsoft.AspNetCore.Mvc.HttpPost]
         [global::Microsoft.AspNetCore.Mvc.Route("/any/data")]
         // Gets any kind of JSON data
@@ -91,6 +92,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Any
         }
 
         /// <param name="putDataBody"></param>
+        // Generated from operation: ../../schemas/any.yaml#/paths/~1data/put
         [global::Microsoft.AspNetCore.Mvc.HttpPut]
         [global::Microsoft.AspNetCore.Mvc.Route("/any/data")]
         [global::Microsoft.AspNetCore.Mvc.Consumes("application/json")]

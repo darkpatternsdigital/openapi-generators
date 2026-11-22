@@ -235,10 +235,16 @@ public abstract class BaseGenerator :
 					additionalText.TextContents,
 					fileTypes.ToArray(),
 					new ReadOnlyDictionary<string, string?>(
-						metadataKeys.ToDictionary(key => key, additionalText.ConfigOptions.GetAdditionalFilesMetadata)
+						metadataKeys.ToDictionary(key => key, key => GetMetadata(additionalText.ConfigOptions, key))
 					)
 				);
 		}
+
+		// Keys such as `build_property.projectdir` are global (CompilerVisibleProperty) rather than per-file metadata
+		private static string? GetMetadata(AnalyzerConfigOptions options, string key) =>
+			key.StartsWith("build_property.", StringComparison.Ordinal)
+				? (options.TryGetValue(key, out var value) ? value : null)
+				: options.GetAdditionalFilesMetadata(key);
 	}
 
 	object ToAdditionalFileType(AdditionalFileTypeParams p)

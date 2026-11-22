@@ -15,6 +15,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.LegacyOptional
     {
         
         /// <param name="contrivedBody"></param>
+        // Generated from operation: ../../schemas/nullable-vs-optional-legacy.yaml#/paths/~1contrived/post
         [global::Microsoft.AspNetCore.Mvc.HttpPost]
         [global::Microsoft.AspNetCore.Mvc.Route("/nullable-vs-optional-legacy/contrived")]
         [global::Microsoft.AspNetCore.Mvc.Consumes("application/json")]

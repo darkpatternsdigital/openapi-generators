@@ -22,7 +22,7 @@ public class CSharpClientTransformer(TransformSettings settings, OpenApiDocument
 		var className = CSharpNaming.ToClassName("operations", options.ReservedIdentifiers());
 
 		var resultOperations = new List<Operation>();
-		var visitor = new OperationVisitor(settings.SchemaRegistry, options, controllerClassName: className);
+		var visitor = new OperationVisitor(settings.SchemaRegistry, options, controllerClassName: className, toSourceReference: settings.ToSourceReference);
 		visitor.Visit(document, new OperationVisitor.Argument(diagnostic, resultOperations.Add));
 
 		resultOperations = (from operation in resultOperations

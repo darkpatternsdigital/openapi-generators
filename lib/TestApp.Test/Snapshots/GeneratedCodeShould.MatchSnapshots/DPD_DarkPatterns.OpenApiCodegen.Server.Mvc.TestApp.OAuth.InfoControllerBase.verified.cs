@@ -14,6 +14,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OAuth
     public abstract class InfoControllerBase : global::Microsoft.AspNetCore.Mvc.ControllerBase
     {
         
+        // Generated from operation: ../../schemas/oauth.yaml#/paths/~1info/get
         [global::Microsoft.AspNetCore.Mvc.HttpGet]
         [global::Microsoft.AspNetCore.Mvc.Route("/oauth/info")]
         // Sample Response

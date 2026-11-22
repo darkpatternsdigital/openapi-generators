@@ -16,6 +16,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.PathLevelParameters
         
         /// <param name="widgetId"></param>
         /// <param name="verbose"></param>
+        // Generated from operation: ../../schemas/path-level-parameters.yaml#/paths/~1widgets~1{widgetId}/get
         [global::Microsoft.AspNetCore.Mvc.HttpGet]
         [global::Microsoft.AspNetCore.Mvc.Route("/path-level-parameters/widgets/{widgetId}")]
         // The widget
@@ -98,6 +99,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.PathLevelParameters
         /// <param name="widgetId"></param>
         /// <param name="verbose"></param>
         /// <param name="reason"></param>
+        // Generated from operation: ../../schemas/path-level-parameters.yaml#/paths/~1widgets~1{widgetId}/delete
         [global::Microsoft.AspNetCore.Mvc.HttpDelete]
         [global::Microsoft.AspNetCore.Mvc.Route("/path-level-parameters/widgets/{widgetId}")]
         // Deleted

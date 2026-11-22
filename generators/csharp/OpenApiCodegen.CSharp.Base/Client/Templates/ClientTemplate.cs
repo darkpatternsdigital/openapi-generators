@@ -21,7 +21,8 @@ public record Operation(
 	bool HasQueryStringEmbedded,
 	OperationRequestBody[] RequestBodies,
 	OperationResponses Responses,
-	OperationSecurityRequirement[] SecurityRequirements
+	OperationSecurityRequirement[] SecurityRequirements,
+	string SourceReference
 );
 
 public record OperationParameter(

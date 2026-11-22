@@ -54,7 +54,9 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 				var transformer = TransformSettings.BuildComposite(registry, GetVersionInfo(), [
 					(s) => new OperationTransformerFactory(s).Build(document, options),
 					(s) => new TypeScriptSchemaSourceProvider(s, options)
-				]);
+				],
+				// Source comments are relative to where the CLI runs, like the input path usually is
+				sourceBaseUri: new Uri(Path.TrimEndingDirectorySeparator(Directory.GetCurrentDirectory()) + Path.DirectorySeparatorChar));
 
 				var sourcesResult = transformer.GetSources();
 				foreach (var error in sourcesResult.Diagnostics.Distinct())

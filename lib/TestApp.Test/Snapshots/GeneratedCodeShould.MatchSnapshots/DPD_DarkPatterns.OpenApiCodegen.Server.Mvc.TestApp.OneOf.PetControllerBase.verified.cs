@@ -12,6 +12,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf
     public abstract class PetControllerBase : global::Microsoft.AspNetCore.Mvc.ControllerBase
     {
         
+        // Generated from operation: ../../schemas/one-of.yaml#/paths/~1pet/get
         [global::Microsoft.AspNetCore.Mvc.HttpGet]
         [global::Microsoft.AspNetCore.Mvc.Route("/one-of/pet")]
         // OK
@@ -89,6 +90,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf
         }
 
         /// <param name="addPetBody"></param>
+        // Generated from operation: ../../schemas/one-of.yaml#/paths/~1pet/post
         [global::Microsoft.AspNetCore.Mvc.HttpPost]
         [global::Microsoft.AspNetCore.Mvc.Route("/one-of/pet")]
         [global::Microsoft.AspNetCore.Mvc.Consumes("application/json")]

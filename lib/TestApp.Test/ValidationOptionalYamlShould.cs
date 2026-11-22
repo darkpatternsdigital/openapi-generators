@@ -1,3 +1,4 @@
+using DarkPatterns.OpenApiCodegen.Json.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -40,7 +41,7 @@ public class ValidationOptionalYamlShould
 			AssertResponseMessage = VerifyResponse(204),
 		});
 
-	[Theory(Skip = "Optional form fields can't be model-bound yet (planning #25)")]
+	[Theory]
 	[MemberData(nameof(Cases))]
 	public Task Validate_optional_form_fields(bool expectedIsValid, string? propertyName, object? value) =>
 		TestSingleRequest<FormControllerBase.PostFormActionResult, OptionalValues>(new(
@@ -53,6 +54,46 @@ public class ValidationOptionalYamlShould
 			AssertRequest = (controller, request) =>
 			{
 				Assert.Equal(expectedIsValid, controller.ModelState.IsValid);
+			},
+			AssertResponseMessage = VerifyResponse(204),
+		});
+
+	[Fact]
+	public Task Distinguish_missing_form_fields_from_present_ones() =>
+		TestSingleRequest<FormControllerBase.PostFormActionResult, OptionalValues>(new(
+			FormControllerBase.PostFormActionResult.NoContent(),
+			client => client.PostAsync("/validation-optional/form", new FormUrlEncodedContent(new Dictionary<string, string>
+			{
+				["name"] = "abc",
+				["count"] = "5",
+			}))
+		)
+		{
+			AssertRequest = (controller, request) =>
+			{
+				Assert.True(controller.ModelState.IsValid);
+				Assert.Equal<IOptional<string>?>(Optional.Create("abc"), request.Name);
+				Assert.Null(request.Code);
+				Assert.Equal<IOptional<int>?>(Optional.Create(5), request.Count);
+				Assert.Null(request.Note);
+			},
+			AssertResponseMessage = VerifyResponse(204),
+		});
+
+	[Fact]
+	public Task Treat_an_empty_nullable_form_field_as_present_and_null() =>
+		TestSingleRequest<FormControllerBase.PostFormActionResult, OptionalValues>(new(
+			FormControllerBase.PostFormActionResult.NoContent(),
+			client => client.PostAsync("/validation-optional/form", new FormUrlEncodedContent(new Dictionary<string, string>
+			{
+				["note"] = "",
+			}))
+		)
+		{
+			AssertRequest = (controller, request) =>
+			{
+				Assert.True(controller.ModelState.IsValid);
+				Assert.Equal<IOptional<string?>?>(Optional.Create<string?>(null), request.Note);
 			},
 			AssertResponseMessage = VerifyResponse(204),
 		});

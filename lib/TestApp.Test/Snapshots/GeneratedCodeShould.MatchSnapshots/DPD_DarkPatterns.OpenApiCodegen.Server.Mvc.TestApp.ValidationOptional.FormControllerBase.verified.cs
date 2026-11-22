@@ -17,6 +17,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ValidationOptional
         /// <param name="name"></param>
         /// <param name="code"></param>
         /// <param name="count"></param>
+        /// <param name="note"></param>
         // Generated from operation: ../../schemas/validation-optional.yaml#/paths/~1form/post
         [global::Microsoft.AspNetCore.Mvc.HttpPost]
         [global::Microsoft.AspNetCore.Mvc.Route("/validation-optional/form")]
@@ -25,15 +26,17 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ValidationOptional
         [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(204)] // 
         
         public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.IActionResult> PostFormTypeSafeEntry(
-            [global::Microsoft.AspNetCore.Mvc.FromForm(Name = "name"), global::DarkPatterns.OpenApiCodegen.Json.Extensions.OptionalMinLength(2), global::DarkPatterns.OpenApiCodegen.Json.Extensions.OptionalMaxLength(4)] global::DarkPatterns.OpenApiCodegen.Json.Extensions.IOptional<string> name,
-            [global::Microsoft.AspNetCore.Mvc.FromForm(Name = "code"), global::DarkPatterns.OpenApiCodegen.Json.Extensions.OptionalRegularExpression(@".*^[A-Z]+$.*")] global::DarkPatterns.OpenApiCodegen.Json.Extensions.IOptional<string> code,
-            [global::Microsoft.AspNetCore.Mvc.FromForm(Name = "count"), global::DarkPatterns.OpenApiCodegen.Json.Extensions.OptionalRange(1, 10)] global::DarkPatterns.OpenApiCodegen.Json.Extensions.IOptional<int> count
-        ) => (await PostForm(name,code,count)).ActionResult;
+            [global::Microsoft.AspNetCore.Mvc.FromForm(Name = "name"), global::System.ComponentModel.DataAnnotations.MinLength(2), global::System.ComponentModel.DataAnnotations.MaxLength(4)] string? name,
+            [global::Microsoft.AspNetCore.Mvc.FromForm(Name = "code"), global::System.ComponentModel.DataAnnotations.RegularExpression(@".*^[A-Z]+$.*")] string? code,
+            [global::Microsoft.AspNetCore.Mvc.FromForm(Name = "count"), global::System.ComponentModel.DataAnnotations.Range(1, 10)] int? count,
+            [global::Microsoft.AspNetCore.Mvc.FromForm(Name = "note")] string? note
+        ) => (await PostForm(name is { } nameValue ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<string>(nameValue) : null,code is { } codeValue ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<string>(codeValue) : null,count is { } countValue ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<int>(countValue) : null,Request.HasFormContentType && Request.Form.ContainsKey("note") ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<string?>(note) : null)).ActionResult;
 
         protected abstract global::System.Threading.Tasks.Task<PostFormActionResult> PostForm(
             global::DarkPatterns.OpenApiCodegen.Json.Extensions.IOptional<string> name, 
             global::DarkPatterns.OpenApiCodegen.Json.Extensions.IOptional<string> code, 
-            global::DarkPatterns.OpenApiCodegen.Json.Extensions.IOptional<int> count);
+            global::DarkPatterns.OpenApiCodegen.Json.Extensions.IOptional<int> count, 
+            global::DarkPatterns.OpenApiCodegen.Json.Extensions.IOptional<string?> note);
 
         public readonly struct PostFormActionResult
         {

@@ -44,3 +44,6 @@ components:
           type: integer
           minimum: 1
           maximum: 10
+        note:
+          type: string
+          nullable: true

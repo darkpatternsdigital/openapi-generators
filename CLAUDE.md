@@ -73,7 +73,7 @@ Consumers reference `OpenApiCodegen.Json.Extensions` themselves; the C# package 
 - `lib/TestApp.Test/GeneratedCodeShould` snapshots everything in `lib/TestApp/generated/` with [Verify](https://github.com/VerifyTests/Verify), replacing the repo path and generator version with placeholders. Any change to generated output fails it and leaves `*.received.cs` files next to the `*.verified.cs` snapshots. Review the diff, then rename the received files to `.verified.cs`. `generated/` isn't cleaned automatically, so delete it before rebuilding if outputs were removed or renamed.
 - The "Compatibility fixtures" item group in `lib/TestApp`'s csproj recreates MSBuild configuration patterns from real-world projects. Expect their snapshots to change only when a change is meant to affect existing users.
 - `lib/OpenApiCodegen.Server.Mvc.Test/ComprehensiveTransformsShould` generates and dynamically compiles each schema; add new schemas to its `InlineData` list when they're added to the TestApp.
-- `lib/OpenApiCodegen.Client.TypeScript.Test` generates TS and runs it in `testing/` via node.
+- `lib/OpenApiCodegen.Client.TypeScript.Test` generates TS and runs it in `testing/` with `pnpm exec ts-node` (ts-node is pinned in `testing/package.json`; it type-checks, which tests like `CheckModel` rely on), so it needs pnpm but not a global Node.
 - `generators/SourceGenerators.Test` checks diagnostics reported by the Roslyn generator.
 - `examples/` are separate solutions that consume the built NuGet packages (CI runs `examples/dotnetcore-server-interfaces/tooling/build-examples.ps1` on PRs).
 

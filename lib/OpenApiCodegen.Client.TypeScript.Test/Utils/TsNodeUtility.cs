@@ -17,14 +17,16 @@ static class NodeUtility
 	private static bool IsWindows =>
 		System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);
 
-	private static ProcessStartInfo Npx(string args) =>
+	// Runs through pnpm so the workspace's pinned ts-node and Node (`use-node-version`) are used.
+	// On Windows, pnpm is a .cmd or .exe, which cmd resolves.
+	private static ProcessStartInfo PnpmExec(string args) =>
 		IsWindows
-			? new ProcessStartInfo("pwsh", @$"-c ""npx {args}""")
-			: new ProcessStartInfo("npx", args);
+			? new ProcessStartInfo("cmd", $"/c pnpm exec {args}")
+			: new ProcessStartInfo("pnpm", $"exec {args}");
 
 	public static async Task<ProcessResult> TsNode(string input, Action<System.Diagnostics.ProcessStartInfo>? configureStartInfo = null, CancellationToken cancellationToken = default)
 	{
-		var startInfo = Npx("-y ts-node");
+		var startInfo = PnpmExec("ts-node");
 		configureStartInfo?.Invoke(startInfo);
 		var (exitCode, (output, error)) = await ExecuteProcess(startInfo, async (process, cancellationToken) =>
 		{

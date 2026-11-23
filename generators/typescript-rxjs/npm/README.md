@@ -42,3 +42,9 @@ export default toRxjsApi(operations, baseDomain, ajax);
 This API will use the type safety from OpenAPI along with rxjs.
 
 [1]: https://www.npmjs.com/package/@darkpatternsdigital/openapi-codegen-typescript
+
+## Documentation
+
+- [Getting started](https://github.com/darkpatternsdigital/openapi-generators/blob/main/docs/getting-started/typescript.md)
+- [CLI arguments and options](https://github.com/darkpatternsdigital/openapi-generators/blob/main/docs/reference/typescript-cli.md)
+- [Migration guide](https://github.com/darkpatternsdigital/openapi-generators/blob/main/docs/migration.md)

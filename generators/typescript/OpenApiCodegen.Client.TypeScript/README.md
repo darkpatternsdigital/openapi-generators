@@ -64,3 +64,9 @@ types:
   the format is either not specified or not found) or custom `formats`. Note
   that this only changes the type of the generated TypeScript, not how values
   are serialized at runtime.
+
+## Documentation
+
+- [Getting started](https://github.com/darkpatternsdigital/openapi-generators/blob/main/docs/getting-started/typescript.md), including the npm package, the .NET tool and the adapters
+- [CLI arguments and options](https://github.com/darkpatternsdigital/openapi-generators/blob/main/docs/reference/typescript-cli.md)
+- [Migration guide](https://github.com/darkpatternsdigital/openapi-generators/blob/main/docs/migration.md)

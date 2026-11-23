@@ -1,0 +1,139 @@
+# Migration guide
+
+What changes in each release, newest first, and what to do when upgrading. Each
+section lists the package versions it applies to. When you skip releases, read
+every section between your version and the new one.
+
+Releases before C# 0.25.4 and TypeScript 0.13.0 aren't covered.
+
+## C# 0.31.1
+
+**Default namespace for items without `Link` or `Namespace`.** An item inside
+the project folder with neither `Link` nor `Namespace`, such as
+`<OpenApiSchemaMvcServer Include="Api/petstore.yaml" />`, generated code with an
+empty namespace that didn't compile. Its namespace is now the root namespace
+plus the file's folders (`MyApp.Api`), as documented. Items that set `Link` or
+`Namespace` aren't affected.
+
+## C# 0.31.0, TypeScript 0.15.0, fetch 0.11.0, RxJS 0.10.0
+
+**Clients read non-JSON responses.** Before, the clients parsed response bodies
+as JSON, which threw for anything else.
+
+- C#: a `text/*` response has a `string` `Body`. Other non-JSON responses,
+  including binary types, have an `HttpContent` `Body`. **A binary response
+  that declared a `Stream` `Body` now declares `HttpContent`;** call
+  `ReadAsStreamAsync()` on it. `application/xml` responses, which used to be
+  returned as the base `…ReturnType`, now have their own subtype, so `switch`
+  statements over the result may need new cases.
+- TypeScript: `text/*` data is a `string`, and other non-JSON data is a `Blob`.
+  Responses of every media type now appear in the result types
+  (`allowedMimeTypes` only limits request bodies), so code that switches over
+  the responses may need new cases.
+
+**Response media types match more reliably.** In C#, media types match
+regardless of case, ranges such as `text/*` in the document work, and a response
+without a `Content-Type` no longer throws. In TypeScript,
+`application/json; charset=utf-8` now matches `application/json`, `mimeType`
+is the media type without parameters, and in the fetch and RxJS adapters an
+empty body with a JSON `Content-Type` is treated as no body.
+
+## TypeScript 0.14.1, MSW 0.10.0
+
+**Responses without a body are typed `undefined`.** For a response with no
+content, such as a 204, `data` was typed `unknown` and is now `undefined`. Code
+that used it never received a value, so only types change.
+
+**The MSW adapter mocks more kinds of responses.**
+
+- Responses without a body, such as
+  `{ statusCode: 204, mimeType: '', data: undefined }`. Before, every response
+  was sent as JSON.
+- Non-JSON responses, sent as given with their `mimeType` as the
+  `Content-Type`.
+- Response `headers`, which were ignored.
+- Default (`'other'`) responses, sent with the new `status` property, or 500
+  if it isn't set. Before, they used status 0, which failed.
+
+## C# 0.30.0, Json.Extensions 0.20.0, TypeScript 0.14.0, fetch 0.10.0, MSW 0.9.1
+
+**Upgrade `DarkPatterns.OpenApiCodegen.Json.Extensions` to 0.20.0** along with
+the C# package. With an older version, the build reports warning `DPDAPI002`
+and generated code may not compile.
+
+**C# clients format parameter and form values for OpenAPI.** Path, query,
+header and form values no longer depend on the current culture: dates are ISO
+8601, numbers use a decimal point, booleans are lowercase, enums send their
+OpenAPI value, `format: byte` values are base64, and a space in a path segment
+is sent as `%20` rather than `+`. Optional form fields and headers that aren't
+set are left out instead of throwing. Servers that accepted the old formats by
+accident may need checking.
+
+**C# webhook clients send query parameters.** They were dropped before.
+
+**TypeScript clients send forms URL-encoded.** Form bodies were sent as
+multipart data under a URL-encoded `Content-Type`, which servers couldn't parse.
+They're now `URLSearchParams`. A `null` value is sent empty, not as the string
+`"null"`. The fetch adapter takes `mimeType` for non-JSON request bodies, like
+the RxJS adapter.
+
+## C# 0.29.1
+
+**Optional form fields bind.** Optional fields in
+`application/x-www-form-urlencoded` request bodies failed MVC model binding.
+They now arrive as `IOptional` values, and an empty nullable field arrives as
+present with a `null` value.
+
+## C# 0.29.0
+
+**New `OpenApiSchemaModels` item** for OpenAPI documents that only supply
+shared schemas. If you registered such a document as `OpenApiSchemaMvcServer`
+with a dummy `PathPrefix` just to get model names, switch to:
+
+```xml
+<OpenApiSchemaModels Include="shared.yaml" Namespace="MyApp.Shared" />
+```
+
+Keep the same `Namespace` or `Link`, and the models keep their names and
+namespace. The unused controllers, `AddOpenApi…` method and security policies
+for that document are no longer generated, so check nothing referenced them.
+
+## C# 0.28.1, TypeScript 0.13.1
+
+**Source comments use relative paths.** Comments naming the source of
+generated code, such as
+`// Generated from schema: ../../schemas/api.yaml#/components/schemas/Foo`, are
+relative to the project (C#) or to the folder the CLI runs in (TypeScript)
+instead of absolute. They're the same on every machine. Checked-in generated
+code gets a one-time diff.
+
+## C# 0.28.0
+
+**Generated action results expose what they return.** `UnderlyingResult` is the
+`IActionResult` (an `ObjectResult`, a `StatusCodeResult`, or the one passed to
+`Unsafe`), and `Headers` holds the headers that will be added. Tests that read
+the private `original` and `headers` fields through reflection can use these
+instead. The private fields aren't a supported contract.
+
+## C# 0.27.0, TypeScript 0.13.0
+
+**Path-level parameters apply to every operation.** Parameters declared on a
+path, rather than on each operation, were ignored. They now appear in every
+operation under that path, so controller methods and client calls for those
+operations gain parameters. An operation's own parameter with the same name and
+location wins.
+
+## C# 0.26.0, Json.Extensions 0.19.0
+
+**Upgrade `DarkPatterns.OpenApiCodegen.Json.Extensions` to 0.19.0 or later.**
+
+**Optional values are validated.** Optional properties and parameters with
+`minLength`, `maxLength`, `pattern`, `minimum` or `maximum` now get normal
+model validation errors for invalid values. Before, validation threw, or with
+`pattern` checked the wrong text. Tests that expected an exception or a 500 for
+such input will see a validation failure.
+
+## C# 0.25.4
+
+**C# client header parameters use their OpenAPI name.** Header parameters were
+sent with an empty name, which threw. They now work.

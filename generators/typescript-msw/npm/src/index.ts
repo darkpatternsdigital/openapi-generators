@@ -56,6 +56,8 @@ export type MswStandardResponse<
 	mimeType: T['mimeType'];
 	data: T['data'];
 	headers?: Record<string, unknown>;
+	/** The HTTP status for a default (`'other'`) response; 500 when not given */
+	status?: number;
 };
 
 export function toMswResponse<
@@ -67,10 +69,33 @@ export function toMswResponse<
 		StandardResponse<TStatusCode, TMimeType, TBody>
 	>,
 ): StrictResponse<TBody> {
-	return HttpResponse.json<TBody>(response.data, {
-		status: response.statusCode === 'other' ? 0 : response.statusCode,
-		// TODO: support headers
-	});
+	const status =
+		typeof response.statusCode === 'number'
+			? response.statusCode
+			: response.status ?? 500;
+	const headers: Record<string, string> = {};
+	for (const [key, value] of Object.entries(response.headers ?? {}))
+		if (value !== undefined && value !== null) headers[key] = String(value);
+
+	// No content (e.g. 204): an empty body
+	if (!response.mimeType)
+		return new HttpResponse(null, {
+			status,
+			headers,
+		}) as StrictResponse<TBody>;
+	if (isJson(response.mimeType))
+		return HttpResponse.json<TBody>(response.data, { status, headers });
+	// Any other media type: the body as given (a string, Blob, ...)
+	return new HttpResponse(response.data as ResponseBody, {
+		status,
+		headers: { 'Content-Type': response.mimeType, ...headers },
+	}) as StrictResponse<TBody>;
+}
+
+type ResponseBody = ConstructorParameters<typeof HttpResponse>[0];
+
+function isJson(mimeType: string) {
+	return /^application\/([^;]+\+)?json$/i.test(mimeType.split(';')[0].trim());
 }
 
 function buildHandler<

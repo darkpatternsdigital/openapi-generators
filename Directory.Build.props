@@ -33,9 +33,9 @@
 		<OpenApiJsonExtensionsVersion>0.20.0</OpenApiJsonExtensionsVersion>
 		<OpenApiLoadersVersion>0.2.0</OpenApiLoadersVersion>
 		<OpenApiCSharpVersion>0.30.0</OpenApiCSharpVersion>
-		<OpenApiTypeScriptClientVersion>0.14.0</OpenApiTypeScriptClientVersion>
+		<OpenApiTypeScriptClientVersion>0.14.1</OpenApiTypeScriptClientVersion>
 		<OpenApiTypeScriptRxjsClientVersion>0.9.0</OpenApiTypeScriptRxjsClientVersion>
-		<OpenApiTypeScriptMswVersion>0.9.1</OpenApiTypeScriptMswVersion>
+		<OpenApiTypeScriptMswVersion>0.10.0</OpenApiTypeScriptMswVersion>
 		<OpenApiTypeScriptFetchVersion>0.10.0</OpenApiTypeScriptFetchVersion>
 		<!-- Should be incremented anytime one of the internal libraries changes -->
 		<SharedAnalyzerLibrariesVersion>0.11.1</SharedAnalyzerLibrariesVersion>

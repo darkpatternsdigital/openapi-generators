@@ -20,6 +20,7 @@
         <TestedSchema Include="petstore" />
         <TestedSchema Include="headers" />
         <TestedSchema Include="form" />
+        <TestedSchema Include="parameter-formats" />
     </ItemGroup>
 
     <ItemGroup>

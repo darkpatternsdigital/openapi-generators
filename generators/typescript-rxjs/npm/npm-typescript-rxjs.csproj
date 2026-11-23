@@ -21,6 +21,7 @@
         <TestedSchema Include="no-refs" />
         <TestedSchema Include="petstore" />
         <TestedSchema Include="headers" />
+        <TestedSchema Include="response-media-types" />
     </ItemGroup>
 
     <ItemGroup>

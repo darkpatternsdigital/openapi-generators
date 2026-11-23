@@ -2,7 +2,7 @@
 // Generated from operation: {{{Operation.SourceReference}}}
 {{#with Operation}}
 import type { HttpHeaders, AdapterRequestArgs, AdapterResponseArgs, RequestConversion, StandardResponse, TransformRequest } from '@darkpatternsdigital/openapi-codegen-typescript';
-import { encodeURI, throwIfNullOrUndefined, toParameterString } from '@darkpatternsdigital/openapi-codegen-typescript';
+import { encodeURI, throwIfNullOrUndefined, toMediaType, toParameterString } from '@darkpatternsdigital/openapi-codegen-typescript';
 {{#each Imports}}
 import {
 {{#each Members}}
@@ -167,7 +167,7 @@ export function constructResponse(res: AdapterResponseArgs) {
         statusCode: [{{#each Responses.StatusResponse as |Response StatusCode|}}
             {{StatusCode}},{{/each}}
         ].indexOf(res.status) === -1 ? 'other' : res.status,
-        mimeType: res.getResponseHeader("Content-Type"),
+        mimeType: toMediaType(res.getResponseHeader("Content-Type")),
         data: res.response,
         response: res,
         {{!-- TODO - we need response headers in this, etc. --}}

@@ -80,25 +80,30 @@ namespace {{PackageName}}
         {{/each}}
         public static async global::System.Threading.Tasks.Task<{{Operation.Name}}ReturnType?> Parse{{Operation.Name}}(this global::System.Net.Http.HttpResponseMessage response)
         {
+            var mediaType = response.Content.Headers.ContentType?.MediaType;
             switch ((int)response.StatusCode)
             { {{#each Responses.StatusResponse as |Response Code|}}
                 case {{Code}}:
                     {{#each Response.Content}}
-                    {{#if MediaType}} if (response.Content.Headers.ContentType.MediaType == "{{MediaType}}") {{/if}}
+                    {{#if MediaType}} if ({{{MediaTypeCondition}}}) {{/if}}
                         return new {{Operation.Name}}ReturnType.{{ResponseMethodName}}
                         {
-                            Response = response,{{#if DataType}}
-                            Body = await global::System.Text.Json.JsonSerializer.DeserializeAsync<{{{DataType}}}>(await response.Content.ReadAsStreamAsync()), {{/if}}
+                            Response = response,{{#if IsJson}}{{#if DataType}}
+                            Body = await global::System.Text.Json.JsonSerializer.DeserializeAsync<{{{DataType}}}>(await response.Content.ReadAsStreamAsync()), {{/if}}{{/if}}{{#if IsText}}
+                            Body = await response.Content.ReadAsStringAsync(), {{/if}}{{#if IsRaw}}
+                            Body = response.Content, {{/if}}
                         };
                     {{/each}}
                     break;
                 {{/each}}{{#if Responses.DefaultResponse}}
                 default: {{#each Responses.DefaultResponse.Content}}
-                    {{#if MediaType}} if (response.Content.Headers.ContentType.MediaType == "{{MediaType}}") {{/if}}
+                    {{#if MediaType}} if ({{{MediaTypeCondition}}}) {{/if}}
                         return new {{Operation.Name}}ReturnType.{{ResponseMethodName}}
                         {
-                            Response = response,{{#if DataType}}
-                            Body = await global::System.Text.Json.JsonSerializer.DeserializeAsync<{{{DataType}}}>(await response.Content.ReadAsStreamAsync()), {{/if}}
+                            Response = response,{{#if IsJson}}{{#if DataType}}
+                            Body = await global::System.Text.Json.JsonSerializer.DeserializeAsync<{{{DataType}}}>(await response.Content.ReadAsStreamAsync()), {{/if}}{{/if}}{{#if IsText}}
+                            Body = await response.Content.ReadAsStringAsync(), {{/if}}{{#if IsRaw}}
+                            Body = response.Content, {{/if}}
                         }; {{/each}}
                     break;{{/if}}
             }

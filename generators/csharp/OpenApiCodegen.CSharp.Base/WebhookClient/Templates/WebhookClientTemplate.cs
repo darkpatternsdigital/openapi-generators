@@ -62,7 +62,11 @@ public record OperationResponse(
 public record OperationResponseContentOption(
 	string MediaType,
 	string ResponseMethodName,
-	string? DataType
+	string? DataType,
+	bool IsJson,
+	bool IsText,
+	bool IsRaw,
+	string MediaTypeCondition
 );
 
 public record OperationRequestBody(string Name, bool IsForm, bool IsFile, bool HasQueryParam, string? RequestBodyType, IEnumerable<OperationParameter> AllParams);

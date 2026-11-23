@@ -1,0 +1,34 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Response media types
+  description: Responses with JSON, text and binary bodies, and without a body
+paths:
+  /report:
+    get:
+      operationId: getReport
+      responses:
+        '200':
+          description: The report, in the requested format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+            text/plain:
+              schema:
+                type: string
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '204':
+          description: No report yet
+components:
+  schemas:
+    Report:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string

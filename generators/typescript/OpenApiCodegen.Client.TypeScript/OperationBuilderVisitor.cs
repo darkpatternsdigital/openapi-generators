@@ -159,14 +159,21 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 				Description: response.Description,
 				Content: (from entry in (from c in content ?? Enumerable.Empty<KeyValuePair<string, OpenApiMediaTypeObject>>()
 										 select (c.Key, c.Value.Schema)).DefaultIfEmpty((Key: "", Schema: null))
-						  where entry.Key is { Length: 0 } || options.AllowedMimeTypes.Contains(entry.Key)
+						  // Every response media type is handled (JSON, text, or the raw body), so responses
+						  // aren't filtered by allowedMimeTypes; that option now only limits request bodies.
 						  let dataType = inlineSchemas.ToInlineDataType(entry.Schema)
+						  let kind = MediaTypes.Classify(entry.Key)
 						  select new OperationResponseContentOption(
 							  MediaType: entry.Key,
 							  ResponseMethodName: TypeScriptNaming.ToTitleCaseIdentifier($"{(contentCount > 1 ? entry.Key : "")} {statusCodeName}", options.ReservedIdentifiers()),
-							  // No content: no data type, so the template writes `undefined` (a media type
-							  // without a schema still has a body, typed `unknown`)
-							  DataType: entry.Key is { Length: 0 } ? null : dataType.Text
+							  // No content: no data type, so the template writes `undefined`
+							  DataType: kind switch
+							  {
+								  MediaTypeKind.Json => dataType.Text,
+								  MediaTypeKind.Text => "string",
+								  MediaTypeKind.Raw => "Blob",
+								  _ => null,
+							  }
 						  )).ToArray(),
 				Headers: (from entry in response.Headers
 						  let required = entry.Required

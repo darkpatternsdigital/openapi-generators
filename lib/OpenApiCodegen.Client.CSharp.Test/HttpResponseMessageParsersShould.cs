@@ -224,9 +224,60 @@ public class HttpResponseMessageParsersShould : IClassFixture<TempDirectory>
 			additionalMessageSetup?.Invoke(responseMessage);
 		});
 
+	[Fact]
+	public async Task ReadTextResponsesAsStrings()
+	{
+		var result = await DeserializeResponseMessage("response-media-types.yaml", "ParseGetReport", 200, "GetReportReturnType.TextPlainOk", msg =>
+		{
+			msg.Content = new StringContent("hello", Encoding.UTF8, "text/plain");
+		});
+
+		Assert.NotNull(result);
+		Assert.Equal("hello", (string)result.Body);
+	}
+
+	[Fact]
+	public async Task ReturnOtherMediaTypesAsContent()
+	{
+		var result = await DeserializeResponseMessage("response-media-types.yaml", "ParseGetReport", 200, "GetReportReturnType.ApplicationOctetStreamOk", msg =>
+		{
+			msg.Content = new ByteArrayContent([1, 2, 3]);
+			msg.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
+		});
+
+		Assert.NotNull(result);
+		HttpContent body = Assert.IsAssignableFrom<HttpContent>(result.Body);
+		Assert.Equal([1, 2, 3], await body.ReadAsByteArrayAsync());
+	}
+
+	[Fact]
+	public async Task MatchMediaTypesIgnoringParametersAndCase()
+	{
+		var result = await DeserializeResponseMessage("response-media-types.yaml", "ParseGetReport", 200, "GetReportReturnType.ApplicationJsonOk", msg =>
+		{
+			msg.Content = new StringContent(@"{""name"":""quarterly""}", Encoding.UTF8);
+			msg.Content.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("APPLICATION/JSON; charset=utf-8");
+		});
+
+		Assert.NotNull(result);
+		Assert.Equal("quarterly", (string)result.Body.Name);
+	}
+
+	[Fact]
+	public async Task HandleAResponseWithoutContentType()
+	{
+		var result = await DeserializeResponseMessage("response-media-types.yaml", "ParseGetReport", 200, "GetReportReturnType", msg =>
+		{
+			msg.Content = new ByteArrayContent([1, 2, 3]);
+		});
+
+		Assert.NotNull(result);
+	}
+
 	private async Task<dynamic> DeserializeResponseMessage(string documentName, string operation, int statusCode, string parsedType, Action<HttpResponseMessage>? additionalMessageSetup = null)
 	{
-		using var responseMessage = new HttpResponseMessage((System.Net.HttpStatusCode)statusCode);
+		// Not disposed here: results such as HttpContent bodies are read after this returns
+		var responseMessage = new HttpResponseMessage((System.Net.HttpStatusCode)statusCode);
 		additionalMessageSetup?.Invoke(responseMessage);
 
 		var libBytes = DynamicCompilation.GetGeneratedLibrary(documentName);

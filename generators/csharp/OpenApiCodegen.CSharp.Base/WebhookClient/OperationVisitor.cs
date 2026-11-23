@@ -135,11 +135,15 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 			Content: (from entry in (from c in content ?? Enumerable.Empty<KeyValuePair<string, OpenApiMediaTypeObject>>()
 									 select (c.Key, c.Value.Schema)).DefaultIfEmpty((Key: "", Schema: null))
 					  let dataType = entry.Schema != null ? inlineSchemas.ToInlineDataType(entry.Schema) : null
-					  where entry.Key != "application/xml" // exclude xml, since we don't support it
+					  let kind = MediaTypes.Classify(entry.Key)
 					  select new OperationResponseContentOption(
 						  MediaType: entry.Key,
 						  ResponseMethodName: CSharpNaming.ToTitleCaseIdentifier($"{(contentCount > 1 ? entry.Key : "")} {statusCodeName}", options.ReservedIdentifiers()),
-						  DataType: dataType?.Text
+						  DataType: CSharpMediaTypes.ToBodyType(kind, dataType?.Text),
+						  IsJson: kind == MediaTypeKind.Json,
+						  IsText: kind == MediaTypeKind.Text,
+						  IsRaw: kind == MediaTypeKind.Raw,
+						  MediaTypeCondition: CSharpMediaTypes.ToCondition(entry.Key, "mediaType")
 					  )).ToArray(),
 			Headers: (from entry in response.Headers
 					  let required = entry.Required

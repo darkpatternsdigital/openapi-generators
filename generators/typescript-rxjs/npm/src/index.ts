@@ -14,6 +14,11 @@ import type {
 	RequestConversions,
 	HttpMethod,
 } from '@darkpatternsdigital/openapi-codegen-typescript';
+import {
+	isJsonMediaType,
+	isTextMediaType,
+	toMediaType,
+} from '@darkpatternsdigital/openapi-codegen-typescript';
 
 export const toUrl = (prefix: string, requestOpts: AdapterRequestArgs) =>
 	new URL(requestOpts.path, prefix).toString();
@@ -35,7 +40,8 @@ function rxWithPrefix(
 					'application/x-www-form-urlencoded'
 					? requestOpts.body
 					: JSON.stringify(requestOpts.body),
-			responseType: 'json',
+			// Read as bytes, then convert by media type: see readResponseBody
+			responseType: 'arraybuffer',
 		};
 	};
 
@@ -69,7 +75,10 @@ function rxWithPrefix(
 				map((response) => {
 					return conversion.response({
 						status: response.status,
-						response: response.response,
+						response: readResponseBody(
+							response.response,
+							response.xhr.getResponseHeader('Content-Type'),
+						),
 						getResponseHeader(header) {
 							return response.xhr.getResponseHeader(header);
 						},
@@ -149,4 +158,22 @@ export function toRxjsApi<TMethods extends RequestConversions>(
 	rxjsRequest: (params: AjaxConfig) => Observable<AjaxResponse<unknown>> = ajax,
 ) {
 	return applyTransform(api, rxWithPrefix(prefix, rxjsRequest));
+}
+
+// The Blob constructor, declared here so this also type-checks without the DOM library
+declare const Blob: new (
+	parts: ArrayBuffer[],
+	options?: { type?: string },
+) => unknown;
+
+/** JSON is parsed, text/* is a string, anything else is a Blob; no Content-Type means no body. */
+function readResponseBody(body: unknown, contentType: string | null) {
+	const mediaType = toMediaType(contentType);
+	// No Content-Type, or an empty body (e.g. a 204 that still sends a Content-Type): no body
+	if (!mediaType || !(body instanceof ArrayBuffer) || body.byteLength === 0)
+		return undefined;
+	if (isJsonMediaType(mediaType))
+		return JSON.parse(new TextDecoder().decode(body)) as unknown;
+	if (isTextMediaType(mediaType)) return new TextDecoder().decode(body);
+	return new Blob([body], { type: mediaType });
 }

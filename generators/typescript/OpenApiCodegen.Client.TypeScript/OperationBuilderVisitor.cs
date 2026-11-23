@@ -164,7 +164,9 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 						  select new OperationResponseContentOption(
 							  MediaType: entry.Key,
 							  ResponseMethodName: TypeScriptNaming.ToTitleCaseIdentifier($"{(contentCount > 1 ? entry.Key : "")} {statusCodeName}", options.ReservedIdentifiers()),
-							  DataType: dataType.Text
+							  // No content: no data type, so the template writes `undefined` (a media type
+							  // without a schema still has a body, typed `unknown`)
+							  DataType: entry.Key is { Length: 0 } ? null : dataType.Text
 						  )).ToArray(),
 				Headers: (from entry in response.Headers
 						  let required = entry.Required

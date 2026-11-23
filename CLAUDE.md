@@ -79,6 +79,7 @@ Consumers reference `OpenApiCodegen.Json.Extensions` themselves; the C# package 
 
 ## Versioning and packaging
 
+- NuGet dependency versions live in `Directory.Packages.props` (Central Package Management): add a `PackageVersion` there and a `PackageReference` without `Version` in the project. Exceptions: the analyzers pin Roslyn per build with `VersionOverride` (`eng/roslyn.targets`); `examples/` (its own `Directory.Packages.props`) and the pnpm SDK projects (`ManagePackageVersionsCentrally` false, because the SDK adds a versioned reference) opt out.
 - Package versions live in `Directory.Build.props` (`OpenApiCSharpVersion`, `OpenApiTypeScriptClientVersion`, etc.). npm packages take their version from these via `VersionPrefix`; keep each `package.json` `version` consistent.
 - Build output goes to `artifacts/` (`UseArtifactsOutput`); packages land in `artifacts/package/release/`. Non-main CI builds publish prerelease packages with a `sha.<commit>` suffix to GitHub Packages (see `docs/testing-github-nuget-packages.md`).
 - Assemblies are strong-named when `OpenApiCodegen.snk` exists at the repo root (CI only).

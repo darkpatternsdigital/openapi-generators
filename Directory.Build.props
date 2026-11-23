@@ -22,7 +22,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="DarkPatterns.Build.Structure" Version="0.1.0" PrivateAssets="All" />
+		<!-- examples/ build without Central Package Management (see examples/Directory.Packages.props) -->
+		<PackageReference Include="DarkPatterns.Build.Structure" PrivateAssets="All" Condition=" '$(ManagePackageVersionsCentrally)' == 'true' " />
+		<PackageReference Include="DarkPatterns.Build.Structure" Version="0.1.0" PrivateAssets="All" Condition=" '$(ManagePackageVersionsCentrally)' != 'true' " />
 	</ItemGroup>
 
 	<PropertyGroup>

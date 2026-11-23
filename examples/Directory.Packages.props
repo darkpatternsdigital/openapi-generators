@@ -1,0 +1,10 @@
+<Project>
+	<!--
+		The examples are separate solutions that reference the published packages (built in Docker
+		from a copy of the root Directory.Build.props only), so they keep versions on their
+		PackageReferences instead of using the root Directory.Packages.props.
+	-->
+	<PropertyGroup>
+		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+	</PropertyGroup>
+</Project>

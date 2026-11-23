@@ -45,6 +45,10 @@ Generators currently available:
   [TypeScript MSW](./generators/typescript-msw), for setting up MSW in a strongly-typed way to mock an API.
 
 
+## Documentation
+
+See [docs](./docs/README.md) for getting started, configuration reference and the migration guide.
+
 [1]: https://editor.swagger.io/
 [2]: https://mermade.github.io/openapi-gui/
 [3]: https://openapi.tools/#gui-editors

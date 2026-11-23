@@ -5,7 +5,7 @@ Adds C# source generators from an OpenAPI specification file.
     ```xml
     <ItemGroup>
         <PackageReference Include="DarkPatterns.OpenApiCodegen.Json.Extensions" Version="0.20.0" />
-        <PackageReference Include="DarkPatterns.OpenApiCodegen.CSharp" Version="0.31.0" PrivateAssets="All" />
+        <PackageReference Include="DarkPatterns.OpenApiCodegen.CSharp" Version="0.31.1" PrivateAssets="All" />
     </ItemGroup>
     ```
 
@@ -203,3 +203,10 @@ are available:
 - `x-dotnet-type-name` overrides the type name for a single schema. This is
   a higher-priority than settings within the csproj but lower priority than
   individual schema name overrides in the options file.
+
+## Documentation
+
+- [Getting started](https://github.com/darkpatternsdigital/openapi-generators/blob/main/docs/getting-started/csharp.md)
+- [MSBuild items and metadata](https://github.com/darkpatternsdigital/openapi-generators/blob/main/docs/reference/csharp-msbuild.md), including how namespaces are chosen
+- [Options and schema extensions](https://github.com/darkpatternsdigital/openapi-generators/blob/main/docs/reference/csharp-options.md)
+- [Migration guide](https://github.com/darkpatternsdigital/openapi-generators/blob/main/docs/migration.md)

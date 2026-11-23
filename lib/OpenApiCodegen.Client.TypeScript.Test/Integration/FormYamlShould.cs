@@ -27,4 +27,15 @@ public class FormYamlShould
 		AssertRequestSuccess(result, "POST", "/basic", expectedBody, contentType: "application/x-www-form-urlencoded");
 	}
 
+	[Fact]
+	public async Task Leave_out_the_optional_tag_when_not_set()
+	{
+		var body = new { name = "Fido", hasIdTag = false };
+		var expectedBody = new { name = "Fido", hasIdTag = "false" };
+
+		var result = await commonDirectory.ConvertRequest("form.yaml", "postBasicForm", new { }, body, contentType: "application/x-www-form-urlencoded");
+
+		AssertRequestSuccess(result, "POST", "/basic", expectedBody, contentType: "application/x-www-form-urlencoded");
+	}
+
 }

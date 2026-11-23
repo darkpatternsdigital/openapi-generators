@@ -294,7 +294,7 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 	[Fact]
 	public async Task AllowFormEncodedBodies()
 	{
-		var actualMessage = await GetRequestMessage("form.yaml", "PostBasicForm(name: \"Fido\", tag: \"dog\", hasIdTag: true)");
+		var actualMessage = await GetRequestMessage("form.yaml", "PostBasicForm(name: \"Fido\", tag: Optional.Create(\"dog\"), hasIdTag: true)");
 
 		Assert.Equal("POST", actualMessage.Method.Method);
 		Assert.Equal("basic", actualMessage.RequestUri?.OriginalString);
@@ -303,6 +303,14 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 		await content.CopyToAsync(memoryStream);
 		var formString = Encoding.ASCII.GetString(memoryStream.ToArray());
 		Assert.Equal("name=Fido&tag=dog&hasIdTag=true", formString);
+	}
+
+	[Fact]
+	public async Task OmitAnOptionalFormFieldThatIsNotSet()
+	{
+		var actualMessage = await GetRequestMessage("form.yaml", "PostBasicForm(name: \"Fido\", tag: null, hasIdTag: false)");
+
+		Assert.Equal("name=Fido&hasIdTag=false", await actualMessage.Content!.ReadAsStringAsync());
 	}
 
 	private async Task<HttpRequestMessage> GetRequestMessage(string documentName, string operationAndParameters, Action<CSharpSchemaOptions>? configureOptions = null, bool webhooks = false)

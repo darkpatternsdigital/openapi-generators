@@ -29,13 +29,13 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Form
         
         public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.IActionResult> PostBasicFormTypeSafeEntry(
             [global::Microsoft.AspNetCore.Mvc.FromForm(Name = "name"), global::System.ComponentModel.DataAnnotations.Required] string name,
-            [global::Microsoft.AspNetCore.Mvc.FromForm(Name = "tag"), global::System.ComponentModel.DataAnnotations.Required] string tag,
+            [global::Microsoft.AspNetCore.Mvc.FromForm(Name = "tag")] string? tag,
             [global::Microsoft.AspNetCore.Mvc.FromForm(Name = "hasIdTag"), global::System.ComponentModel.DataAnnotations.Required] bool hasIdTag
-        ) => (await PostBasicForm(name,tag,hasIdTag)).ActionResult;
+        ) => (await PostBasicForm(name,tag is { } tagValue ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<string>(tagValue) : null,hasIdTag)).ActionResult;
 
         protected abstract global::System.Threading.Tasks.Task<PostBasicFormActionResult> PostBasicForm(
             string name, 
-            string tag, 
+            global::DarkPatterns.OpenApiCodegen.Json.Extensions.IOptional<string> tag, 
             bool hasIdTag);
 
         public readonly struct PostBasicFormActionResult

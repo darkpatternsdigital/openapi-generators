@@ -108,9 +108,19 @@ async function handleMswFullRequest<
 		return;
 	}
 	if ('body' in request) {
-		const currentBody = await info.request.clone().json();
-		if (!deepEqual(request.body, currentBody)) {
-			return;
+		if (request.body instanceof URLSearchParams) {
+			// application/x-www-form-urlencoded
+			const currentBody = new URLSearchParams(
+				await info.request.clone().text(),
+			);
+			if (!formFieldsEqual(request.body, currentBody)) {
+				return;
+			}
+		} else {
+			const currentBody = await info.request.clone().json();
+			if (!deepEqual(request.body, currentBody)) {
+				return;
+			}
 		}
 	} else if (info.request.bodyUsed) {
 		return;
@@ -119,6 +129,15 @@ async function handleMswFullRequest<
 
 	if (typeof response === 'function') return response(info);
 	return toMswResponse(response);
+}
+
+function formFieldsEqual(x: URLSearchParams, y: URLSearchParams): boolean {
+	const fields = (p: URLSearchParams) => {
+		const result: string[] = [];
+		p.forEach((value, key) => result.push(`${key}=${value}`));
+		return result.sort().join('&');
+	};
+	return fields(x) === fields(y);
 }
 
 function queryStringMatch(thisRequest: AdapterRequestArgs, request: Request) {

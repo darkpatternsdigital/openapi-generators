@@ -60,10 +60,11 @@ namespace {{PackageName}}
             }}] {{{DataType}}}{{#if Optional}}{{#unless DataTypeNullable}}?{{/unless}}{{/if}} {{ParamName}}{{#unless @last}},
             {{/unless}}{{/unless}}{{/each}}
         ) => (await {{RequestBody.Name}}({{#each RequestBody.AllParams}}{{#if Optional}}{{!
-            Optional form fields bind as nullable values. A missing field binds null; for a nullable
-            schema, a field sent empty is present with a null value, so check the form for the key.
-            }}{{#if DataTypeNullable}}Request.HasFormContentType && Request.Form.ContainsKey("{{RawName}}") ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}) : null{{else
-            }}{{ParamName}} is { } {{ParamName}}Value ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}Value) : null{{/if}}{{else}}{{ParamName}}{{/if}}{{#unless @last}},{{/unless}}{{/each}})).ActionResult;
+            Optional form fields bind as nullable values. A missing field binds null, except that a
+            missing collection binds empty, and a nullable field sent empty is present with a null
+            value: for those, check the form for the key.
+            }}{{#if DataTypeEnumerable}}Request.HasFormContentType && Request.Form.ContainsKey("{{RawName}}") ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}) : null{{else}}{{#if DataTypeNullable}}Request.HasFormContentType && Request.Form.ContainsKey("{{RawName}}") ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}) : null{{else
+            }}{{ParamName}} is { } {{ParamName}}Value ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}Value) : null{{/if}}{{/if}}{{else}}{{ParamName}}{{/if}}{{#unless @last}},{{/unless}}{{/each}})).ActionResult;
         {{!--
             TODO - check scopes
             {{#each Operation.SecurityRequirements}}{{#if Schemes.Length}}{{#if }}

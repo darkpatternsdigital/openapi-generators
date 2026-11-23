@@ -19,6 +19,7 @@
         <TestedSchema Include="no-refs" />
         <TestedSchema Include="petstore" />
         <TestedSchema Include="headers" />
+        <TestedSchema Include="form" />
     </ItemGroup>
 
     <ItemGroup>

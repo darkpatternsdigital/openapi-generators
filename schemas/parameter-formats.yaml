@@ -1,0 +1,107 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Parameter formats
+  description: Values of each kind in path, query and header parameters and form fields
+paths:
+  /formats/{name}:
+    parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: getFormats
+      parameters:
+        - name: when
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: amount
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: flag
+          in: query
+          required: true
+          schema:
+            type: boolean
+        - name: size
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Size'
+        - name: data
+          in: query
+          required: true
+          schema:
+            type: string
+            format: byte
+        - name: X-Size
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/Size'
+      responses:
+        '204':
+          description: Received
+      callbacks:
+        received:
+          '{$request.query.callback}':
+            post:
+              operationId: formatsReceived
+              parameters:
+                - name: when
+                  in: query
+                  required: true
+                  schema:
+                    type: string
+                    format: date-time
+                - name: X-Size
+                  in: header
+                  schema:
+                    $ref: '#/components/schemas/Size'
+              responses:
+                '204':
+                  description: Received
+    post:
+      operationId: postFormats
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FormatsForm'
+      responses:
+        '204':
+          description: Received
+components:
+  schemas:
+    Size:
+      type: string
+      enum:
+        - small
+        - large
+    FormatsForm:
+      type: object
+      required:
+        - size
+      properties:
+        size:
+          $ref: '#/components/schemas/Size'
+        when:
+          type: string
+          format: date-time
+        flag:
+          type: boolean
+        tags:
+          type: array
+          items:
+            type: string
+        note:
+          type: string
+          nullable: true

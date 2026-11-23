@@ -20,6 +20,9 @@
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\validation-min-max.yaml" Link="ValidationMinMax\validation-min-max.yaml" PathPrefix="/validation-min-max" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\validation-optional.yaml" Link="ValidationOptional\validation-optional.yaml" PathPrefix="/validation-optional" />
     <OpenApiSchemaModels Include="$(SolutionRoot)schemas\models-only.yaml" Link="ModelsOnly\models-only.yaml" />
+    <!-- Server and client for the same document, so tests can round-trip parameter and form values -->
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\parameter-formats.yaml" Link="ParameterFormats\parameter-formats.yaml" />
+    <OpenApiSchemaClient Include="$(SolutionRoot)schemas\parameter-formats.yaml" Link="ParameterFormats\parameter-formats.yaml" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\path-level-parameters.yaml" Link="PathLevelParameters\path-level-parameters.yaml" PathPrefix="/path-level-parameters" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\regex-escape.yaml" Link="RegexEscape\regex-escape.yaml" PathPrefix="/regex-escape" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\headers.yaml" Link="Headers\headers.yaml" PathPrefix="/headers" />

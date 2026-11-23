@@ -29,7 +29,7 @@ public sealed class OpenApiCSharpGenerator() : BaseGenerator("DarkPatterns.OpenA
 
 	// Generated code uses Json.Extensions APIs added in this version. Raise it whenever templates
 	// start using newer Json.Extensions APIs.
-	private static readonly Version MinimumJsonExtensionsVersion = new Version(0, 19, 0, 0);
+	private static readonly Version MinimumJsonExtensionsVersion = new Version(0, 20, 0, 0);
 	private static readonly DiagnosticDescriptor UpdateDependentDll = new DiagnosticDescriptor(id: "DPDAPI002",
 																								title: "Update the reference to DarkPatterns.OpenApiCodegen.Json.Extensions",
 																								messageFormat: "Generated code requires DarkPatterns.OpenApiCodegen.Json.Extensions {0} or later, but version {1} is referenced",

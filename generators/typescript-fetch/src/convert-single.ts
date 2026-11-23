@@ -19,7 +19,7 @@ export type FetchRequest = {
 	method: HttpMethod;
 	headers: Record<string, string> | undefined;
 
-	body: FormData | string;
+	body: URLSearchParams | string;
 };
 
 export type FetchResponse = {
@@ -57,7 +57,7 @@ function createRequestArgs(
 				requestOpts.headers &&
 				requestOpts.headers['Content-Type'] ===
 					'application/x-www-form-urlencoded'
-					? (requestOpts.body as FormData)
+					? (requestOpts.body as URLSearchParams)
 					: JSON.stringify(requestOpts.body),
 		},
 	];
@@ -104,19 +104,22 @@ export function toFetchOperation<
 		type Temp = {
 			params?: TParams | undefined;
 			body: TBodies[keyof TBodies];
+			mimeType?: keyof TBodies;
 			extra?: TExtra;
 		};
 		const {
 			params = {} as TParams,
 			body = undefined as Temp['body'],
+			mimeType,
 			extra,
 		} = (param ?? {}) as Temp;
 		const requestArgs: AdapterRequestArgs = conversion.request(
 			params,
 			body,
-			(body
-				? applicationJson
-				: undefined) as keyof AnyRequestBodies as keyof RequestBodies,
+			(mimeType ??
+				(body
+					? applicationJson
+					: undefined)) as keyof AnyRequestBodies as keyof RequestBodies,
 		);
 		const fetchArgs = createRequestArgs(requestArgs);
 		const fetchResponse = await fetchImpl(...fetchArgs, extra as TExtra);
@@ -125,6 +128,23 @@ export function toFetchOperation<
 	};
 }
 
+// One option per request body type: `mimeType` may be left out for JSON, and is required
+// otherwise (e.g. 'application/x-www-form-urlencoded'). Matches the rxjs adapter.
+type BodyPartInner<
+	TBodies extends RequestBodies,
+	TMime extends keyof TBodies,
+> = TMime extends 'application/json'
+	? { body: TBodies['application/json']; mimeType?: 'application/json' }
+	: { body: TBodies[TMime]; mimeType: TMime };
+type BodyPart<
+	TCallType extends TransformCallType,
+	TBodies extends RequestBodies,
+> = TCallType extends 'no-body'
+	? { body: undefined }
+	: TCallType extends 'optional'
+		? BodyPartInner<TBodies, keyof TBodies> | { body: undefined }
+		: BodyPartInner<TBodies, keyof TBodies>;
+
 type BaseRequestParam<
 	TCallType extends TransformCallType,
 	TParams,
@@ -132,20 +152,20 @@ type BaseRequestParam<
 	TExtra,
 > = {
 	params: TParams;
-	body: TCallType extends 'no-body'
-		? undefined
-		: TCallType extends 'optional'
-			? TBodies['application/json'] | undefined
-			: TBodies['application/json'];
 	extra: TExtra;
-};
+} & BodyPart<TCallType, TBodies>;
+
+// PropsOptional maps over the keys every union member shares, so apply it to each member
+type DistributePropsOptional<T> = T extends object ? PropsOptional<T> : never;
 
 export type RequestParam<
 	TCallType extends TransformCallType,
 	TParams,
 	TBodies extends RequestBodies,
 	TExtra,
-> = PropsOptional<BaseRequestParam<TCallType, TParams, TBodies, TExtra>>;
+> = DistributePropsOptional<
+	BaseRequestParam<TCallType, TParams, TBodies, TExtra>
+>;
 
 type FetchOperationParamList<
 	TCallType extends TransformCallType,

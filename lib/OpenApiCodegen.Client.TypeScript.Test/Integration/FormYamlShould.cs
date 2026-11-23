@@ -15,14 +15,16 @@ public class FormYamlShould
 		this.commonDirectory = commonDirectory;
 	}
 
-	[Fact(Skip = "Form support is currenlty very weak; the generated types do not pass.")]
+	[Fact]
 	public async Task Be_able_to_generate_the_request()
 	{
 		var body = new { name = "Fido", tag = "dog", hasIdTag = true };
+		// Form fields are sent as strings
+		var expectedBody = new { name = "Fido", tag = "dog", hasIdTag = "true" };
 
 		var result = await commonDirectory.ConvertRequest("form.yaml", "postBasicForm", new { }, body, contentType: "application/x-www-form-urlencoded");
 
-		AssertRequestSuccess(result, "POST", "/form/basic", body);
+		AssertRequestSuccess(result, "POST", "/basic", expectedBody, contentType: "application/x-www-form-urlencoded");
 	}
 
 }

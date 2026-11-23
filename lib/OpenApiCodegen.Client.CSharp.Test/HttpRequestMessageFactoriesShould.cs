@@ -76,7 +76,9 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 		Assert.Equal("large", form["size"]);
 		Assert.Equal("2026-11-22T16:45:00.0000000-06:00", form["when"]);
 		Assert.Equal("false", form["flag"]);
-		Assert.Equal(["a", "b"], form.GetValues("tags") ?? []);
+		var tags = form.GetValues("tags");
+		Assert.NotNull(tags);
+		Assert.Equal(["a", "b"], tags);
 		// A nullable field that is present with a null value is sent empty
 		Assert.Equal("", form["note"]);
 	}

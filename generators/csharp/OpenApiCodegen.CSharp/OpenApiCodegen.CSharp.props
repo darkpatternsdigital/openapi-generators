@@ -82,6 +82,9 @@
 			</AdditionalFiles>
 			<AdditionalFiles Condition=" '@(AdditionalFiles.DPDInclude)' != '' ">
 				<WorkingOutputPath Condition=" '%(AdditionalFiles.WorkingOutputPath)' == '' ">$([System.Text.RegularExpressions.Regex]::Replace(%(AdditionalFiles.Identity), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__'))</WorkingOutputPath>
+			</AdditionalFiles>
+			<!-- Separate element: metadata set within one element isn't visible to its own conditions -->
+			<AdditionalFiles Condition=" '@(AdditionalFiles.DPDInclude)' != '' ">
 				<Namespace Condition=" '%(AdditionalFiles.Namespace)' == '' and '%(AdditionalFiles.WorkingOutputPath)' != '' ">$(RootNamespace)$([System.Text.RegularExpressions.Regex]::Replace($([System.Text.RegularExpressions.Regex]::Replace('/$([System.IO.Path]::GetDirectoryName('%(AdditionalFiles.WorkingOutputPath)'))', '[/\\]', '.')), '\.$', ''))</Namespace>
 			</AdditionalFiles>
 		</ItemGroup>

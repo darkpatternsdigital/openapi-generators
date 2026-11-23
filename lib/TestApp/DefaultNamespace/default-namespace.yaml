@@ -1,0 +1,15 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Default namespace
+  description: A document inside the project with neither Link nor Namespace, so its namespace comes from its folder
+paths: {}
+components:
+  schemas:
+    Sprocket:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string

@@ -1,3 +1,4 @@
+using DarkPatterns.OpenApiCodegen.Json.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -40,7 +41,7 @@ public class ValidationOptionalYamlShould
 			AssertResponseMessage = VerifyResponse(204),
 		});
 
-	[Theory(Skip = "Optional form fields can't be model-bound yet (planning #25)")]
+	[Theory]
 	[MemberData(nameof(Cases))]
 	public Task Validate_optional_form_fields(bool expectedIsValid, string? propertyName, object? value) =>
 		TestSingleRequest<FormControllerBase.PostFormActionResult, OptionalValues>(new(

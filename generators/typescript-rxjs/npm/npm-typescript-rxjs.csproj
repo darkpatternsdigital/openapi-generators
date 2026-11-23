@@ -1,5 +1,7 @@
 <Project Sdk="DarkPatterns.Build.Pnpm/0.2.0">
     <PropertyGroup>
+        <!-- The pnpm SDK adds its own versioned PackageReference (JsonPeek), which Central Package Management rejects -->
+        <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
         <VersionPrefix>$(OpenApiTypeScriptRxjsClientVersion)</VersionPrefix>
         <PackPnpmOnBuild Condition=" $(Configuration) == 'Release' ">true</PackPnpmOnBuild>
     </PropertyGroup>

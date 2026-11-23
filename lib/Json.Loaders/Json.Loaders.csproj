@@ -12,8 +12,8 @@
 	</PropertyGroup>
 	<Import Project="$(RepositoryEngineeringDir)netstandard/polyfills.targets" />
 	<ItemGroup>
-		<PackageReference Include="Yaml2JsonNode" Version="2.1.0" />
-		<PackageReference Include="YamlDotNet" Version="15.1.2" />
+		<PackageReference Include="Yaml2JsonNode" />
+		<PackageReference Include="YamlDotNet" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="$(SolutionRoot)lib\Json.Specifications\Json.Specifications.csproj" />

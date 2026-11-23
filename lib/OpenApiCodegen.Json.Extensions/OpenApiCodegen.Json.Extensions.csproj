@@ -19,8 +19,8 @@
 	<Import Project="$(RepositoryEngineeringDir)netstandard/polyfills.targets" />
 
 	<ItemGroup>
-		<PackageReference Include="System.Text.Json" Version="8.0.5" />
+		<PackageReference Include="System.Text.Json" />
 		<!-- Validation attributes in OptionalValidation.cs; built into .NET, but not .NET Standard -->
-		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" Condition=" '$(TargetFrameworkIdentifier)' == '.NETStandard' " />
+		<PackageReference Include="System.ComponentModel.Annotations" Condition=" '$(TargetFrameworkIdentifier)' == '.NETStandard' " />
 	</ItemGroup>
 </Project>

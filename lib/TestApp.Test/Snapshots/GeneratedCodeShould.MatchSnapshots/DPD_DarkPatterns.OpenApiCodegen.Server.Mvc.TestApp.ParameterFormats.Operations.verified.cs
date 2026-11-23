@@ -71,6 +71,7 @@ global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ParameterFormats.Size xSi
 
         public static async global::System.Threading.Tasks.Task<GetFormatsReturnType?> ParseGetFormats(this global::System.Net.Http.HttpResponseMessage response)
         {
+            var mediaType = response.Content.Headers.ContentType?.MediaType;
             switch ((int)response.StatusCode)
             { 
                 case 204:
@@ -164,6 +165,7 @@ global::DarkPatterns.OpenApiCodegen.Json.Extensions.IOptional<string?>? note,
 
         public static async global::System.Threading.Tasks.Task<PostFormatsReturnType?> ParsePostFormats(this global::System.Net.Http.HttpResponseMessage response)
         {
+            var mediaType = response.Content.Headers.ContentType?.MediaType;
             switch ((int)response.StatusCode)
             { 
                 case 204:

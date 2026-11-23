@@ -59,6 +59,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OpenApi30Callbacks
 
         public static async global::System.Threading.Tasks.Task<PostOnDataReturnType?> ParsePostOnData(this global::System.Net.Http.HttpResponseMessage response)
         {
+            var mediaType = response.Content.Headers.ContentType?.MediaType;
             switch ((int)response.StatusCode)
             { 
                 case 202:

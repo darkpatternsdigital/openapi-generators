@@ -34,10 +34,11 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.Glob.tree
 
         public static async global::System.Threading.Tasks.Task<GetTreeReturnType?> ParseGetTree(this global::System.Net.Http.HttpResponseMessage response)
         {
+            var mediaType = response.Content.Headers.ContentType?.MediaType;
             switch ((int)response.StatusCode)
             { 
                 case 200:
-                     if (response.Content.Headers.ContentType.MediaType == "application/json") 
+                     if (string.Equals(mediaType, "application/json", global::System.StringComparison.OrdinalIgnoreCase)) 
                         return new GetTreeReturnType.Ok
                         {
                             Response = response,

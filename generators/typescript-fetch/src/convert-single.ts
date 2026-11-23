@@ -7,6 +7,11 @@ import type {
 	HttpMethod,
 	AdapterResponseArgs,
 } from '@darkpatternsdigital/openapi-codegen-typescript';
+import {
+	isJsonMediaType,
+	isTextMediaType,
+	toMediaType,
+} from '@darkpatternsdigital/openapi-codegen-typescript';
 import type {
 	AnyObject,
 	AnyRequestBodies,
@@ -26,7 +31,8 @@ export type FetchResponse = {
 	status: number;
 	headers: Headers;
 	json(): Promise<unknown>;
-	body: unknown; // ReadableStream, but may be different for Node vs DOM
+	text(): Promise<string>;
+	blob(): Promise<unknown>;
 };
 
 export type BaseFetchImplementation = (
@@ -67,13 +73,17 @@ async function createResponseArgs(
 	fetchResponse: Awaited<ReturnType<BaseFetchImplementation>>,
 ): Promise<AdapterResponseArgs> {
 	const response = fetchResponse;
-	const contentType = response.headers.get('Content-Type') ?? '';
+	const mediaType = toMediaType(response.headers.get('Content-Type'));
 	return {
 		status: response.status,
-		response:
-			contentType.split(';')[0] === applicationJson
-				? await response.json()
-				: response.body,
+		// JSON is parsed, text/* is a string, anything else is a Blob; no Content-Type means no body
+		response: !mediaType
+			? undefined
+			: isJsonMediaType(mediaType)
+				? parseJson(await response.text())
+				: isTextMediaType(mediaType)
+					? await response.text()
+					: await response.blob(),
 		getResponseHeader(header) {
 			return response.headers.get(header);
 		},
@@ -193,3 +203,8 @@ export type FetchOperation<
 		TExtra
 	>
 ) => Promise<TResponses>;
+
+/** An empty body (e.g. a 204 that still sends a JSON Content-Type) is no body, not invalid JSON */
+function parseJson(text: string): unknown {
+	return text ? JSON.parse(text) : undefined;
+}

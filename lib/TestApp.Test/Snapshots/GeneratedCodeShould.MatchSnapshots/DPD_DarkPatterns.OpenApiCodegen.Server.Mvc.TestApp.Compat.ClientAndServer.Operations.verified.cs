@@ -38,10 +38,11 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.ClientAndServer
 
         public static async global::System.Threading.Tasks.Task<LookupRecordReturnType?> ParseLookupRecord(this global::System.Net.Http.HttpResponseMessage response)
         {
+            var mediaType = response.Content.Headers.ContentType?.MediaType;
             switch ((int)response.StatusCode)
             { 
                 case 200:
-                     if (response.Content.Headers.ContentType.MediaType == "application/json") 
+                     if (string.Equals(mediaType, "application/json", global::System.StringComparison.OrdinalIgnoreCase)) 
                         return new LookupRecordReturnType.Ok
                         {
                             Response = response,
@@ -50,7 +51,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.ClientAndServer
                     break;
                 
                 case 409:
-                     if (response.Content.Headers.ContentType.MediaType == "application/json") 
+                     if (string.Equals(mediaType, "application/json", global::System.StringComparison.OrdinalIgnoreCase)) 
                         return new LookupRecordReturnType.Conflict
                         {
                             Response = response,
@@ -59,7 +60,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.ClientAndServer
                     break;
                 
                 default: 
-                     if (response.Content.Headers.ContentType.MediaType == "application/json") 
+                     if (string.Equals(mediaType, "application/json", global::System.StringComparison.OrdinalIgnoreCase)) 
                         return new LookupRecordReturnType.OtherStatusCode
                         {
                             Response = response,
@@ -132,19 +133,20 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.ClientAndServer
 
         public static async global::System.Threading.Tasks.Task<GetPhotoReturnType?> ParseGetPhoto(this global::System.Net.Http.HttpResponseMessage response)
         {
+            var mediaType = response.Content.Headers.ContentType?.MediaType;
             switch ((int)response.StatusCode)
             { 
                 case 200:
-                     if (response.Content.Headers.ContentType.MediaType == "application/octet-stream") 
+                     if (string.Equals(mediaType, "application/octet-stream", global::System.StringComparison.OrdinalIgnoreCase)) 
                         return new GetPhotoReturnType.Ok
                         {
                             Response = response,
-                            Body = await global::System.Text.Json.JsonSerializer.DeserializeAsync<global::System.IO.Stream>(await response.Content.ReadAsStreamAsync()), 
+                            Body = response.Content, 
                         };
                     break;
                 
                 default: 
-                     if (response.Content.Headers.ContentType.MediaType == "application/json") 
+                     if (string.Equals(mediaType, "application/json", global::System.StringComparison.OrdinalIgnoreCase)) 
                         return new GetPhotoReturnType.OtherStatusCode
                         {
                             Response = response,
@@ -173,7 +175,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.ClientAndServer
             /// </summary>
             public class Ok : GetPhotoReturnType
             {
-                public global::System.IO.Stream Body { get; set; }
+                public global::System.Net.Http.HttpContent Body { get; set; }
             }
             
             

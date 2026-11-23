@@ -5,12 +5,15 @@ using DarkPatterns.OpenApi.CSharp;
 using DarkPatterns.OpenApiCodegen.TestUtils;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using Xunit;
 
 namespace DarkPatterns.OpenApiCodegen.Client.CSharp;
@@ -24,14 +27,93 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 		workingDirectory = directory.DirectoryPath;
 	}
 
-	[Fact(Skip = "Test fails, see github #85")]
+	[Fact]
 	public async Task PassBase64EncodedQueryData()
 	{
 		var actualMessage = await GetRequestMessage("controller-extension.yaml", "GetInfo(data: Optional.Create(new byte[] { 1, 2, 3 }))");
 
 		Assert.Equal("GET", actualMessage.Method.Method);
-		Assert.Equal("api/info?data=AQI%3D", actualMessage.RequestUri?.OriginalString);
+		Assert.Equal("api/info?data=AQID", actualMessage.RequestUri?.OriginalString);
 		Assert.Null(actualMessage.Content);
+	}
+
+	[Fact]
+	public async Task FormatParameterValuesIndependentOfCulture()
+	{
+		CultureInfo.CurrentCulture = new CultureInfo("de-DE");
+		var actualMessage = await GetRequestMessage("parameter-formats.yaml", @"GetFormats(
+			name: ""a b/c"",
+			when: new System.DateTimeOffset(2026, 11, 22, 16, 45, 0, System.TimeSpan.FromHours(-6)),
+			amount: 1.5,
+			flag: true,
+			size: Size.Small,
+			data: new byte[] { 1, 2, 3 },
+			xSize: Size.Large)");
+
+		var (path, query) = SplitUri(actualMessage);
+		Assert.Equal("formats/a%20b%2Fc", path);
+		Assert.Equal("2026-11-22T16:45:00.0000000-06:00", query["when"]);
+		Assert.Equal("1.5", query["amount"]);
+		Assert.Equal("true", query["flag"]);
+		Assert.Equal("small", query["size"]);
+		Assert.Equal("AQID", query["data"]);
+		Assert.Equal(["large"], actualMessage.Headers.GetValues("X-Size"));
+	}
+
+	[Fact]
+	public async Task FormatFormFieldValues()
+	{
+		CultureInfo.CurrentCulture = new CultureInfo("de-DE");
+		var actualMessage = await GetRequestMessage("parameter-formats.yaml", @"PostFormats(
+			name: ""n"",
+			size: Size.Large,
+			when: Optional.Create(new System.DateTimeOffset(2026, 11, 22, 16, 45, 0, System.TimeSpan.FromHours(-6))),
+			flag: Optional.Create(false),
+			tags: Optional.Create<System.Collections.Generic.IEnumerable<string>>(new[] { ""a"", ""b"" }),
+			note: Optional.Create<string?>(null))");
+
+		var form = HttpUtility.ParseQueryString(await actualMessage.Content!.ReadAsStringAsync());
+		Assert.Equal("large", form["size"]);
+		Assert.Equal("2026-11-22T16:45:00.0000000-06:00", form["when"]);
+		Assert.Equal("false", form["flag"]);
+		Assert.Equal(["a", "b"], form.GetValues("tags"));
+		// A nullable field that is present with a null value is sent empty
+		Assert.Equal("", form["note"]);
+	}
+
+	[Fact]
+	public async Task OmitMissingOptionalFormFields()
+	{
+		var actualMessage = await GetRequestMessage("parameter-formats.yaml", @"PostFormats(name: ""n"", size: Size.Small, when: null, flag: null, tags: null, note: null)");
+
+		Assert.Equal("size=small", await actualMessage.Content!.ReadAsStringAsync());
+	}
+
+	[Fact]
+	public async Task SendWebhookQueryParametersAndOptionalHeaders()
+	{
+		CultureInfo.CurrentCulture = new CultureInfo("de-DE");
+		var withoutHeader = await GetRequestMessage("parameter-formats.yaml", @"FormatsReceived(
+			new System.Uri(""https://example.com/hook?token=x""),
+			when: new System.DateTimeOffset(2026, 11, 22, 16, 45, 0, System.TimeSpan.FromHours(-6)),
+			xSize: null)", webhooks: true);
+		var withHeader = await GetRequestMessage("parameter-formats.yaml", @"FormatsReceived(
+			new System.Uri(""https://example.com/hook""),
+			when: new System.DateTimeOffset(2026, 11, 22, 16, 45, 0, System.TimeSpan.FromHours(-6)),
+			xSize: Optional.Create(Size.Large))", webhooks: true);
+
+		var (path, query) = SplitUri(withoutHeader);
+		Assert.Equal("https://example.com/hook", path);
+		Assert.Equal("x", query["token"]);
+		Assert.Equal("2026-11-22T16:45:00.0000000-06:00", query["when"]);
+		Assert.False(withoutHeader.Headers.Contains("X-Size"));
+		Assert.Equal(["large"], withHeader.Headers.GetValues("X-Size"));
+	}
+
+	private static (string Path, NameValueCollection Query) SplitUri(HttpRequestMessage message)
+	{
+		var parts = message.RequestUri!.OriginalString.Split('?', 2);
+		return (parts[0], HttpUtility.ParseQueryString(parts.Length > 1 ? parts[1] : ""));
 	}
 
 	[Fact]
@@ -85,15 +167,15 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 		Assert.Null(actualMessage.Content);
 	}
 
-	[Fact(Skip = "Test fails, see github #86")]
+	[Fact]
 	public async Task PassBase64EncodedHeaderData()
 	{
-		var actualMessage = await GetRequestMessage("headers.yaml", "GetInfo(xData: Optional.Create(new byte[] { 1, 2, 3 }))");
+		var actualMessage = await GetRequestMessage("headers.yaml", "GetInfo(xData: new byte[] { 1, 2, 3 })");
 
 		Assert.Equal("GET", actualMessage.Method.Method);
 		Assert.Equal("info", actualMessage.RequestUri?.OriginalString);
 		Assert.Collection(actualMessage.Headers.GetValues("X-Data"),
-			value => Assert.Equal("AQI=", value)
+			value => Assert.Equal("AQID", value)
 		);
 		Assert.Null(actualMessage.Content);
 	}
@@ -112,7 +194,7 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 		var actualMessage = await GetRequestMessage("path-level-parameters.yaml", @"DeleteWidget(widgetId: ""w-1"", verbose: true, reason: Optional.Create(""old""))");
 
 		Assert.Equal("DELETE", actualMessage.Method.Method);
-		Assert.Equal("widgets/w-1?verbose=True&reason=old", actualMessage.RequestUri?.OriginalString);
+		Assert.Equal("widgets/w-1?verbose=true&reason=old", actualMessage.RequestUri?.OriginalString);
 	}
 
 	[Fact]
@@ -212,7 +294,7 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 	[Fact]
 	public async Task AllowFormEncodedBodies()
 	{
-		var actualMessage = await GetRequestMessage("form.yaml", "PostBasicForm(name: \"Fido\", tag: \"dog\", hasIdTag: true)");
+		var actualMessage = await GetRequestMessage("form.yaml", "PostBasicForm(name: \"Fido\", tag: Optional.Create(\"dog\"), hasIdTag: true)");
 
 		Assert.Equal("POST", actualMessage.Method.Method);
 		Assert.Equal("basic", actualMessage.RequestUri?.OriginalString);
@@ -220,12 +302,20 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 		using var memoryStream = new MemoryStream();
 		await content.CopyToAsync(memoryStream);
 		var formString = Encoding.ASCII.GetString(memoryStream.ToArray());
-		Assert.Equal("name=Fido&tag=dog&hasIdTag=True", formString);
+		Assert.Equal("name=Fido&tag=dog&hasIdTag=true", formString);
 	}
 
-	private async Task<HttpRequestMessage> GetRequestMessage(string documentName, string operationAndParameters, Action<CSharpSchemaOptions>? configureOptions = null)
+	[Fact]
+	public async Task OmitAnOptionalFormFieldThatIsNotSet()
 	{
-		var libBytes = DynamicCompilation.GetGeneratedLibrary(documentName, configureOptions);
+		var actualMessage = await GetRequestMessage("form.yaml", "PostBasicForm(name: \"Fido\", tag: null, hasIdTag: false)");
+
+		Assert.Equal("name=Fido&hasIdTag=false", await actualMessage.Content!.ReadAsStringAsync());
+	}
+
+	private async Task<HttpRequestMessage> GetRequestMessage(string documentName, string operationAndParameters, Action<CSharpSchemaOptions>? configureOptions = null, bool webhooks = false)
+	{
+		var libBytes = DynamicCompilation.GetGeneratedLibrary(documentName, configureOptions, webhooks);
 
 		var fullPath = Path.Combine(workingDirectory, Path.GetRandomFileName());
 		File.WriteAllBytes(fullPath, libBytes);
@@ -235,7 +325,7 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 			.AddReferences(MetadataReference.CreateFromFile(fullPath))
 			.WithImports(
 				"DPD.Controller",
-				"DPD.Controller.Operations",
+				webhooks ? "DPD.Controller.WebhookOperations" : "DPD.Controller.Operations",
 				"DarkPatterns.OpenApiCodegen.Json.Extensions"
 			);
 

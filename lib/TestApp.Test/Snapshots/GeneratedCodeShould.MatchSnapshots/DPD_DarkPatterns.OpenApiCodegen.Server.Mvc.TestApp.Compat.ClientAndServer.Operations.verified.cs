@@ -124,7 +124,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.ClientAndServer
             var requestMessage = new global::System.Net.Http.HttpRequestMessage(
                 global::System.Net.Http.HttpMethod.Get,
                 "photo/{id}"
-                        .Replace("{" + "id" + "}", global::System.Web.HttpUtility.UrlEncode(id.ToString())));
+                        .Replace("{" + "id" + "}", global::System.Uri.EscapeDataString(global::DarkPatterns.OpenApiCodegen.Json.Extensions.ParameterFormatting.ToParameterString(id) ?? "")));
 
 
             return requestMessage;

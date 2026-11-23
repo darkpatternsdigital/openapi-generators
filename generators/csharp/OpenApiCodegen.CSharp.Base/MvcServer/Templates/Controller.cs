@@ -36,6 +36,7 @@ public record OperationParameter(
 	string? Description,
 	string DataType,
 	bool DataTypeNullable,
+	bool DataTypeEnumerable,
 	bool IsPathParam,
 	bool IsQueryParam,
 	bool IsHeaderParam,

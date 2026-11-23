@@ -28,8 +28,6 @@ components:
       type: object
       required:
         - name
-        # TODO: forms don't support Optional
-        - tag
         - hasIdTag
       properties:
         name:

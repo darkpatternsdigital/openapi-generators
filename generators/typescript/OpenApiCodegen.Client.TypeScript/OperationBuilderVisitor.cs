@@ -124,7 +124,12 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 						from p in operation.Parameters
 						select p.Schema,
 						from mediaType in operation.RequestBody?.Content?.Values ?? Enumerable.Empty<OpenApiMediaTypeObject>()
-						select mediaType.Schema
+						select mediaType.Schema,
+						// Form bodies are typed field by field, so each field's type needs importing
+						from mediaType in operation.RequestBody?.Content ?? Enumerable.Empty<KeyValuePair<string, OpenApiMediaTypeObject>>()
+						where mediaType.Key == formMimeType
+						from property in mediaType.Value.Schema?.ResolveSchemaInfo()?.TryGetAnnotation<PropertiesKeyword>()?.Properties.Values ?? Enumerable.Empty<JsonSchema>()
+						select property
 					}
 					   from schema in set
 					   select schema;

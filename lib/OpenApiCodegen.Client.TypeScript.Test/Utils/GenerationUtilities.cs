@@ -31,7 +31,8 @@ internal static class GenerationUtilities
             import {{ AdapterRequestArgs }} from '@darkpatternsdigital/openapi-codegen-typescript';
             import {{ conversion }} from './{documentName}/operations/{operationName}';
             const request: AdapterRequestArgs = conversion.request({JsonSerializer.Serialize(parameters)}, {JsonSerializer.Serialize(body)}, {JsonSerializer.Serialize(contentType)});
-            console.log(JSON.stringify(request));
+            // Form bodies are URLSearchParams, which JSON.stringify prints as an empty object
+            console.log(JSON.stringify(request.body instanceof URLSearchParams ? {{ ...request, body: Object.fromEntries(request.body) }} : request));
         ");
 		return result;
 	}

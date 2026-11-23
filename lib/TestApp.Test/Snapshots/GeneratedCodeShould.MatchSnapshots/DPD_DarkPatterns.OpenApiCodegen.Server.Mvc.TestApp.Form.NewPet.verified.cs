@@ -14,7 +14,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Form
 {
     public partial record NewPet(
         [property: global::System.Text.Json.Serialization.JsonPropertyName("name")][property: global::System.Text.Json.Serialization.JsonRequiredAttribute] string Name, 
-        [property: global::System.Text.Json.Serialization.JsonPropertyName("tag")][property: global::System.Text.Json.Serialization.JsonRequiredAttribute] string Tag, 
+        [property: global::System.Text.Json.Serialization.JsonPropertyName("tag")][property: global::System.Text.Json.Serialization.JsonIgnore(Condition = global::System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)] global::DarkPatterns.OpenApiCodegen.Json.Extensions.IOptional<string>? Tag, 
         [property: global::System.Text.Json.Serialization.JsonPropertyName("hasIdTag")][property: global::System.Text.Json.Serialization.JsonRequiredAttribute] bool HasIdTag
     );
 }

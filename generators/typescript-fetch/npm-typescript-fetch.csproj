@@ -20,6 +20,7 @@
         <TestedSchema Include="no-refs" />
         <TestedSchema Include="petstore" />
         <TestedSchema Include="headers" />
+        <TestedSchema Include="parameter-formats" />
         <TestedSchema Include="multi-path-variables" />
     </ItemGroup>
 

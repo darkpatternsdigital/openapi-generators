@@ -11,6 +11,7 @@ using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
 using DarkPatterns.OpenApiCodegen.TestUtils;
 using DarkPatterns.OpenApiCodegen.Handlebars;
 using DarkPatterns.OpenApiCodegen.CSharp.Client;
+using DarkPatterns.OpenApiCodegen.CSharp.WebhookClient;
 
 namespace DarkPatterns.OpenApiCodegen.Client.CSharp;
 
@@ -35,7 +36,7 @@ internal class DynamicCompilation
 			typeof(DarkPatterns.OpenApiCodegen.Json.Extensions.JsonStringEnumPropertyNameConverter).Assembly.Location,
 	};
 
-	public static byte[] GetGeneratedLibrary(string documentName, Action<CSharpSchemaOptions>? configureOptions = null)
+	public static byte[] GetGeneratedLibrary(string documentName, Action<CSharpSchemaOptions>? configureOptions = null, bool webhooks = false)
 	{
 		var registry = DocumentLoader.CreateRegistry();
 		var docResult = GetOpenApiDocument(documentName, registry);
@@ -44,7 +45,9 @@ internal class DynamicCompilation
 		configureOptions?.Invoke(options);
 
 		var transformer = TransformSettings.BuildComposite(registry, "", [
-			(s) => new ClientTransformerFactory(s).Build(docResult, options),
+			webhooks
+				? (s) => new WebhookClientTransformerFactory(s).Build(docResult, options)
+				: (s) => new ClientTransformerFactory(s).Build(docResult, options),
 			(s) => new CSharpSchemaSourceProvider(s, options)
 		]);
 

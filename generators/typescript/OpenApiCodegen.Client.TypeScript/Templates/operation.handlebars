@@ -2,7 +2,7 @@
 // Generated from operation: {{{Operation.SourceReference}}}
 {{#with Operation}}
 import type { HttpHeaders, AdapterRequestArgs, AdapterResponseArgs, RequestConversion, StandardResponse, TransformRequest } from '@darkpatternsdigital/openapi-codegen-typescript';
-import { encodeURI, throwIfNullOrUndefined } from '@darkpatternsdigital/openapi-codegen-typescript';
+import { encodeURI, throwIfNullOrUndefined, toParameterString } from '@darkpatternsdigital/openapi-codegen-typescript';
 {{#each Imports}}
 import {
 {{#each Members}}
@@ -69,8 +69,8 @@ export function constructUrl(params: UrlParams): string {
     const query = new URLSearchParams();
     {{#each SharedParams}}{{#if IsQueryParam}}
     {{#unless Required}}if (params.{{{ParamName}}} !== undefined)
-        {{/unless}}{{#unless DataTypeEnumerable}}query.set('{{{RawName}}}', String(params.{{{ParamName}}}));{{else}}for (const value of params.{{{ParamName}}}) {
-            query.append('{{{RawName}}}', String(value));
+        {{/unless}}{{#unless DataTypeEnumerable}}query.set('{{{RawName}}}', toParameterString(params.{{{ParamName}}}));{{else}}for (const value of params.{{{ParamName}}}) {
+            query.append('{{{RawName}}}', toParameterString(value));
         }{{/unless}}
     {{/if}}{{/each}}
 
@@ -116,16 +116,14 @@ export const constructRequestBodyByMimeType: {
             return body;
         {{else}}
         {{#ifEquals RequestBodyType 'application/x-www-form-urlencoded'}}
-            let formData = new FormData();
+            {{!-- URLSearchParams, not FormData: fetch sends FormData as multipart even with a urlencoded Content-Type --}}
+            const formData = new URLSearchParams();
             {{#each AllParams}}
             {{#if DataTypeEnumerable}}
-            if (body!.{{{ParamName}}} !== undefined) {
-                {{!-- TODO - openapi style/explode combo --}}
-                body!.{{{ParamName}}}.forEach((element) => formData.append('{{RawName}}', element as any))
-                {{!-- formData.append('{{RawName}}', body!.{{{ParamName}}}.join(COLLECTION_FORMATS['{{CollectionFormat}}'])); --}}
-            }
+            {{!-- TODO - openapi style/explode combo (planning #27); repeated keys are the default (form, explode) --}}
+            for (const element of body!.{{{ParamName}}} ?? []) { formData.append('{{RawName}}', toParameterString(element)); }
             {{else}}
-            if (body!.{{{ParamName}}} !== undefined) { formData.append('{{RawName}}', body!.{{{ParamName}}} as any); }
+            if (body!.{{{ParamName}}} !== undefined) { formData.append('{{RawName}}', toParameterString(body!.{{{ParamName}}})); }
             {{/if}}
             {{/each}}
             return formData;

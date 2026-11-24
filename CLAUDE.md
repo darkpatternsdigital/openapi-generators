@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 OpenAPI code generators (C# source generator, plus TypeScript generators shipped via npm). The generators are written in C#; the TypeScript npm packages wrap a .NET console app and add runtime helpers. Everything is driven by MSBuild — `openapi-codegen.sln` includes the npm packages as projects (via the `DarkPatterns.Build.Pnpm` SDK), so `dotnet build`/`dotnet test` also build and test the TypeScript side.
 
-Prereqs: .NET 8 SDK (`global.json`), Node 20 (`.nvmrc`), pnpm 8 (`packageManager` in `package.json`).
+Prereqs: .NET 8 SDK (`global.json`), Node 26 (`.nvmrc`), pnpm 12 (`packageManager` in `package.json`). pnpm settings live in `pnpm-workspace.yaml`.
 
 ## Commands
 

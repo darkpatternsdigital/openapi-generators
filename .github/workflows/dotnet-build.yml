@@ -127,7 +127,6 @@ jobs:
         echo '' >> .npmrc
         echo '//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}' >> .npmrc
         echo '@darkpatternsdigital:registry=https://npm.pkg.github.com/' >> .npmrc
-        echo 'always-auth=false' >> .npmrc
     - name: Publish npm packages to GitHub registry
       if: ${{ github.ref != 'refs/heads/main' }}
       working-directory: ./artifacts/package/release
@@ -136,9 +135,6 @@ jobs:
       continue-on-error: true # Dependabot and other outside contributors can't push to our GitHub packages
       env:
         NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Update npm for trusted publishing
-      if: ${{ github.ref == 'refs/heads/main' }}
-      run: npm install -g npm@^11.5.1 # trusted publishing needs npm 11.5.1 or later
     - name: Publish npm packages to npm registry if new version number
       if: ${{ github.ref == 'refs/heads/main' }}
       working-directory: ./artifacts/package/release

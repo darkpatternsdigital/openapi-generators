@@ -1,3 +1,19 @@
 packages:
   - '**'
   - '!artifacts/**'
+
+saveWorkspaceProtocol: rolling
+childConcurrency: 1
+linkWorkspacePackages: deep
+preferWorkspacePackages: true
+disallowWorkspaceCycles: true
+shamefullyHoist: true
+engineStrict: true
+
+allowBuilds:
+  esbuild: true # installs the native binary vitest uses
+  msw: false # only copies the service worker into a configured workerDirectory, which we don't use
+
+peerDependencyRules:
+  allowedVersions:
+    eslint-plugin-import@2.29.1>eslint: '>=9'

@@ -29,6 +29,14 @@ public abstract class BaseGenerator :
 																								category: "DarkPatterns.OpenApiCodegen",
 																								DiagnosticSeverity.Error,
 																								isEnabledByDefault: true);
+	// Roslyn's CS8785 only names the exception type, which hides the cause of exceptions such as
+	// TypeInitializationException, so report the whole exception instead.
+	private static readonly DiagnosticDescriptor GenerationFailed = new DiagnosticDescriptor(id: "DPDAPI003",
+																							title: "Code generation failed",
+																							messageFormat: "Code generation failed: {0}",
+																							category: "DarkPatterns.OpenApiCodegen",
+																							DiagnosticSeverity.Warning,
+																							isEnabledByDefault: true);
 
 	private static readonly object lockHandle = new object();
 
@@ -128,7 +136,7 @@ public abstract class BaseGenerator :
 	{
 		context.RegisterImplementationSourceOutput(context.CompilationProvider, (context, compilation) =>
 		{
-			ReportCompilationDiagnostics(compilation, context);
+			ReportFailures(context, () => ReportCompilationDiagnostics(compilation, context));
 		});
 
 		// Build an incremental "watcher"
@@ -138,19 +146,22 @@ public abstract class BaseGenerator :
 			.Where((tuple) => GetFileTypes(tuple) is not []);
 		context.RegisterSourceOutput(allAdditionalTexts.Collect(), (context, tuple) =>
 		{
-			GenerateSources(tuple, context);
+			ReportFailures(context, () => GenerateSources(tuple, context));
 		});
 	}
 #endif
 
 	public virtual void Execute(GeneratorExecutionContext context)
 	{
-		ReportCompilationDiagnostics(context.Compilation, context);
+		ReportFailures(context, () =>
+		{
+			ReportCompilationDiagnostics(context.Compilation, context);
 
-		var allAdditionalTexts = context.AdditionalFiles.Select(file => GetOptions(file, context.AnalyzerConfigOptions))
-			.Where(static (tuple) => tuple.TextContents != null)
-			.ToArray();
-		GenerateSources(allAdditionalTexts, context);
+			var allAdditionalTexts = context.AdditionalFiles.Select(file => GetOptions(file, context.AnalyzerConfigOptions))
+				.Where(static (tuple) => tuple.TextContents != null)
+				.ToArray();
+			GenerateSources(allAdditionalTexts, context);
+		});
 	}
 
 	public void Initialize(GeneratorInitializationContext context)
@@ -174,6 +185,21 @@ public abstract class BaseGenerator :
 	{
 		var opt = analyzerConfigOptions.GetOptions(file);
 		return new(file.Path, file.GetText()?.ToString()!, opt);
+	}
+
+	private static void ReportFailures(CompilerApis apis, Action action)
+	{
+		try
+		{
+			action();
+		}
+#pragma warning disable CA1031 // Do not catch general exception types: any exception is reported instead of CS8785
+		catch (Exception ex) when (ex is not OperationCanceledException)
+#pragma warning restore CA1031
+		{
+			// ToString includes inner exceptions and stack traces
+			apis.ReportDiagnostic(Diagnostic.Create(GenerationFailed, Location.None, ex.ToString()));
+		}
 	}
 
 	protected abstract void ReportCompilationDiagnostics(Compilation compilation, CompilerApis apis);

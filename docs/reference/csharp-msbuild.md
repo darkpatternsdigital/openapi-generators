@@ -109,3 +109,4 @@ document's location. The generator also reports:
 | :--- | :------ |
 | `DPDAPI001` | The project doesn't reference `DarkPatterns.OpenApiCodegen.Json.Extensions`, which the generated code needs. |
 | `DPDAPI002` | The `DarkPatterns.OpenApiCodegen.Json.Extensions` reference is older than the generated code needs. Update it to the version named in the warning. |
+| `DPDAPI003` | Code generation failed with an exception, so generated code may be missing. The message has the whole exception; include it when reporting a bug. |

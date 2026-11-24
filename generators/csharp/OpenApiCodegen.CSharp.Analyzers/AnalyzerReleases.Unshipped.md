@@ -6,6 +6,7 @@ Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 DPDAPI001 | DarkPatterns.OpenApiCodegen.CSharp | Warning | OpenApiMvcServerGenerator
 DPDAPI002 | DarkPatterns.OpenApiCodegen.CSharp | Warning | OpenApiCSharpGenerator
+DPDAPI003 | DarkPatterns.OpenApiCodegen | Warning | BaseGenerator
 DPD_JSON_001 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
 DPD_JSON_002 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
 DPD_JSON_003 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics

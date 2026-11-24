@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 OpenAPI code generators (C# source generator, plus TypeScript generators shipped via npm). The generators are written in C#; the TypeScript npm packages wrap a .NET console app and add runtime helpers. Everything is driven by MSBuild — `openapi-codegen.sln` includes the npm packages as projects (via the `DarkPatterns.Build.Pnpm` SDK), so `dotnet build`/`dotnet test` also build and test the TypeScript side.
 
-Prereqs: .NET 11 SDK (`global.json`) plus the .NET 8 runtime for tests, Node 26 (`.nvmrc`), pnpm 12 (`packageManager` in `package.json`). pnpm settings live in `pnpm-workspace.yaml`.
+Prereqs: .NET 11 SDK (`global.json`) plus the .NET 10 runtime (tests run on .NET 10 and 11) and the .NET 8 runtime (the TypeScript CLI), Node 26 (`.nvmrc`), pnpm 12 (`packageManager` in `package.json`). pnpm settings live in `pnpm-workspace.yaml`.
 
 ## Commands
 
@@ -69,7 +69,7 @@ Consumers reference `OpenApiCodegen.Json.Extensions` themselves; the C# package 
 ## Testing conventions
 
 - `schemas/` holds the shared OpenAPI fixtures used by every test suite. Adding a feature usually means adding a schema here and wiring it into the relevant consumers.
-- `lib/TestApp` is a real ASP.NET app that consumes the source generator (referenced as an analyzer) on many schemas; `lib/TestApp.Test` exercises it over HTTP. Generated files are emitted to `lib/TestApp/generated/` for inspection. `lib/TestApp.Bad` covers schemas that should produce diagnostics.
+- `lib/TestApp` is a real ASP.NET app that consumes the source generator (referenced as an analyzer) on many schemas; `lib/TestApp.Test` exercises it over HTTP. Both target `net10.0` and `net11.0`, so generated code is compiled and tested on each. Generated files are emitted to `lib/TestApp/generated/` for inspection, from the `net10.0` build only. `lib/TestApp.Bad` covers schemas that should produce diagnostics.
 - `lib/TestApp.Test/GeneratedCodeShould` snapshots everything in `lib/TestApp/generated/` with [Verify](https://github.com/VerifyTests/Verify), replacing the generator version with a placeholder. Any change to generated output fails it and leaves `*.received.cs` files next to the `*.verified.cs` snapshots. Review the diff, then rename the received files to `.verified.cs`. `generated/` isn't cleaned automatically, so delete it before rebuilding if outputs were removed or renamed.
 - The "Compatibility fixtures" item group in `lib/TestApp`'s csproj recreates MSBuild configuration patterns from real-world projects. Expect their snapshots to change only when a change is meant to affect existing users.
 - `lib/OpenApiCodegen.Server.Mvc.Test/ComprehensiveTransformsShould` generates and dynamically compiles each schema; add new schemas to its `InlineData` list when they're added to the TestApp.

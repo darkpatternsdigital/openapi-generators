@@ -27,6 +27,8 @@ internal class DynamicCompilation
 			typeof(System.ComponentModel.DataAnnotations.RequiredAttribute).Assembly.Location,
 			typeof(System.Text.Json.JsonSerializer).Assembly.Location,
 			typeof(System.Net.Http.Json.JsonContent).Assembly.Location,
+			// System.Text.Json's PipeReader overloads, which overload resolution needs since .NET 10
+			Path.Combine(Path.GetDirectoryName(typeof(object).Assembly.Location)!, "System.IO.Pipelines.dll"),
 
 			Path.Combine(Path.GetDirectoryName(typeof(object).Assembly.Location)!, "System.Net.Http.dll"),
 			Path.Combine(Path.GetDirectoryName(typeof(object).Assembly.Location)!, "System.Net.Primitives.dll"),

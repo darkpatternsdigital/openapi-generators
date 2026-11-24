@@ -17,7 +17,7 @@ static class NodeUtility
 	private static bool IsWindows =>
 		System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);
 
-	// Runs through pnpm so the workspace's pinned ts-node and Node (`use-node-version`) are used.
+	// Runs through pnpm so the workspace's pinned ts-node and Node (`devEngines.runtime`) are used.
 	// On Windows, pnpm is a .cmd or .exe, which cmd resolves.
 	private static ProcessStartInfo PnpmExec(string args) =>
 		IsWindows

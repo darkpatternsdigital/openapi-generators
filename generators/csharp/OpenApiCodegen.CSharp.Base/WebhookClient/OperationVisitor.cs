@@ -55,7 +55,7 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 	{
 		if (argument.CurrentPath is not OpenApiPath pathObj)
 			throw new ArgumentException("Could not find path in argument; be sure to visit a whole OpenAPI doc", nameof(argument));
-		var path = JsonPointer.Parse(pathObj.Id.Fragment).Segments.Reverse().Skip(1).First().Value;
+		var path = Enumerable.Reverse(JsonPointer.Parse(pathObj.Id.Fragment).Segments).Skip(1).First().Value;
 		if (path == null)
 			throw new ArgumentException("Context is not initialized properly - key expected for path items", nameof(argument));
 

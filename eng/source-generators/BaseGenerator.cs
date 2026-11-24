@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using static System.Linq.Expressions.Expression;
 using System.Reflection;
@@ -118,9 +119,9 @@ public abstract class BaseGenerator :
 			using var stream = myAsm.GetManifestResourceStream(streamName);
 			if (stream != null)
 			{
-				var dllBytes = new byte[stream.Length];
-				stream.Read(dllBytes, 0, (int)stream.Length);
-				var resultAsm = Assembly.Load(dllBytes);
+				using var dllBytes = new MemoryStream();
+				stream.CopyTo(dllBytes);
+				var resultAsm = Assembly.Load(dllBytes.ToArray());
 				loadedAssemblies.Add(resultAsm);
 				loadedFromStreamAssemblies[streamName] = resultAsm;
 				return resultAsm;

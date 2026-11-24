@@ -3,7 +3,7 @@
 
 	<PropertyGroup>
 		<Nullable>enable</Nullable>
-		<LangVersion>12</LangVersion>
+		<LangVersion>15</LangVersion>
 
 		<SolutionRoot>$(MSBuildThisFileDirectory)</SolutionRoot>
 		<RepositoryEngineeringDir>$(SolutionRoot)eng/</RepositoryEngineeringDir>

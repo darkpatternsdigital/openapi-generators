@@ -8,8 +8,10 @@ runs:
     # .NET install and cache
     - uses: actions/setup-dotnet@v3
       with:
-        # The main version this project uses
-        dotnet-version: '8.0.x'
+        # The SDK in global.json, plus the runtimes the tests run on
+        dotnet-version: |
+          8.0.x
+          11.0.x
 
     - uses: actions/cache@v3
       with:

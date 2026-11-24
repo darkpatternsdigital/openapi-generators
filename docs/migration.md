@@ -6,6 +6,14 @@ every section between your version and the new one.
 
 Releases before C# 0.25.4 and TypeScript 0.13.0 aren't covered.
 
+## C# 0.31.2
+
+**Generator failures are reported as `DPDAPI003`.** When code generation throws,
+the build reports warning `DPDAPI003` with the whole exception, including inner
+exceptions and stack traces, instead of Roslyn's `CS8785`, which only gave the
+exception's type and message. Builds that suppress `CS8785` should suppress
+`DPDAPI003` too.
+
 ## C# 0.31.1
 
 **Default namespace for items without `Link` or `Namespace`.** An item inside

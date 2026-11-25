@@ -7,7 +7,7 @@ creating clients of many shapes. Delivered via an npm package.
 npm i @darkpatternsdigital/openapi-codegen-typescript
 ```
 
-You must also have the .NET 8.0 runtime installed on your machine.
+You must also have the .NET 10 runtime, or a later one, installed on your machine.
 
 This will provide a corresponding bin to generate the typescript files.
 

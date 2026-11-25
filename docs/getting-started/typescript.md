@@ -5,8 +5,8 @@ library: each operation describes how to build its request and read its
 responses. An adapter package then turns the operations into functions for
 fetch or RxJS, or into MSW handlers for tests.
 
-The generator is a .NET program, so it needs the .NET 8 runtime whichever way you
-install it.
+The generator is a .NET program, so it needs the .NET 10 runtime, or a later
+one, whichever way you install it.
 
 ## 1. Install the generator
 

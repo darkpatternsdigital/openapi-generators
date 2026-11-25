@@ -7,7 +7,7 @@ tests via vitest.
 
 Prerequisites:
 
-    .NET 8 SDK, Node, pnpm
+    .NET 11 SDK and .NET 10 runtime, Node, pnpm
 
 Build (also regenerates `tests/generated/` from the shared `schemas/`):
 

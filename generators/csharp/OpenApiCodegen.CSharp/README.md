@@ -4,8 +4,8 @@ Adds C# source generators from an OpenAPI specification file.
 
     ```xml
     <ItemGroup>
-        <PackageReference Include="DarkPatterns.OpenApiCodegen.Json.Extensions" Version="0.20.0" />
-        <PackageReference Include="DarkPatterns.OpenApiCodegen.CSharp" Version="0.31.2" PrivateAssets="All" />
+        <PackageReference Include="DarkPatterns.OpenApiCodegen.Json.Extensions" Version="0.21.0" />
+        <PackageReference Include="DarkPatterns.OpenApiCodegen.CSharp" Version="0.32.0" PrivateAssets="All" />
     </ItemGroup>
     ```
 
@@ -39,7 +39,7 @@ and to control the Namespace. If a referenced file is an OpenAPI document (with
 - System.Text.Json
 - C# 11+
 - .NET 8
-- Roslyn 3.11 or Roslyn 4.0+ (VS 2022 or later, or other up-to-date Roslyn installation.)
+- Roslyn 4.8+ (the .NET 8 SDK, or VS 2022 17.8 or later)
 - A reference to `DarkPatterns.OpenApiCodegen.Json.Extensions`
 
 ## Other notes

@@ -5,7 +5,6 @@
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
 		<RootNamespace>$(RootNamespacePrefix).OpenApiCodegen</RootNamespace>
-		<AnalyzerRoslynVersion>4.0</AnalyzerRoslynVersion>
 
 		<NoWarn>$(NoWarn);RS2008</NoWarn>
 	</PropertyGroup>
@@ -35,6 +34,6 @@
 		<ProjectReference Include="..\csharp\OpenApiCodegen.CSharp.Base\OpenApiCodegen.CSharp.Base.csproj" />
 		<ProjectReference Include="..\typescript\OpenApiCodegen.Client.TypeScript\OpenApiCodegen.Client.TypeScript.csproj" />
 		<!-- Build order only: JsonExtensionsReferenceShould loads the built analyzer -->
-		<ProjectReference Include="..\csharp\OpenApiCodegen.CSharp.Analyzers\OpenApiCodegen.CSharp.Roslyn4.1.csproj" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\csharp\OpenApiCodegen.CSharp.Analyzers\OpenApiCodegen.CSharp.Roslyn4.8.csproj" ReferenceOutputAssembly="false" />
 	</ItemGroup>
 </Project>

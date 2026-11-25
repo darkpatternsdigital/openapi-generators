@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <ProjectReference
-      Include="$(SolutionRoot)generators\csharp\OpenApiCodegen.CSharp.Analyzers\OpenApiCodegen.CSharp.Roslyn4.1.csproj"
+      Include="$(SolutionRoot)generators\csharp\OpenApiCodegen.CSharp.Analyzers\OpenApiCodegen.CSharp.Roslyn4.8.csproj"
       OutputItemType="Analyzer"
       ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\OpenApiCodegen.Json.Extensions\OpenApiCodegen.Json.Extensions.csproj" />

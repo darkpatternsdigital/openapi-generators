@@ -76,7 +76,7 @@
 
   <ItemGroup>
 	  <ProjectReference
-		Include="$(SolutionRoot)generators\csharp\OpenApiCodegen.CSharp.Analyzers\OpenApiCodegen.CSharp.Roslyn4.0.csproj"
+		Include="$(SolutionRoot)generators\csharp\OpenApiCodegen.CSharp.Analyzers\OpenApiCodegen.CSharp.Roslyn5.12.csproj"
 		OutputItemType="Analyzer"
 		ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\OpenApiCodegen.Json.Extensions\OpenApiCodegen.Json.Extensions.csproj" />

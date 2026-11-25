@@ -16,11 +16,7 @@ namespace DarkPatterns.OpenApiCodegen;
 using ReportDiagnostic = Action<Diagnostic>;
 using AddSourceText = Action<string, SourceText>;
 
-public abstract class BaseGenerator :
-#if ROSLYN4_0_OR_GREATER
-	IIncrementalGenerator,
-#endif
-	ISourceGenerator
+public abstract class BaseGenerator : IIncrementalGenerator
 {
 	private const string additionalTextInfoAssemblyName = "DarkPatterns.OpenApiCodegen";
 	private const string additionalTextInfoTypeName = "DarkPatterns.OpenApiCodegen.AdditionalTextInfo";
@@ -41,11 +37,21 @@ public abstract class BaseGenerator :
 
 	private static readonly object lockHandle = new object();
 
-	private readonly Func<IEnumerable<string>> getMetadataKeys;
-	private readonly Func<string, string, IReadOnlyList<string>, IReadOnlyDictionary<string, string?>, object> toAdditionalTextType;
-	private readonly Func<object[], object> generate;
+	private readonly Lazy<LoadedGenerator> loaded;
 
 	protected BaseGenerator(string generatorTypeName, string assemblyName)
+	{
+		// Roslyn reports an exception from this constructor without its details, so load the
+		// generator when it's first used, where ReportFailures reports any exception.
+		loaded = new(() => Load(generatorTypeName, assemblyName));
+	}
+
+	private sealed record LoadedGenerator(
+		Func<IEnumerable<string>> GetMetadataKeys,
+		Func<string, string, IReadOnlyList<string>, IReadOnlyDictionary<string, string?>, object> ToAdditionalTextType,
+		Func<object[], object> Generate);
+
+	private LoadedGenerator Load(string generatorTypeName, string assemblyName)
 	{
 		var myAsm = this.GetType().Assembly;
 
@@ -71,18 +77,20 @@ public abstract class BaseGenerator :
 		var textParameter = Parameter(typeof(string));
 		var typesParamter = Parameter(typeof(IReadOnlyList<string>));
 		var dictionaryParameter = Parameter(typeof(IReadOnlyDictionary<string, string?>));
-		getMetadataKeys = Lambda<Func<IEnumerable<string>>>(Property(generatorExpression, "MetadataKeys")).Compile();
-		toAdditionalTextType = Lambda<Func<string, string, IReadOnlyList<string>, IReadOnlyDictionary<string, string?>, object>>(
+		var getMetadataKeys = Lambda<Func<IEnumerable<string>>>(Property(generatorExpression, "MetadataKeys")).Compile();
+		var toAdditionalTextType = Lambda<Func<string, string, IReadOnlyList<string>, IReadOnlyDictionary<string, string?>, object>>(
 			Convert(Call(generatorExpression, toAdditionalTextTypeMethod, pathParameter, textParameter, typesParamter, dictionaryParameter), typeof(object))
 			, pathParameter, textParameter, typesParamter, dictionaryParameter).Compile();
 
 		var generateMethod = generatorType.GetMethods().FirstOrDefault(m => m.Name == "Generate" && m.GetParameters().Length == 1)!;
 		var ofTypeMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.OfType))!.MakeGenericMethod(generateMethod.GetParameters()[0].ParameterType.GetGenericArguments())!;
 		var otherFilesParameter = Parameter(typeof(object[]));
-		generate = Lambda<Func<object[], object>>(
+		var generate = Lambda<Func<object[], object>>(
 			Convert(Call(generatorExpression, generateMethod,
 				Call(null, ofTypeMethod, otherFilesParameter)), typeof(object))
 			, otherFilesParameter).Compile();
+
+		return new(getMetadataKeys, toAdditionalTextType, generate);
 
 		Assembly? ResolveAssembly(object sender, ResolveEventArgs ev)
 		{
@@ -121,7 +129,9 @@ public abstract class BaseGenerator :
 			{
 				using var dllBytes = new MemoryStream();
 				stream.CopyTo(dllBytes);
+#pragma warning disable RS1035 // Assembly.Load is banned for analyzers: the generator embeds its dependencies so it can load them without the compiler resolving them
 				var resultAsm = Assembly.Load(dllBytes.ToArray());
+#pragma warning restore RS1035
 				loadedAssemblies.Add(resultAsm);
 				loadedFromStreamAssemblies[streamName] = resultAsm;
 				return resultAsm;
@@ -130,7 +140,6 @@ public abstract class BaseGenerator :
 		}
 	}
 
-#if ROSLYN4_0_OR_GREATER
 	record IncrementalData(AdditionalTextWithOptions Entrypoint, IEnumerable<AdditionalTextWithOptions> OtherKnownSchemas);
 
 	public virtual void Initialize(IncrementalGeneratorInitializationContext context)
@@ -150,35 +159,12 @@ public abstract class BaseGenerator :
 			ReportFailures(context, () => GenerateSources(tuple, context));
 		});
 	}
-#endif
-
-	public virtual void Execute(GeneratorExecutionContext context)
-	{
-		ReportFailures(context, () =>
-		{
-			ReportCompilationDiagnostics(context.Compilation, context);
-
-			var allAdditionalTexts = context.AdditionalFiles.Select(file => GetOptions(file, context.AnalyzerConfigOptions))
-				.Where(static (tuple) => tuple.TextContents != null)
-				.ToArray();
-			GenerateSources(allAdditionalTexts, context);
-		});
-	}
-
-	public void Initialize(GeneratorInitializationContext context)
-	{
-	}
-
 
 	protected record AdditionalTextWithOptions(string Path, string TextContents, AnalyzerConfigOptions ConfigOptions);
 	protected record CompilerApis(AddSourceText AddSource, ReportDiagnostic ReportDiagnostic)
 	{
 #pragma warning disable CA2225 // Operator overloads have named alternates
-#if ROSLYN4_0_OR_GREATER
 		public static implicit operator CompilerApis(SourceProductionContext context) =>
-			new(context.AddSource, context.ReportDiagnostic);
-#endif
-		public static implicit operator CompilerApis(GeneratorExecutionContext context) =>
 			new(context.AddSource, context.ReportDiagnostic);
 #pragma warning restore CA2225 // Operator overloads have named alternates
 	}
@@ -207,11 +193,11 @@ public abstract class BaseGenerator :
 	protected abstract string[] GetFileTypes(AdditionalTextWithOptions additionalText);
 	private void GenerateSources(IEnumerable<AdditionalTextWithOptions> additionalText, CompilerApis apis)
 	{
-		IEnumerable<string> metadataKeys = getMetadataKeys();
+		IEnumerable<string> metadataKeys = loaded.Value.GetMetadataKeys();
 		var additionalFileInputs = additionalText.Select((f) => AdditionalFileTypeParams.Load(f, metadataKeys, GetFileTypes(f))).ToArray();
 
 		// result is of type DarkPatterns.OpenApiCodegen.GenerationResult
-		dynamic result = generate(
+		dynamic result = loaded.Value.Generate(
 			additionalFileInputs.Select(ToAdditionalFileType).ToArray()
 		);
 		foreach (var entry in result.Sources)
@@ -276,7 +262,7 @@ public abstract class BaseGenerator :
 
 	object ToAdditionalFileType(AdditionalFileTypeParams p)
 	{
-		return toAdditionalTextType(
+		return loaded.Value.ToAdditionalTextType(
 					p.Path,
 					p.TextContents,
 					p.FileTypes,

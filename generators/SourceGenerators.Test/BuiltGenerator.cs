@@ -13,7 +13,7 @@ internal static class BuiltGenerator
 		// rather than compiling its source into this test. Its output path mirrors this project's.
 		var configuration = new DirectoryInfo(AppContext.BaseDirectory).Name;
 		var analyzerPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..",
-			"OpenApiCodegen.CSharp.Roslyn4.1", configuration, "DarkPatterns.OpenApiCodegen.CSharp.Roslyn4_1.dll"));
+			"OpenApiCodegen.CSharp.Roslyn4.8", configuration, "DarkPatterns.OpenApiCodegen.CSharp.Roslyn4_8.dll"));
 		var generatorType = Assembly.LoadFrom(analyzerPath).GetType("DarkPatterns.OpenApiCodegen.CSharp.OpenApiCSharpGenerator", throwOnError: true)!;
 		return (IIncrementalGenerator)Activator.CreateInstance(generatorType)!;
 	}

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Text;
 
 namespace DarkPatterns.Json.Diagnostics;
+
 [DebuggerDisplay("{Line},{Column}")]
 public record FileLocationMark(int Line, int Column);
 [DebuggerDisplay("{Start},{End}")]

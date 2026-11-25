@@ -35,7 +35,7 @@ public abstract class JsonNodeVisitor
 				return;
 			default:
 				throw new NotSupportedException();
-		};
+		}
 	}
 
 	protected virtual void VisitUndefined(JsonPointer elementPointer) { }

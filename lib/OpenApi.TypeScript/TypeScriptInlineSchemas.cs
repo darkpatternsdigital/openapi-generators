@@ -12,6 +12,7 @@ using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
 using System.Diagnostics.CodeAnalysis;
 
 namespace DarkPatterns.OpenApi.TypeScript;
+
 using v3_0 = DarkPatterns.OpenApi.Specifications.v3_0;
 
 public record TypeScriptImportReference(JsonSchema Schema, string Member, string File);
@@ -270,7 +271,7 @@ public class TypeScriptInlineSchemas(TypeScriptSchemaOptions options, DocumentRe
 					throw new NotImplementedException($"Could not name section '{string.Join(", ", parts)} {t.GetType().FullName}' when naming {uri.OriginalString}");
 				default:
 					throw new NotImplementedException();
-			};
+			}
 		}
 	}
 }

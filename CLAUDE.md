@@ -36,10 +36,9 @@ Run each CI check (`.github/workflows/`) that your change could break, and say w
   - `tsc -b` and eslint cover TS sources plus generated test code, so changes to TS templates or generators can break them.
   - Prettier covers every `*.{cjs,mjs,js,mts,cts,ts,tsx,yaml,json}` in the repo, including `.claude/settings.json` and `schemas/*.yaml`, and expects tab indentation. `pnpm lint:fix` repairs formatting.
 - **Version sync** (`git diff --exit-code` after the build): when you change a version property in `Directory.Build.props`, the build rewrites the matching npm `package.json` `version`. Commit the rewritten files.
+- **C# format** (`dotnet build`, then `dotnet format --verify-no-changes`; `dotnet format` fixes it): whitespace and code style in any C# change. It needs the Debug build first to see source-generated types.
 
-All of these run in one CI job (`dotnet-build.yml`). CI skips changes that only touch Markdown, `adr/` or `docs/`, except `AnalyzerReleases.*.md`, which is a build input.
-
-`dotnet format` isn't a PR check. Its workflow is disabled because on .NET 8 it can't see source-generated types.
+All of these except C# format run in one CI job (`dotnet-build.yml`); C# format runs in `dotnet-lint.yml` on every PR. `dotnet-build.yml` skips changes that only touch Markdown, `adr/` or `docs/`, except `AnalyzerReleases.*.md`, which is a build input.
 
 ## Architecture
 

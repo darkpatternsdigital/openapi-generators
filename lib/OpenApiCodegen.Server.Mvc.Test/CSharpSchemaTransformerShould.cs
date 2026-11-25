@@ -14,6 +14,7 @@ using DarkPatterns.OpenApi.Transformations.Specifications;
 using DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
 
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc;
+
 using static OptionsHelpers;
 
 public class CSharpSchemaTransformerShould

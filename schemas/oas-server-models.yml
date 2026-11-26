@@ -1,0 +1,237 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Models
+  description: Schema Object features, each round-tripped through an echo operation
+paths:
+  /formats:
+    post:
+      operationId: echoFormats
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Formats'
+      responses:
+        '200':
+          description: The same value
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Formats'
+  /read-write:
+    post:
+      operationId: echoReadWrite
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReadWrite'
+      responses:
+        '200':
+          description: The same value
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadWrite'
+  /open-object:
+    post:
+      operationId: echoOpenObject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpenObject'
+      responses:
+        '200':
+          description: The same value
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpenObject'
+  /closed-object:
+    post:
+      operationId: echoClosedObject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClosedObject'
+      responses:
+        '200':
+          description: The same value
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClosedObject'
+  /typed-additional-properties:
+    post:
+      operationId: echoTypedAdditionalProperties
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TypedAdditionalProperties'
+      responses:
+        '200':
+          description: The same value
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedAdditionalProperties'
+  /matrix:
+    post:
+      operationId: echoMatrix
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Matrix'
+      responses:
+        '200':
+          description: The same value
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Matrix'
+  /defaults:
+    post:
+      operationId: echoDefaults
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Defaults'
+      responses:
+        '200':
+          description: The same value
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Defaults'
+  /tree:
+    post:
+      operationId: echoTree
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TreeNode'
+      responses:
+        '200':
+          description: The same value
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TreeNode'
+components:
+  schemas:
+    Formats:
+      type: object
+      required:
+        - float
+        - double
+        - int64
+        - date
+        - dateTime
+        - uuid
+        - byte
+      properties:
+        float:
+          type: number
+          format: float
+        double:
+          type: number
+          format: double
+        int64:
+          type: integer
+          format: int64
+        date:
+          type: string
+          format: date
+        dateTime:
+          type: string
+          format: date-time
+        uuid:
+          type: string
+          format: uuid
+        byte:
+          type: string
+          format: byte
+    ReadWrite:
+      type: object
+      required:
+        - id
+        - name
+        - password
+      properties:
+        id:
+          type: string
+          readOnly: true
+        name:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+    OpenObject:
+      type: object
+      properties:
+        name:
+          type: string
+      additionalProperties: true
+    ClosedObject:
+      type: object
+      properties:
+        name:
+          type: string
+      additionalProperties: false
+    TypedAdditionalProperties:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+      additionalProperties:
+        type: integer
+    Matrix:
+      type: object
+      required:
+        - rows
+      properties:
+        rows:
+          type: array
+          items:
+            type: array
+            items:
+              type: integer
+    Defaults:
+      type: object
+      properties:
+        count:
+          type: integer
+          default: 10
+        label:
+          type: string
+          default: none
+    TreeNode:
+      type: object
+      description: A node in a tree
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: The name of the node
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/TreeNode'

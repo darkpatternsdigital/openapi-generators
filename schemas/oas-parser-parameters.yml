@@ -1,0 +1,140 @@
+openapi: 3.0.3
+info:
+  title: Parameters fixture
+  version: 1.0.0
+paths:
+  /items/{itemId}:
+    parameters:
+      - $ref: '#/components/parameters/ItemId'
+    get:
+      operationId: getItem
+      parameters:
+        - name: session
+          in: cookie
+          schema:
+            type: string
+        - name: legacy
+          in: query
+          deprecated: true
+          schema:
+            type: string
+        - name: emptyAllowed
+          in: query
+          allowEmptyValue: true
+          explode: false
+          schema:
+            type: string
+        - name: emptyNotAllowed
+          in: query
+          allowEmptyValue: false
+          schema:
+            type: string
+        - name: formNoExplode
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: spaced
+          in: query
+          style: spaceDelimited
+          schema:
+            type: array
+            items:
+              type: string
+        - name: piped
+          in: query
+          style: pipeDelimited
+          schema:
+            type: array
+            items:
+              type: string
+        - name: deep
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            properties:
+              color:
+                type: string
+        - name: reserved
+          in: query
+          allowReserved: true
+          schema:
+            type: string
+        - name: json
+          in: query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  lat:
+                    type: number
+        - name: withExample
+          in: query
+          example: abc
+          schema:
+            type: string
+        - name: withExamples
+          in: query
+          schema:
+            type: string
+          examples:
+            first:
+              summary: First example
+              value: one
+            second:
+              $ref: '#/components/examples/Second'
+        - $ref: '#/components/parameters/a~0b'
+      responses:
+        '200':
+          description: OK
+  /matrix/{m}/label/{l}/simple/{s}:
+    get:
+      operationId: getStyles
+      parameters:
+        - name: m
+          in: path
+          required: true
+          style: matrix
+          schema:
+            type: string
+        - name: l
+          in: path
+          required: true
+          style: label
+          schema:
+            type: string
+        - name: s
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: X-Simple
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+components:
+  parameters:
+    ItemId:
+      name: itemId
+      in: path
+      required: true
+      schema:
+        type: string
+    a~b:
+      name: X-Tilde
+      in: header
+      schema:
+        type: string
+  examples:
+    Second:
+      summary: Second example
+      value: two

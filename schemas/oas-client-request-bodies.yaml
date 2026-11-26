@@ -1,0 +1,67 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Request bodies
+  description: Text, binary, optional and multi-media-type request bodies
+paths:
+  /text:
+    post:
+      operationId: sendText
+      requestBody:
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '204':
+          description: Received
+  /binary:
+    post:
+      operationId: sendBinary
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '204':
+          description: Received
+  /either:
+    post:
+      operationId: sendEither
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Note'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '204':
+          description: Received
+  /optional:
+    put:
+      operationId: saveNote
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Note'
+      responses:
+        '204':
+          description: Received
+components:
+  schemas:
+    Note:
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          type: string

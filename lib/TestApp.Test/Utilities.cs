@@ -127,6 +127,13 @@ internal record HandleArbitraryRequest<TRequest>(Action<ControllerBase, TRequest
 
 public class TestAppFactory : WebApplicationFactory<Startup>
 {
+	static TestAppFactory()
+	{
+		// Each test starts its own host. With config reloading on, every host holds a file watcher,
+		// and parallel tests exceed Linux's inotify instance limit (128 by default).
+		Environment.SetEnvironmentVariable("DOTNET_hostBuilder__reloadConfigOnChange", "false");
+	}
+
 	public event Action<IServiceCollection>? OverrideServices;
 
 	protected override void ConfigureWebHost(IWebHostBuilder builder)

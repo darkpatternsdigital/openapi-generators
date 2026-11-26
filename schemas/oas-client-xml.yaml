@@ -1,0 +1,38 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: XML bodies
+  description: Request and response bodies that are only available as XML
+paths:
+  /xml-item:
+    post:
+      operationId: postXmlItem
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Item'
+      responses:
+        '204':
+          description: Received
+    get:
+      operationId: getXmlItem
+      responses:
+        '200':
+          description: The item
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Item'
+components:
+  schemas:
+    Item:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+      xml:
+        name: item

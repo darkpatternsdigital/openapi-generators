@@ -1,0 +1,98 @@
+openapi: 3.0.3
+x-root-extension: root
+info:
+  title: Document fixture
+  version: 1.2.3
+  description: Info description
+  termsOfService: https://example.com/terms
+  contact:
+    name: API team
+    url: https://example.com/contact
+    email: api@example.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  x-info-extension: info
+externalDocs:
+  description: Root docs
+  url: https://example.com/docs
+tags:
+  - name: widgets
+    description: Widget operations
+    externalDocs:
+      url: https://example.com/docs/widgets
+  - name: gadgets
+servers:
+  - url: https://api.example.com/v1
+    description: Production
+  - url: https://{env}.example.com/v1
+    description: Templated
+    variables:
+      env:
+        enum:
+          - dev
+          - staging
+        default: dev
+        description: Environment
+security:
+  - apiKeyHeader: []
+    oauth:
+      - read
+      - write
+  - bearer: []
+paths:
+  /ping:
+    x-path-extension: path
+    get:
+      operationId: ping
+      x-operation-extension: operation
+      responses:
+        '204':
+          description: No content
+components:
+  securitySchemes:
+    apiKeyQuery:
+      type: apiKey
+      name: api_key
+      in: query
+    apiKeyHeader:
+      type: apiKey
+      name: X-API-Key
+      in: header
+      description: Header key
+    apiKeyCookie:
+      type: apiKey
+      name: session
+      in: cookie
+    basic:
+      type: http
+      scheme: basic
+    bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    oauth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://example.com/oauth/authorize
+          scopes:
+            read: Read access
+        password:
+          tokenUrl: https://example.com/oauth/token
+          refreshUrl: https://example.com/oauth/refresh
+          scopes:
+            read: Read access
+        clientCredentials:
+          tokenUrl: https://example.com/oauth/token
+          scopes:
+            write: Write access
+        authorizationCode:
+          authorizationUrl: https://example.com/oauth/authorize
+          tokenUrl: https://example.com/oauth/token
+          scopes:
+            read: Read access
+            write: Write access
+    oidc:
+      type: openIdConnect
+      openIdConnectUrl: https://example.com/.well-known/openid-configuration

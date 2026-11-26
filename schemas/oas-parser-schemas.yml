@@ -1,0 +1,113 @@
+openapi: 3.0.3
+info:
+  title: Schemas fixture
+  version: 1.0.0
+paths:
+  /schemas:
+    get:
+      operationId: getSchemas
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  flags:
+                    $ref: '#/components/schemas/Flags'
+                  range:
+                    $ref: '#/components/schemas/Range'
+                  list:
+                    $ref: '#/components/schemas/List'
+                  bag:
+                    $ref: '#/components/schemas/Bag'
+                  closed:
+                    $ref: '#/components/schemas/Closed'
+                  map:
+                    $ref: '#/components/schemas/Map'
+                  either:
+                    $ref: '#/components/schemas/Either'
+                  notString:
+                    $ref: '#/components/schemas/NotString'
+                  pet:
+                    $ref: '#/components/schemas/Pet'
+                  node:
+                    $ref: '#/components/schemas/Node'
+components:
+  schemas:
+    Flags:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        secret:
+          type: string
+          writeOnly: true
+        old:
+          type: string
+          deprecated: true
+    Range:
+      type: number
+      minimum: 0
+      exclusiveMinimum: true
+      maximum: 10
+      exclusiveMaximum: true
+      multipleOf: 0.5
+    List:
+      type: array
+      items:
+        type: string
+      minItems: 1
+      maxItems: 5
+      uniqueItems: true
+    Bag:
+      type: object
+      minProperties: 1
+      maxProperties: 3
+      additionalProperties: true
+    Closed:
+      type: object
+      additionalProperties: false
+    Map:
+      type: object
+      additionalProperties:
+        type: integer
+    Either:
+      anyOf:
+        - type: string
+        - type: integer
+    NotString:
+      not:
+        type: string
+    Pet:
+      oneOf:
+        - $ref: '#/components/schemas/Cat'
+        - $ref: '#/components/schemas/Dog'
+      discriminator:
+        propertyName: petType
+        mapping:
+          cat: '#/components/schemas/Cat'
+          dog: '#/components/schemas/Dog'
+    Cat:
+      type: object
+      required:
+        - petType
+      properties:
+        petType:
+          type: string
+    Dog:
+      type: object
+      required:
+        - petType
+      properties:
+        petType:
+          type: string
+    Node:
+      type: object
+      properties:
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Node'

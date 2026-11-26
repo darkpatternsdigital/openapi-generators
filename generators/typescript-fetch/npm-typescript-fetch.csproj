@@ -25,6 +25,11 @@
         <TestedSchema Include="response-media-types" />
         <TestedSchema Include="parameter-formats" />
         <TestedSchema Include="multi-path-variables" />
+        <TestedSchema Include="oas-client-methods" />
+        <TestedSchema Include="oas-client-cookies" />
+        <TestedSchema Include="oas-client-param-styles" />
+        <TestedSchema Include="oas-client-request-bodies" />
+        <TestedSchema Include="oas-client-responses" />
     </ItemGroup>
 
     <ItemGroup>

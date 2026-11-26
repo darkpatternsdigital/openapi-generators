@@ -1,0 +1,113 @@
+openapi: 3.0.3
+info:
+  title: Responses fixture
+  version: 1.0.0
+paths:
+  /responses:
+    get:
+      operationId: getResponses
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Rate-Limit:
+              $ref: '#/components/headers/RateLimit'
+            X-Inline:
+              description: Inline header
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+              example:
+                id: 1
+              examples:
+                referenced:
+                  $ref: '#/components/examples/Item'
+          links:
+            GetItem:
+              operationId: getItem
+              parameters:
+                itemId: '$response.body#/id'
+              description: Get the item
+            Self:
+              $ref: '#/components/links/Self'
+        '2XX':
+          description: Other success
+        '4XX':
+          description: Client error
+        default:
+          description: Unexpected error
+  /items/{itemId}:
+    get:
+      operationId: getItem
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+  /uploads:
+    post:
+      operationId: upload
+      requestBody:
+        description: Upload body
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                meta:
+                  type: object
+            encoding:
+              meta:
+                contentType: application/json
+                headers:
+                  X-Part:
+                    schema:
+                      type: string
+      responses:
+        '201':
+          description: Created
+      callbacks:
+        inline:
+          '{$request.query.callbackUrl}/inline':
+            post:
+              responses:
+                '200':
+                  description: OK
+        referenced:
+          $ref: '#/components/callbacks/Shared'
+components:
+  headers:
+    RateLimit:
+      description: Requests remaining
+      schema:
+        type: integer
+  examples:
+    Item:
+      summary: An item
+      description: Item example
+      value:
+        id: 2
+  links:
+    Self:
+      operationId: getResponses
+  callbacks:
+    Shared:
+      '{$request.query.callbackUrl}/shared':
+        post:
+          responses:
+            '200':
+              description: OK

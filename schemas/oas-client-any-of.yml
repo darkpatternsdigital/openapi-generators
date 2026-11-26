@@ -1,0 +1,40 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: anyOf
+  description: A schema that is any of two object schemas
+paths:
+  /shape:
+    get:
+      operationId: getShape
+      responses:
+        '200':
+          description: A shape
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shape'
+
+
+components:
+  schemas:
+    Shape:
+      anyOf:
+        - $ref: '#/components/schemas/Circle'
+        - $ref: '#/components/schemas/Square'
+    Circle:
+      type: object
+      required:
+        - radius
+      properties:
+        radius:
+          type: number
+    Square:
+      type: object
+      required:
+        - side
+      properties:
+        side:
+          type: number
+
+

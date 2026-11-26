@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using DarkPatterns.OpenApiCodegen.Json.Extensions;
 using System;
@@ -270,6 +270,214 @@ public class HttpResponseMessageParsersShould : IClassFixture<TempDirectory>
 		{
 			msg.Content = new ByteArrayContent([1, 2, 3]);
 		});
+
+		Assert.NotNull(result);
+	}
+
+	[Fact]
+	public async Task PreferAnExactStatusCodeOverARange()
+	{
+		var result = await DeserializeResponseMessage("oas-client-responses.yaml", "ParseGetRanges", 200, "GetRangesReturnType.Ok", new { id = "i-1" });
+
+		Assert.NotNull(result);
+		Assert.Equal("i-1", (string)result.Body.Id);
+	}
+
+	[Theory(Skip = "OpenAPI 3.0 gap (Response ranges): 2XX and 4XX responses are dropped, so their bodies are not parsed")]
+	[InlineData(201, "{\"id\":\"i-1\"}", "Id", "i-1")]
+	[InlineData(404, "{\"message\":\"missing\"}", "Message", "missing")]
+	public async Task ParseStatusCodeRangeResponses(int statusCode, string json, string property, string expected)
+	{
+		var result = await DeserializeResponseMessage("oas-client-responses.yaml", "ParseGetRanges", statusCode, "GetRangesReturnType", msg =>
+		{
+			msg.Content = new StringContent(json, Encoding.UTF8, "application/json");
+		});
+
+		Assert.NotNull(result);
+		object body = result.Body;
+		Assert.Equal(expected, body.GetType().GetProperty(property)?.GetValue(body));
+	}
+
+	[Fact]
+	public async Task ParseDefaultResponses()
+	{
+		var result = await DeserializeResponseMessage("oas-client-responses.yaml", "ParseGetWithDefault", 503, "GetWithDefaultReturnType.OtherStatusCode", new { message = "unavailable" });
+
+		Assert.NotNull(result);
+		Assert.Equal("unavailable", (string)result.Body.Message);
+		Assert.Equal(503, (int)result.Response.StatusCode);
+	}
+
+	[Fact]
+	public async Task ReturnUndocumentedStatusCodesWithTheResponse()
+	{
+		var result = await DeserializeResponseMessage("oas-client-responses.yaml", "ParseGetItem", 500, "GetItemReturnType", new { message = "oops" });
+
+		Assert.NotNull(result);
+		Assert.Equal("GetItemReturnType", ((object)result).GetType().Name);
+		Assert.Equal(500, (int)result.Response.StatusCode);
+	}
+
+	// The property name is illustrative: response headers have no typed accessors yet
+	[Fact(Skip = "OpenAPI 3.0 gap (Response headers): declared response headers are not parsed into typed properties")]
+	public async Task ParseTypedResponseHeaders()
+	{
+		var result = await DeserializeResponseMessage("oas-client-responses.yaml", "ParseGetWithHeaders", 200, "GetWithHeadersReturnType.Ok", new { id = "i-1" }, msg =>
+		{
+			msg.Headers.Add("X-Rate-Limit", "10");
+			msg.Headers.Add("X-Request-Id", "r-1");
+		});
+
+		Assert.NotNull(result);
+		Assert.Equal(10, (int)result.XRateLimit);
+		Assert.Equal("r-1", (string)result.XRequestId.Value);
+	}
+
+	[Fact]
+	public async Task ParseResponsesWithLinks()
+	{
+		var result = await DeserializeResponseMessage("oas-client-responses.yaml", "ParseCreateItem", 201, "CreateItemReturnType.Created", new { id = "i-1" });
+
+		Assert.NotNull(result);
+		Assert.Equal("i-1", (string)result.Body.Id);
+	}
+
+	[Fact]
+	public async Task ParseHeadResponses()
+	{
+		var result = await DeserializeResponseMessage("oas-client-methods.yaml", "ParseCheckItem", 404, "CheckItemReturnType.NotFound");
+
+		Assert.NotNull(result);
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (XML): XML response bodies are returned as raw HttpContent instead of the schema's type")]
+	public async Task ParseXmlResponses()
+	{
+		var result = await DeserializeResponseMessage("oas-client-xml.yaml", "ParseGetXmlItem", 200, "GetXmlItemReturnType.Ok", msg =>
+		{
+			msg.Content = new StringContent("<item><name>n</name></item>", Encoding.UTF8, "application/xml");
+		});
+
+		Assert.NotNull(result);
+		Assert.Equal("n", (string)result.Body.Name);
+	}
+
+	[Fact]
+	public async Task DeserializeAdditionalPropertiesAsADictionary()
+	{
+		var result = await DeserializeResponseMessage("oas-client-models.yaml", "ParseGetLabels", 200, "GetLabelsReturnType.Ok", new { a = "x", b = "y" });
+
+		Assert.NotNull(result);
+		var body = Assert.IsAssignableFrom<IReadOnlyDictionary<string, string>>((object)result.Body);
+		Assert.Equal("x", body["a"]);
+		Assert.Equal("y", body["b"]);
+	}
+
+	// The property name is illustrative: additional properties are not kept yet
+	[Fact(Skip = "OpenAPI 3.0 gap (Models): additional properties alongside named properties are dropped")]
+	public async Task KeepAdditionalPropertiesAlongsideNamedProperties()
+	{
+		var result = await DeserializeResponseMessage("oas-client-models.yaml", "ParseGetTagged", 200, "GetTaggedReturnType.Ok", new { name = "n", color = "red" });
+
+		Assert.NotNull(result);
+		Assert.Equal("n", (string)result.Body.Name);
+		Assert.Equal("red", (string)result.Body.AdditionalProperties["color"]);
+	}
+
+	[Fact]
+	public async Task DeserializeObjectsWithoutAdditionalProperties()
+	{
+		var result = await DeserializeResponseMessage("oas-client-models.yaml", "ParseGetClosed", 200, "GetClosedReturnType.Ok", new { name = "n" });
+
+		Assert.NotNull(result);
+		Assert.Equal("n", (string)result.Body.Name);
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Models): writeOnly properties are required in responses, so a response without them fails to parse")]
+	public async Task NotRequireWriteOnlyPropertiesInResponses()
+	{
+		var result = await DeserializeResponseMessage("oas-client-models.yaml", "ParseCreateAccount", 201, "CreateAccountReturnType.Created", new { id = "a-1", name = "n" });
+
+		Assert.NotNull(result);
+		Assert.Equal("a-1", (string)result.Body.Id);
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Models): default values are not applied to missing properties")]
+	public async Task ApplyDefaultValuesToMissingProperties()
+	{
+		var result = await DeserializeResponseMessage("oas-client-models.yaml", "ParseGetSettings", 200, "GetSettingsReturnType.Ok", new { });
+
+		Assert.NotNull(result);
+		Assert.Equal(20, (int)result.Body.PageSize.Value);
+	}
+
+	[Fact]
+	public async Task DeserializeRecursiveModels()
+	{
+		var result = await DeserializeResponseMessage("oas-client-models.yaml", "ParseGetTree", 200, "GetTreeReturnType.Ok", new
+		{
+			value = "root",
+			children = new[] { new { value = "leaf" } },
+		});
+
+		Assert.NotNull(result);
+		Assert.Equal("root", (string)result.Body.Value);
+		var children = Assert.IsAssignableFrom<IEnumerable<object>>((object)result.Body.Children.Value);
+		Assert.Collection(children, (dynamic child) => Assert.Equal("leaf", (string)child.Value));
+	}
+
+	[Fact]
+	public async Task DeserializeStringAndNumberFormats()
+	{
+		var result = await DeserializeResponseMessage("oas-client-models.yaml", "ParseGetFormats", 200, "GetFormatsReturnType.Ok", new
+		{
+			id = "0f8fad5b-d9cb-469f-a165-70867728950e",
+			day = "2026-11-25",
+			when = "2026-11-25T16:45:00-06:00",
+			big = 9007199254740993L,
+			ratio = 1.5,
+		});
+
+		Assert.NotNull(result);
+		Assert.Equal(Guid.Parse("0f8fad5b-d9cb-469f-a165-70867728950e"), (Guid)result.Body.Id);
+		Assert.Equal(new DateOnly(2026, 11, 25), (DateOnly)result.Body.Day);
+		Assert.Equal(new DateTimeOffset(2026, 11, 25, 16, 45, 0, TimeSpan.FromHours(-6)), (DateTimeOffset)result.Body.When);
+		Assert.Equal(9007199254740993L, (long)result.Body.Big);
+		Assert.Equal(1.5f, (float)result.Body.Ratio);
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Non-string enums): integer enums are generated as a plain int")]
+	public async Task DeserializeIntegerEnumsAsEnums()
+	{
+		var result = await DeserializeResponseMessage("oas-client-enums.yml", "ParseGetPriority", 200, "GetPriorityReturnType.Ok", 2);
+
+		Assert.NotNull(result);
+		object body = result.Body;
+		Assert.True(body.GetType().IsEnum);
+		Assert.Equal(2, Convert.ToInt32(body, System.Globalization.CultureInfo.InvariantCulture));
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Non-string enums): a nullable enum that lists null fails generation (NotSupportedException)")]
+	public async Task DeserializeNullableEnums()
+	{
+		var result = await DeserializeResponseMessage("oas-client-nullable-enum.yaml", "ParseGetStatus", 200, "GetStatusReturnType.Ok", (object?)null);
+
+		Assert.NotNull(result);
+		Assert.Null((object?)result.Body);
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Models): anyOf schemas are not generated, so the client doesn't compile")]
+	public async Task DeserializeAnyOf()
+	{
+		var result = await DeserializeResponseMessage("oas-client-any-of.yml", "ParseGetShape", 200, "GetShapeReturnType.Ok", new { radius = 1.5 });
+
+		Assert.NotNull(result);
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Models): a schema using not reports UnableToCreateInlineSchemaDiagnostic")]
+	public async Task DeserializeNot()
+	{
+		var result = await DeserializeResponseMessage("oas-client-not.yml", "ParseGetNotString", 200, "GetNotStringReturnType.Ok", 5);
 
 		Assert.NotNull(result);
 	}

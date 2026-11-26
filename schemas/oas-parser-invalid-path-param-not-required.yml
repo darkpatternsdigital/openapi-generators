@@ -1,0 +1,16 @@
+openapi: 3.0.3
+info:
+  title: Path parameter not required
+  version: 1.0.0
+paths:
+  /items/{id}:
+    get:
+      operationId: getItem
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK

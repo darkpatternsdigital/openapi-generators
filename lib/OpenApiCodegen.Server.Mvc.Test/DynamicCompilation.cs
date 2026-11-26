@@ -40,6 +40,24 @@ internal class DynamicCompilation
 		typeof(DarkPatterns.OpenApiCodegen.Json.Extensions.JsonStringEnumPropertyNameConverter).Assembly.Location,
 	};
 
+	/// <summary>Generated source text by file name, for checking what the generated code says (such as documentation)</summary>
+	public static System.Collections.Generic.Dictionary<string, string> GetGeneratedSources(string documentName)
+	{
+		var registry = DocumentLoader.CreateRegistry();
+		var docResult = GetOpenApiDocument(documentName, registry);
+		Assert.NotNull(docResult.Result);
+		var options = LoadOptions();
+
+		var transformer = TransformSettings.BuildComposite(registry, "", [
+			(s) => new PathControllerTransformerFactory(s).Build(docResult, options),
+			(s) => new CSharpSchemaSourceProvider(s, options)
+		]);
+
+		var generated = transformer.GetSources();
+		Assert.Empty(generated.Diagnostics);
+		return generated.Sources.ToDictionary(e => e.Key, e => e.SourceText.ToString());
+	}
+
 	public static byte[] GetGeneratedLibrary(string documentName)
 	{
 		var registry = DocumentLoader.CreateRegistry();

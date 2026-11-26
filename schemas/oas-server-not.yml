@@ -1,0 +1,28 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: not
+  description: A property that accepts anything except a string
+paths:
+  /values:
+    post:
+      operationId: postValue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotString'
+      responses:
+        '204':
+          description: Received
+components:
+  schemas:
+    NotString:
+      type: object
+      required:
+        - value
+      properties:
+        value:
+          not:
+            type: string

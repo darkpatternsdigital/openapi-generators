@@ -1,0 +1,97 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Request bodies
+  description: Request bodies with each kind of media type, optional bodies, and shared definitions
+paths:
+  /text:
+    post:
+      operationId: postText
+      requestBody:
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: The text
+          content:
+            application/json:
+              schema:
+                type: string
+  /binary:
+    post:
+      operationId: postBinary
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: The length of the body
+          content:
+            application/json:
+              schema:
+                type: integer
+  /optional:
+    post:
+      operationId: postOptional
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Note'
+      responses:
+        '204':
+          description: Received
+  /multiple:
+    post:
+      operationId: postMultiple
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Note'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Note'
+      responses:
+        '204':
+          description: Received
+  /ref:
+    post:
+      operationId: postRef
+      requestBody:
+        $ref: '#/components/requestBodies/NoteBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/NoteResponse'
+components:
+  requestBodies:
+    NoteBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Note'
+  responses:
+    NoteResponse:
+      description: The note
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Note'
+  schemas:
+    Note:
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          type: string

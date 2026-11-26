@@ -1,0 +1,79 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Documentation
+  description: Documentation fields that generated code can carry
+externalDocs:
+  description: The documentation site
+  url: https://example.com/docs
+tags:
+  - name: gadgets
+    description: Gadget operations
+paths:
+  /gadgets:
+    get:
+      operationId: listGadgets
+      summary: Lists the gadgets
+      description: Returns every gadget, oldest first.
+      tags:
+        - gadgets
+      externalDocs:
+        description: Listing gadgets
+        url: https://example.com/docs/gadgets
+      parameters:
+        - name: color
+          in: query
+          description: Only gadgets of this color
+          example: red
+          schema:
+            type: string
+        - name: legacyFilter
+          in: query
+          description: Use color instead
+          deprecated: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The gadgets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Gadget'
+              examples:
+                one:
+                  summary: A single gadget
+                  value:
+                    - name: sprocket
+  /old-gadgets:
+    get:
+      operationId: listOldGadgets
+      summary: Lists the gadgets the old way
+      deprecated: true
+      responses:
+        '200':
+          description: The gadgets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Gadget'
+components:
+  schemas:
+    Gadget:
+      type: object
+      description: A gadget
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: The name of the gadget
+          example: sprocket
+        oldName:
+          type: string
+          description: The previous name of the gadget
+          deprecated: true

@@ -1,0 +1,13 @@
+openapi: 3.0.3
+info:
+  title: Wrong scalar type
+  version: 1.0.0
+  contact:
+    email: 5
+paths:
+  /ping:
+    get:
+      operationId: ping
+      responses:
+        '200':
+          description: OK

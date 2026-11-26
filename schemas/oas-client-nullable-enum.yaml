@@ -1,0 +1,25 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Nullable enums
+  description: A nullable string enum that lists null
+paths:
+  /status:
+    get:
+      operationId: getStatus
+      responses:
+        '200':
+          description: A status, possibly null
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+components:
+  schemas:
+    Status:
+      type: string
+      nullable: true
+      enum:
+        - active
+        - inactive
+        - null

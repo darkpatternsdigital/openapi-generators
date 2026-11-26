@@ -1,0 +1,16 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: TRACE method
+  description: An operation using the TRACE HTTP method
+paths:
+  /echo:
+    trace:
+      operationId: traceEcho
+      responses:
+        '200':
+          description: The request, echoed
+          content:
+            message/http:
+              schema:
+                type: string

@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Xunit;
@@ -38,7 +39,8 @@ internal class DynamicCompilation
 			typeof(DarkPatterns.OpenApiCodegen.Json.Extensions.JsonStringEnumPropertyNameConverter).Assembly.Location,
 	};
 
-	public static byte[] GetGeneratedLibrary(string documentName, Action<CSharpSchemaOptions>? configureOptions = null, bool webhooks = false)
+	/// <summary>The generated C# source files, by name; asserts that generation reports no diagnostics.</summary>
+	public static IReadOnlyDictionary<string, string> GetGeneratedSources(string documentName, Action<CSharpSchemaOptions>? configureOptions = null, bool webhooks = false)
 	{
 		var registry = DocumentLoader.CreateRegistry();
 		var docResult = GetOpenApiDocument(documentName, registry);
@@ -57,8 +59,15 @@ internal class DynamicCompilation
 
 		Assert.Empty(generated.Diagnostics);
 
+		return generated.Sources.ToDictionary(e => e.Key, e => e.SourceText);
+	}
+
+	public static byte[] GetGeneratedLibrary(string documentName, Action<CSharpSchemaOptions>? configureOptions = null, bool webhooks = false)
+	{
+		var sources = GetGeneratedSources(documentName, configureOptions, webhooks);
+
 		var parseOptions = CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.CSharp11);
-		var syntaxTrees = generated.Sources.Select(e => CSharpSyntaxTree.ParseText(e.SourceText, options: parseOptions, path: e.Key)).ToArray();
+		var syntaxTrees = sources.Select(e => CSharpSyntaxTree.ParseText(e.Value, options: parseOptions, path: e.Key)).ToArray();
 
 		string assemblyName = Path.GetRandomFileName();
 		MetadataReference[] references = SystemTextCompilationRefPaths.Select(r => MetadataReference.CreateFromFile(r)).ToArray();

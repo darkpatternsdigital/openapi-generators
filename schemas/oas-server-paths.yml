@@ -1,0 +1,89 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Path templating
+  description: Path templates with several parameters, parameters inside a segment, and shared parameter definitions
+paths:
+  /owners/{ownerId}/pets/{petId}:
+    get:
+      operationId: getOwnerPet
+      parameters:
+        - name: ownerId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: petId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The pet
+          content:
+            application/json:
+              schema:
+                type: string
+  /files/{name}.{ext}:
+    get:
+      operationId: getFile
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: ext
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The file name
+          content:
+            application/json:
+              schema:
+                type: string
+  /shared-parameters:
+    get:
+      operationId: getWithSharedParameters
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/TraceId'
+      responses:
+        '200':
+          description: The limit
+          content:
+            application/json:
+              schema:
+                type: integer
+  /no-operation-id/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The id
+          content:
+            application/json:
+              schema:
+                type: string
+components:
+  parameters:
+    Limit:
+      name: limit
+      in: query
+      required: true
+      schema:
+        type: integer
+    TraceId:
+      name: X-Trace-Id
+      in: header
+      schema:
+        type: string

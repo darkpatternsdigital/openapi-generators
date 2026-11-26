@@ -1,0 +1,109 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Responses
+  description: Status code ranges, default responses, response headers and links
+paths:
+  /ranges:
+    get:
+      operationId: getRanges
+      responses:
+        '200':
+          description: The item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '2XX':
+          description: Another success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '4XX':
+          description: A client error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /with-default:
+    get:
+      operationId: getWithDefault
+      responses:
+        '200':
+          description: The item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        default:
+          description: Any other response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /with-headers:
+    get:
+      operationId: getWithHeaders
+      responses:
+        '200':
+          description: The item, with rate limit headers
+          headers:
+            X-Rate-Limit:
+              required: true
+              schema:
+                type: integer
+            X-Request-Id:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+  /items:
+    post:
+      operationId: createItem
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+          links:
+            GetCreatedItem:
+              operationId: getItem
+              parameters:
+                id: '$response.body#/id'
+  /items/{id}:
+    get:
+      operationId: getItem
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+components:
+  schemas:
+    Item:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string

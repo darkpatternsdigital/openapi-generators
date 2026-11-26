@@ -1,0 +1,274 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Parameter styles
+  description: Serialization of array and object parameters with each style and explode combination
+paths:
+  /query/form-explode:
+    get:
+      operationId: getFormExplode
+      parameters:
+        # style: form, explode: true is the default for query parameters: ?ids=1&ids=2
+        - name: ids
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        '200':
+          description: The ids
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+  /query/form-no-explode:
+    get:
+      operationId: getFormNoExplode
+      parameters:
+        # ?ids=1,2
+        - name: ids
+          in: query
+          required: true
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        '200':
+          description: The ids
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+  /query/space-delimited:
+    get:
+      operationId: getSpaceDelimited
+      parameters:
+        # ?ids=1%202
+        - name: ids
+          in: query
+          required: true
+          style: spaceDelimited
+          explode: false
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        '200':
+          description: The ids
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+  /query/pipe-delimited:
+    get:
+      operationId: getPipeDelimited
+      parameters:
+        # ?ids=1|2
+        - name: ids
+          in: query
+          required: true
+          style: pipeDelimited
+          explode: false
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        '200':
+          description: The ids
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+  /query/deep-object:
+    get:
+      operationId: getDeepObject
+      parameters:
+        # ?filter[color]=red&filter[size]=2
+        - name: filter
+          in: query
+          required: true
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/Filter'
+      responses:
+        '200':
+          description: The filter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Filter'
+  /query/form-object:
+    get:
+      operationId: getFormObject
+      parameters:
+        # style: form, explode: true for an object: ?color=red&size=2
+        - name: filter
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Filter'
+      responses:
+        '200':
+          description: The filter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Filter'
+  /query/allow-empty-value:
+    get:
+      operationId: getAllowEmptyValue
+      parameters:
+        # ?search= is a present, empty value
+        - name: search
+          in: query
+          required: true
+          allowEmptyValue: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The search
+          content:
+            application/json:
+              schema:
+                type: string
+  /query/allow-reserved:
+    get:
+      operationId: getAllowReserved
+      parameters:
+        # ?path=a/b?c is sent without percent-encoding the reserved characters
+        - name: path
+          in: query
+          required: true
+          allowReserved: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The path
+          content:
+            application/json:
+              schema:
+                type: string
+  /query/content:
+    get:
+      operationId: getContentParameter
+      parameters:
+        # ?filter={"color":"red","size":2}
+        - name: filter
+          in: query
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Filter'
+      responses:
+        '200':
+          description: The filter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Filter'
+  /header/simple:
+    get:
+      operationId: getHeaderArray
+      parameters:
+        # X-Ids: 1,2
+        - name: X-Ids
+          in: header
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        '200':
+          description: The ids
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+  /path/simple/{ids}:
+    get:
+      operationId: getPathSimpleArray
+      parameters:
+        # /path/simple/1,2
+        - name: ids
+          in: path
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        '200':
+          description: The ids
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+  /path/label/{id}:
+    get:
+      operationId: getPathLabel
+      parameters:
+        # /path/label/.5
+        - name: id
+          in: path
+          required: true
+          style: label
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The id
+          content:
+            application/json:
+              schema:
+                type: integer
+  /path/matrix/{id}:
+    get:
+      operationId: getPathMatrix
+      parameters:
+        # /path/matrix/;id=5
+        - name: id
+          in: path
+          required: true
+          style: matrix
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The id
+          content:
+            application/json:
+              schema:
+                type: integer
+components:
+  schemas:
+    Filter:
+      type: object
+      properties:
+        color:
+          type: string
+        size:
+          type: integer

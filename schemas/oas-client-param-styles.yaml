@@ -1,0 +1,177 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Parameter styles
+  description: Array and object parameters with each style and explode combination, allowReserved and content-based parameters
+paths:
+  /simple/{ids}:
+    get:
+      operationId: getSimple
+      parameters:
+        - name: ids
+          in: path
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        '204':
+          description: No content
+  /label/{ids}:
+    get:
+      operationId: getLabel
+      parameters:
+        - name: ids
+          in: path
+          required: true
+          style: label
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        '204':
+          description: No content
+  /matrix/{ids}:
+    get:
+      operationId: getMatrix
+      parameters:
+        - name: ids
+          in: path
+          required: true
+          style: matrix
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        '204':
+          description: No content
+  /form-explode:
+    get:
+      operationId: getFormExplode
+      parameters:
+        - name: tags
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '204':
+          description: No content
+  /form-no-explode:
+    get:
+      operationId: getFormNoExplode
+      parameters:
+        - name: tags
+          in: query
+          required: true
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '204':
+          description: No content
+  /space-delimited:
+    get:
+      operationId: getSpaceDelimited
+      parameters:
+        - name: tags
+          in: query
+          required: true
+          style: spaceDelimited
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '204':
+          description: No content
+  /pipe-delimited:
+    get:
+      operationId: getPipeDelimited
+      parameters:
+        - name: tags
+          in: query
+          required: true
+          style: pipeDelimited
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '204':
+          description: No content
+  /deep-object:
+    get:
+      operationId: getDeepObject
+      parameters:
+        - name: filter
+          in: query
+          required: true
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/Filter'
+      responses:
+        '204':
+          description: No content
+  /form-object:
+    get:
+      operationId: getFormObject
+      parameters:
+        - name: filter
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Filter'
+      responses:
+        '204':
+          description: No content
+  /reserved:
+    get:
+      operationId: getReserved
+      parameters:
+        - name: path
+          in: query
+          required: true
+          allowReserved: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No content
+  /content-param:
+    get:
+      operationId: getContentParam
+      parameters:
+        - name: filter
+          in: query
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Filter'
+      responses:
+        '204':
+          description: No content
+components:
+  schemas:
+    Filter:
+      type: object
+      required:
+        - color
+        - size
+      properties:
+        color:
+          type: string
+        size:
+          type: string

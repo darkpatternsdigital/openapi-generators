@@ -1,0 +1,22 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Cookie parameters
+  description: Parameters sent in the Cookie header
+paths:
+  /session:
+    get:
+      operationId: getSession
+      parameters:
+        - name: session
+          in: cookie
+          required: true
+          schema:
+            type: string
+        - name: theme
+          in: cookie
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No content

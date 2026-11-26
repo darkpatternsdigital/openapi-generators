@@ -1,0 +1,68 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Multipart forms
+  description: multipart/form-data request bodies, with files and an encoding object
+paths:
+  /upload:
+    post:
+      operationId: upload
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - name
+                - file
+              properties:
+                name:
+                  type: string
+                file:
+                  type: string
+                  format: binary
+                metadata:
+                  $ref: '#/components/schemas/Metadata'
+            encoding:
+              file:
+                contentType: image/png
+              metadata:
+                contentType: application/json
+      responses:
+        '200':
+          description: The name and file length
+          content:
+            application/json:
+              schema:
+                type: string
+  /fields:
+    post:
+      operationId: postFields
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                count:
+                  type: integer
+      responses:
+        '200':
+          description: The name
+          content:
+            application/json:
+              schema:
+                type: string
+components:
+  schemas:
+    Metadata:
+      type: object
+      properties:
+        author:
+          type: string

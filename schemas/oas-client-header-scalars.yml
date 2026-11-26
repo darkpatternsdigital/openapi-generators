@@ -1,0 +1,28 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Non-string header parameters
+  description: Header parameters holding numbers and booleans
+paths:
+  /counted:
+    get:
+      operationId: getCounted
+      parameters:
+        - name: X-Count
+          in: header
+          required: true
+          schema:
+            type: integer
+        - name: X-Ratio
+          in: header
+          required: true
+          schema:
+            type: number
+        - name: X-Enabled
+          in: header
+          required: true
+          schema:
+            type: boolean
+      responses:
+        '204':
+          description: No content

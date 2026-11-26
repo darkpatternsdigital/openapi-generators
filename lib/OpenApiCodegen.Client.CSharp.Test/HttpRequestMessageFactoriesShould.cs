@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using DarkPatterns.OpenApi.CSharp;
@@ -313,6 +313,302 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 		var actualMessage = await GetRequestMessage("form.yaml", "PostBasicForm(name: \"Fido\", tag: null, hasIdTag: false)");
 
 		Assert.Equal("name=Fido&hasIdTag=false", await actualMessage.Content!.ReadAsStringAsync());
+	}
+
+	[Fact]
+	public async Task SendPutRequestsWithBodies()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-methods.yaml", @"ReplaceItem(id: ""i-1"", replaceItemBody: new(Name: ""n""))");
+
+		Assert.Equal("PUT", actualMessage.Method.Method);
+		Assert.Equal("items/i-1", actualMessage.RequestUri?.OriginalString);
+		Assert.Equal("application/json", actualMessage.Content?.Headers.ContentType?.MediaType);
+		CompareJson(await actualMessage.Content!.ReadAsStringAsync(), new { name = "n" });
+	}
+
+	[Fact]
+	public async Task SendPatchRequestsWithAnOptionalBody()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-methods.yaml", @"UpdateItem(id: ""i-1"", updateItemBody: new(Name: ""n""))");
+
+		Assert.Equal("PATCH", actualMessage.Method.Method);
+		Assert.Equal("items/i-1", actualMessage.RequestUri?.OriginalString);
+		CompareJson(await actualMessage.Content!.ReadAsStringAsync(), new { name = "n" });
+	}
+
+	[Fact]
+	public async Task OmitAnOptionalRequestBody()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-methods.yaml", @"UpdateItem(id: ""i-1"")");
+
+		Assert.Equal("PATCH", actualMessage.Method.Method);
+		Assert.Equal("items/i-1", actualMessage.RequestUri?.OriginalString);
+		Assert.Null(actualMessage.Content);
+	}
+
+	[Theory]
+	[InlineData("oas-client-methods.yaml", @"CheckItem(id: ""i-1"")", "HEAD", "items/i-1")]
+	[InlineData("oas-client-methods.yaml", @"ItemOptions(id: ""i-1"")", "OPTIONS", "items/i-1")]
+	[InlineData("oas-client-trace.yml", "TraceEcho()", "TRACE", "echo")]
+	public async Task SendEachHttpMethod(string documentName, string operation, string method, string path)
+	{
+		var actualMessage = await GetRequestMessage(documentName, operation);
+
+		Assert.Equal(method, actualMessage.Method.Method);
+		Assert.Equal(path, actualMessage.RequestUri?.OriginalString);
+		Assert.Null(actualMessage.Content);
+	}
+
+	[Fact]
+	public async Task GenerateOperationsWithoutAnOperationId()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-methods.yaml", "GetUntitled()");
+
+		Assert.Equal("GET", actualMessage.Method.Method);
+		Assert.Equal("untitled", actualMessage.RequestUri?.OriginalString);
+	}
+
+	[Fact]
+	public async Task SubstituteSeveralParametersInOnePathSegment()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-methods.yaml", @"GetFile(name: ""report"", ext: ""pdf"")");
+
+		Assert.Equal("files/report.pdf", actualMessage.RequestUri?.OriginalString);
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Cookie parameters): cookie parameters are accepted but no Cookie header is sent")]
+	public async Task SendCookieParameters()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-cookies.yaml", @"GetSession(session: ""abc"", theme: Optional.Create(""dark""))");
+
+		Assert.Equal(["session=abc; theme=dark"], actualMessage.Headers.GetValues("Cookie"));
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Parameter style): path arrays are formatted with ToString instead of comma-separated (simple style)")]
+	public async Task SendSimpleStylePathArrays()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-param-styles.yaml", "GetSimple(ids: new[] { 1, 2, 3 })");
+
+		Assert.Equal("simple/1,2,3", Uri.UnescapeDataString(actualMessage.RequestUri!.OriginalString));
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Parameter style): style: label is ignored")]
+	public async Task SendLabelStylePathArrays()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-param-styles.yaml", "GetLabel(ids: new[] { 1, 2, 3 })");
+
+		Assert.Equal("label/.1,2,3", Uri.UnescapeDataString(actualMessage.RequestUri!.OriginalString));
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Parameter style): style: matrix is ignored")]
+	public async Task SendMatrixStylePathArrays()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-param-styles.yaml", "GetMatrix(ids: new[] { 1, 2, 3 })");
+
+		Assert.Equal("matrix/;ids=1,2,3", Uri.UnescapeDataString(actualMessage.RequestUri!.OriginalString));
+	}
+
+	[Fact]
+	public async Task RepeatExplodedQueryArrays()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-param-styles.yaml", @"GetFormExplode(tags: new[] { ""a"", ""b"" })");
+
+		Assert.Equal("form-explode?tags=a&tags=b", actualMessage.RequestUri?.OriginalString);
+	}
+
+	[Theory(Skip = "OpenAPI 3.0 gap (Parameter style): explode: false and delimited styles are ignored; arrays are always sent as repeated keys")]
+	[InlineData("GetFormNoExplode", "a,b")]
+	[InlineData("GetSpaceDelimited", "a b")]
+	[InlineData("GetPipeDelimited", "a|b")]
+	public async Task DelimitQueryArraysThatAreNotExploded(string operation, string expected)
+	{
+		var actualMessage = await GetRequestMessage("oas-client-param-styles.yaml", $@"{operation}(tags: new[] {{ ""a"", ""b"" }})");
+
+		var (_, query) = SplitUri(actualMessage);
+		Assert.Equal([expected], query.GetValues("tags") ?? Array.Empty<string>());
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Parameter style): style: deepObject is ignored; the object is sent with ToString")]
+	public async Task SendDeepObjectQueryParameters()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-param-styles.yaml", @"GetDeepObject(filter: new(Color: ""red"", Size: ""large""))");
+
+		var (_, query) = SplitUri(actualMessage);
+		Assert.Equal("red", query["filter[color]"]);
+		Assert.Equal("large", query["filter[size]"]);
+		Assert.Null(query["filter"]);
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Parameter style): exploded form objects are sent with ToString instead of one key per property")]
+	public async Task SendExplodedFormObjectQueryParameters()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-param-styles.yaml", @"GetFormObject(filter: new(Color: ""red"", Size: ""large""))");
+
+		var (_, query) = SplitUri(actualMessage);
+		Assert.Equal("red", query["color"]);
+		Assert.Equal("large", query["size"]);
+		Assert.Null(query["filter"]);
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Parameter style): allowReserved is ignored; reserved characters are percent-encoded")]
+	public async Task SendReservedCharactersWhenAllowed()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-param-styles.yaml", @"GetReserved(path: ""a/b:c"")");
+
+		Assert.Equal("reserved?path=a/b:c", actualMessage.RequestUri?.OriginalString);
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Parameter style): content-based parameters are typed object and sent with ToString instead of as JSON")]
+	public async Task SerializeContentParametersAsTheirMediaType()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-param-styles.yaml", @"GetContentParam(filter: new Filter(Color: ""red"", Size: ""large""))");
+
+		var (_, query) = SplitUri(actualMessage);
+		CompareJson(query["filter"]!, new { color = "red", size = "large" });
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Parameter style): array header parameters don't compile ('Select' without System.Linq)")]
+	public async Task SendArrayHeadersCommaSeparated()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-header-array.yml", @"GetTagged(xTags: new[] { ""a"", ""b"" })");
+
+		var values = string.Join(",", actualMessage.Headers.GetValues("X-Tags")).Split(',').Select(v => v.Trim());
+		Assert.Equal(["a", "b"], values);
+	}
+
+	[Fact]
+	public async Task SendNonStringHeaders()
+	{
+		CultureInfo.CurrentCulture = new CultureInfo("de-DE");
+		var actualMessage = await GetRequestMessage("oas-client-header-scalars.yml", "GetCounted(xCount: 5, xRatio: 1.5, xEnabled: true)");
+
+		Assert.Equal(["5"], actualMessage.Headers.GetValues("X-Count"));
+		Assert.Equal(["1.5"], actualMessage.Headers.GetValues("X-Ratio"));
+		Assert.Equal(["true"], actualMessage.Headers.GetValues("X-Enabled"));
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Request bodies): text/plain bodies are JSON-encoded (quoted)")]
+	public async Task SendTextBodiesAsText()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-request-bodies.yaml", @"SendText(sendTextBody: ""hello"")");
+
+		Assert.Equal("text/plain", actualMessage.Content?.Headers.ContentType?.MediaType);
+		Assert.Equal("hello", await actualMessage.Content!.ReadAsStringAsync());
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Request bodies): application/octet-stream bodies are sent without a Content-Type")]
+	public async Task SendBinaryBodies()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-request-bodies.yaml", "SendBinary(sendBinaryBody: new System.IO.MemoryStream(new byte[] { 1, 2, 3 }))");
+
+		Assert.Equal("application/octet-stream", actualMessage.Content?.Headers.ContentType?.MediaType);
+		Assert.Equal([1, 2, 3], await actualMessage.Content!.ReadAsByteArrayAsync());
+	}
+
+	[Fact]
+	public async Task SendTheJsonMediaTypeOfARequestBodyWithSeveral()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-request-bodies.yaml", @"SendEither(sendEitherBody: new Note(Text: ""hello""))");
+
+		Assert.Equal("application/json", actualMessage.Content?.Headers.ContentType?.MediaType);
+		CompareJson(await actualMessage.Content!.ReadAsStringAsync(), new { text = "hello" });
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Request bodies): text/plain bodies are JSON-encoded (quoted)")]
+	public async Task SendTheTextMediaTypeOfARequestBodyWithSeveral()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-request-bodies.yaml", @"SendEither(sendEitherBody: ""hello"")");
+
+		Assert.Equal("text/plain", actualMessage.Content?.Headers.ContentType?.MediaType);
+		Assert.Equal("hello", await actualMessage.Content!.ReadAsStringAsync());
+	}
+
+	[Fact]
+	public async Task OmitAnOptionalJsonRequestBody()
+	{
+		var withoutBody = await GetRequestMessage("oas-client-request-bodies.yaml", "SaveNote()");
+		var withBody = await GetRequestMessage("oas-client-request-bodies.yaml", @"SaveNote(saveNoteBody: new(Text: ""hello""))");
+
+		Assert.Equal("PUT", withoutBody.Method.Method);
+		Assert.Null(withoutBody.Content);
+		CompareJson(await withBody.Content!.ReadAsStringAsync(), new { text = "hello" });
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Forms and multipart): multipart/form-data bodies are sent as JSON labelled multipart/form-data")]
+	public async Task SendMultipartFormData()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-multipart.yaml", @"Upload(uploadBody: new(Description: Optional.Create(""d""), File: new System.IO.MemoryStream(new byte[] { 1, 2, 3 })))");
+
+		var content = Assert.IsType<MultipartFormDataContent>(actualMessage.Content);
+		var parts = content.ToDictionary(p => p.Headers.ContentDisposition!.Name!.Trim('"'));
+		Assert.Equal("d", await parts["description"].ReadAsStringAsync());
+		Assert.Equal([1, 2, 3], await parts["file"].ReadAsByteArrayAsync());
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (XML): an operation whose only request body is XML is not generated")]
+	public async Task SendXmlBodies()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-xml.yaml", @"PostXmlItem(postXmlItemBody: new(Name: ""n""))");
+
+		Assert.Equal("application/xml", actualMessage.Content?.Headers.ContentType?.MediaType);
+		Assert.Equal("<item><name>n</name></item>", await actualMessage.Content!.ReadAsStringAsync());
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Models): readOnly properties are required in requests and sent")]
+	public async Task NotSendReadOnlyProperties()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-models.yaml", @"CreateAccount(createAccountBody: new(Password: ""p"", Name: ""n""))");
+
+		CompareJson(await actualMessage.Content!.ReadAsStringAsync(), new { password = "p", name = "n" });
+	}
+
+	// The credential arguments are illustrative: the generated client has no way to supply credentials yet
+	[Theory(Skip = "OpenAPI 3.0 gap (Client security): security requirements are ignored; there is no way to supply credentials")]
+	[InlineData(@"GetWithHeaderKey(headerKey: ""secret"")", "X-API-Key", "secret")]
+	[InlineData(@"GetWithCookieKey(cookieKey: ""secret"")", "Cookie", "session=secret")]
+	[InlineData(@"GetWithBasic(basic: ""dXNlcjpwYXNz"")", "Authorization", "Basic dXNlcjpwYXNz")]
+	[InlineData(@"GetWithBearer(bearer: ""token"")", "Authorization", "Bearer token")]
+	[InlineData(@"GetWithOAuth2(oauth2: ""token"")", "Authorization", "Bearer token")]
+	[InlineData(@"GetWithOpenIdConnect(openId: ""token"")", "Authorization", "Bearer token")]
+	public async Task ApplyCredentialsInHeaders(string operation, string headerName, string expected)
+	{
+		var actualMessage = await GetRequestMessage("oas-client-security.yaml", operation);
+
+		Assert.Equal([expected], actualMessage.Headers.GetValues(headerName));
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Client security): security requirements are ignored; there is no way to supply credentials")]
+	public async Task ApplyApiKeysInQuery()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-security.yaml", @"GetWithQueryKey(queryKey: ""secret"")");
+
+		Assert.Equal("query-key?api_key=secret", actualMessage.RequestUri?.OriginalString);
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Servers): servers are ignored; requests use the path alone")]
+	public async Task PrefixPathsWithTheDefaultServer()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-servers.yaml", "ListItems()");
+
+		Assert.Equal("https://us.example.com/v1/items", actualMessage.RequestUri?.OriginalString);
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Callbacks): the callback URL expression is ignored; '/events' is not appended to the given URL")]
+	public async Task SendCallbacksToTheExpressionUrl()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-callbacks.yaml", @"NotifyEvent(new System.Uri(""https://example.com/hooks""), notifyEventBody: new(Id: ""e-1""))", webhooks: true);
+
+		Assert.Equal("https://example.com/hooks/events", actualMessage.RequestUri?.OriginalString);
+	}
+
+	[Fact]
+	public async Task SendCallbackBodies()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-callbacks.yaml", @"NotifyEvent(new System.Uri(""https://example.com/hooks""), notifyEventBody: new(Id: ""e-1""))", webhooks: true);
+
+		Assert.Equal("POST", actualMessage.Method.Method);
+		Assert.Equal("application/json", actualMessage.Content?.Headers.ContentType?.MediaType);
+		CompareJson(await actualMessage.Content!.ReadAsStringAsync(), new { id = "e-1" });
 	}
 
 	private async Task<HttpRequestMessage> GetRequestMessage(string documentName, string operationAndParameters, Action<CSharpSchemaOptions>? configureOptions = null, bool webhooks = false)

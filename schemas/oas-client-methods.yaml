@@ -1,0 +1,91 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: HTTP methods
+  description: Operations for each HTTP method (except TRACE), plus operation-level documentation and path templating
+paths:
+  /items/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    put:
+      operationId: replaceItem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+      responses:
+        '200':
+          description: The replaced item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+    patch:
+      operationId: updateItem
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+      responses:
+        '204':
+          description: Updated
+    head:
+      operationId: checkItem
+      responses:
+        '200':
+          description: The item exists
+        '404':
+          description: The item does not exist
+    options:
+      operationId: itemOptions
+      responses:
+        '204':
+          description: The allowed methods
+  /legacy:
+    get:
+      operationId: getLegacy
+      deprecated: true
+      summary: Gets the legacy value
+      description: Use replaceItem instead.
+      responses:
+        '204':
+          description: No content
+  /untitled:
+    get:
+      responses:
+        '204':
+          description: An operation without an operationId
+  /files/{name}.{ext}:
+    get:
+      operationId: getFile
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: ext
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No content
+components:
+  schemas:
+    Item:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string

@@ -1,0 +1,168 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Models
+  description: Schema object features that affect generated models
+paths:
+  /labels:
+    get:
+      operationId: getLabels
+      responses:
+        '200':
+          description: Labels keyed by name
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Labels'
+  /tagged:
+    get:
+      operationId: getTagged
+      responses:
+        '200':
+          description: An object with named and additional properties
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tagged'
+  /closed:
+    get:
+      operationId: getClosed
+      responses:
+        '200':
+          description: An object without additional properties
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Closed'
+  /accounts:
+    post:
+      operationId: createAccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Account'
+      responses:
+        '201':
+          description: The created account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+  /settings:
+    get:
+      operationId: getSettings
+      responses:
+        '200':
+          description: Settings with defaults
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Settings'
+  /tree:
+    get:
+      operationId: getTree
+      responses:
+        '200':
+          description: A recursive tree
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tree'
+  /formats:
+    get:
+      operationId: getFormats
+      responses:
+        '200':
+          description: Values of each string format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Formats'
+
+components:
+  schemas:
+
+
+    Labels:
+      type: object
+      additionalProperties:
+        type: string
+    Tagged:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+      additionalProperties:
+        type: string
+    Closed:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+      additionalProperties: false
+    Account:
+      type: object
+      required:
+        - id
+        - password
+        - name
+      properties:
+        id:
+          type: string
+          readOnly: true
+        password:
+          type: string
+          writeOnly: true
+        name:
+          type: string
+          description: The display name of the account
+        legacyCode:
+          type: string
+          deprecated: true
+    Settings:
+      type: object
+      properties:
+        pageSize:
+          type: integer
+          default: 20
+    Tree:
+      type: object
+      required:
+        - value
+      properties:
+        value:
+          type: string
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tree'
+    Formats:
+      type: object
+      required:
+        - id
+        - day
+        - when
+        - big
+        - ratio
+      properties:
+        id:
+          type: string
+          format: uuid
+        day:
+          type: string
+          format: date
+        when:
+          type: string
+          format: date-time
+        big:
+          type: integer
+          format: int64
+        ratio:
+          type: number
+          format: float

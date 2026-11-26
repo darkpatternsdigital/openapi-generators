@@ -1,0 +1,21 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: not
+  description: A schema that excludes another schema
+paths:
+  /not-string:
+    get:
+      operationId: getNotString
+      responses:
+        '200':
+          description: Anything but a string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotString'
+components:
+  schemas:
+    NotString:
+      not:
+        type: string

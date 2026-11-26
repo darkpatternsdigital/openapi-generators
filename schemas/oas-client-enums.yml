@@ -1,0 +1,25 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Non-string enums
+  description: Integer enums
+paths:
+  /priority:
+    get:
+      operationId: getPriority
+      responses:
+        '200':
+          description: A priority
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Priority'
+components:
+  schemas:
+    Priority:
+      type: integer
+      enum:
+        - 1
+        - 2
+        - 3
+

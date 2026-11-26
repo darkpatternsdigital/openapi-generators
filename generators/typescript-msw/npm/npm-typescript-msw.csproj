@@ -23,6 +23,7 @@
         <TestedSchema Include="headers" />
         <TestedSchema Include="form" />
         <TestedSchema Include="parameter-formats" />
+        <TestedSchema Include="oas-client-methods" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,0 +1,93 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Client security
+  description: Operations secured by each kind of security scheme
+paths:
+  /header-key:
+    get:
+      operationId: getWithHeaderKey
+      security:
+        - headerKey: []
+      responses:
+        '204':
+          description: No content
+  /query-key:
+    get:
+      operationId: getWithQueryKey
+      security:
+        - queryKey: []
+      responses:
+        '204':
+          description: No content
+  /cookie-key:
+    get:
+      operationId: getWithCookieKey
+      security:
+        - cookieKey: []
+      responses:
+        '204':
+          description: No content
+  /basic:
+    get:
+      operationId: getWithBasic
+      security:
+        - basic: []
+      responses:
+        '204':
+          description: No content
+  /bearer:
+    get:
+      operationId: getWithBearer
+      security:
+        - bearer: []
+      responses:
+        '204':
+          description: No content
+  /oauth2:
+    get:
+      operationId: getWithOAuth2
+      security:
+        - oauth2:
+            - read
+      responses:
+        '204':
+          description: No content
+  /open-id:
+    get:
+      operationId: getWithOpenIdConnect
+      security:
+        - openId: []
+      responses:
+        '204':
+          description: No content
+components:
+  securitySchemes:
+    headerKey:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    queryKey:
+      type: apiKey
+      in: query
+      name: api_key
+    cookieKey:
+      type: apiKey
+      in: cookie
+      name: session
+    basic:
+      type: http
+      scheme: basic
+    bearer:
+      type: http
+      scheme: bearer
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://example.com/token
+          scopes:
+            read: Read access
+    openId:
+      type: openIdConnect
+      openIdConnectUrl: https://example.com/.well-known/openid-configuration

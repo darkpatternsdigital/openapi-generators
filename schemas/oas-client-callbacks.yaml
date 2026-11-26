@@ -1,0 +1,42 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Callbacks
+  description: A callback whose URL is a runtime expression with a suffix
+paths:
+  /subscriptions:
+    post:
+      operationId: subscribe
+      parameters:
+        - name: callbackUrl
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uri
+      responses:
+        '201':
+          description: Subscribed
+      callbacks:
+        onEvent:
+          '{$request.query.callbackUrl}/events':
+            post:
+              operationId: notifyEvent
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      $ref: '#/components/schemas/Event'
+              responses:
+                '204':
+                  description: Received
+components:
+  schemas:
+    Event:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string

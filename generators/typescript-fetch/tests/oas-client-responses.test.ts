@@ -35,7 +35,7 @@ describe('typescript-fetch OpenAPI 3.0 responses', () => {
 		expect(result.data).toEqual({ id: 'i-1' });
 	});
 
-	it.skip('parses responses in a status code range — OpenAPI 3.0 gap (Response ranges): 2XX and 4XX responses are dropped, so other codes in the range become "other"', async () => {
+	it('parses responses in a status code range', async () => {
 		respondWith('/ranges', () =>
 			HttpResponse.json({ message: 'missing' }, { status: 404 }),
 		);

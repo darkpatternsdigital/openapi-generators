@@ -209,6 +209,8 @@ public class TypeScriptInlineSchemas(TypeScriptSchemaOptions options, DocumentRe
 						{
 							"default" when responses.StatusCodeResponses.Count == 0 => "",
 							"default" => "other",
+							_ when statusCode.Length == 3 && statusCode.EndsWith("XX", StringComparison.Ordinal) && HttpStatusCodes.StatusCodeRangeNames.TryGetValue(statusCode[0] - '0', out var rangeName)
+								=> rangeName,
 							_ when responses.StatusCodeResponses.Count == 1 && responses.Default == null
 								=> "",
 							_ when HttpSuccessRegex.IsMatch(statusCode) && responses.StatusCodeResponses.Keys.Count(Is2xx) == 1

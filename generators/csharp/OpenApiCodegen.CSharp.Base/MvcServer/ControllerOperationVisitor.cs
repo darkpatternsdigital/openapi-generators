@@ -40,6 +40,7 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 
 		public OperationResponse? DefaultResponse { get; set; }
 		public Dictionary<int, OperationResponse> StatusResponses { get; } = [];
+		public Dictionary<int, OperationResponse> RangeResponses { get; } = [];
 		public List<OperationSecurityRequirement> SecurityRequirements { get; } = [];
 		public List<Dictionary<string, string[]>> RawSecurityRequirements { get; } = [];
 		public List<OperationParameter> SharedParameters { get; } = [];
@@ -90,7 +91,8 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 				RequestBodies: builder.RequestBodies.DefaultIfEmpty(OperationRequestBodyFactory(operationId, null, Enumerable.Empty<OperationParameter>())).Select(transform => transform(sharedParameters)).ToArray(),
 				Responses: new Templates.OperationResponses(
 					DefaultResponse: builder.DefaultResponse,
-					StatusResponse: new(builder.StatusResponses)
+					StatusResponse: new(builder.StatusResponses),
+					RangeResponse: new(builder.RangeResponses)
 				),
 				SecurityRequirements: [.. builder.SecurityRequirements],
 				RawSecurityRequirements: [.. builder.RawSecurityRequirements],
@@ -132,10 +134,16 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 		));
 	}
 
-	public override void Visit(OpenApiResponse response, int? statusCode, Argument argument)
+	public override void Visit(OpenApiResponse response, int? statusCode, Argument argument) =>
+		VisitResponse(response, statusCode, null, argument);
+	public override void VisitStatusCodeRange(OpenApiResponse response, int statusCodeClass, Argument argument) =>
+		VisitResponse(response, null, statusCodeClass, argument);
+	private void VisitResponse(OpenApiResponse response, int? statusCode, int? statusCodeClass, Argument argument)
 	{
 		string statusCodeName;
-		if (!statusCode.HasValue)
+		if (statusCodeClass.HasValue)
+			statusCodeName = HttpStatusCodes.StatusCodeRangeNames[statusCodeClass.Value];
+		else if (!statusCode.HasValue)
 			statusCodeName = "other status code";
 		else if (!HttpStatusCodes.StatusCodeNames.TryGetValue(statusCode.Value, out statusCodeName))
 			statusCodeName = $"status code {statusCode}";
@@ -175,7 +183,9 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 					  )).ToArray()
 		);
 
-		if (statusCode.HasValue)
+		if (statusCodeClass.HasValue)
+			argument.Builder.RangeResponses.Add(statusCodeClass.Value, result);
+		else if (statusCode.HasValue)
 			argument.Builder.StatusResponses.Add(statusCode.Value, result);
 		else
 			argument.Builder.DefaultResponse = result;

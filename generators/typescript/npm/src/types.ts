@@ -28,6 +28,13 @@ export type StandardResponse<
 	response: AdapterResponseArgs;
 };
 
+type Digit = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+/** Every status code in a range, such as 400 through 499 for `StatusCodeRange<4>` (the `4XX` range) */
+export type StatusCodeRange<TStatusCodeClass extends 1 | 2 | 3 | 4 | 5> =
+	`${TStatusCodeClass}${Digit}${Digit}` extends `${infer TStatusCode extends number}`
+		? TStatusCode
+		: never;
+
 export type TransformRequestNoBody<TRequestParams extends {}, TResult> = (
 	params: TRequestParams,
 ) => TResult;

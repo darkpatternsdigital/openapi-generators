@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ using Responses;
 
 public class ResponsesYamlShould
 {
-	[Fact(Skip = "OpenAPI 3.0 gap (Response ranges): 2XX and 4XX responses are dropped; only Ok is generated")]
+	[Fact]
 	public void Generate_a_result_for_each_response_range()
 	{
 		// 200, 2XX and 4XX are each documented, so each should have a factory besides Unsafe
@@ -20,6 +21,20 @@ public class ResponsesYamlShould
 			.ToArray();
 		Assert.Equal(3, factories.Length);
 	}
+
+	[Fact]
+	public Task Respond_with_a_status_code_in_a_range() =>
+		TestSingleRequest<RangesControllerBase.GetRangesActionResult>(new(
+			RangesControllerBase.GetRangesActionResult.ClientError(404, "missing"),
+			client => client.GetAsync("/responses/ranges")
+		)
+		{
+			AssertResponseMessage = VerifyResponse(404, "missing"),
+		});
+
+	[Fact]
+	public void Reject_a_status_code_outside_of_the_range() =>
+		Assert.Throws<ArgumentOutOfRangeException>(() => RangesControllerBase.GetRangesActionResult.ClientError(500, "oops"));
 
 	[Fact]
 	public Task Respond_with_a_specific_status_code() =>

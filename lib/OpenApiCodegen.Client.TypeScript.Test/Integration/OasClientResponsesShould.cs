@@ -27,7 +27,7 @@ public class OasClientResponsesShould
 		AssertResponseSuccess(result, 200, body);
 	}
 
-	[Theory(Skip = "OpenAPI 3.0 gap (Response ranges): 2XX and 4XX responses are dropped, so other codes in the range become 'other'")]
+	[Theory]
 	[InlineData(201, "{\"id\":\"i-1\"}")]
 	[InlineData(404, "{\"message\":\"missing\"}")]
 	public async Task Parse_status_code_range_responses(int statusCode, string json)

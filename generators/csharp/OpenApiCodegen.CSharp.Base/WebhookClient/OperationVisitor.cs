@@ -37,6 +37,7 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 
 		public OperationResponse? DefaultResponse { get; set; }
 		public Dictionary<int, OperationResponse> StatusResponses { get; } = new();
+		public Dictionary<int, OperationResponse> RangeResponses { get; } = new();
 		public List<OperationSecurityRequirement> SecurityRequirements { get; } = new();
 		public List<OperationParameter> SharedParameters { get; } = new();
 		public OpenApiOperation Operation { get; }
@@ -84,7 +85,8 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 					HasQueryStringEmbedded: path.Contains("?"),
 					Responses: new OperationResponses(
 						DefaultResponse: builder.DefaultResponse,
-						StatusResponse: new(builder.StatusResponses)
+						StatusResponse: new(builder.StatusResponses),
+						RangeResponse: new(builder.RangeResponses)
 					),
 					SecurityRequirements: builder.SecurityRequirements.ToArray(),
 					SourceReference: toSourceReference(operation.Id)
@@ -118,10 +120,16 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 			Maximum: info?.TryGetAnnotation<MaximumKeyword>()?.Value
 		));
 	}
-	public override void Visit(OpenApiResponse response, int? statusCode, Argument argument)
+	public override void Visit(OpenApiResponse response, int? statusCode, Argument argument) =>
+		VisitResponse(response, statusCode, null, argument);
+	public override void VisitStatusCodeRange(OpenApiResponse response, int statusCodeClass, Argument argument) =>
+		VisitResponse(response, null, statusCodeClass, argument);
+	private void VisitResponse(OpenApiResponse response, int? statusCode, int? statusCodeClass, Argument argument)
 	{
 		string statusCodeName;
-		if (!statusCode.HasValue)
+		if (statusCodeClass.HasValue)
+			statusCodeName = HttpStatusCodes.StatusCodeRangeNames[statusCodeClass.Value];
+		else if (!statusCode.HasValue)
 			statusCodeName = "other status code";
 		else if (!HttpStatusCodes.StatusCodeNames.TryGetValue(statusCode.Value, out statusCodeName))
 			statusCodeName = $"status code {statusCode}";
@@ -164,7 +172,9 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 					  )).ToArray()
 		);
 
-		if (statusCode.HasValue)
+		if (statusCodeClass.HasValue)
+			argument.Builder.RangeResponses.Add(statusCodeClass.Value, result);
+		else if (statusCode.HasValue)
 			argument.Builder.StatusResponses.Add(statusCode.Value, result);
 		else
 			argument.Builder.DefaultResponse = result;

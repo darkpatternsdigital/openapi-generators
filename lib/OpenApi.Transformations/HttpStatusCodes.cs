@@ -71,5 +71,15 @@ namespace DarkPatterns.OpenApi.Transformations
 			[510] = "NotExtended",
 			[511] = "NetworkAuthenticationRequired",
 		};
+
+		/// <summary>Names of the status code classes (RFC 9110), keyed by the first digit of the range, such as 4 for `4XX`</summary>
+		public static readonly IReadOnlyDictionary<int, string> StatusCodeRangeNames = new Dictionary<int, string>
+		{
+			[1] = "Informational",
+			[2] = "Successful",
+			[3] = "Redirection",
+			[4] = "ClientError",
+			[5] = "ServerError",
+		};
 	}
 }

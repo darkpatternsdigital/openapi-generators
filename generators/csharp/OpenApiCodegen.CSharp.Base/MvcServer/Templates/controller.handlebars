@@ -46,10 +46,10 @@ namespace {{PackageName}}
         [{{{@root.SecurityAttribute}}}({{{jsonString Operation.RawSecurityRequirements}}})]
         {{~/if}}{{/if}}
         public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.IActionResult> {{RequestBody.Name}}TypeSafeEntry(
-            {{#each RequestBody.AllParams}}{{#unless IsCookieParam}}[{{!
+            {{#each RequestBody.EntryParams}}{{#unless IsCookieParam}}[{{!
             }}{{#if IsPathParam}}global::Microsoft.AspNetCore.Mvc.FromRoute(Name = "{{RawName}}"){{/if}}{{!
             }}{{#if IsQueryParam}}global::Microsoft.AspNetCore.Mvc.FromQuery(Name = "{{RawName}}"){{/if}}{{!
-            }}{{#if IsBodyParam}}global::Microsoft.AspNetCore.Mvc.FromBody{{/if}}{{!
+            }}{{#if IsBodyParam}}global::Microsoft.AspNetCore.Mvc.FromBody{{#unless Required}}(EmptyBodyBehavior = global::Microsoft.AspNetCore.Mvc.ModelBinding.EmptyBodyBehavior.Allow){{/unless}}{{/if}}{{!
             }}{{#if IsFormParam}}global::Microsoft.AspNetCore.Mvc.FromForm(Name = "{{RawName}}"){{/if}}{{!
             }}{{#if IsHeaderParam}}global::Microsoft.AspNetCore.Mvc.FromHeader(Name = "{{RawName}}"){{/if}}{{!
             }}{{#if Required}}, global::System.ComponentModel.DataAnnotations.Required{{/if}}{{!
@@ -59,12 +59,16 @@ namespace {{PackageName}}
             }}{{#if HasMinimum}}{{#if HasMaximum}}, global::System.ComponentModel.DataAnnotations.Range({{Minimum}}, {{Maximum}}){{/if}}{{/if}}{{!
             }}] {{{DataType}}}{{#if Optional}}{{#unless DataTypeNullable}}?{{/unless}}{{/if}} {{ParamName}}{{#unless @last}},
             {{/unless}}{{/unless}}{{/each}}
-        ) => (await {{RequestBody.Name}}({{#each RequestBody.AllParams}}{{#if Optional}}{{!
+        ) => {{#if RequestBody.RequiresBodyFromRequest}}Request.ContentType == null ? new global::Microsoft.AspNetCore.Mvc.UnsupportedMediaTypeResult() : {{/if}}(await {{RequestBody.Name}}({{#each RequestBody.AllParams}}{{#if IsReadFromRequest}}{{#unless Required}}Request.ContentType == null ? null : global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{/unless}}{{#if IsTextBodyParam}}await new global::System.IO.StreamReader(Request.Body).ReadToEndAsync(){{else}}Request.Body{{/if}}{{#unless Required}}){{/unless}}{{else}}{{#if Optional}}{{#if IsBodyParam}}{{!
+            An optional body binds null when the request has none. A nullable body can also be
+            sent as JSON null, so check for content.
+            }}{{#if DataTypeNullable}}Request.ContentType == null || Request.ContentLength == 0 ? null : global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}){{else
+            }}{{ParamName}} is { } {{ParamName}}Value ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}Value) : null{{/if}}{{else}}{{!
             Optional form fields bind as nullable values. A missing field binds null, except that a
             missing collection binds empty, and a nullable field sent empty is present with a null
             value: for those, check the form for the key.
             }}{{#if DataTypeEnumerable}}Request.HasFormContentType && Request.Form.ContainsKey("{{RawName}}") ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}) : null{{else}}{{#if DataTypeNullable}}Request.HasFormContentType && Request.Form.ContainsKey("{{RawName}}") ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}) : null{{else
-            }}{{ParamName}} is { } {{ParamName}}Value ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}Value) : null{{/if}}{{/if}}{{else}}{{ParamName}}{{/if}}{{#unless @last}},{{/unless}}{{/each}})).ActionResult;
+            }}{{ParamName}} is { } {{ParamName}}Value ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}Value) : null{{/if}}{{/if}}{{/if}}{{else}}{{ParamName}}{{/if}}{{/if}}{{#unless @last}},{{/unless}}{{/each}})).ActionResult;
         {{!--
             TODO - check scopes
             {{#each Operation.SecurityRequirements}}{{#if Schemes.Length}}{{#if }}

@@ -43,7 +43,7 @@ public class OpenApi30CallbacksYamlShould
 
 		var result = await client.PostOnData(
 			new Uri("https://example.com/cb/data"),
-			new PostStreamsPostOnDataRequest(null, Optional.Create("hello")));
+			Optional.Create(new PostStreamsPostOnDataRequest(null, Optional.Create("hello"))));
 
 		Assert.IsType<WebhookOperations.PostOnDataReturnType.Accepted>(result);
 		Assert.Equal(HttpMethod.Post, sent?.Method);

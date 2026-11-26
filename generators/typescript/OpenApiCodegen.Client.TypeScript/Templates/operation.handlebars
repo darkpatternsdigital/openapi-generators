@@ -128,7 +128,8 @@ export const constructRequestBodyByMimeType: {
             {{/each}}
             return formData;
         {{else}}
-            throw new Error('Non-JSON requests not supported');
+            {{!-- text and binary bodies (a string or a Blob) are sent as given --}}
+            return body;
         {{/ifEquals}}
         {{/ifEquals}}
     },

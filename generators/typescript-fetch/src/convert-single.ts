@@ -24,7 +24,7 @@ export type FetchRequest = {
 	method: HttpMethod;
 	headers: Record<string, string> | undefined;
 
-	body: URLSearchParams | string;
+	body: URLSearchParams | string | Blob | undefined;
 };
 
 export type FetchResponse = {
@@ -59,14 +59,18 @@ function createRequestArgs(
 						),
 					)
 				: undefined,
-			body:
-				requestOpts.headers &&
-				requestOpts.headers['Content-Type'] ===
-					'application/x-www-form-urlencoded'
-					? (requestOpts.body as URLSearchParams)
-					: JSON.stringify(requestOpts.body),
+			body: toFetchBody(requestOpts),
 		},
 	];
+}
+
+/** No Content-Type means no body; JSON is serialized; anything else (a form, a string or a Blob) is sent as given */
+function toFetchBody(requestOpts: AdapterRequestArgs): FetchRequest['body'] {
+	const contentType = requestOpts.headers?.['Content-Type'];
+	if (!contentType) return undefined;
+	return isJsonMediaType(toMediaType(contentType))
+		? JSON.stringify(requestOpts.body)
+		: (requestOpts.body as URLSearchParams | string | Blob);
 }
 
 async function createResponseArgs(

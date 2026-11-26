@@ -23,8 +23,8 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.RequestBodies
         [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(200, Type = typeof(string))] // application/json
         
         public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.IActionResult> PostTextTypeSafeEntry(
-            [global::Microsoft.AspNetCore.Mvc.FromBody, global::System.ComponentModel.DataAnnotations.Required] string postTextBody
-        ) => (await PostText(postTextBody)).ActionResult;
+            
+        ) => Request.ContentType == null ? new global::Microsoft.AspNetCore.Mvc.UnsupportedMediaTypeResult() : (await PostText(await new global::System.IO.StreamReader(Request.Body).ReadToEndAsync())).ActionResult;
 
         protected abstract global::System.Threading.Tasks.Task<PostTextActionResult> PostText(
             string postTextBody);

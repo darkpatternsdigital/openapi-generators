@@ -249,7 +249,13 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 				   RawNameWithCurly: null,
 				   ParamName: TypeScriptNaming.ToParameterName("body", options.ReservedIdentifiers()),
 				   Description: null,
-				   DataType: dataType.Text,
+				   // As for responses: text bodies are strings and other non-JSON bodies are Blobs
+				   DataType: MediaTypes.Classify(mimeType) switch
+				   {
+					   MediaTypeKind.Text => "string",
+					   MediaTypeKind.Raw => "Blob",
+					   _ => dataType.Text,
+				   },
 				   DataTypeEnumerable: dataType.IsEnumerable,
 				   DataTypeNullable: dataType.Nullable,
 				   IsPathParam: false,

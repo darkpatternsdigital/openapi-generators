@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using DarkPatterns.OpenApiCodegen.Handlebars.Templates;
 
 namespace DarkPatterns.OpenApiCodegen.CSharp.MvcServer.Templates;
@@ -49,9 +50,14 @@ public record OperationParameter(
 	int? MinLength,
 	int? MaxLength,
 	decimal? Minimum,
-	decimal? Maximum
+	decimal? Maximum,
+	bool IsTextBodyParam = false,
+	bool IsStreamBodyParam = false
 )
 {
+	/// <summary>Text and binary bodies are read from the request rather than bound as an action parameter</summary>
+	public bool IsReadFromRequest => IsTextBodyParam || IsStreamBodyParam;
+
 	public bool HasMinLength => MinLength.HasValue;
 	public bool HasMaxLength => MaxLength.HasValue;
 
@@ -76,7 +82,13 @@ public record OperationResponseContentOption(
 	string? DataType
 );
 
-public record OperationRequestBody(string Name, string? RequestBodyType, IEnumerable<OperationParameter> AllParams);
+public record OperationRequestBody(string Name, string? RequestBodyType, IEnumerable<OperationParameter> AllParams)
+{
+	/// <summary>The parameters MVC binds for the action</summary>
+	public IEnumerable<OperationParameter> EntryParams => AllParams.Where(p => !p.IsReadFromRequest);
+	/// <summary>A required body read from the request: a request without one is rejected, as MVC does for bound bodies</summary>
+	public bool RequiresBodyFromRequest => AllParams.Any(p => p.IsReadFromRequest && p.Required);
+}
 
 public record OperationSecurityRequirement(
 	OperationSecuritySchemeRequirement[] Schemes

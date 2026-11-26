@@ -88,7 +88,7 @@ public class PathTemplatesYamlShould
 			AssertResponseMessage = VerifyResponse(204),
 		});
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Request bodies): without an operationId, an operation with a request body generates a method named _")]
+	[Fact]
 	public void Name_operations_with_a_body_and_without_an_operation_id_from_the_method_and_path()
 	{
 		// The ActionResult is named from the method and path; the abstract method should be, too

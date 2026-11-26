@@ -186,7 +186,7 @@ public class OasClientRequestsShould
 		Assert.Equal("true", token?["headers"]?["X-Enabled"]?.GetValue<string>());
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Request bodies): text/plain request bodies are dropped from the operation")]
+	[Fact]
 	public async Task Send_text_bodies()
 	{
 		var result = await commonDirectory.ConvertRequest("oas-client-request-bodies.yaml", "sendText", new { }, "hello", "text/plain");
@@ -194,7 +194,7 @@ public class OasClientRequestsShould
 		AssertRequestSuccess(result, "POST", "/text", "hello", "text/plain");
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Request bodies): application/octet-stream bodies throw 'Non-JSON requests not supported'")]
+	[Fact]
 	public async Task Send_binary_bodies()
 	{
 		var result = await commonDirectory.TsNode(@"
@@ -220,7 +220,7 @@ public class OasClientRequestsShould
 		AssertRequestSuccess(result, "POST", "/either", body);
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Request bodies): only the JSON media type of a request body is kept; text/plain is dropped")]
+	[Fact]
 	public async Task Send_the_text_media_type_of_a_request_body_with_several()
 	{
 		var result = await commonDirectory.ConvertRequest("oas-client-request-bodies.yaml", "sendEither", new { }, "hello", "text/plain");

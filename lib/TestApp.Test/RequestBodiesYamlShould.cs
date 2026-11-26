@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using DarkPatterns.OpenApiCodegen.Json.Extensions;
 using Xunit;
 
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp;
@@ -12,7 +13,7 @@ using RequestBodies;
 
 public class RequestBodiesYamlShould
 {
-	[Fact(Skip = "OpenAPI 3.0 gap (Request bodies): text/plain is bound [FromBody] with no text input formatter, so it returns 415")]
+	[Fact]
 	public Task Accept_text_plain_bodies() =>
 		TestSingleRequest<TextControllerBase.PostTextActionResult, string>(new(
 			TextControllerBase.PostTextActionResult.Ok("hello"),
@@ -27,7 +28,7 @@ public class RequestBodiesYamlShould
 			AssertResponseMessage = VerifyResponse(200, "hello"),
 		});
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Request bodies): application/octet-stream is bound [FromBody] Stream with no input formatter, so it returns 415")]
+	[Fact]
 	public Task Accept_octet_stream_bodies() =>
 		TestSingleRequest<BinaryControllerBase.PostBinaryActionResult, byte[]>(new(
 			BinaryControllerBase.PostBinaryActionResult.Ok(3),
@@ -47,7 +48,7 @@ public class RequestBodiesYamlShould
 
 	[Fact]
 	public Task Accept_an_optional_body() =>
-		TestSingleRequest<OptionalControllerBase.PostOptionalActionResult, Note?>(new(
+		TestSingleRequest<OptionalControllerBase.PostOptionalActionResult, IOptional<Note>?>(new(
 			OptionalControllerBase.PostOptionalActionResult.NoContent(),
 			client => client.PostAsync("/request-bodies/optional", JsonContent.Create(new { text = "note" }))
 		)
@@ -55,14 +56,15 @@ public class RequestBodiesYamlShould
 			AssertRequest = (controller, body) =>
 			{
 				Assert.True(controller.ModelState.IsValid);
-				Assert.Equal("note", body?.Text);
+				Assert.NotNull(body);
+				Assert.Equal("note", Optional.GetValueOrThrow(body).Text);
 			},
 			AssertResponseMessage = VerifyResponse(204),
 		});
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Request bodies): required: false is ignored (body is [Required]); a request without a body returns 415")]
+	[Fact]
 	public Task Accept_a_request_without_the_optional_body() =>
-		TestSingleRequest<OptionalControllerBase.PostOptionalActionResult, Note?>(new(
+		TestSingleRequest<OptionalControllerBase.PostOptionalActionResult, IOptional<Note>?>(new(
 			OptionalControllerBase.PostOptionalActionResult.NoContent(),
 			client => client.PostAsync("/request-bodies/optional", null)
 		)

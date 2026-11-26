@@ -2,6 +2,7 @@
   - application/json
   - application/x-www-form-urlencoded
   - application/octet-stream
+  - text/plain
 globalReservedIdentifiers:
   - 'break'
   - 'case'

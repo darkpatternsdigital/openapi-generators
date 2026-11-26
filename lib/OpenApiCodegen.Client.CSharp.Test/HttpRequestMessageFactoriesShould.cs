@@ -329,7 +329,7 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 	[Fact]
 	public async Task SendPatchRequestsWithAnOptionalBody()
 	{
-		var actualMessage = await GetRequestMessage("oas-client-methods.yaml", @"UpdateItem(id: ""i-1"", updateItemBody: new(Name: ""n""))");
+		var actualMessage = await GetRequestMessage("oas-client-methods.yaml", @"UpdateItem(id: ""i-1"", updateItemBody: Optional.Create(new Item(Name: ""n"")))");
 
 		Assert.Equal("PATCH", actualMessage.Method.Method);
 		Assert.Equal("items/i-1", actualMessage.RequestUri?.OriginalString);
@@ -487,7 +487,7 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 		Assert.Equal(["true"], actualMessage.Headers.GetValues("X-Enabled"));
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Request bodies): text/plain bodies are JSON-encoded (quoted)")]
+	[Fact]
 	public async Task SendTextBodiesAsText()
 	{
 		var actualMessage = await GetRequestMessage("oas-client-request-bodies.yaml", @"SendText(sendTextBody: ""hello"")");
@@ -496,7 +496,7 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 		Assert.Equal("hello", await actualMessage.Content!.ReadAsStringAsync());
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Request bodies): application/octet-stream bodies are sent without a Content-Type")]
+	[Fact]
 	public async Task SendBinaryBodies()
 	{
 		var actualMessage = await GetRequestMessage("oas-client-request-bodies.yaml", "SendBinary(sendBinaryBody: new System.IO.MemoryStream(new byte[] { 1, 2, 3 }))");
@@ -514,7 +514,7 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 		CompareJson(await actualMessage.Content!.ReadAsStringAsync(), new { text = "hello" });
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Request bodies): text/plain bodies are JSON-encoded (quoted)")]
+	[Fact]
 	public async Task SendTheTextMediaTypeOfARequestBodyWithSeveral()
 	{
 		var actualMessage = await GetRequestMessage("oas-client-request-bodies.yaml", @"SendEither(sendEitherBody: ""hello"")");
@@ -527,7 +527,7 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 	public async Task OmitAnOptionalJsonRequestBody()
 	{
 		var withoutBody = await GetRequestMessage("oas-client-request-bodies.yaml", "SaveNote()");
-		var withBody = await GetRequestMessage("oas-client-request-bodies.yaml", @"SaveNote(saveNoteBody: new(Text: ""hello""))");
+		var withBody = await GetRequestMessage("oas-client-request-bodies.yaml", @"SaveNote(saveNoteBody: Optional.Create(new Note(Text: ""hello"")))");
 
 		Assert.Equal("PUT", withoutBody.Method.Method);
 		Assert.Null(withoutBody.Content);

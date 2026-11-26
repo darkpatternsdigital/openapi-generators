@@ -66,11 +66,20 @@ namespace {{PackageName}}
                 formFields.Add(new("{{RawName}}", global::DarkPatterns.OpenApiCodegen.Json.Extensions.ParameterFormatting.ToParameterString({{#if Required}}{{ParamName}}{{else}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.GetValueOrThrow({{ParamName}}){{/if}}) ?? ""));
 {{/if}}{{/if}}{{/each}}
             requestMessage.Content = new global::System.Net.Http.FormUrlEncodedContent(formFields);
-{{else}}{{#each RequestBody.AllParams}}{{#if IsBodyParam}}{{#if IsFile}}
-            requestMessage.Content = new global::System.Net.Http.StreamContent({{#if Required}}{{ParamName}}{{else}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.GetValueOrThrow({{ParamName}}){{/if}});
+{{else}}{{#each RequestBody.AllParams}}{{#if IsBodyParam}}{{#unless Required}}
+            if ({{ParamName}} != null)
+            {
+{{/unless}}{{#if IsFile}}
+{{#unless Required}}    {{/unless}}            requestMessage.Content = new global::System.Net.Http.StreamContent({{#if Required}}{{ParamName}}{{else}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.GetValueOrThrow({{ParamName}}){{/if}});
+{{#unless Required}}    {{/unless}}            requestMessage.Content.Headers.ContentType = global::System.Net.Http.Headers.MediaTypeHeaderValue.Parse("{{{RequestBody.RequestBodyType}}}");
+{{else}}{{#if RequestBody.IsText}}
+{{#unless Required}}    {{/unless}}            requestMessage.Content = new global::System.Net.Http.StringContent({{#if Required}}{{ParamName}}{{else}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.GetValueOrThrow({{ParamName}}){{/if}}, global::System.Text.Encoding.UTF8);
+{{#unless Required}}    {{/unless}}            requestMessage.Content.Headers.ContentType = global::System.Net.Http.Headers.MediaTypeHeaderValue.Parse("{{{RequestBody.RequestBodyType}}}");
+{{#unless Required}}    {{/unless}}            requestMessage.Content.Headers.ContentType.CharSet ??= "utf-8";
 {{else}}
-            requestMessage.Content = global::System.Net.Http.Json.JsonContent.Create<{{{DataType}}}>({{ParamName}}, global::System.Net.Http.Headers.MediaTypeHeaderValue.Parse("{{{RequestBody.RequestBodyType}}}"));
-{{/if}}{{/if}}{{/each}}{{/if}}
+{{#unless Required}}    {{/unless}}            requestMessage.Content = global::System.Net.Http.Json.JsonContent.Create<{{{DataType}}}>({{#if Required}}{{ParamName}}{{else}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.GetValueOrThrow({{ParamName}}){{/if}}, global::System.Net.Http.Headers.MediaTypeHeaderValue.Parse("{{{RequestBody.RequestBodyType}}}"));
+{{/if}}{{/if}}{{#unless Required}}            }
+{{/unless}}{{/if}}{{/each}}{{/if}}
 {{#each RequestBody.AllParams}}{{#if IsHeaderParam}}{{#unless Required}}
             if ({{ParamName}} != null){{/unless}}
             requestMessage.Headers.Add("{{RawName}}", {{#if DataTypeEnumerable}}{{#if Required}}{{ParamName}}{{else}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.GetValueOrThrow({{ParamName}}){{/if}}.Select(v => global::DarkPatterns.OpenApiCodegen.Json.Extensions.ParameterFormatting.ToParameterString(v) ?? ""){{else}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.ParameterFormatting.ToParameterString({{#if Required}}{{ParamName}}{{else}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.GetValueOrThrow({{ParamName}}){{/if}}) ?? ""{{/if}});{{/if}}{{/each}}

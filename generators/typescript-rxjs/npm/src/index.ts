@@ -23,6 +23,15 @@ import {
 export const toUrl = (prefix: string, requestOpts: AdapterRequestArgs) =>
 	new URL(requestOpts.path, prefix).toString();
 
+/** No Content-Type means no body; JSON is serialized; anything else (a form, a string or a Blob) is sent as given */
+function toAjaxBody(requestOpts: AdapterRequestArgs): unknown {
+	const contentType = requestOpts.headers?.['Content-Type'];
+	if (!contentType) return undefined;
+	return isJsonMediaType(toMediaType(contentType))
+		? JSON.stringify(requestOpts.body)
+		: requestOpts.body;
+}
+
 function rxWithPrefix(
 	prefix: string,
 	rxjsRequest: (params: AjaxConfig) => Observable<AjaxResponse<unknown>> = ajax,
@@ -34,12 +43,7 @@ function rxWithPrefix(
 			url,
 			method: requestOpts.method,
 			headers: requestOpts.headers,
-			body:
-				requestOpts.headers &&
-				requestOpts.headers['Content-Type'] ===
-					'application/x-www-form-urlencoded'
-					? requestOpts.body
-					: JSON.stringify(requestOpts.body),
+			body: toAjaxBody(requestOpts),
 			// Read as bytes, then convert by media type: see readResponseBody
 			responseType: 'arraybuffer',
 		};

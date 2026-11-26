@@ -6,6 +6,30 @@ every section between your version and the new one.
 
 Releases before C# 0.25.4 and TypeScript 0.13.0 aren't covered.
 
+## C# 0.32.0, Json.Extensions 0.21.0, TypeScript 0.16.0, fetch 0.12.0, RxJS 0.11.0, MSW 0.11.0
+
+**The C# generator needs Roslyn 4.8 or later**, which ships with the .NET 8 SDK
+and Visual Studio 2022 17.8. The builds for Roslyn 3.11, 4.0 and 4.1 are gone.
+With an older compiler, such as the .NET 6 or 7 SDK or an older Visual Studio,
+no code is generated and the build fails on the missing types. Update the SDK
+or Visual Studio.
+
+**Failures to load the C# generator are reported as `DPDAPI003`**, with the
+whole exception. Before, Roslyn reported that it couldn't create the generator,
+without the exception's details.
+
+**The TypeScript generator needs the .NET 10 runtime or later**, both from npm
+and as a .NET tool. It needed .NET 8 before. It also runs on later runtimes,
+such as .NET 11, without .NET 10 installed. Update CI images and developer
+machines that only have the .NET 8 runtime.
+
+**The fetch, RxJS and MSW adapters require TypeScript 0.16.0**, so upgrade them
+together. Nothing else changes in them.
+
+**Json.Extensions targets .NET Standard 2.0, .NET 8 and .NET 10.** Projects on
+.NET 6, .NET 7 or .NET Standard 2.1 use the .NET Standard 2.0 build. Nothing
+needs to change.
+
 ## C# 0.31.2
 
 **Generator failures are reported as `DPDAPI003`.** When code generation throws,

@@ -37,6 +37,27 @@ public class GenerationFailureShould
 		Assert.Contains(" at DarkPatterns.", diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture));
 	}
 
+	[Fact]
+	public void Report_a_failure_to_load_the_generator()
+	{
+		// Roslyn reports an exception from a generator's constructor without its details
+		var driver = CSharpGeneratorDriver.Create(
+			[new MissingAssemblyGenerator().AsSourceGenerator()],
+			additionalTexts: [new InMemoryAdditionalText(System.IO.Path.Combine(System.IO.Path.GetTempPath(), "api.yaml"), "openapi: 3.0.3")]
+		);
+
+		var result = driver.RunGenerators(CSharpCompilation.Create("Consumer")).GetRunResult();
+
+		var diagnostic = Assert.Single(result.Diagnostics, d => d.Id == "DPDAPI003");
+		Assert.Contains("Could not find generator Missing.Generator", diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture));
+	}
+
+	private sealed class MissingAssemblyGenerator() : BaseGenerator("Missing.Generator", "Missing.Assembly")
+	{
+		protected override void ReportCompilationDiagnostics(Compilation compilation, CompilerApis apis) { }
+		protected override string[] GetFileTypes(AdditionalTextWithOptions additionalText) => ["Other"];
+	}
+
 	private sealed class InMemoryAdditionalText(string path, string text) : AdditionalText
 	{
 		public override string Path => path;

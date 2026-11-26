@@ -1,11 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
 		<RootNamespace>$(RootNamespacePrefix).OpenApiCodegen</RootNamespace>
-		<AnalyzerRoslynVersion>4.0</AnalyzerRoslynVersion>
 
 		<NoWarn>$(NoWarn);RS2008</NoWarn>
 	</PropertyGroup>
@@ -17,8 +16,8 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
-		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" />
 		<PackageReference Include="xunit" />
 		<PackageReference Include="xunit.runner.visualstudio">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -35,6 +34,6 @@
 		<ProjectReference Include="..\csharp\OpenApiCodegen.CSharp.Base\OpenApiCodegen.CSharp.Base.csproj" />
 		<ProjectReference Include="..\typescript\OpenApiCodegen.Client.TypeScript\OpenApiCodegen.Client.TypeScript.csproj" />
 		<!-- Build order only: JsonExtensionsReferenceShould loads the built analyzer -->
-		<ProjectReference Include="..\csharp\OpenApiCodegen.CSharp.Analyzers\OpenApiCodegen.CSharp.Roslyn4.1.csproj" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\csharp\OpenApiCodegen.CSharp.Analyzers\OpenApiCodegen.CSharp.Roslyn4.8.csproj" ReferenceOutputAssembly="false" />
 	</ItemGroup>
 </Project>

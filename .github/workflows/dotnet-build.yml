@@ -131,7 +131,9 @@ jobs:
       if: ${{ github.ref != 'refs/heads/main' }}
       working-directory: ./artifacts/package/release
       run:  |
-        find . -type f -regex ".*\.tgz" -exec npm publish "{}" --access public \;
+        # Only the prerelease packages: builds without the version suffix also leave packages here.
+        # npm 11 requires a tag to publish a prerelease version.
+        find . -type f -name "*-sha.*.tgz" -exec npm publish "{}" --access public --tag prerelease \;
       continue-on-error: true # Dependabot and other outside contributors can't push to our GitHub packages
       env:
         NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -6,6 +6,7 @@ using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.Json.Documents;
 
 namespace DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
+
 using static TypeAnnotation;
 
 /// <see cref="https://json-schema.org/draft/2020-12/json-schema-validation#name-type">Draft 2020-12 type keyword</see>
@@ -142,7 +143,7 @@ public class TypeAnnotation(string keyword, IReadOnlyList<PrimitiveType> allowed
 			default:
 				type = PrimitiveType.Null;
 				return false;
-		};
+		}
 	}
 }
 

@@ -23,9 +23,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<AnalyzerReference Include="..\OpenApiCodegen.CSharp.Analyzers\OpenApiCodegen.CSharp.Roslyn3.11.csproj"
+		<AnalyzerReference Include="..\OpenApiCodegen.CSharp.Analyzers\OpenApiCodegen.CSharp.Roslyn4.8.csproj"
 						   ReferenceAnalyzer="false" />
-		<AnalyzerReference Include="..\OpenApiCodegen.CSharp.Analyzers\OpenApiCodegen.CSharp.Roslyn4.0.csproj"
+		<AnalyzerReference Include="..\OpenApiCodegen.CSharp.Analyzers\OpenApiCodegen.CSharp.Roslyn5.12.csproj"
 						   ReferenceAnalyzer="false" />
 	</ItemGroup>
 

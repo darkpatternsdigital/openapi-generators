@@ -8,7 +8,7 @@ npm i @darkpatternsdigital/openapi-codegen-typescript
 npm i -D @darkpatternsdigital/openapi-codegen-typescript-msw
 ```
 
-You must also have the .NET 8.0 runtime installed on your machine.
+You must also have the .NET 10 runtime, or a later one, installed on your machine.
 
 This will provide a corresponding bin to generate the typescript files. (See the
 [@darkpatternsdigital/openapi-codegen-typescript][1] package for command line usage

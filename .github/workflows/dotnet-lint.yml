@@ -1,9 +1,8 @@
 name: Lint DotNet
 on:
   workflow_dispatch: {}
-  # Disabled because the 8.x format is unreliable with source generators
-  # pull_request:
-  #   types: [edited, opened, reopened, synchronize, ready_for_review]
+  pull_request:
+    types: [edited, opened, reopened, synchronize, ready_for_review]
 
 jobs:
   build:
@@ -11,6 +10,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/parts/cache/
+      # Format only sees source-generated types once the analyzers are built
+      - name: 'Build'
+        run: dotnet build
       - name: 'Run dotnet checks'
         run: |
           dotnet format --verify-no-changes

@@ -16,7 +16,7 @@
 		<ProjectReference Include="$(SolutionRoot)lib\OpenApiCodegen.Json.Extensions\OpenApiCodegen.Json.Extensions.csproj" />
 
 		<ProjectReference
-			Include="$(SolutionRoot)generators\csharp\OpenApiCodegen.CSharp.Analyzers\OpenApiCodegen.CSharp.Roslyn3.11.csproj"
+			Include="$(SolutionRoot)generators\csharp\OpenApiCodegen.CSharp.Analyzers\OpenApiCodegen.CSharp.Roslyn4.8.csproj"
 			OutputItemType="Analyzer"
 			ReferenceOutputAssembly="false" />
 		<!-- Not an analyzer, but the project-reference analyzer needs all child dependencies, too -->

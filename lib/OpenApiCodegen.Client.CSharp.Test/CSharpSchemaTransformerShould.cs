@@ -11,6 +11,7 @@ using DarkPatterns.Json.Documents;
 using DarkPatterns.OpenApi.Transformations.Specifications;
 
 namespace DarkPatterns.OpenApiCodegen.Client.CSharp;
+
 using static OptionsHelpers;
 
 public class CSharpSchemaTransformerShould

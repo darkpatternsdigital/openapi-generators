@@ -12,9 +12,8 @@
           DependsOnTargets="_{TargetPrefix}GatherAnalyzers">
 
     <ItemGroup>
-      <!-- Remove our analyzers targeting roslyn4.x -->
-      <Analyzer Remove="@(_{TargetPrefix}Analyzer)"
-                Condition="$([System.String]::Copy('%(_{TargetPrefix}Analyzer.Identity)').IndexOf('roslyn4')) &gt;= 0"/>
+      <!-- Every build needs a newer compiler than these SDKs (before .NET 6) have, so remove them all -->
+      <Analyzer Remove="@(_{TargetPrefix}Analyzer)" />
     </ItemGroup>
   </Target>
 

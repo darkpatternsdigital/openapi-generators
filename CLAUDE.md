@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 OpenAPI code generators (C# source generator, plus TypeScript generators shipped via npm). The generators are written in C#; the TypeScript npm packages wrap a .NET console app and add runtime helpers. Everything is driven by MSBuild — `openapi-codegen.sln` includes the npm packages as projects (via the `DarkPatterns.Build.Pnpm` SDK), so `dotnet build`/`dotnet test` also build and test the TypeScript side.
 
-Prereqs: .NET 8 SDK (`global.json`), Node 26 (`.nvmrc`), pnpm 12 (`packageManager` in `package.json`). pnpm settings live in `pnpm-workspace.yaml`.
+Prereqs: .NET 11 SDK (`global.json`) plus the .NET 10 runtime (tests and the TypeScript CLI run on .NET 10, and TestApp also on 11), Node 26 (`.nvmrc`), pnpm 12 (`packageManager` in `package.json`). pnpm settings live in `pnpm-workspace.yaml`.
 
 ## Commands
 
@@ -36,10 +36,9 @@ Run each CI check (`.github/workflows/`) that your change could break, and say w
   - `tsc -b` and eslint cover TS sources plus generated test code, so changes to TS templates or generators can break them.
   - Prettier covers every `*.{cjs,mjs,js,mts,cts,ts,tsx,yaml,json}` in the repo, including `.claude/settings.json` and `schemas/*.yaml`, and expects tab indentation. `pnpm lint:fix` repairs formatting.
 - **Version sync** (`git diff --exit-code` after the build): when you change a version property in `Directory.Build.props`, the build rewrites the matching npm `package.json` `version`. Commit the rewritten files.
+- **C# format** (`dotnet build`, then `dotnet format --verify-no-changes`; `dotnet format` fixes it): whitespace and code style in any C# change. It needs the Debug build first to see source-generated types.
 
-All of these run in one CI job (`dotnet-build.yml`). CI skips changes that only touch Markdown, `adr/` or `docs/`, except `AnalyzerReleases.*.md`, which is a build input.
-
-`dotnet format` isn't a PR check. Its workflow is disabled because on .NET 8 it can't see source-generated types.
+All of these except C# format run in one CI job (`dotnet-build.yml`); C# format runs in `dotnet-lint.yml` on every PR. `dotnet-build.yml` skips changes that only touch Markdown, `adr/` or `docs/`, except `AnalyzerReleases.*.md`, which is a build input.
 
 ## Architecture
 
@@ -56,7 +55,7 @@ Pipeline: **load documents → parse/validate into abstractions → transform to
 
 Generators:
 - `generators/csharp/OpenApiCodegen.CSharp.Base` — `CSharpGenerator` with three outputs: `MvcServer` (abstract controllers, `AddServices`, security policies), `Client` (extension methods), `WebhookClient`.
-- `generators/csharp/OpenApiCodegen.CSharp.Analyzers` — the Roslyn source generator, built three times against Roslyn 3.11 / 4.0 / 4.1 (`Analyzer.targets`). It loads the Base assembly by name rather than referencing types directly. Analyzer diagnostics must be recorded in `AnalyzerReleases.Unshipped.md`.
+- `generators/csharp/OpenApiCodegen.CSharp.Analyzers` — the Roslyn source generator (an `IIncrementalGenerator`), built twice: against Roslyn 4.8 (the .NET 8 SDK) and 5.12 (the .NET 11 SDK) (`Analyzer.targets`). It loads the Base assembly by name rather than referencing types directly. Analyzer diagnostics must be recorded in `AnalyzerReleases.Unshipped.md`.
 - `generators/csharp/OpenApiCodegen.CSharp` — the NuGet package; its `.props` maps the user-facing MSBuild items (`OpenApiSchemaMvcServer`, `OpenApiSchemaClient`, `OpenApiSchemaWebhookClient`, `JsonSchemaDocument`, `OpenApiSchemaOptions`) and metadata (`PathPrefix`, `SchemaId`, `Namespace`, …) onto `AdditionalFiles` with `DPD*` metadata the generator reads.
 - `generators/typescript/OpenApiCodegen.Client.TypeScript` — .NET console app (`Program.cs`) that writes TS operation files + models. Also packed as a .NET tool (`openapi-codegen-typescript`), so CLI changes ship via both NuGet and npm.
 - `generators/typescript/npm` (`@darkpatternsdigital/openapi-codegen-typescript`) — on build, publishes the console app into `dotnet/` and exposes it via `bin/index.js` (which spawns `dotnet <dll>`), plus runtime helpers in `src/`. Its csproj regenerates `tests/generated/<schema>/` from `schemas/*.yaml` before tests/lint.
@@ -69,7 +68,7 @@ Consumers reference `OpenApiCodegen.Json.Extensions` themselves; the C# package 
 ## Testing conventions
 
 - `schemas/` holds the shared OpenAPI fixtures used by every test suite. Adding a feature usually means adding a schema here and wiring it into the relevant consumers.
-- `lib/TestApp` is a real ASP.NET app that consumes the source generator (referenced as an analyzer) on many schemas; `lib/TestApp.Test` exercises it over HTTP. Generated files are emitted to `lib/TestApp/generated/` for inspection. `lib/TestApp.Bad` covers schemas that should produce diagnostics.
+- `lib/TestApp` is a real ASP.NET app that consumes the source generator (referenced as an analyzer) on many schemas; `lib/TestApp.Test` exercises it over HTTP. Both target `net10.0` and `net11.0`, so generated code is compiled and tested on each. Generated files are emitted to `lib/TestApp/generated/` for inspection, from the `net10.0` build only. `lib/TestApp.Bad` covers schemas that should produce diagnostics.
 - `lib/TestApp.Test/GeneratedCodeShould` snapshots everything in `lib/TestApp/generated/` with [Verify](https://github.com/VerifyTests/Verify), replacing the generator version with a placeholder. Any change to generated output fails it and leaves `*.received.cs` files next to the `*.verified.cs` snapshots. Review the diff, then rename the received files to `.verified.cs`. `generated/` isn't cleaned automatically, so delete it before rebuilding if outputs were removed or renamed.
 - The "Compatibility fixtures" item group in `lib/TestApp`'s csproj recreates MSBuild configuration patterns from real-world projects. Expect their snapshots to change only when a change is meant to affect existing users.
 - `lib/OpenApiCodegen.Server.Mvc.Test/ComprehensiveTransformsShould` generates and dynamically compiles each schema; add new schemas to its `InlineData` list when they're added to the TestApp.

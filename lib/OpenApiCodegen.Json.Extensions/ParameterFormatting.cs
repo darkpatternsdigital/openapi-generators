@@ -21,6 +21,9 @@ public static class ParameterFormatting
 			DateTime dateTime => dateTime.ToString("O", CultureInfo.InvariantCulture),
 #if NET6_0_OR_GREATER
 			DateOnly date => date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+#else
+			// .NET 6 and 7 use the netstandard2.0 build, which has no DateOnly type to match
+			IFormattable date when date.GetType().FullName == "System.DateOnly" => date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
 #endif
 			// Generated enums carry a TypeConverter that writes the OpenAPI value
 			Enum => TypeDescriptor.GetConverter(value.GetType()).ConvertToInvariantString(value),

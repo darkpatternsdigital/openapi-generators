@@ -10,6 +10,7 @@ using DarkPatterns.Json.Documents;
 using DarkPatterns.OpenApi.Abstractions;
 
 namespace DarkPatterns.OpenApiCodegen.Client.TypeScript;
+
 using static OptionsHelpers;
 
 public class TypeScriptSchemaTransformerShould

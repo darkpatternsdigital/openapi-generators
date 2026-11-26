@@ -12,6 +12,7 @@ using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
 using System.Diagnostics.CodeAnalysis;
 
 namespace DarkPatterns.OpenApi.CSharp;
+
 using v3_0 = DarkPatterns.OpenApi.Specifications.v3_0;
 
 public class CSharpInlineSchemas(CSharpSchemaOptions options, DocumentRegistry documentRegistry)
@@ -249,7 +250,7 @@ public class CSharpInlineSchemas(CSharpSchemaOptions options, DocumentRegistry d
 					throw new NotImplementedException($"{string.Join(", ", parts)} {t.GetType().FullName}");
 				default:
 					throw new NotImplementedException();
-			};
+			}
 		}
 	}
 }

@@ -7,7 +7,7 @@ build, so nothing is checked in and the code always matches the document.
 ## Requirements
 
 - .NET 8 SDK or later, with C# 12 or later (the default for .NET 8)
-- Roslyn 3.11, or 4.0 and later (Visual Studio 2022 or later)
+- Roslyn 4.8 or later (the .NET 8 SDK, or Visual Studio 2022 17.8 or later)
 - System.Text.Json
 - A reference to `DarkPatterns.OpenApiCodegen.Json.Extensions`, which the
   generated code uses at runtime
@@ -16,8 +16,8 @@ build, so nothing is checked in and the code always matches the document.
 
 ```xml
 <ItemGroup>
-	<PackageReference Include="DarkPatterns.OpenApiCodegen.Json.Extensions" Version="0.20.0" />
-	<PackageReference Include="DarkPatterns.OpenApiCodegen.CSharp" Version="0.31.2" PrivateAssets="All" />
+	<PackageReference Include="DarkPatterns.OpenApiCodegen.Json.Extensions" Version="0.21.0" />
+	<PackageReference Include="DarkPatterns.OpenApiCodegen.CSharp" Version="0.32.0" PrivateAssets="All" />
 </ItemGroup>
 ```
 

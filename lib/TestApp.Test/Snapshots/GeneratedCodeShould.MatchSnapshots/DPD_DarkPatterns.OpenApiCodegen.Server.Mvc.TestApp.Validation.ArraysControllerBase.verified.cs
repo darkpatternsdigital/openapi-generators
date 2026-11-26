@@ -23,7 +23,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Validation
         [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(204)] // 
         
         public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.IActionResult> PostArrayTypeSafeEntry(
-            [global::Microsoft.AspNetCore.Mvc.FromBody, global::System.ComponentModel.DataAnnotations.Required] global::System.Collections.Generic.IEnumerable<string> postArrayBody
+            [global::Microsoft.AspNetCore.Mvc.FromBody, global::System.ComponentModel.DataAnnotations.Required, global::System.ComponentModel.DataAnnotations.MinLength(1), global::System.ComponentModel.DataAnnotations.MaxLength(3), global::DarkPatterns.OpenApiCodegen.Json.Extensions.UniqueItems] global::System.Collections.Generic.IEnumerable<string> postArrayBody
         ) => (await PostArray(postArrayBody)).ActionResult;
 
         protected abstract global::System.Threading.Tasks.Task<PostArrayActionResult> PostArray(

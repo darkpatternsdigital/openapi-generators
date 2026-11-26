@@ -18,7 +18,13 @@ namespace {{this.PackageName}}
             }}{{#if Pattern}}[{{#if Optional}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.OptionalRegularExpression{{else}}global::System.ComponentModel.DataAnnotations.RegularExpression{{/if}}(@".*{{{escapeverbatimstring Pattern}}}.*")]{{/if}}{{!
             }}{{#if HasMinLength}}[{{#if Optional}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.OptionalMinLength{{else}}global::System.ComponentModel.DataAnnotations.MinLength{{/if}}({{MinLength}})]{{/if}}{{!
             }}{{#if HasMaxLength}}[{{#if Optional}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.OptionalMaxLength{{else}}global::System.ComponentModel.DataAnnotations.MaxLength{{/if}}({{MaxLength}})]{{/if}}{{!
-            }}{{#if HasMinimum}}{{#if HasMaximum}}[{{#if Optional}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.OptionalRange{{else}}global::System.ComponentModel.DataAnnotations.Range{{/if}}({{Minimum}}, {{Maximum}})]{{/if}}{{/if}}{{!
+            }}{{#if HasRange}}[{{#if Optional}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.OptionalRange{{else}}global::System.ComponentModel.DataAnnotations.Range{{/if}}({{Minimum}}, {{Maximum}})]{{/if}}{{!
+            }}{{#if MinimumText}}[global::DarkPatterns.OpenApiCodegen.Json.Extensions.Minimum({{MinimumText}}{{#if ExclusiveMinimum}}, Exclusive = true{{/if}})]{{/if}}{{!
+            }}{{#if MaximumText}}[global::DarkPatterns.OpenApiCodegen.Json.Extensions.Maximum({{MaximumText}}{{#if ExclusiveMaximum}}, Exclusive = true{{/if}})]{{/if}}{{!
+            }}{{#if MultipleOfText}}[global::DarkPatterns.OpenApiCodegen.Json.Extensions.MultipleOf({{MultipleOfText}})]{{/if}}{{!
+            }}{{#if UniqueItems}}[global::DarkPatterns.OpenApiCodegen.Json.Extensions.UniqueItems]{{/if}}{{!
+            }}{{#if HasMinProperties}}[global::DarkPatterns.OpenApiCodegen.Json.Extensions.MinProperties({{MinProperties}})]{{/if}}{{!
+            }}{{#if HasMaxProperties}}[global::DarkPatterns.OpenApiCodegen.Json.Extensions.MaxProperties({{MaxProperties}})]{{/if}}{{!
     data type: }} {{#if Optional}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.IOptional<{{/if}}{{{DataType}}}{{#if Optional}}>?{{/if}}{{!
     name: }} {{Name}}{{#unless @last}}, {{/unless}}{{/each}}
     );

@@ -6,6 +6,27 @@ every section between your version and the new one.
 
 Releases before C# 0.25.4 and TypeScript 0.13.0 aren't covered.
 
+## Unreleased
+
+**The MVC server enforces more JSON Schema validation keywords**, so requests
+that used to pass can now fail model validation, which returns 400 with
+`[ApiController]`. Newly enforced on parameters, request bodies and model
+properties:
+
+- `minimum` without `maximum`, and `maximum` without `minimum`. Before, `[Range]`
+  was only emitted when both were set.
+- OpenAPI 3.0's boolean `exclusiveMinimum` and `exclusiveMaximum`. Before,
+  ranges were always inclusive, and `exclusiveMaximum` wasn't recognized at all.
+- `multipleOf`, `minItems`, `maxItems`, `uniqueItems`, `minProperties` and
+  `maxProperties`.
+
+Inclusive ranges with both bounds still use `[Range]`. One-sided and exclusive
+bounds use the new `[Minimum]` and `[Maximum]` attributes, and the other
+keywords use `[MultipleOf]`, `[UniqueItems]`, `[MinProperties]` and
+`[MaxProperties]`. They all come from Json.Extensions, so **generated code needs
+Json.Extensions 0.22.0 or later**. With an older reference, the build reports
+`DPDAPI002`. Generated models used by clients get the same attributes.
+
 ## C# 0.32.0, Json.Extensions 0.21.0, TypeScript 0.16.0, fetch 0.12.0, RxJS 0.11.0, MSW 0.11.0
 
 **The C# generator needs Roslyn 4.8 or later**, which ships with the .NET 8 SDK

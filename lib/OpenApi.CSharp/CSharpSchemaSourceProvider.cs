@@ -7,6 +7,7 @@ using DarkPatterns.OpenApi.CSharp.Templates;
 using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.OpenApi.Abstractions;
 using DarkPatterns.Json.Specifications;
+using DarkPatterns.Json.Specifications.Keywords.Draft04;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Metadata;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
@@ -114,10 +115,16 @@ public class CSharpSchemaSourceProvider(
 										 Required: req,
 										 Optional: !req && !objectModel.LegacyOptionalBehavior,
 										 Pattern: entry.Value?.TryGetAnnotation<PatternKeyword>()?.Pattern,
-										 MinLength: entry.Value?.TryGetAnnotation<MinLengthKeyword>()?.Value,
-										 MaxLength: entry.Value?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
+										 MinLength: entry.Value?.TryGetAnnotation<MinLengthKeyword>()?.Value ?? entry.Value?.TryGetAnnotation<MinItemsKeyword>()?.Value,
+										 MaxLength: entry.Value?.TryGetAnnotation<MaxLengthKeyword>()?.Value ?? entry.Value?.TryGetAnnotation<MaxItemsKeyword>()?.Value,
 										 Minimum: entry.Value?.TryGetAnnotation<MinimumKeyword>()?.Value,
-										 Maximum: entry.Value?.TryGetAnnotation<MaximumKeyword>()?.Value
+										 Maximum: entry.Value?.TryGetAnnotation<MaximumKeyword>()?.Value,
+										 ExclusiveMinimum: entry.Value?.TryGetAnnotation<ExclusiveMinimumKeyword>()?.IsExclusive ?? false,
+										 ExclusiveMaximum: entry.Value?.TryGetAnnotation<ExclusiveMaximumKeyword>()?.IsExclusive ?? false,
+										 MultipleOf: entry.Value?.TryGetAnnotation<MultipleOfKeyword>()?.Value,
+										 UniqueItems: entry.Value?.TryGetAnnotation<UniqueItemsKeyword>()?.MustBeUnique ?? false,
+										 MinProperties: entry.Value?.TryGetAnnotation<MinPropertiesKeyword>()?.Value,
+										 MaxProperties: entry.Value?.TryGetAnnotation<MaxPropertiesKeyword>()?.Value
 									 )).ToArray();
 
 		return new Templates.ObjectModel(

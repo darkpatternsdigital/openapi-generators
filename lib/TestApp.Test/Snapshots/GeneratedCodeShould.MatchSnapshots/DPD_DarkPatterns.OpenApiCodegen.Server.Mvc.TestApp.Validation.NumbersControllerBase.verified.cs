@@ -25,10 +25,10 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Validation
         [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(204)] // 
         
         public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.IActionResult> GetNumbersTypeSafeEntry(
-            [global::Microsoft.AspNetCore.Mvc.FromQuery(Name = "multipleOfFive")] int? multipleOfFive,
-            [global::Microsoft.AspNetCore.Mvc.FromQuery(Name = "atLeastOne")] int? atLeastOne,
-            [global::Microsoft.AspNetCore.Mvc.FromQuery(Name = "atMostTen")] int? atMostTen,
-            [global::Microsoft.AspNetCore.Mvc.FromQuery(Name = "exclusive"), global::System.ComponentModel.DataAnnotations.Range(0, 10)] int? exclusive
+            [global::Microsoft.AspNetCore.Mvc.FromQuery(Name = "multipleOfFive"), global::DarkPatterns.OpenApiCodegen.Json.Extensions.MultipleOf(5)] int? multipleOfFive,
+            [global::Microsoft.AspNetCore.Mvc.FromQuery(Name = "atLeastOne"), global::DarkPatterns.OpenApiCodegen.Json.Extensions.Minimum(1)] int? atLeastOne,
+            [global::Microsoft.AspNetCore.Mvc.FromQuery(Name = "atMostTen"), global::DarkPatterns.OpenApiCodegen.Json.Extensions.Maximum(10)] int? atMostTen,
+            [global::Microsoft.AspNetCore.Mvc.FromQuery(Name = "exclusive"), global::DarkPatterns.OpenApiCodegen.Json.Extensions.Minimum(0, Exclusive = true), global::DarkPatterns.OpenApiCodegen.Json.Extensions.Maximum(10, Exclusive = true)] int? exclusive
         ) => (await GetNumbers(multipleOfFive,atLeastOne,atMostTen,exclusive)).ActionResult;
 
         protected abstract global::System.Threading.Tasks.Task<GetNumbersActionResult> GetNumbers(

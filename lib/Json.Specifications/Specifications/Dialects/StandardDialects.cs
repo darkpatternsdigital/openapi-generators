@@ -41,7 +41,7 @@ public static class StandardDialects
 				// ("multipleOf", null),
 				("maximum", Keywords.Draft2020_12Validation.MaximumKeyword.Instance),
 				("minimum", Keywords.Draft2020_12Validation.MinimumKeyword.Instance),
-				("exclusiveMaimum", Keywords.Draft04.ExclusiveMaximumKeyword.Instance),
+				("exclusiveMaximum", Keywords.Draft04.ExclusiveMaximumKeyword.Instance),
 				("exclusiveMinimum", Keywords.Draft04.ExclusiveMinimumKeyword.Instance),
 				("maxLength", Keywords.Draft2020_12Validation.MaxLengthKeyword.Instance),
 				("minLength", Keywords.Draft2020_12Validation.MinLengthKeyword.Instance),

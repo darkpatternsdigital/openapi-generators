@@ -16,8 +16,8 @@ public class JsonExtensionsReferenceShould
 
 	[Theory]
 	[InlineData(null, "DPDAPI001")]
-	[InlineData("0.19.0.0", "DPDAPI002")]
-	[InlineData("0.20.0.0", null)]
+	[InlineData("0.21.0.0", "DPDAPI002")]
+	[InlineData("0.22.0.0", null)]
 	[InlineData("1.0.0.0", null)]
 	public void Report_a_missing_or_outdated_reference(string? referencedVersion, string? expectedDiagnosticId)
 	{

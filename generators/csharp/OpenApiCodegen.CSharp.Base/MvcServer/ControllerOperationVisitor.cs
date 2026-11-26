@@ -5,6 +5,7 @@ using DarkPatterns.OpenApi.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DarkPatterns.Json.Specifications.Keywords.Draft04;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator;
 using DarkPatterns.OpenApi.CSharp;
@@ -125,10 +126,16 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 			Optional: false,
 			Required: param.Required,
 			Pattern: info?.TryGetAnnotation<PatternKeyword>()?.Pattern,
-			MinLength: info?.TryGetAnnotation<MinLengthKeyword>()?.Value,
-			MaxLength: info?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
+			MinLength: info?.TryGetAnnotation<MinLengthKeyword>()?.Value ?? info?.TryGetAnnotation<MinItemsKeyword>()?.Value,
+			MaxLength: info?.TryGetAnnotation<MaxLengthKeyword>()?.Value ?? info?.TryGetAnnotation<MaxItemsKeyword>()?.Value,
 			Minimum: info?.TryGetAnnotation<MinimumKeyword>()?.Value,
-			Maximum: info?.TryGetAnnotation<MaximumKeyword>()?.Value
+			Maximum: info?.TryGetAnnotation<MaximumKeyword>()?.Value,
+			ExclusiveMinimum: info?.TryGetAnnotation<ExclusiveMinimumKeyword>()?.IsExclusive ?? false,
+			ExclusiveMaximum: info?.TryGetAnnotation<ExclusiveMaximumKeyword>()?.IsExclusive ?? false,
+			MultipleOf: info?.TryGetAnnotation<MultipleOfKeyword>()?.Value,
+			UniqueItems: info?.TryGetAnnotation<UniqueItemsKeyword>()?.MustBeUnique ?? false,
+			MinProperties: info?.TryGetAnnotation<MinPropertiesKeyword>()?.Value,
+			MaxProperties: info?.TryGetAnnotation<MaxPropertiesKeyword>()?.Value
 		));
 	}
 
@@ -216,10 +223,16 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 				Required: required,
 				Optional: !required,
 				Pattern: info?.TryGetAnnotation<PatternKeyword>()?.Pattern,
-				MinLength: info?.TryGetAnnotation<MinLengthKeyword>()?.Value,
-				MaxLength: info?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
+				MinLength: info?.TryGetAnnotation<MinLengthKeyword>()?.Value ?? info?.TryGetAnnotation<MinItemsKeyword>()?.Value,
+				MaxLength: info?.TryGetAnnotation<MaxLengthKeyword>()?.Value ?? info?.TryGetAnnotation<MaxItemsKeyword>()?.Value,
 				Minimum: info?.TryGetAnnotation<MinimumKeyword>()?.Value,
-				Maximum: info?.TryGetAnnotation<MaximumKeyword>()?.Value
+				Maximum: info?.TryGetAnnotation<MaximumKeyword>()?.Value,
+				ExclusiveMinimum: info?.TryGetAnnotation<ExclusiveMinimumKeyword>()?.IsExclusive ?? false,
+				ExclusiveMaximum: info?.TryGetAnnotation<ExclusiveMaximumKeyword>()?.IsExclusive ?? false,
+				MultipleOf: info?.TryGetAnnotation<MultipleOfKeyword>()?.Value,
+				UniqueItems: info?.TryGetAnnotation<UniqueItemsKeyword>()?.MustBeUnique ?? false,
+				MinProperties: info?.TryGetAnnotation<MinPropertiesKeyword>()?.Value,
+				MaxProperties: info?.TryGetAnnotation<MaxPropertiesKeyword>()?.Value
 			);
 		IEnumerable<OperationParameter> GetStandardParams() =>
 			from ct in new[] { mediaType }
@@ -241,10 +254,16 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 				Required: true,
 				Optional: false,
 				Pattern: info?.TryGetAnnotation<PatternKeyword>()?.Pattern,
-				MinLength: info?.TryGetAnnotation<MinLengthKeyword>()?.Value,
-				MaxLength: info?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
+				MinLength: info?.TryGetAnnotation<MinLengthKeyword>()?.Value ?? info?.TryGetAnnotation<MinItemsKeyword>()?.Value,
+				MaxLength: info?.TryGetAnnotation<MaxLengthKeyword>()?.Value ?? info?.TryGetAnnotation<MaxItemsKeyword>()?.Value,
 				Minimum: info?.TryGetAnnotation<MinimumKeyword>()?.Value,
-				Maximum: info?.TryGetAnnotation<MaximumKeyword>()?.Value
+				Maximum: info?.TryGetAnnotation<MaximumKeyword>()?.Value,
+				ExclusiveMinimum: info?.TryGetAnnotation<ExclusiveMinimumKeyword>()?.IsExclusive ?? false,
+				ExclusiveMaximum: info?.TryGetAnnotation<ExclusiveMaximumKeyword>()?.IsExclusive ?? false,
+				MultipleOf: info?.TryGetAnnotation<MultipleOfKeyword>()?.Value,
+				UniqueItems: info?.TryGetAnnotation<UniqueItemsKeyword>()?.MustBeUnique ?? false,
+				MinProperties: info?.TryGetAnnotation<MinPropertiesKeyword>()?.Value,
+				MaxProperties: info?.TryGetAnnotation<MaxPropertiesKeyword>()?.Value
 			);
 	}
 

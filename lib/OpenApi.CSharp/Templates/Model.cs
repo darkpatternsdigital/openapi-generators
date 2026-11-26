@@ -1,4 +1,5 @@
-﻿using DarkPatterns.OpenApiCodegen.Handlebars.Templates;
+﻿using System.Globalization;
+using DarkPatterns.OpenApiCodegen.Handlebars.Templates;
 
 namespace DarkPatterns.OpenApi.CSharp.Templates;
 
@@ -63,7 +64,13 @@ public record ModelVar(
 	int? MinLength,
 	int? MaxLength,
 	decimal? Minimum,
-	decimal? Maximum
+	decimal? Maximum,
+	bool ExclusiveMinimum,
+	bool ExclusiveMaximum,
+	decimal? MultipleOf,
+	bool UniqueItems,
+	int? MinProperties,
+	int? MaxProperties
 )
 {
 	public bool HasMinLength => MinLength.HasValue;
@@ -71,4 +78,12 @@ public record ModelVar(
 
 	public bool HasMinimum => Minimum.HasValue;
 	public bool HasMaximum => Maximum.HasValue;
+	// Inclusive ranges with both bounds use [Range]; others use the Json.Extensions [Minimum] and [Maximum]
+	public bool HasRange => HasMinimum && HasMaximum && !ExclusiveMinimum && !ExclusiveMaximum;
+	public string? MinimumText => HasRange ? null : Minimum?.ToString(CultureInfo.InvariantCulture);
+	public string? MaximumText => HasRange ? null : Maximum?.ToString(CultureInfo.InvariantCulture);
+
+	public string? MultipleOfText => MultipleOf?.ToString(CultureInfo.InvariantCulture);
+	public bool HasMinProperties => MinProperties.HasValue;
+	public bool HasMaxProperties => MaxProperties.HasValue;
 }

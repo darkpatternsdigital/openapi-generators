@@ -13,9 +13,9 @@
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Validation
 {
     public partial record Measurements(
-        [property: global::System.Text.Json.Serialization.JsonPropertyName("multipleOfFive")][property: global::System.Text.Json.Serialization.JsonRequiredAttribute] int MultipleOfFive, 
-        [property: global::System.Text.Json.Serialization.JsonPropertyName("atLeastOne")][property: global::System.Text.Json.Serialization.JsonRequiredAttribute] int AtLeastOne, 
-        [property: global::System.Text.Json.Serialization.JsonPropertyName("atMostTen")][property: global::System.Text.Json.Serialization.JsonRequiredAttribute] int AtMostTen, 
-        [property: global::System.Text.Json.Serialization.JsonPropertyName("tags")][property: global::System.Text.Json.Serialization.JsonRequiredAttribute] global::System.Collections.Generic.IEnumerable<string> Tags
+        [property: global::System.Text.Json.Serialization.JsonPropertyName("multipleOfFive")][property: global::System.Text.Json.Serialization.JsonRequiredAttribute][global::DarkPatterns.OpenApiCodegen.Json.Extensions.MultipleOf(5)] int MultipleOfFive, 
+        [property: global::System.Text.Json.Serialization.JsonPropertyName("atLeastOne")][property: global::System.Text.Json.Serialization.JsonRequiredAttribute][global::DarkPatterns.OpenApiCodegen.Json.Extensions.Minimum(1)] int AtLeastOne, 
+        [property: global::System.Text.Json.Serialization.JsonPropertyName("atMostTen")][property: global::System.Text.Json.Serialization.JsonRequiredAttribute][global::DarkPatterns.OpenApiCodegen.Json.Extensions.Maximum(10)] int AtMostTen, 
+        [property: global::System.Text.Json.Serialization.JsonPropertyName("tags")][property: global::System.Text.Json.Serialization.JsonRequiredAttribute][global::System.ComponentModel.DataAnnotations.MinLength(1)][global::System.ComponentModel.DataAnnotations.MaxLength(2)] global::System.Collections.Generic.IEnumerable<string> Tags
     );
 }

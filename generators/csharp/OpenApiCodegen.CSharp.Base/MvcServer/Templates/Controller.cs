@@ -8,6 +8,7 @@ namespace DarkPatterns.OpenApiCodegen.CSharp.MvcServer.Templates;
 public record ControllerTemplate(
 	PartialHeader Header,
 	string? SecurityAttribute,
+	string SecurityRequirementsAttribute,
 
 	string PackageName,
 	string ClassName,
@@ -32,11 +33,18 @@ public record ControllerOperation(
 	OperationResponses Responses,
 	OperationSecurityRequirement[] SecurityRequirements,
 	Dictionary<string, string[]>[] RawSecurityRequirements,
+	bool AllowAnonymous,
+	string[] AuthorizePolicies,
+	bool UseSecurityRequirementsAttribute,
 	string SourceReference
 )
 {
 	// ASP.NET Core MVC has no HttpTraceAttribute
 	public string HttpMethodAttribute => HttpMethod == "Trace" ? "AcceptVerbs(\"TRACE\")" : $"Http{HttpMethod}";
+
+	/// <summary>The requirements the generated filter enforces: scopes only for OAuth2 and OpenID Connect schemes</summary>
+	public Dictionary<string, string[]>[] EnforcedSecurityRequirements =>
+		SecurityRequirements.Select(r => r.Schemes.ToDictionary(s => s.SchemeName, s => s.ScopeNames)).ToArray();
 }
 
 public record OperationParameter(

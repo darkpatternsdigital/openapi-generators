@@ -16,6 +16,102 @@ namespace {{PackageName}}
             {{{Scheme.PropertyName}}},
             {{/each}}
         };
+
+        /// <summary>
+        /// Claim types that list the user's OAuth2 scopes, separated by spaces
+        /// </summary>
+        public static global::System.Collections.Generic.ISet<string> ScopeClaimTypes { get; } = new global::System.Collections.Generic.HashSet<string>
+        {
+            "scope",
+            "scp",
+            "http://schemas.microsoft.com/identity/claims/scope",
+        };
+
+        /// <summary>
+        /// Allows a request that satisfies any one of the OpenAPI security requirements. A requirement is satisfied
+        /// when the policy named for each of its schemes succeeds and the user has each of its scopes.
+        /// </summary>
+        [global::System.AttributeUsage(global::System.AttributeTargets.Class | global::System.AttributeTargets.Method)]
+        public sealed class SecurityRequirementsAttribute : global::System.Attribute, global::Microsoft.AspNetCore.Mvc.Filters.IAsyncAuthorizationFilter
+        {
+            private readonly global::System.Collections.Generic.List<global::System.Collections.Generic.KeyValuePair<string, string[]>[]> requirements = new global::System.Collections.Generic.List<global::System.Collections.Generic.KeyValuePair<string, string[]>[]>();
+
+            /// <param name="securityRequirements">The OpenAPI security requirements, as JSON</param>
+            public SecurityRequirementsAttribute(string securityRequirements)
+            {
+                using (var document = global::System.Text.Json.JsonDocument.Parse(securityRequirements))
+                {
+                    foreach (var requirement in document.RootElement.EnumerateArray())
+                    {
+                        var schemes = new global::System.Collections.Generic.List<global::System.Collections.Generic.KeyValuePair<string, string[]>>();
+                        foreach (var scheme in requirement.EnumerateObject())
+                        {
+                            var scopes = new global::System.Collections.Generic.List<string>();
+                            foreach (var scope in scheme.Value.EnumerateArray())
+                                scopes.Add(scope.GetString());
+                            schemes.Add(new global::System.Collections.Generic.KeyValuePair<string, string[]>(scheme.Name, scopes.ToArray()));
+                        }
+                        requirements.Add(schemes.ToArray());
+                    }
+                }
+            }
+
+            public async global::System.Threading.Tasks.Task OnAuthorizationAsync(global::Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext context)
+            {
+                foreach (var metadata in context.ActionDescriptor.EndpointMetadata)
+                    if (metadata is global::Microsoft.AspNetCore.Authorization.IAllowAnonymous)
+                        return;
+
+                var services = context.HttpContext.RequestServices;
+                var policyProvider = (global::Microsoft.AspNetCore.Authorization.IAuthorizationPolicyProvider)services.GetService(typeof(global::Microsoft.AspNetCore.Authorization.IAuthorizationPolicyProvider));
+                var policyEvaluator = (global::Microsoft.AspNetCore.Authorization.Policy.IPolicyEvaluator)services.GetService(typeof(global::Microsoft.AspNetCore.Authorization.Policy.IPolicyEvaluator));
+                var authenticationSchemes = new global::System.Collections.Generic.List<string>();
+                var forbidden = false;
+                foreach (var requirement in requirements)
+                {
+                    // An empty requirement allows anonymous requests
+                    if (requirement.Length == 0)
+                        return;
+
+                    var builder = new global::Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder();
+                    foreach (var scheme in requirement)
+                    {
+                        var schemePolicy = await policyProvider.GetPolicyAsync(scheme.Key)
+                            ?? throw new global::System.InvalidOperationException($"The AuthorizationPolicy named: '{scheme.Key}' was not found.");
+                        builder.Combine(schemePolicy);
+                        var scopes = scheme.Value;
+                        if (scopes.Length > 0)
+                            builder.RequireAssertion(authorization => HasScopes(authorization.User, scopes));
+                    }
+                    var policy = builder.Build();
+                    foreach (var authenticationScheme in policy.AuthenticationSchemes)
+                        if (!authenticationSchemes.Contains(authenticationScheme))
+                            authenticationSchemes.Add(authenticationScheme);
+
+                    var authenticateResult = await policyEvaluator.AuthenticateAsync(policy, context.HttpContext);
+                    var authorizeResult = await policyEvaluator.AuthorizeAsync(policy, authenticateResult, context.HttpContext, context.HttpContext);
+                    if (authorizeResult.Succeeded)
+                        return;
+                    forbidden |= authorizeResult.Forbidden;
+                }
+
+                context.Result = forbidden
+                    ? new global::Microsoft.AspNetCore.Mvc.ForbidResult(authenticationSchemes)
+                    : new global::Microsoft.AspNetCore.Mvc.ChallengeResult(authenticationSchemes);
+            }
+
+            private static bool HasScopes(global::System.Security.Claims.ClaimsPrincipal user, string[] scopes)
+            {
+                var granted = new global::System.Collections.Generic.HashSet<string>();
+                foreach (var claim in user.Claims)
+                    if (ScopeClaimTypes.Contains(claim.Type))
+                        granted.UnionWith(claim.Value.Split(' '));
+                foreach (var scope in scopes)
+                    if (!granted.Contains(scope))
+                        return false;
+                return true;
+            }
+        }
     }
 }
 {{/with}}

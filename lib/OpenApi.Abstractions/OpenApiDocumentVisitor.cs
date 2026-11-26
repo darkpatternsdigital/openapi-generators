@@ -53,7 +53,7 @@ public abstract class OpenApiDocumentVisitor<TArgument> : IOpenApiDocumentVisito
 	public virtual void Visit(OpenApiLicense license, TArgument argument) { }
 	public virtual void Visit(OpenApiOperation operation, string method, TArgument argument)
 	{
-		foreach (var e in operation.SecurityRequirements)
+		foreach (var e in operation.SecurityRequirements ?? [])
 			this.Visit(e, argument);
 		// this.VisitHelper(operation.Callbacks, argument);
 		if (operation.Responses != null)

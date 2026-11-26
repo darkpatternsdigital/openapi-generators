@@ -38,7 +38,7 @@ public class ServerSecurityYamlShould
 	private static string BasicCredentials(string user, string password) =>
 		"Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes($"{user}:{password}"));
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Server security): document-level security is not applied, so an anonymous request reaches the controller (204)")]
+	[Fact]
 	public Task Apply_document_level_security_to_operations_without_their_own() =>
 		TestBlocked(DocumentLevelControllerBase.GetDocumentLevelActionResult.NoContent(), Get("/security/document-level"), 401);
 
@@ -76,6 +76,16 @@ public class ServerSecurityYamlShould
 	[Fact]
 	public Task Block_requests_without_the_query_api_key() =>
 		TestBlocked(QueryKeyControllerBase.GetQueryKeyActionResult.NoContent(), Get("/security/query-key"), 401);
+
+	[Fact]
+	public Task Ignore_scopes_on_api_key_schemes() =>
+		TestSingleRequest<ApiKeyScopesControllerBase.GetApiKeyScopesActionResult>(new(
+			ApiKeyScopesControllerBase.GetApiKeyScopesActionResult.NoContent(),
+			Get("/security/api-key-scopes?api_key=key")
+		)
+		{
+			AssertResponseMessage = VerifyResponse(204),
+		});
 
 	[Fact]
 	public Task Allow_api_keys_in_a_cookie() =>
@@ -144,11 +154,11 @@ public class ServerSecurityYamlShould
 			AssertResponseMessage = VerifyResponse(204),
 		});
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Server security): OAuth2 scopes are not enforced, so a token without the write scope reaches the controller (204)")]
+	[Fact]
 	public Task Block_oauth2_tokens_without_the_required_scopes() =>
 		TestBlocked(OauthScopesControllerBase.GetOAuthScopesActionResult.NoContent(), Get("/security/oauth-scopes", ("Authorization", "Bearer scopes:read")), 403);
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Server security): a requirement with two schemes emits one policy named 'HeaderKey,QueryKey', which doesn't exist (InvalidOperationException)")]
+	[Fact]
 	public Task Allow_requests_that_satisfy_every_scheme_of_a_requirement() =>
 		TestSingleRequest<AllOfControllerBase.GetAllOfActionResult>(new(
 			AllOfControllerBase.GetAllOfActionResult.NoContent(),
@@ -158,11 +168,11 @@ public class ServerSecurityYamlShould
 			AssertResponseMessage = VerifyResponse(204),
 		});
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Server security): a requirement with two schemes emits one policy named 'HeaderKey,QueryKey', which doesn't exist (InvalidOperationException)")]
+	[Fact]
 	public Task Block_requests_that_satisfy_only_one_scheme_of_a_requirement() =>
 		TestBlocked(AllOfControllerBase.GetAllOfActionResult.NoContent(), Get("/security/all-of", ("X-Header-Key", "key")), 401, 403);
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Server security): each alternative requirement emits its own [Authorize], which ASP.NET Core ANDs, so one scheme alone gets 403")]
+	[Fact]
 	public Task Allow_requests_that_satisfy_the_first_of_several_requirements() =>
 		TestSingleRequest<AnyOfControllerBase.GetAnyOfActionResult>(new(
 			AnyOfControllerBase.GetAnyOfActionResult.NoContent(),
@@ -172,7 +182,7 @@ public class ServerSecurityYamlShould
 			AssertResponseMessage = VerifyResponse(204),
 		});
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Server security): each alternative requirement emits its own [Authorize], which ASP.NET Core ANDs, so one scheme alone gets 403")]
+	[Fact]
 	public Task Allow_requests_that_satisfy_the_second_of_several_requirements() =>
 		TestSingleRequest<AnyOfControllerBase.GetAnyOfActionResult>(new(
 			AnyOfControllerBase.GetAnyOfActionResult.NoContent(),

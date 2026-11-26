@@ -39,9 +39,10 @@ namespace {{PackageName}}
         // {{Response.Description}}
         {{#each Response.Content}}
         [global::Microsoft.AspNetCore.Mvc.ProducesResponseType({{StatusCode}}{{#if DataType}}, Type = typeof({{{DataType}}}){{/if}})] // {{MediaType}}{{/each}}{{/each}}{{!
-        }}{{#each Operation.SecurityRequirements}}{{#if Schemes.Length}}
-        [global::Microsoft.AspNetCore.Authorization.Authorize(Policy = "{{#each Schemes}}{{SchemeName}}{{#unless @last}},{{/unless}}{{/each}}")]{{else}}
-        [global::Microsoft.AspNetCore.Authorization.AllowAnonymous]{{/if}}{{/each}}
+        }}{{#if Operation.AllowAnonymous}}
+        [global::Microsoft.AspNetCore.Authorization.AllowAnonymous]{{/if}}{{#each Operation.AuthorizePolicies}}
+        [global::Microsoft.AspNetCore.Authorization.Authorize(Policy = "{{this}}")]{{/each}}{{#if Operation.UseSecurityRequirementsAttribute}}
+        [{{{@root.SecurityRequirementsAttribute}}}({{{jsonString Operation.EnforcedSecurityRequirements}}})]{{/if}}
         {{#if Operation.SecurityRequirements}}{{#if @root.SecurityAttribute~}}
         [{{{@root.SecurityAttribute}}}({{{jsonString Operation.RawSecurityRequirements}}})]
         {{~/if}}{{/if}}
@@ -76,12 +77,6 @@ namespace {{PackageName}}
             value: for those, check the form for the key.
             }}{{#if DataTypeEnumerable}}Request.HasFormContentType && Request.Form.ContainsKey("{{RawName}}") ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}) : null{{else}}{{#if DataTypeNullable}}Request.HasFormContentType && Request.Form.ContainsKey("{{RawName}}") ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}) : null{{else
             }}{{ParamName}} is { } {{ParamName}}Value ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}Value) : null{{/if}}{{/if}}{{/if}}{{else}}{{ParamName}}{{/if}}{{/if}}{{#unless @last}},{{/unless}}{{/each}})).ActionResult;
-        {{!--
-            TODO - check scopes
-            {{#each Operation.SecurityRequirements}}{{#if Schemes.Length}}{{#if }}
-            if (User.Identity?.AuthenticationType == "OAuth2" && !await VerifyScopes(User, "read:user", "user:email"))
-                return Forbid();{{/if}}{{/if}}{{/each}}
-            return --}}
 
         protected abstract global::System.Threading.Tasks.Task<{{Operation.Name}}ActionResult> {{RequestBody.Name}}({{#each RequestBody.AllParams}}
             {{#unless Optional}}{{{DataType}}}{{else

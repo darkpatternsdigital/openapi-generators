@@ -28,6 +28,14 @@ paths:
       responses:
         '204':
           description: Allowed with an API key in the query
+  /api-key-scopes:
+    get:
+      operationId: getApiKeyScopes
+      security:
+        - QueryKey: [custom:permission]
+      responses:
+        '204':
+          description: Allowed with an API key; scopes are only checked for OAuth2 and OpenID Connect
   /cookie-key:
     get:
       operationId: getCookieKey

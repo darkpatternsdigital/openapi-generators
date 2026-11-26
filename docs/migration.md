@@ -6,125 +6,22 @@ every section between your version and the new one.
 
 Releases before C# 0.25.4 and TypeScript 0.13.0 aren't covered.
 
-## Unreleased
+## C# 0.33.0, Json.Extensions 0.22.0, TypeScript 0.17.0, fetch 0.13.0, RxJS 0.12.0, MSW 0.12.0
 
-**Each output of a file uses its own metadata.** When the same file is listed as
-more than one of `OpenApiSchemaMvcServer`, `OpenApiSchemaClient` and
-`OpenApiSchemaWebhookClient`, each output now uses its own `Namespace`, `Link`,
-`PathPrefix` and `Configuration`. Before, all outputs used the first value set,
-in the order `JsonSchemaDocument`, `OpenApiSchemaMvcServer`,
-`OpenApiSchemaClient`, `OpenApiSchemaWebhookClient`. If your items for one file
-set different values, the controllers or client methods may move to the
-namespace their own item names. Models don't move. To keep the old namespace,
-set the same `Namespace` (or `Link`) on every item for the file. Nothing changes
-for files listed once, or listed with the same metadata on every item.
-
-**A file listed twice as the same item type is generated.** With the same
-metadata on both items, it's generated as if listed once; before, nothing was
-generated for it. With different `Namespace`, `Link` or `PathPrefix` values,
-the build reports `DPD_OPENAPI_CS_002`.
-
-**Status code ranges (`2XX`, `4XX`, …) are no longer ignored.** Before, a
-response for a range was dropped, so only documents with ranges change. An
-explicit status code still takes precedence over a range, and a range over
-`default`.
-
-- MVC server: each range gets a factory named for its class (`Informational`,
-  `Successful`, `Redirection`, `ClientError` or `ServerError`) that takes the
-  status code, such as `ClientError(404, error)`. It throws
-  `ArgumentOutOfRangeException` for a status code outside the range.
-- C# client: a status code in a range parses into a return type of the same
-  name, with its `Body`, instead of the `default` response or the base return
-  type. Code that handled those responses through `OtherStatusCode` or the base
-  type should check for the new type.
-- TypeScript: a status code in a range keeps its number as `statusCode`
-  instead of `'other'`, and its `data` is typed by the range's schema. Code that
-  checked for `'other'` to handle those responses should check the status code.
-  Generated code imports the new `StatusCodeRange` type, so upgrade the runtime
-  package with the generator.
-
-**The MVC server enforces more JSON Schema validation keywords**, so requests
-that used to pass can now fail model validation, which returns 400 with
-`[ApiController]`. Newly enforced on parameters, request bodies and model
-properties:
-
-- `minimum` without `maximum`, and `maximum` without `minimum`. Before, `[Range]`
-  was only emitted when both were set.
-- OpenAPI 3.0's boolean `exclusiveMinimum` and `exclusiveMaximum`. Before,
-  ranges were always inclusive, and `exclusiveMaximum` wasn't recognized at all.
-- `multipleOf`, `minItems`, `maxItems`, `uniqueItems`, `minProperties` and
-  `maxProperties`.
-
-Inclusive ranges with both bounds still use `[Range]`. One-sided and exclusive
-bounds use the new `[Minimum]` and `[Maximum]` attributes, and the other
-keywords use `[MultipleOf]`, `[UniqueItems]`, `[MinProperties]` and
-`[MaxProperties]`. They all come from Json.Extensions, so **generated code needs
-Json.Extensions 0.22.0 or later**. With an older reference, the build reports
-`DPDAPI002`. Generated models used by clients get the same attributes.
+**Upgrade `DarkPatterns.OpenApiCodegen.Json.Extensions` to 0.22.0** along with
+the C# package. With an older version, the build reports warning `DPDAPI002`
+and generated code may not compile.
 
 **OpenAPI 3.0 documents are now validated against the whole OpenAPI 3.0
 schema.** Before, only the document's top level was checked, so documents that
 break the specification were still generated. Now they are reported as errors
 (C# `DPD_JSON_*` diagnostics, which fail the build; the TypeScript generator
-prints them and writes no files). Common causes are a response without `description`, an
-operation without `responses`, `info` without `title` or `version`, a path
-parameter without `required: true`, both `example` and `examples` on the same
-object, unknown properties (other than `x-` extensions), and values of the
-wrong type, such as `email: 5`. Fix the document to match the specification.
-
-**C# and TypeScript clients send cookie parameters.** Parameters with
-`in: cookie` are sent in a `Cookie` header, as `name=value` pairs joined with
-`; ` and with values URL-encoded. They were accepted but dropped before. If you
-added these cookies yourself, such as through a `CookieContainer` or a fetch
-wrapper, stop, or the server may receive them twice. Browsers don't let fetch
-set `Cookie`, so there the header is still left out.
-
-**TypeScript's `HttpMethod` includes `'TRACE'`.** Code that switches over every
-`HttpMethod` needs a `'TRACE'` case.
-
-**Optional request bodies are `IOptional<T>` in C#.** A request body is
-optional unless it sets `required: true`, which is the OpenAPI default. Before,
-every body was treated as required. Now an optional body is an `IOptional<T>`
-in MVC server methods, C# clients and webhook clients, so code for operations
-whose `requestBody` doesn't set `required: true` stops compiling until it's
-updated:
-
-- MVC servers: change the override's parameter to `IOptional<T>`. A request
-  without the body reaches it as `null`; before, it got 415.
-- C# clients: pass the body as `Optional.Create(body)`, or `null` to send none.
-
-If the body is meant to be required, set `required: true` in the document
-instead, and nothing changes.
-
-**MVC servers read `text/*` and binary request bodies themselves.** A `text/*`
-body with a `string` schema arrives as the request's text, and a non-JSON body
-with a `format: binary` schema arrives as `Request.Body`. They returned 415
-unless an input formatter was registered for them; such formatters aren't used
-any more. When the body is required, a request without a `Content-Type` still
-gets 415.
-
-**MVC server methods for operations without an `operationId` are named from
-the method and path.** An operation with a request body and no `operationId`
-generated an abstract method named `_`. It's now named like its action result,
-such as `PostWidgets`. Rename the override.
-
-**C# clients send text and binary request bodies as declared.** A `text/*` body
-with a `string` schema is sent as text rather than as a quoted JSON string, and
-a binary (`Stream`) body is sent with its `Content-Type`. This applies to
-webhook clients too.
-
-**TypeScript clients send text and binary request bodies.** `text/plain` is now
-in the default `allowedMimeTypes`, so operations that accept it get that request
-body alongside any others. If you set `allowedMimeTypes` with fewer than four
-entries, `text/plain` is added too, since lists merge by position. `text/*`
-bodies are typed `string` and other non-JSON bodies `Blob`; they used to throw
-"Non-JSON requests not supported". The fetch and RxJS adapters send them as
-given, and send no body when an optional body is left out, rather than
-`"null"`. The fetch adapter's `FetchRequest.body` is now
-`URLSearchParams | string | Blob | undefined`, so custom fetch implementations
-typed against the old type may need updating. The MSW adapter matches text
-bodies by their text, `Blob` bodies by their bytes, and a left-out optional
-body as an empty request, instead of parsing every body as JSON.
+prints them and writes no files). Common causes are a response without
+`description`, an operation without `responses`, `info` without `title` or
+`version`, a path parameter without `required: true`, both `example` and
+`examples` on the same object, unknown properties (other than `x-` extensions),
+and values of the wrong type, such as `email: 5`. Fix the document to match the
+specification.
 
 **MVC servers apply document-level `security`.** An operation without its own
 `security` now requires the document's security requirements. Before, it was
@@ -155,6 +52,114 @@ class named after the document's `info.title`, such as
 **The `securityAttribute` option includes document-level `security`.** Actions
 for operations that inherit the document's requirements now get the attribute
 too, with those requirements as its argument.
+
+**Optional request bodies are `IOptional<T>` in C#.** A request body is
+optional unless it sets `required: true`, which is the OpenAPI default. Before,
+every body was treated as required. Now an optional body is an `IOptional<T>`
+in MVC server methods, C# clients and webhook clients, so code for operations
+whose `requestBody` doesn't set `required: true` stops compiling until it's
+updated:
+
+- MVC servers: change the override's parameter to `IOptional<T>`. A request
+  without the body reaches it as `null`; before, it got 415.
+- C# clients: pass the body as `Optional.Create(body)`, or `null` to send none.
+
+If the body is meant to be required, set `required: true` in the document
+instead, and nothing changes.
+
+**MVC servers read `text/*` and binary request bodies themselves.** A `text/*`
+body with a `string` schema arrives as the request's text, and a non-JSON body
+with a `format: binary` schema arrives as `Request.Body`. They returned 415
+unless an input formatter was registered for them; such formatters aren't used
+any more. When the body is required, a request without a `Content-Type` still
+gets 415.
+
+**C# clients send text and binary request bodies as declared.** A `text/*` body
+with a `string` schema is sent as text rather than as a quoted JSON string, and
+a binary (`Stream`) body is sent with its `Content-Type`. This applies to
+webhook clients too.
+
+**TypeScript clients send text and binary request bodies.** `text/plain` is now
+in the default `allowedMimeTypes`, so operations that accept it get that request
+body alongside any others. If you set `allowedMimeTypes` with fewer than four
+entries, `text/plain` is added too, since lists merge by position. `text/*`
+bodies are typed `string` and other non-JSON bodies `Blob`; they used to throw
+"Non-JSON requests not supported". The fetch and RxJS adapters send them as
+given, and send no body when an optional body is left out, rather than
+`"null"`. The fetch adapter's `FetchRequest.body` is now
+`URLSearchParams | string | Blob | undefined`, so custom fetch implementations
+typed against the old type may need updating. The MSW adapter matches text
+bodies by their text, `Blob` bodies by their bytes, and a left-out optional
+body as an empty request, instead of parsing every body as JSON.
+
+**MVC server methods for operations without an `operationId` are named from
+the method and path.** An operation with a request body and no `operationId`
+generated an abstract method named `_`. It's now named like its action result,
+such as `PostWidgets`. Rename the override.
+
+**The MVC server enforces more JSON Schema validation keywords**, so requests
+that used to pass can now fail model validation, which returns 400 with
+`[ApiController]`. Newly enforced on parameters, request bodies and model
+properties:
+
+- `minimum` without `maximum`, and `maximum` without `minimum`. Before, `[Range]`
+  was only emitted when both were set.
+- OpenAPI 3.0's boolean `exclusiveMinimum` and `exclusiveMaximum`. Before,
+  ranges were always inclusive, and `exclusiveMaximum` wasn't recognized at all.
+- `multipleOf`, `minItems`, `maxItems`, `uniqueItems`, `minProperties` and
+  `maxProperties`.
+
+Inclusive ranges with both bounds still use `[Range]`. One-sided and exclusive
+bounds use the new `[Minimum]` and `[Maximum]` attributes, and the other
+keywords use `[MultipleOf]`, `[UniqueItems]`, `[MinProperties]` and
+`[MaxProperties]`. They all come from Json.Extensions, so **generated code needs
+Json.Extensions 0.22.0 or later**. With an older reference, the build reports
+`DPDAPI002`. Generated models used by clients get the same attributes.
+
+**Status code ranges (`2XX`, `4XX`, …) are no longer ignored.** Before, a
+response for a range was dropped, so only documents with ranges change. An
+explicit status code still takes precedence over a range, and a range over
+`default`.
+
+- MVC server: each range gets a factory named for its class (`Informational`,
+  `Successful`, `Redirection`, `ClientError` or `ServerError`) that takes the
+  status code, such as `ClientError(404, error)`. It throws
+  `ArgumentOutOfRangeException` for a status code outside the range.
+- C# client: a status code in a range parses into a return type of the same
+  name, with its `Body`, instead of the `default` response or the base return
+  type. Code that handled those responses through `OtherStatusCode` or the base
+  type should check for the new type.
+- TypeScript: a status code in a range keeps its number as `statusCode`
+  instead of `'other'`, and its `data` is typed by the range's schema. Code that
+  checked for `'other'` to handle those responses should check the status code.
+  Generated code imports the new `StatusCodeRange` type, so upgrade the runtime
+  package with the generator.
+
+**C# and TypeScript clients send cookie parameters.** Parameters with
+`in: cookie` are sent in a `Cookie` header, as `name=value` pairs joined with
+`; ` and with values URL-encoded. They were accepted but dropped before. If you
+added these cookies yourself, such as through a `CookieContainer` or a fetch
+wrapper, stop, or the server may receive them twice. Browsers don't let fetch
+set `Cookie`, so there the header is still left out.
+
+**TypeScript's `HttpMethod` includes `'TRACE'`.** Code that switches over every
+`HttpMethod` needs a `'TRACE'` case.
+
+**Each output of a file uses its own metadata.** When the same file is listed as
+more than one of `OpenApiSchemaMvcServer`, `OpenApiSchemaClient` and
+`OpenApiSchemaWebhookClient`, each output now uses its own `Namespace`, `Link`,
+`PathPrefix` and `Configuration`. Before, all outputs used the first value set,
+in the order `JsonSchemaDocument`, `OpenApiSchemaMvcServer`,
+`OpenApiSchemaClient`, `OpenApiSchemaWebhookClient`. If your items for one file
+set different values, the controllers or client methods may move to the
+namespace their own item names. Models don't move. To keep the old namespace,
+set the same `Namespace` (or `Link`) on every item for the file. Nothing changes
+for files listed once, or listed with the same metadata on every item.
+
+**A file listed twice as the same item type is generated.** With the same
+metadata on both items, it's generated as if listed once; before, nothing was
+generated for it. With different `Namespace`, `Link` or `PathPrefix` values,
+the build reports `DPD_OPENAPI_CS_002`.
 
 ## C# 0.32.0, Json.Extensions 0.21.0, TypeScript 0.16.0, fetch 0.12.0, RxJS 0.11.0, MSW 0.11.0
 

@@ -80,6 +80,15 @@
     <CompatPartialSchema Include="..\..\schemas\compat-parts\*.yaml" Namespace="$(RootNamespace).Compat.Parts.%(Filename)" PathPrefix="/compat/parts" />
     <OpenApiSchemaMvcServer Include="@(CompatPartialSchema)" Visible="false" PathPrefix="/_Incorrect" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\compat-part-consumer.yaml" Link="Compat\Parts\compat-part-consumer.yaml" PathPrefix="/compat/parts" />
+    <!-- The same item listed twice with the same metadata (e.g. overlapping globs) -->
+    <OpenApiSchemaClient Include="$(SolutionRoot)schemas\query-in-path.yaml" Link="Compat\DuplicateItem\query-in-path.yaml" />
+    <OpenApiSchemaClient Include="$(SolutionRoot)schemas\query-in-path.yaml" Link="Compat\DuplicateItem\query-in-path.yaml" />
+  </ItemGroup>
+
+  <!-- The same file as Client and MvcServer with different metadata: each output uses its own (planning #3) -->
+  <ItemGroup>
+    <OpenApiSchemaClient Include="$(SolutionRoot)schemas\simple-types.yaml" Link="PerOutput\Client\simple-types.yaml" />
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\simple-types.yaml" Link="PerOutput\Server\simple-types.yaml" PathPrefix="/per-output" />
   </ItemGroup>
 
   <ItemGroup>

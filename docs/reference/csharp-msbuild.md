@@ -46,17 +46,23 @@ Use full paths for `Configuration`, such as
 `$(MSBuildProjectDirectory)/api-options.yaml`. A file that can't be found is
 ignored without a warning.
 
-### One set of metadata per file
+### The same file in several items
 
-The generator sees each file once, however many items include it. When the same
-file is in more than one item (for example as both `OpenApiSchemaMvcServer` and
-`OpenApiSchemaClient`), every output is generated, but they share one value of
-each metadata. The first item that sets a value wins, in this order:
+A file can be in more than one item, for example as both
+`OpenApiSchemaMvcServer` and `OpenApiSchemaClient`. Each of
+`OpenApiSchemaMvcServer`, `OpenApiSchemaClient` and `OpenApiSchemaWebhookClient`
+generates its controllers or client methods with its own `Namespace`, `Link`,
+`PathPrefix` and `Configuration`.
+
+The file's models are generated once, so they share one namespace and one
+`SchemaId`. The first item that sets a value wins, in this order:
 `JsonSchemaDocument`, `OpenApiSchemaMvcServer`, `OpenApiSchemaClient`,
 `OpenApiSchemaWebhookClient`, `OpenApiSchemaModels`.
 
-So a client and a server for the same file go in the same namespace. To keep
-them apart, generate them in separate projects.
+Listing a file twice as the same item type with the same metadata is the same as
+listing it once. With different `Namespace`, `Link` or `PathPrefix` values, that
+output isn't generated and the build reports `DPD_OPENAPI_CS_002`. Different
+`Configuration` values are all applied.
 
 ## Namespaces
 

@@ -6,6 +6,24 @@ every section between your version and the new one.
 
 Releases before C# 0.25.4 and TypeScript 0.13.0 aren't covered.
 
+## Unreleased
+
+**Each output of a file uses its own metadata.** When the same file is listed as
+more than one of `OpenApiSchemaMvcServer`, `OpenApiSchemaClient` and
+`OpenApiSchemaWebhookClient`, each output now uses its own `Namespace`, `Link`,
+`PathPrefix` and `Configuration`. Before, all outputs used the first value set,
+in the order `JsonSchemaDocument`, `OpenApiSchemaMvcServer`,
+`OpenApiSchemaClient`, `OpenApiSchemaWebhookClient`. If your items for one file
+set different values, the controllers or client methods may move to the
+namespace their own item names. Models don't move. To keep the old namespace,
+set the same `Namespace` (or `Link`) on every item for the file. Nothing changes
+for files listed once, or listed with the same metadata on every item.
+
+**A file listed twice as the same item type is generated.** With the same
+metadata on both items, it's generated as if listed once; before, nothing was
+generated for it. With different `Namespace`, `Link` or `PathPrefix` values,
+the build reports `DPD_OPENAPI_CS_002`.
+
 ## C# 0.32.0, Json.Extensions 0.21.0, TypeScript 0.16.0, fetch 0.12.0, RxJS 0.11.0, MSW 0.11.0
 
 **The C# generator needs Roslyn 4.8 or later**, which ships with the .NET 8 SDK

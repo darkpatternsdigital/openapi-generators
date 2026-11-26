@@ -13,10 +13,20 @@
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDGenerateWebhookClient" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDGenerateModels" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDSchemaOptions" />
-		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="Configuration" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="Namespace" />
-		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="PathPrefix" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="SchemaId" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDMvcServerLink" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDMvcServerNamespace" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDMvcServerPathPrefix" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDMvcServerConfiguration" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDClientLink" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDClientNamespace" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDClientPathPrefix" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDClientConfiguration" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDWebhookClientLink" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDWebhookClientNamespace" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDWebhookClientPathPrefix" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDWebhookClientConfiguration" />
 
 		<OpenApiSchemaOptions Condition="Exists('$(ProjectDir)csharp.config.yaml') and '' == '@(OpenApiSchemaOptions)'"
 			Include="$(ProjectDir)csharp.config.yaml"/>
@@ -39,41 +49,49 @@
 			<AdditionalFiles Include="%(Identity)">
 				<DPDInclude>true</DPDInclude>
 
-				<DPDJsonSchema>@(JsonSchemaDocument->'true')</DPDJsonSchema>
-				<Link>@(JsonSchemaDocument->'%(Link)')</Link>
-				<Namespace>@(JsonSchemaDocument->'%(Namespace)')</Namespace>
-				<PathPrefix>@(JsonSchemaDocument->'%(PathPrefix)')</PathPrefix>
-				<Configuration>@(JsonSchemaDocument->'%(Configuration)')</Configuration>
-				<SchemaId>@(JsonSchemaDocument->'%(SchemaId)')</SchemaId>
+				<DPDJsonSchema>@(JsonSchemaDocument->'true'->Distinct())</DPDJsonSchema>
+				<Link>@(JsonSchemaDocument->'%(Link)'->Distinct())</Link>
+				<Namespace>@(JsonSchemaDocument->'%(Namespace)'->Distinct())</Namespace>
+				<SchemaId>@(JsonSchemaDocument->'%(SchemaId)'->Distinct())</SchemaId>
 
-				<DPDGenerateMvcServer>@(OpenApiSchemaMvcServer->'true')</DPDGenerateMvcServer>
-				<Link Condition="'%(AdditionalFiles.Link)' == ''">@(OpenApiSchemaMvcServer->'%(Link)')</Link>
-				<Namespace Condition="'%(AdditionalFiles.Namespace)' == ''">@(OpenApiSchemaMvcServer->'%(Namespace)')</Namespace>
-				<PathPrefix Condition="'%(AdditionalFiles.PathPrefix)' == ''">@(OpenApiSchemaMvcServer->'%(PathPrefix)')</PathPrefix>
-				<Configuration Condition="'%(AdditionalFiles.Configuration)' == ''">@(OpenApiSchemaMvcServer->'%(Configuration)')</Configuration>
-				<SchemaId Condition="'%(AdditionalFiles.SchemaId)' == ''">@(OpenApiSchemaMvcServer->'%(SchemaId)')</SchemaId>
+				<DPDGenerateMvcServer>@(OpenApiSchemaMvcServer->'true'->Distinct())</DPDGenerateMvcServer>
+				<Link Condition="'%(AdditionalFiles.Link)' == ''">@(OpenApiSchemaMvcServer->'%(Link)'->Distinct())</Link>
+				<Namespace Condition="'%(AdditionalFiles.Namespace)' == ''">@(OpenApiSchemaMvcServer->'%(Namespace)'->Distinct())</Namespace>
+				<SchemaId Condition="'%(AdditionalFiles.SchemaId)' == ''">@(OpenApiSchemaMvcServer->'%(SchemaId)'->Distinct())</SchemaId>
 
-				<DPDGenerateClient>@(OpenApiSchemaClient->'true')</DPDGenerateClient>
-				<Link Condition="'%(AdditionalFiles.Link)' == ''">@(OpenApiSchemaClient->'%(Link)')</Link>
-				<Namespace Condition="'%(AdditionalFiles.Namespace)' == ''">@(OpenApiSchemaClient->'%(Namespace)')</Namespace>
-				<PathPrefix Condition="'%(AdditionalFiles.PathPrefix)' == ''">@(OpenApiSchemaClient->'%(PathPrefix)')</PathPrefix>
-				<Configuration Condition="'%(AdditionalFiles.Configuration)' == ''">@(OpenApiSchemaClient->'%(Configuration)')</Configuration>
-				<SchemaId Condition="'%(AdditionalFiles.SchemaId)' == ''">@(OpenApiSchemaClient->'%(SchemaId)')</SchemaId>
+				<DPDGenerateClient>@(OpenApiSchemaClient->'true'->Distinct())</DPDGenerateClient>
+				<Link Condition="'%(AdditionalFiles.Link)' == ''">@(OpenApiSchemaClient->'%(Link)'->Distinct())</Link>
+				<Namespace Condition="'%(AdditionalFiles.Namespace)' == ''">@(OpenApiSchemaClient->'%(Namespace)'->Distinct())</Namespace>
+				<SchemaId Condition="'%(AdditionalFiles.SchemaId)' == ''">@(OpenApiSchemaClient->'%(SchemaId)'->Distinct())</SchemaId>
 
-				<DPDGenerateWebhookClient>@(OpenApiSchemaWebhookClient->'true')</DPDGenerateWebhookClient>
-				<Link Condition="'%(AdditionalFiles.Link)' == ''">@(OpenApiSchemaWebhookClient->'%(Link)')</Link>
-				<Namespace Condition="'%(AdditionalFiles.Namespace)' == ''">@(OpenApiSchemaWebhookClient->'%(Namespace)')</Namespace>
-				<PathPrefix Condition="'%(AdditionalFiles.PathPrefix)' == ''">@(OpenApiSchemaWebhookClient->'%(PathPrefix)')</PathPrefix>
-				<Configuration Condition="'%(AdditionalFiles.Configuration)' == ''">@(OpenApiSchemaWebhookClient->'%(Configuration)')</Configuration>
-				<SchemaId Condition="'%(AdditionalFiles.SchemaId)' == ''">@(OpenApiSchemaWebhookClient->'%(SchemaId)')</SchemaId>
+				<DPDGenerateWebhookClient>@(OpenApiSchemaWebhookClient->'true'->Distinct())</DPDGenerateWebhookClient>
+				<Link Condition="'%(AdditionalFiles.Link)' == ''">@(OpenApiSchemaWebhookClient->'%(Link)'->Distinct())</Link>
+				<Namespace Condition="'%(AdditionalFiles.Namespace)' == ''">@(OpenApiSchemaWebhookClient->'%(Namespace)'->Distinct())</Namespace>
+				<SchemaId Condition="'%(AdditionalFiles.SchemaId)' == ''">@(OpenApiSchemaWebhookClient->'%(SchemaId)'->Distinct())</SchemaId>
 
-				<DPDGenerateModels>@(OpenApiSchemaModels->'true')</DPDGenerateModels>
-				<Link Condition="'%(AdditionalFiles.Link)' == ''">@(OpenApiSchemaModels->'%(Link)')</Link>
-				<Namespace Condition="'%(AdditionalFiles.Namespace)' == ''">@(OpenApiSchemaModels->'%(Namespace)')</Namespace>
-				<Configuration Condition="'%(AdditionalFiles.Configuration)' == ''">@(OpenApiSchemaModels->'%(Configuration)')</Configuration>
-				<SchemaId Condition="'%(AdditionalFiles.SchemaId)' == ''">@(OpenApiSchemaModels->'%(SchemaId)')</SchemaId>
+				<DPDGenerateModels>@(OpenApiSchemaModels->'true'->Distinct())</DPDGenerateModels>
+				<Link Condition="'%(AdditionalFiles.Link)' == ''">@(OpenApiSchemaModels->'%(Link)'->Distinct())</Link>
+				<Namespace Condition="'%(AdditionalFiles.Namespace)' == ''">@(OpenApiSchemaModels->'%(Namespace)'->Distinct())</Namespace>
+				<SchemaId Condition="'%(AdditionalFiles.SchemaId)' == ''">@(OpenApiSchemaModels->'%(SchemaId)'->Distinct())</SchemaId>
 
-				<DPDSchemaOptions>@(OpenApiSchemaOptions->'true')</DPDSchemaOptions>
+				<DPDSchemaOptions>@(OpenApiSchemaOptions->'true'->Distinct())</DPDSchemaOptions>
+
+				<!-- Each output's own metadata; the merged metadata above names the file's models.
+					Different values are joined with | rather than ;, which starts a comment in the generated .editorconfig. -->
+				<DPDMvcServerLink>@(OpenApiSchemaMvcServer->'%(Link)'->Distinct(), '|')</DPDMvcServerLink>
+				<DPDMvcServerNamespace>@(OpenApiSchemaMvcServer->'%(Namespace)'->Distinct(), '|')</DPDMvcServerNamespace>
+				<DPDMvcServerPathPrefix>@(OpenApiSchemaMvcServer->'%(PathPrefix)'->Distinct(), '|')</DPDMvcServerPathPrefix>
+				<DPDMvcServerConfiguration>@(OpenApiSchemaMvcServer->'%(Configuration)'->Distinct(), '|')</DPDMvcServerConfiguration>
+
+				<DPDClientLink>@(OpenApiSchemaClient->'%(Link)'->Distinct(), '|')</DPDClientLink>
+				<DPDClientNamespace>@(OpenApiSchemaClient->'%(Namespace)'->Distinct(), '|')</DPDClientNamespace>
+				<DPDClientPathPrefix>@(OpenApiSchemaClient->'%(PathPrefix)'->Distinct(), '|')</DPDClientPathPrefix>
+				<DPDClientConfiguration>@(OpenApiSchemaClient->'%(Configuration)'->Distinct(), '|')</DPDClientConfiguration>
+
+				<DPDWebhookClientLink>@(OpenApiSchemaWebhookClient->'%(Link)'->Distinct(), '|')</DPDWebhookClientLink>
+				<DPDWebhookClientNamespace>@(OpenApiSchemaWebhookClient->'%(Namespace)'->Distinct(), '|')</DPDWebhookClientNamespace>
+				<DPDWebhookClientPathPrefix>@(OpenApiSchemaWebhookClient->'%(PathPrefix)'->Distinct(), '|')</DPDWebhookClientPathPrefix>
+				<DPDWebhookClientConfiguration>@(OpenApiSchemaWebhookClient->'%(Configuration)'->Distinct(), '|')</DPDWebhookClientConfiguration>
 			</AdditionalFiles>
 		</ItemGroup>
 		<ItemGroup>
@@ -86,6 +104,18 @@
 			<!-- Separate element: metadata set within one element isn't visible to its own conditions -->
 			<AdditionalFiles Condition=" '@(AdditionalFiles.DPDInclude)' != '' ">
 				<Namespace Condition=" '%(AdditionalFiles.Namespace)' == '' and '%(AdditionalFiles.WorkingOutputPath)' != '' ">$(RootNamespace)$([System.Text.RegularExpressions.Regex]::Replace($([System.Text.RegularExpressions.Regex]::Replace('/$([System.IO.Path]::GetDirectoryName('%(AdditionalFiles.WorkingOutputPath)'))', '[/\\]', '.')), '\.$', ''))</Namespace>
+			</AdditionalFiles>
+
+			<!-- Each output's namespace, computed the same way from its own Link (or the file's Identity) -->
+			<AdditionalFiles Condition=" '@(AdditionalFiles.DPDInclude)' != '' ">
+				<DPDMvcServerWorkingOutputPath Condition=" '%(AdditionalFiles.DPDGenerateMvcServer)' == 'true' and '%(AdditionalFiles.DPDMvcServerNamespace)' == '' ">$([System.Text.RegularExpressions.Regex]::Replace($([MSBuild]::ValueOrDefault('%(AdditionalFiles.DPDMvcServerLink)', '%(AdditionalFiles.Identity)')), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__'))</DPDMvcServerWorkingOutputPath>
+				<DPDClientWorkingOutputPath Condition=" '%(AdditionalFiles.DPDGenerateClient)' == 'true' and '%(AdditionalFiles.DPDClientNamespace)' == '' ">$([System.Text.RegularExpressions.Regex]::Replace($([MSBuild]::ValueOrDefault('%(AdditionalFiles.DPDClientLink)', '%(AdditionalFiles.Identity)')), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__'))</DPDClientWorkingOutputPath>
+				<DPDWebhookClientWorkingOutputPath Condition=" '%(AdditionalFiles.DPDGenerateWebhookClient)' == 'true' and '%(AdditionalFiles.DPDWebhookClientNamespace)' == '' ">$([System.Text.RegularExpressions.Regex]::Replace($([MSBuild]::ValueOrDefault('%(AdditionalFiles.DPDWebhookClientLink)', '%(AdditionalFiles.Identity)')), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__'))</DPDWebhookClientWorkingOutputPath>
+			</AdditionalFiles>
+			<AdditionalFiles Condition=" '@(AdditionalFiles.DPDInclude)' != '' ">
+				<DPDMvcServerNamespace Condition=" '%(AdditionalFiles.DPDMvcServerWorkingOutputPath)' != '' ">$(RootNamespace)$([System.Text.RegularExpressions.Regex]::Replace($([System.Text.RegularExpressions.Regex]::Replace('/$([System.IO.Path]::GetDirectoryName('%(AdditionalFiles.DPDMvcServerWorkingOutputPath)'))', '[/\\]', '.')), '\.$', ''))</DPDMvcServerNamespace>
+				<DPDClientNamespace Condition=" '%(AdditionalFiles.DPDClientWorkingOutputPath)' != '' ">$(RootNamespace)$([System.Text.RegularExpressions.Regex]::Replace($([System.Text.RegularExpressions.Regex]::Replace('/$([System.IO.Path]::GetDirectoryName('%(AdditionalFiles.DPDClientWorkingOutputPath)'))', '[/\\]', '.')), '\.$', ''))</DPDClientNamespace>
+				<DPDWebhookClientNamespace Condition=" '%(AdditionalFiles.DPDWebhookClientWorkingOutputPath)' != '' ">$(RootNamespace)$([System.Text.RegularExpressions.Regex]::Replace($([System.Text.RegularExpressions.Regex]::Replace('/$([System.IO.Path]::GetDirectoryName('%(AdditionalFiles.DPDWebhookClientWorkingOutputPath)'))', '[/\\]', '.')), '\.$', ''))</DPDWebhookClientNamespace>
 			</AdditionalFiles>
 		</ItemGroup>
 	</Target>

@@ -7,7 +7,7 @@
 #nullable disable warnings
 #pragma warning disable
 
-namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.AllOf
+namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Clients.AllOf
 { 
     public static class Operations
     {

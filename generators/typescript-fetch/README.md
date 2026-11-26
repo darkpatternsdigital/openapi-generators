@@ -29,6 +29,9 @@ export default toFetchApi(operations, fetch);
 
 This API will use the type safety from OpenAPI along with `fetch`.
 
+The Fetch API doesn't allow the `TRACE` method, so calling a `TRACE` operation
+throws a `TypeError`.
+
 ## Use with `node-fetch`
 
 To use with `node-fetch`, a fully-qualified URL must be provided.  See the following example:

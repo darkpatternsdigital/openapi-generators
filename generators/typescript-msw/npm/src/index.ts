@@ -106,8 +106,9 @@ function buildHandler<
 	response: AsyncResponseResolver<TResponses> | MswStandardResponse<TResponses>,
 	options?: RequestHandlerOptions,
 ) {
-	const methodFunc =
-		http[request.method.toLowerCase() as Lowercase<HttpMethod>];
+	const method = request.method.toLowerCase() as Lowercase<HttpMethod>;
+	// MSW has no http.trace, so TRACE matches every method and handleMswFullRequest checks it
+	const methodFunc = method === 'trace' ? http.all : http[method];
 	const url = new URL(
 		request.path.split('?')[0],
 		options?.baseDomain,
@@ -129,6 +130,9 @@ async function handleMswFullRequest<
 	request: AdapterRequestArgs,
 	response: AsyncResponseResolver<TResponses> | MswStandardResponse<TResponses>,
 ): Promise<SafeResponseResolverReturnType<TResponses>> {
+	if (info.request.method !== request.method) {
+		return;
+	}
 	if (!queryStringMatch(request, info.request)) {
 		return;
 	}

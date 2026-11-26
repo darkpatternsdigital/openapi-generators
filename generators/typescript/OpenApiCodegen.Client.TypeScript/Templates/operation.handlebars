@@ -102,6 +102,15 @@ export function constructHeaders(params: RequestParams{{#if RequestBodies.length
     if (params.{{{ParamName}}} !== undefined) headers['{{{RawName}}}'] = params.{{{ParamName}}}; {{!-- TODO - openapi style/explode combo --}}
     {{/if}}
     {{/each}}
+    {{#if HasCookieParams}}
+    const cookies: string[] = [];
+    {{#each SharedParams}}
+    {{#if IsCookieParam}}
+    if (params.{{{ParamName}}} !== undefined) cookies.push('{{{RawName}}}=' + encodeURI(params.{{{ParamName}}}));
+    {{/if}}
+    {{/each}}
+    if (cookies.length) headers['Cookie'] = cookies.join('; ');
+    {{/if}}
 
     return headers;
 }

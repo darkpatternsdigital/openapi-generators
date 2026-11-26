@@ -17,6 +17,10 @@ paths:
           in: cookie
           schema:
             type: string
+        - name: visits
+          in: cookie
+          schema:
+            type: integer
       responses:
         '204':
           description: No content

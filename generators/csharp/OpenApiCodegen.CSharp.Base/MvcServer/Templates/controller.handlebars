@@ -28,7 +28,7 @@ namespace {{PackageName}}
         /// <param name="{{ParamName}}">{{linewrap Description "
         /// "}}</param>{{/each}}
         // Generated from operation: {{{Operation.SourceReference}}}
-        [global::Microsoft.AspNetCore.Mvc.Http{{Operation.HttpMethod}}]
+        [global::Microsoft.AspNetCore.Mvc.{{{Operation.HttpMethodAttribute}}}]
         [global::Microsoft.AspNetCore.Mvc.Route("{{{Operation.Path}}}")]{{#if RequestBody.RequestBodyType}}
         [global::Microsoft.AspNetCore.Mvc.Consumes("{{{RequestBody.RequestBodyType}}}")]{{/if}}{{!
         }}{{#if Operation.Responses.DefaultResponse}}
@@ -46,7 +46,8 @@ namespace {{PackageName}}
         [{{{@root.SecurityAttribute}}}({{{jsonString Operation.RawSecurityRequirements}}})]
         {{~/if}}{{/if}}
         public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.IActionResult> {{RequestBody.Name}}TypeSafeEntry(
-            {{#each RequestBody.AllParams}}{{#unless IsCookieParam}}[{{!
+            {{#each RequestBody.AllParams}}[{{!
+            }}{{#if IsCookieParam}}global::Microsoft.AspNetCore.Mvc.ModelBinder(typeof(CookieModelBinder), Name = "{{RawName}}"){{/if}}{{!
             }}{{#if IsPathParam}}global::Microsoft.AspNetCore.Mvc.FromRoute(Name = "{{RawName}}"){{/if}}{{!
             }}{{#if IsQueryParam}}global::Microsoft.AspNetCore.Mvc.FromQuery(Name = "{{RawName}}"){{/if}}{{!
             }}{{#if IsBodyParam}}global::Microsoft.AspNetCore.Mvc.FromBody{{/if}}{{!
@@ -58,7 +59,7 @@ namespace {{PackageName}}
             }}{{#if HasMaxLength}}, global::System.ComponentModel.DataAnnotations.MaxLength({{MaxLength}}){{/if}}{{!
             }}{{#if HasMinimum}}{{#if HasMaximum}}, global::System.ComponentModel.DataAnnotations.Range({{Minimum}}, {{Maximum}}){{/if}}{{/if}}{{!
             }}] {{{DataType}}}{{#if Optional}}{{#unless DataTypeNullable}}?{{/unless}}{{/if}} {{ParamName}}{{#unless @last}},
-            {{/unless}}{{/unless}}{{/each}}
+            {{/unless}}{{/each}}
         ) => (await {{RequestBody.Name}}({{#each RequestBody.AllParams}}{{#if Optional}}{{!
             Optional form fields bind as nullable values. A missing field binds null, except that a
             missing collection binds empty, and a nullable field sent empty is present with a null
@@ -155,6 +156,29 @@ namespace {{PackageName}}
                 new {{Name}}ActionResult(actionResult, headers);
         }
         {{/each}}
+        {{#if HasCookieParams}}
+
+        // ASP.NET Core MVC has no FromCookie attribute, so cookie parameters bind through this
+        private sealed class CookieModelBinder : global::Microsoft.AspNetCore.Mvc.ModelBinding.IModelBinder
+        {
+            public global::System.Threading.Tasks.Task BindModelAsync(global::Microsoft.AspNetCore.Mvc.ModelBinding.ModelBindingContext bindingContext)
+            {
+                if (bindingContext.HttpContext.Request.Cookies.TryGetValue(bindingContext.ModelName, out var value))
+                {
+                    try
+                    {
+                        bindingContext.Result = global::Microsoft.AspNetCore.Mvc.ModelBinding.ModelBindingResult.Success(
+                            global::System.ComponentModel.TypeDescriptor.GetConverter(bindingContext.ModelType).ConvertFromInvariantString(value));
+                    }
+                    catch (global::System.Exception ex)
+                    {
+                        bindingContext.ModelState.TryAddModelError(bindingContext.ModelName, ex, bindingContext.ModelMetadata);
+                    }
+                }
+                return global::System.Threading.Tasks.Task.CompletedTask;
+            }
+        }
+        {{/if}}
     }
 {{/if}}
 }

@@ -71,6 +71,15 @@ namespace {{PackageName}}
 {{#each RequestBody.AllParams}}{{#if IsHeaderParam}}{{#unless Required}}
             if ({{ParamName}} != null){{/unless}}
             requestMessage.Headers.Add("{{RawName}}", {{#if DataTypeEnumerable}}{{#if Required}}{{ParamName}}{{else}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.GetValueOrThrow({{ParamName}}){{/if}}.Select(v => global::DarkPatterns.OpenApiCodegen.Json.Extensions.ParameterFormatting.ToParameterString(v) ?? ""){{else}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.ParameterFormatting.ToParameterString({{#if Required}}{{ParamName}}{{else}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.GetValueOrThrow({{ParamName}}){{/if}}) ?? ""{{/if}});{{/if}}{{/each}}
+{{#if RequestBody.HasCookieParam}}
+            var cookies = new global::System.Collections.Generic.List<string>();
+{{#each RequestBody.AllParams}}{{#if IsCookieParam}}
+            if ({{ParamName}} != null)
+                cookies.Add("{{RawName}}=" + global::System.Uri.EscapeDataString(global::DarkPatterns.OpenApiCodegen.Json.Extensions.ParameterFormatting.ToParameterString({{#if Required}}{{ParamName}}{{else}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.GetValueOrThrow({{ParamName}}){{/if}}) ?? ""));
+{{/if}}{{/each}}
+            if (cookies.Count > 0)
+                requestMessage.Headers.Add("Cookie", string.Join("; ", cookies));
+{{/if}}
             return requestMessage;
         }
 

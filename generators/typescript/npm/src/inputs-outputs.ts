@@ -5,7 +5,8 @@ export type HttpMethod =
 	| 'PATCH'
 	| 'DELETE'
 	| 'OPTIONS'
-	| 'HEAD';
+	| 'HEAD'
+	| 'TRACE';
 export type HttpHeaders = { [key: string]: string | null };
 
 /** Standardized request to be sent to the adapter layer */

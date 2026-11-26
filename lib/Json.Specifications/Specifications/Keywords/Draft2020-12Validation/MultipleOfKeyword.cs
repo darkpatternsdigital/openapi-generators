@@ -20,6 +20,7 @@ public class MultipleOfKeyword(string keyword, decimal value) : IJsonSchemaAnnot
 	}
 
 	public string Keyword => keyword;
+	public decimal Value => value;
 
 	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
 	public IEnumerable<IJsonSchemaAnnotation> GetDynamicAnnotations()

@@ -58,7 +58,7 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 				("title", Keywords.Draft2020_12Metadata.TitleKeyword.Instance),
 				("multipleOf", Keywords.Draft2020_12Validation.MultipleOfKeyword.Instance),
 				("maximum", Keywords.Draft2020_12Validation.MaximumKeyword.Instance),
-				("exclusiveMaimum", Draft04.ExclusiveMaximumKeyword.Instance),
+				("exclusiveMaximum", Draft04.ExclusiveMaximumKeyword.Instance),
 				("minimum", Keywords.Draft2020_12Validation.MinimumKeyword.Instance),
 				("exclusiveMinimum", Draft04.ExclusiveMinimumKeyword.Instance),
 				("maxLength", Keywords.Draft2020_12Validation.MaxLengthKeyword.Instance),

@@ -20,6 +20,7 @@ public class MaxPropertiesKeyword(string keyword, int value) : IJsonSchemaAnnota
 	}
 
 	public string Keyword => keyword;
+	public int Value => value;
 
 	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
 	public IEnumerable<IJsonSchemaAnnotation> GetDynamicAnnotations()

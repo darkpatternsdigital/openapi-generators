@@ -691,7 +691,7 @@ public class OpenApi3_0SpecificationShould
 		Assert.Single(range.Annotations.OfType<MultipleOfKeyword>());
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Validation): `exclusiveMaximum` is registered as `exclusiveMaimum`, so it is an unknown keyword")]
+	[Fact]
 	public void Read_boolean_exclusive_minimum_and_maximum()
 	{
 		var range = ComponentSchema(ParseValid(SchemasYaml), "range");

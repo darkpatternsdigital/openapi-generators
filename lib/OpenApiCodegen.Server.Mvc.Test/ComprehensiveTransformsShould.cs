@@ -37,10 +37,56 @@ public class ComprehensiveTransformsShould
 	[InlineData("request-ref.yaml")]
 	[InlineData("response-ref.yaml")]
 	[InlineData("openapi-3.0-callbacks.yaml")]
+	[InlineData("oas-server-http-methods.yml")]
+	[InlineData("oas-server-paths.yml")]
+	[InlineData("oas-server-parameter-styles.yml")]
+	[InlineData("oas-server-request-bodies.yml")]
+	[InlineData("oas-server-multipart.yml")]
+	[InlineData("oas-server-responses.yml")]
+	[InlineData("oas-server-security.yml")]
+	[InlineData("oas-server-models.yml")]
+	[InlineData("oas-server-validation.yml")]
+	[InlineData("oas-server-documentation.yml")]
+	[InlineData("oas-server-servers.yml")]
+	[InlineData("oas-server-xml.yml")]
+	[InlineData("oas-server-no-operation-id-body.yml")]
+	[InlineData("oas-server-integer-enum.yml")]
 	[Theory]
 	public void Compile_api_documents_included_in_the_TestApp(string name)
 	{
 		DynamicCompilation.GetGeneratedLibrary(name);
+	}
+
+	// OpenAPI 3.0 features whose generated code doesn't compile yet, so they're kept out of the TestApp
+
+	[Fact(Skip = "OpenAPI 3.0 gap (HTTP methods): trace emits [HttpTrace], which ASP.NET Core MVC doesn't have")]
+	public void Generate_and_compile_the_trace_method()
+	{
+		DynamicCompilation.GetGeneratedLibrary("oas-server-http-trace.yml");
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Cookie parameters): cookie parameters are left out of the action's signature but still passed to the abstract method (CS0103)")]
+	public void Generate_and_compile_cookie_parameters()
+	{
+		DynamicCompilation.GetGeneratedLibrary("oas-server-cookie-parameters.yml");
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Models): an anyOf schema is referenced as a type that is never generated (CS0234)")]
+	public void Generate_and_compile_any_of()
+	{
+		DynamicCompilation.GetGeneratedLibrary("oas-server-any-of.yml");
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Models): a not schema reports UnableToCreateInlineSchemaDiagnostic")]
+	public void Generate_and_compile_not()
+	{
+		DynamicCompilation.GetGeneratedLibrary("oas-server-not.yml");
+	}
+
+	[Fact(Skip = "OpenAPI 3.0 gap (Non-string enums): a nullable enum that lists null throws NotSupportedException in CSharpSchemaSourceProvider.ToEnumModel")]
+	public void Generate_and_compile_nullable_enums()
+	{
+		DynamicCompilation.GetGeneratedLibrary("oas-server-nullable-enum.yml");
 	}
 
 	private static DiagnosticBase[] GetDocumentDiagnostics(string name)

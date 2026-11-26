@@ -1,0 +1,23 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Integer enum
+  description: An enum whose values are integers
+paths:
+  /priority:
+    post:
+      operationId: setPriority
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Priority'
+      responses:
+        '204':
+          description: Set
+components:
+  schemas:
+    Priority:
+      type: integer
+      enum: [1, 2, 3]

@@ -41,6 +41,21 @@
     <JsonSchemaDocument Include="$(SolutionRoot)schemas\multi-file-ref-types.yaml" Link="MultiFileRef\Types\multi-file-ref-types.yaml" SchemaId="proj://darkpatterns-openapi/multi-file-ref-types.yaml" />
     <JsonSchemaDocument Include="$(SolutionRoot)schemas\multi-file-ref-responses.yaml" Link="MultiFileRef\Responses\multi-file-ref-responses.yaml" SchemaId="proj://darkpatterns-openapi/multi-file-ref-responses.yaml" />
     <JsonSchemaDocument Include="$(SolutionRoot)schemas\multi-file-ref-endpoints.yaml" Link="MultiFileRef\Endpoints\multi-file-ref-endpoints.yaml" SchemaId="proj://darkpatterns-openapi/multi-file-ref-endpoints.yaml" />
+    <!-- OpenAPI 3.0 coverage for the MVC server output -->
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\oas-server-http-methods.yml" Link="HttpMethods\oas-server-http-methods.yml" PathPrefix="/http-methods" />
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\oas-server-paths.yml" Link="PathTemplates\oas-server-paths.yml" PathPrefix="/paths" />
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\oas-server-no-operation-id-body.yml" Link="NoOperationId\oas-server-no-operation-id-body.yml" PathPrefix="/no-operation-id" />
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\oas-server-parameter-styles.yml" Link="ParameterStyles\oas-server-parameter-styles.yml" PathPrefix="/parameter-styles" />
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\oas-server-request-bodies.yml" Link="RequestBodies\oas-server-request-bodies.yml" PathPrefix="/request-bodies" />
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\oas-server-multipart.yml" Link="Multipart\oas-server-multipart.yml" PathPrefix="/multipart" />
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\oas-server-responses.yml" Link="Responses\oas-server-responses.yml" PathPrefix="/responses" />
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\oas-server-security.yml" Link="ServerSecurity\oas-server-security.yml" PathPrefix="/security" />
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\oas-server-models.yml" Link="Models\oas-server-models.yml" PathPrefix="/models" />
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\oas-server-integer-enum.yml" Link="IntegerEnum\oas-server-integer-enum.yml" PathPrefix="/integer-enum" />
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\oas-server-validation.yml" Link="Validation\oas-server-validation.yml" PathPrefix="/validation" />
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\oas-server-documentation.yml" Link="Documentation\oas-server-documentation.yml" PathPrefix="/documentation" />
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\oas-server-servers.yml" Link="Servers\oas-server-servers.yml" PathPrefix="/servers" />
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\oas-server-xml.yml" Link="Xml\oas-server-xml.yml" PathPrefix="/xml" />
     <!-- Inside the project with neither Link nor Namespace: the namespace comes from RootNamespace and the folder -->
     <OpenApiSchemaModels Include="DefaultNamespace/default-namespace.yaml" />
     <OpenApiSchemaOptions Include="security.yaml" Link="Options\security.yaml" />

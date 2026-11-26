@@ -1,0 +1,38 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: anyOf
+  description: A value that matches one or more of several schemas
+paths:
+  /pets:
+    post:
+      operationId: addPet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetByAgeOrType'
+      responses:
+        '204':
+          description: Added
+components:
+  schemas:
+    PetByAge:
+      type: object
+      required:
+        - age
+      properties:
+        age:
+          type: integer
+    PetByType:
+      type: object
+      required:
+        - petType
+      properties:
+        petType:
+          type: string
+    PetByAgeOrType:
+      anyOf:
+        - $ref: '#/components/schemas/PetByAge'
+        - $ref: '#/components/schemas/PetByType'

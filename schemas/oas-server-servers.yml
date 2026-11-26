@@ -1,0 +1,35 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Servers
+  description: Paths are relative to the server URL, which here has a base path
+servers:
+  - url: /api/v1
+paths:
+  /things:
+    get:
+      operationId: listThings
+      responses:
+        '200':
+          description: The things
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /other-things:
+    # A Path Item can override the servers for its operations
+    servers:
+      - url: /api/v2
+    get:
+      operationId: listOtherThings
+      responses:
+        '200':
+          description: The things
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string

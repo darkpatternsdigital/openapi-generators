@@ -1,0 +1,17 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Missing operationId with a request body
+  description: operationId is optional; an operation without one still needs a usable name
+paths:
+  /widgets:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        '204':
+          description: Created

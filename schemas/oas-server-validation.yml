@@ -1,0 +1,107 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Validation
+  description: Schema validation keywords applied to parameters and request bodies
+paths:
+  /numbers:
+    get:
+      operationId: getNumbers
+      parameters:
+        - name: multipleOfFive
+          in: query
+          schema:
+            type: integer
+            multipleOf: 5
+        - name: atLeastOne
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+        - name: atMostTen
+          in: query
+          schema:
+            type: integer
+            maximum: 10
+        # OpenAPI 3.0 uses booleans for exclusiveMinimum and exclusiveMaximum
+        - name: exclusive
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            exclusiveMinimum: true
+            maximum: 10
+            exclusiveMaximum: true
+      responses:
+        '204':
+          description: Valid
+  /arrays:
+    post:
+      operationId: postArray
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              minItems: 1
+              maxItems: 3
+              uniqueItems: true
+              items:
+                type: string
+      responses:
+        '204':
+          description: Valid
+  /objects:
+    post:
+      operationId: postObject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              minProperties: 1
+              maxProperties: 2
+              additionalProperties:
+                type: string
+      responses:
+        '204':
+          description: Valid
+  /properties:
+    post:
+      operationId: postProperties
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Measurements'
+      responses:
+        '204':
+          description: Valid
+components:
+  schemas:
+    Measurements:
+      type: object
+      required:
+        - multipleOfFive
+        - atLeastOne
+        - atMostTen
+        - tags
+      properties:
+        multipleOfFive:
+          type: integer
+          multipleOf: 5
+        atLeastOne:
+          type: integer
+          minimum: 1
+        atMostTen:
+          type: integer
+          maximum: 10
+        tags:
+          type: array
+          minItems: 1
+          maxItems: 2
+          items:
+            type: string

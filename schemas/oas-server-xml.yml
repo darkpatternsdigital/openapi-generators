@@ -1,0 +1,48 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: XML
+  description: application/xml bodies shaped by the XML Object
+paths:
+  /books:
+    post:
+      operationId: addBook
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Book'
+      responses:
+        '200':
+          description: The book
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Book'
+components:
+  schemas:
+    Book:
+      type: object
+      xml:
+        name: book
+      required:
+        - id
+        - title
+      properties:
+        id:
+          type: integer
+          xml:
+            attribute: true
+        title:
+          type: string
+          xml:
+            name: book-title
+        authors:
+          type: array
+          xml:
+            wrapped: true
+          items:
+            type: string
+            xml:
+              name: author

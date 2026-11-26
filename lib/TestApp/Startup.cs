@@ -6,9 +6,11 @@ public class Startup
 	{
 		services.AddAuthentication(defaultScheme: "Cookies")
 			.AddCookie("Cookies")
-			.AddOauthYamlPolicies();
+			.AddOauthYamlPolicies()
+			.AddServerSecurityPolicies();
 		services.AddAuthorizationBuilder()
-			.AddOauthYamlPolicies();
+			.AddOauthYamlPolicies()
+			.AddServerSecurityPolicies();
 
 		services.AddControllers();
 	}

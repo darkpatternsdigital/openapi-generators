@@ -1,0 +1,29 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Nullable enum
+  description: A nullable string enum, which lists null among its values
+paths:
+  /color:
+    post:
+      operationId: setColor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - color
+              properties:
+                color:
+                  $ref: '#/components/schemas/Color'
+      responses:
+        '204':
+          description: Set
+components:
+  schemas:
+    Color:
+      type: string
+      nullable: true
+      enum: [red, green, null]

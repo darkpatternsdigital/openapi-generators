@@ -1,0 +1,122 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Server security
+  description: Security schemes of each type, document-level security, and AND/OR requirements
+security:
+  - HeaderKey: []
+paths:
+  /document-level:
+    get:
+      operationId: getDocumentLevel
+      responses:
+        '204':
+          description: Allowed by the document-level requirement
+  /public:
+    get:
+      operationId: getPublic
+      # An empty list removes the document-level requirement
+      security: []
+      responses:
+        '204':
+          description: Allowed for everyone
+  /query-key:
+    get:
+      operationId: getQueryKey
+      security:
+        - QueryKey: []
+      responses:
+        '204':
+          description: Allowed with an API key in the query
+  /cookie-key:
+    get:
+      operationId: getCookieKey
+      security:
+        - CookieKey: []
+      responses:
+        '204':
+          description: Allowed with an API key in a cookie
+  /basic:
+    get:
+      operationId: getBasic
+      security:
+        - Basic: []
+      responses:
+        '204':
+          description: Allowed with HTTP basic authentication
+  /bearer:
+    get:
+      operationId: getBearer
+      security:
+        - Bearer: []
+      responses:
+        '204':
+          description: Allowed with a bearer token
+  /open-id-connect:
+    get:
+      operationId: getOpenIdConnect
+      security:
+        - Oidc: [read]
+      responses:
+        '204':
+          description: Allowed with an OpenID Connect token
+  /oauth-scopes:
+    get:
+      operationId: getOAuthScopes
+      security:
+        - OAuth: [write]
+      responses:
+        '204':
+          description: Allowed with an OAuth token that has the write scope
+  /all-of:
+    get:
+      operationId: getAllOf
+      # Both schemes in one requirement must be satisfied
+      security:
+        - HeaderKey: []
+          QueryKey: []
+      responses:
+        '204':
+          description: Allowed with both API keys
+  /any-of:
+    get:
+      operationId: getAnyOf
+      # Either requirement may be satisfied
+      security:
+        - HeaderKey: []
+        - QueryKey: []
+      responses:
+        '204':
+          description: Allowed with either API key
+components:
+  securitySchemes:
+    HeaderKey:
+      type: apiKey
+      in: header
+      name: X-Header-Key
+    QueryKey:
+      type: apiKey
+      in: query
+      name: api_key
+    CookieKey:
+      type: apiKey
+      in: cookie
+      name: api_key
+    Basic:
+      type: http
+      scheme: basic
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: opaque
+    Oidc:
+      type: openIdConnect
+      openIdConnectUrl: https://example.com/.well-known/openid-configuration
+    OAuth:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://example.com/oauth/token
+          scopes:
+            read: Read access
+            write: Write access

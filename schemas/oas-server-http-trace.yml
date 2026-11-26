@@ -1,0 +1,16 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: HTTP trace
+  description: The trace method, which ASP.NET Core MVC has no Http*Attribute for
+paths:
+  /items:
+    trace:
+      operationId: traceItems
+      responses:
+        '200':
+          description: The request as received
+          content:
+            message/http:
+              schema:
+                type: string

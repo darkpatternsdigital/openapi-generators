@@ -82,6 +82,50 @@ set `Cookie`, so there the header is still left out.
 **TypeScript's `HttpMethod` includes `'TRACE'`.** Code that switches over every
 `HttpMethod` needs a `'TRACE'` case.
 
+**Optional request bodies are `IOptional<T>` in C#.** A request body is
+optional unless it sets `required: true`, which is the OpenAPI default. Before,
+every body was treated as required. Now an optional body is an `IOptional<T>`
+in MVC server methods, C# clients and webhook clients, so code for operations
+whose `requestBody` doesn't set `required: true` stops compiling until it's
+updated:
+
+- MVC servers: change the override's parameter to `IOptional<T>`. A request
+  without the body reaches it as `null`; before, it got 415.
+- C# clients: pass the body as `Optional.Create(body)`, or `null` to send none.
+
+If the body is meant to be required, set `required: true` in the document
+instead, and nothing changes.
+
+**MVC servers read `text/*` and binary request bodies themselves.** A `text/*`
+body with a `string` schema arrives as the request's text, and a non-JSON body
+with a `format: binary` schema arrives as `Request.Body`. They returned 415
+unless an input formatter was registered for them; such formatters aren't used
+any more. When the body is required, a request without a `Content-Type` still
+gets 415.
+
+**MVC server methods for operations without an `operationId` are named from
+the method and path.** An operation with a request body and no `operationId`
+generated an abstract method named `_`. It's now named like its action result,
+such as `PostWidgets`. Rename the override.
+
+**C# clients send text and binary request bodies as declared.** A `text/*` body
+with a `string` schema is sent as text rather than as a quoted JSON string, and
+a binary (`Stream`) body is sent with its `Content-Type`. This applies to
+webhook clients too.
+
+**TypeScript clients send text and binary request bodies.** `text/plain` is now
+in the default `allowedMimeTypes`, so operations that accept it get that request
+body alongside any others. If you set `allowedMimeTypes` with fewer than four
+entries, `text/plain` is added too, since lists merge by position. `text/*`
+bodies are typed `string` and other non-JSON bodies `Blob`; they used to throw
+"Non-JSON requests not supported". The fetch and RxJS adapters send them as
+given, and send no body when an optional body is left out, rather than
+`"null"`. The fetch adapter's `FetchRequest.body` is now
+`URLSearchParams | string | Blob | undefined`, so custom fetch implementations
+typed against the old type may need updating. The MSW adapter matches text
+bodies by their text, `Blob` bodies by their bytes, and a left-out optional
+body as an empty request, instead of parsing every body as JSON.
+
 ## C# 0.32.0, Json.Extensions 0.21.0, TypeScript 0.16.0, fetch 0.12.0, RxJS 0.11.0, MSW 0.11.0
 
 **The C# generator needs Roslyn 4.8 or later**, which ships with the .NET 8 SDK

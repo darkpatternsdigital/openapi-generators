@@ -17,6 +17,13 @@ const fetchImpl: FetchImplementation<unknown> = (url, params) => {
 		params as fetch.RequestInit,
 	) as unknown as ReturnType<FetchImplementation<unknown>>;
 };
+// node-fetch 2 can't send a native Blob body, so request bodies go through Node's own fetch
+const nativeFetchImpl: FetchImplementation<unknown> = (url, params) => {
+	return globalThis.fetch(
+		new URL(url, baseDomain),
+		params as RequestInit,
+	) as unknown as ReturnType<FetchImplementation<unknown>>;
+};
 
 type Received = {
 	method: string;
@@ -29,7 +36,7 @@ describe('typescript-fetch OpenAPI 3.0 requests', () => {
 	const methods = toFetchApi(methodOperations, fetchImpl);
 	const cookies = toFetchApi(cookieOperations, fetchImpl);
 	const styles = toFetchApi(styleOperations, fetchImpl);
-	const bodies = toFetchApi(bodyOperations, fetchImpl);
+	const bodies = toFetchApi(bodyOperations, nativeFetchImpl);
 	const server = setupServer();
 	let received: Received | undefined;
 
@@ -137,7 +144,7 @@ describe('typescript-fetch OpenAPI 3.0 requests', () => {
 		expect(received?.url.searchParams.get('filter[size]')).toBe('large');
 	});
 
-	it.skip('omits an optional JSON request body — OpenAPI 3.0 gap (Request bodies): the fetch adapter sends JSON.stringify(null), a "null" body labelled text/plain', async () => {
+	it('omits an optional JSON request body', async () => {
 		capture('/optional');
 
 		await bodies.saveNote({ params: {} });
@@ -147,7 +154,7 @@ describe('typescript-fetch OpenAPI 3.0 requests', () => {
 		expect(received?.body).toBe('');
 	});
 
-	it.skip('sends application/octet-stream bodies as bytes — OpenAPI 3.0 gap (Request bodies): application/octet-stream bodies throw "Non-JSON requests not supported"', async () => {
+	it('sends application/octet-stream bodies as bytes', async () => {
 		capture('/binary');
 
 		await bodies.sendBinary({

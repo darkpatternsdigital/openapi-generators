@@ -32,9 +32,10 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 
 	public class OperationBuilder
 	{
-		public OperationBuilder(OpenApiOperation operation)
+		public OperationBuilder(OpenApiOperation operation, string operationId)
 		{
 			Operation = operation;
+			OperationId = operationId;
 		}
 
 		public List<Func<OperationParameter[], OperationRequestBody>> RequestBodies { get; } = [];
@@ -46,6 +47,8 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 		public List<Dictionary<string, string[]>> RawSecurityRequirements { get; } = [];
 		public List<OperationParameter> SharedParameters { get; } = [];
 		public OpenApiOperation Operation { get; }
+		/// <summary>The operationId, or a name from the method and path when there is none</summary>
+		public string OperationId { get; }
 	}
 
 	public ControllerOperationVisitor(ISchemaRegistry schemaRegistry, CSharpServerSchemaOptions options, string controllerClassName, Func<Uri, string> toSourceReference)
@@ -76,11 +79,11 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 				? options.PathPrefix.Trim('/') + "/"
 				: "")
 			+ pathSuffix.TrimStart('/');
-		var builder = new OperationBuilder(operation);
+		var operationId = operation.OperationId ?? $"{httpMethod} {path}";
+		var builder = new OperationBuilder(operation, operationId);
 
 		base.Visit(operation, httpMethod, argument with { Builder = builder });
 
-		var operationId = operation.OperationId ?? $"{httpMethod} {path}";
 		var sharedParameters = builder.SharedParameters.ToArray();
 		argument.RegisterControllerOperation(
 			new Templates.ControllerOperation(
@@ -206,11 +209,13 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 		var mimeType = mediaType.GetLastContextPart();
 
 		var isForm = mimeType == "application/x-www-form-urlencoded";
+		var kind = MediaTypes.Classify(mimeType);
+		var bodyRequired = argument.Builder?.Operation.RequestBody?.Required ?? false;
 
 		var singleContentType = argument.Builder?.Operation.RequestBody?.Content?.Count is not > 1;
 
 		var mediaTypeSchemaInfo = mediaType.Schema?.ResolveSchemaInfo();
-		argument.Builder?.RequestBodies.Add(OperationRequestBodyFactory(argument.Builder?.Operation.OperationId + (singleContentType ? "" : mimeType), mimeType, isForm ? GetFormParams() : GetStandardParams()));
+		argument.Builder?.RequestBodies.Add(OperationRequestBodyFactory(argument.Builder?.OperationId + (singleContentType ? "" : mimeType), mimeType, isForm ? GetFormParams() : GetStandardParams()));
 
 		IEnumerable<OperationParameter> GetFormParams() =>
 			from param in mediaTypeSchemaInfo?.TryGetAnnotation<PropertiesKeyword>()?.Properties
@@ -248,6 +253,9 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 			from ct in new[] { mediaType }
 			let info = ct.Schema?.ResolveSchemaInfo()
 			let dataType = inlineSchemas.ToInlineDataType(ct.Schema)
+			// Text and binary bodies are read from the request directly, so they need no input formatter
+			let isTextBody = kind == MediaTypeKind.Text && dataType.Text is "string" or "string?"
+			let isStreamBody = kind != MediaTypeKind.Json && dataType.Text is "global::System.IO.Stream" or "global::System.IO.Stream?"
 			select new Templates.OperationParameter(
 				RawName: null,
 				ParamName: CSharpNaming.ToParameterName(argument.Builder?.Operation.OperationId + " body", options.ReservedIdentifiers()),
@@ -259,10 +267,10 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 				IsQueryParam: false,
 				IsHeaderParam: false,
 				IsCookieParam: false,
-				IsBodyParam: true,
+				IsBodyParam: !isTextBody && !isStreamBody,
 				IsFormParam: false,
-				Required: true,
-				Optional: false,
+				Required: bodyRequired,
+				Optional: !bodyRequired,
 				Pattern: info?.TryGetAnnotation<PatternKeyword>()?.Pattern,
 				MinLength: info?.TryGetAnnotation<MinLengthKeyword>()?.Value ?? info?.TryGetAnnotation<MinItemsKeyword>()?.Value,
 				MaxLength: info?.TryGetAnnotation<MaxLengthKeyword>()?.Value ?? info?.TryGetAnnotation<MaxItemsKeyword>()?.Value,
@@ -273,7 +281,9 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 				MultipleOf: info?.TryGetAnnotation<MultipleOfKeyword>()?.Value,
 				UniqueItems: info?.TryGetAnnotation<UniqueItemsKeyword>()?.MustBeUnique ?? false,
 				MinProperties: info?.TryGetAnnotation<MinPropertiesKeyword>()?.Value,
-				MaxProperties: info?.TryGetAnnotation<MaxPropertiesKeyword>()?.Value
+				MaxProperties: info?.TryGetAnnotation<MaxPropertiesKeyword>()?.Value,
+				IsTextBodyParam: isTextBody,
+				IsStreamBodyParam: isStreamBody
 			);
 	}
 

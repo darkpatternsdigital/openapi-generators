@@ -192,7 +192,10 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 		var singleContentType = argument.Builder?.Operation.RequestBody?.Content?.Count is not > 1;
 
 		var mediaTypeSchemaInfo = mediaType.Schema?.ResolveSchemaInfo();
-		argument.Builder?.RequestBodies.Add(OperationRequestBodyFactory(argument.Builder?.Operation.OperationId + (singleContentType ? "" : mimeType), mimeType, isForm ? GetFormParams() : GetStandardParams(), isForm));
+		var parameters = (isForm ? GetFormParams() : GetStandardParams()).ToArray();
+		// A text/* body with a string schema is sent as the string itself, not as JSON
+		var isText = !isForm && MediaTypes.Classify(mimeType) == MediaTypeKind.Text && parameters.All(p => p.DataType is "string" or "string?");
+		argument.Builder?.RequestBodies.Add(OperationRequestBodyFactory(argument.Builder?.Operation.OperationId + (singleContentType ? "" : mimeType), mimeType, parameters, isForm, isText));
 
 		IEnumerable<OperationParameter> GetFormParams() =>
 			from param in mediaTypeSchemaInfo?.TryGetAnnotation<PropertiesKeyword>()?.Properties
@@ -236,7 +239,7 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 				IsCookieParam: false,
 				IsBodyParam: true,
 				IsFormParam: false,
-				Required: true,
+				Required: argument.Builder?.Operation.RequestBody?.Required ?? false,
 				Pattern: info?.TryGetAnnotation<PatternKeyword>()?.Pattern,
 				MinLength: info?.TryGetAnnotation<MinLengthKeyword>()?.Value,
 				MaxLength: info?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
@@ -245,11 +248,12 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 		   );
 	}
 
-	private Func<OperationParameter[], OperationRequestBody> OperationRequestBodyFactory(string operationName, string? requestBodyMimeType, IEnumerable<OperationParameter> parameters, bool isForm)
+	private Func<OperationParameter[], OperationRequestBody> OperationRequestBodyFactory(string operationName, string? requestBodyMimeType, IEnumerable<OperationParameter> parameters, bool isForm, bool isText = false)
 	{
 		return sharedParams => new OperationRequestBody(
 			 Name: CSharpNaming.ToTitleCaseIdentifier(operationName, options.ReservedIdentifiers()),
 			 IsForm: isForm,
+			 IsText: isText,
 			 IsFile: parameters.Any(t => t.IsFile),
 			 HasQueryParam: sharedParams.Concat(parameters).Any(p => p.IsQueryParam),
 			 HasCookieParam: sharedParams.Concat(parameters).Any(p => p.IsCookieParam),

@@ -15,6 +15,10 @@ import type {
 	StandardResponse,
 	TransformCallType,
 } from '@darkpatternsdigital/openapi-codegen-typescript';
+import {
+	isJsonMediaType,
+	toMediaType,
+} from '@darkpatternsdigital/openapi-codegen-typescript';
 
 function deepEqual(x: unknown, y: unknown): boolean {
 	const tx = typeof x,
@@ -145,11 +149,8 @@ async function handleMswFullRequest<
 			if (!formFieldsEqual(request.body, currentBody)) {
 				return;
 			}
-		} else {
-			const currentBody = await info.request.clone().json();
-			if (!deepEqual(request.body, currentBody)) {
-				return;
-			}
+		} else if (!(await bodyMatches(request, info.request))) {
+			return;
 		}
 	} else if (info.request.bodyUsed) {
 		return;
@@ -158,6 +159,28 @@ async function handleMswFullRequest<
 
 	if (typeof response === 'function') return response(info);
 	return toMswResponse(response);
+}
+
+/** No Content-Type means no body; JSON is compared as values, a Blob by its bytes, and anything else as text */
+async function bodyMatches(
+	request: AdapterRequestArgs,
+	actual: Request,
+): Promise<boolean> {
+	const contentType = request.headers?.['Content-Type'];
+	if (!contentType) return (await actual.clone().text()) === '';
+	if (isJsonMediaType(toMediaType(contentType)))
+		return deepEqual(request.body, await actual.clone().json());
+	// A Blob (checked by shape, since the global Blob type may be replaced)
+	const blob = request.body as { arrayBuffer?: () => Promise<ArrayBuffer> };
+	if (typeof blob?.arrayBuffer === 'function') {
+		const expected = new Uint8Array(await blob.arrayBuffer());
+		const received = new Uint8Array(await actual.clone().arrayBuffer());
+		return (
+			expected.length === received.length &&
+			expected.every((byte, index) => byte === received[index])
+		);
+	}
+	return String(request.body) === (await actual.clone().text());
 }
 
 function formFieldsEqual(x: URLSearchParams, y: URLSearchParams): boolean {

@@ -55,7 +55,7 @@ The defaults are in
 | `arrayType` | `Array<{}>` | The type for arrays. `{}` is replaced with the item type. |
 | `fallbackType` | `any` | The type for a schema whose `type` isn't listed under `types`. `unknown` and `never` are stricter choices. |
 | `types` | see below | The TypeScript type for each JSON Schema `type` and `format`. These change only the generated types, not how values are serialized. |
-| `allowedMimeTypes` | `application/json`, `application/x-www-form-urlencoded`, `application/octet-stream` | Request body media types to generate. Request bodies of other media types are left out. Responses of every media type are generated. |
+| `allowedMimeTypes` | `application/json`, `application/x-www-form-urlencoded`, `application/octet-stream`, `text/plain` | Request body media types to generate. Request bodies of other media types are left out. `text/*` bodies are sent as a `string` and other non-JSON bodies as a `Blob`. Responses of every media type are generated. |
 | `globalReservedIdentifiers` | JavaScript and TypeScript keywords, and names the generated code uses | Names that get a `_` prefix when used as identifiers. |
 
 `types` defaults:

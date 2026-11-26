@@ -6,6 +6,27 @@ every section between your version and the new one.
 
 Releases before C# 0.25.4 and TypeScript 0.13.0 aren't covered.
 
+## Unreleased
+
+**Status code ranges (`2XX`, `4XX`, …) are no longer ignored.** Before, a
+response for a range was dropped, so only documents with ranges change. An
+explicit status code still takes precedence over a range, and a range over
+`default`.
+
+- MVC server: each range gets a factory named for its class (`Informational`,
+  `Successful`, `Redirection`, `ClientError` or `ServerError`) that takes the
+  status code, such as `ClientError(404, error)`. It throws
+  `ArgumentOutOfRangeException` for a status code outside the range.
+- C# client: a status code in a range parses into a return type of the same
+  name, with its `Body`, instead of the `default` response or the base return
+  type. Code that handled those responses through `OtherStatusCode` or the base
+  type should check for the new type.
+- TypeScript: a status code in a range keeps its number as `statusCode`
+  instead of `'other'`, and its `data` is typed by the range's schema. Code that
+  checked for `'other'` to handle those responses should check the status code.
+  Generated code imports the new `StatusCodeRange` type, so upgrade the runtime
+  package with the generator.
+
 ## C# 0.32.0, Json.Extensions 0.21.0, TypeScript 0.16.0, fetch 0.12.0, RxJS 0.11.0, MSW 0.11.0
 
 **The C# generator needs Roslyn 4.8 or later**, which ships with the .NET 8 SDK

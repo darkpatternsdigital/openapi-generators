@@ -283,7 +283,7 @@ public class HttpResponseMessageParsersShould : IClassFixture<TempDirectory>
 		Assert.Equal("i-1", (string)result.Body.Id);
 	}
 
-	[Theory(Skip = "OpenAPI 3.0 gap (Response ranges): 2XX and 4XX responses are dropped, so their bodies are not parsed")]
+	[Theory]
 	[InlineData(201, "{\"id\":\"i-1\"}", "Id", "i-1")]
 	[InlineData(404, "{\"message\":\"missing\"}", "Message", "missing")]
 	public async Task ParseStatusCodeRangeResponses(int statusCode, string json, string property, string expected)

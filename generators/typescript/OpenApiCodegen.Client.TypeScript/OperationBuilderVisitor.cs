@@ -37,6 +37,7 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 
 			public OperationResponse? DefaultResponse { get; set; }
 			public Dictionary<int, OperationResponse> StatusResponses { get; } = new();
+			public Dictionary<int, OperationResponse> RangeResponses { get; } = new();
 			public List<OperationSecurityRequirement> SecurityRequirements { get; } = new();
 			public List<OperationParameter> SharedParameters { get; } = new();
 			public OpenApiOperation Operation { get; }
@@ -107,7 +108,8 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 					RequestBodies: builder.RequestBodies.ToArray(),
 					Responses: new Templates.OperationResponses(
 						DefaultResponse: builder.DefaultResponse,
-						StatusResponse: new(builder.StatusResponses)
+						StatusResponse: new(builder.StatusResponses),
+						RangeResponse: new(builder.RangeResponses)
 					),
 					SecurityRequirements: builder.SecurityRequirements.ToArray(),
 					HasQueryParams: operation.Parameters.Any(p => p.In == ParameterLocation.Query),
@@ -138,17 +140,23 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 			IEnumerable<OpenApiResponse> GetResponses()
 			{
 				if (operation.Responses == null) return Enumerable.Empty<OpenApiResponse>();
-				var result = operation.Responses.StatusCodeResponses.Values;
+				var result = operation.Responses.StatusCodeResponses.Values.Concat(operation.Responses.StatusCodeRangeResponses.Values);
 				if (operation.Responses.Default != null)
 					result = result.Append(operation.Responses.Default);
 				return result;
 			}
 		}
 
-		public override void Visit(OpenApiResponse response, int? statusCode, Argument argument)
+		public override void Visit(OpenApiResponse response, int? statusCode, Argument argument) =>
+			VisitResponse(response, statusCode, null, argument);
+		public override void VisitStatusCodeRange(OpenApiResponse response, int statusCodeClass, Argument argument) =>
+			VisitResponse(response, null, statusCodeClass, argument);
+		private void VisitResponse(OpenApiResponse response, int? statusCode, int? statusCodeClass, Argument argument)
 		{
 			string? statusCodeName;
-			if (!statusCode.HasValue)
+			if (statusCodeClass.HasValue)
+				statusCodeName = HttpStatusCodes.StatusCodeRangeNames[statusCodeClass.Value];
+			else if (!statusCode.HasValue)
 				statusCodeName = "other status code";
 			else if (!HttpStatusCodes.StatusCodeNames.TryGetValue(statusCode.Value, out statusCodeName))
 				statusCodeName = $"status code {statusCode}";
@@ -159,8 +167,8 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 				Description: response.Description,
 				Content: (from entry in (from c in content ?? Enumerable.Empty<KeyValuePair<string, OpenApiMediaTypeObject>>()
 										 select (c.Key, c.Value.Schema)).DefaultIfEmpty((Key: "", Schema: null))
-						  // Every response media type is handled (JSON, text, or the raw body), so responses
-						  // aren't filtered by allowedMimeTypes; that option now only limits request bodies.
+							  // Every response media type is handled (JSON, text, or the raw body), so responses
+							  // aren't filtered by allowedMimeTypes; that option now only limits request bodies.
 						  let dataType = inlineSchemas.ToInlineDataType(entry.Schema)
 						  let kind = MediaTypes.Classify(entry.Key)
 						  select new OperationResponseContentOption(
@@ -194,7 +202,9 @@ namespace DarkPatterns.OpenApiCodegen.Client.TypeScript
 						  )).ToArray()
 			);
 
-			if (statusCode.HasValue)
+			if (statusCodeClass.HasValue)
+				argument.Builder?.RangeResponses.Add(statusCodeClass.Value, result);
+			else if (statusCode.HasValue)
 				argument.Builder?.StatusResponses.Add(statusCode.Value, result);
 			else
 				argument.Builder.DefaultResponse = result;

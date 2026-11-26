@@ -85,6 +85,20 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Responses
             public static GetRangesActionResult Ok(string result) =>
                 new GetRangesActionResult(200, "application/json", typeof(string), result);
             
+            /// <summary>
+            /// Any other success
+            /// </summary>
+            /// <param name="statusCode">A status code from 200 to 299</param>
+            public static GetRangesActionResult Successful(int statusCode, string result) =>
+                new GetRangesActionResult(statusCode / 100 == 2 ? statusCode : throw new global::System.ArgumentOutOfRangeException(nameof(statusCode)), "application/json", typeof(string), result);
+            
+            /// <summary>
+            /// Any client error
+            /// </summary>
+            /// <param name="statusCode">A status code from 400 to 499</param>
+            public static GetRangesActionResult ClientError(int statusCode, string result) =>
+                new GetRangesActionResult(statusCode / 100 == 4 ? statusCode : throw new global::System.ArgumentOutOfRangeException(nameof(statusCode)), "application/json", typeof(string), result);
+            
 
             /// <summary>Allows for action results not specified in the API</summary>
             public static GetRangesActionResult Unsafe(global::Microsoft.AspNetCore.Mvc.IActionResult actionResult, params global::System.Collections.Generic.KeyValuePair<string, string>[] headers) =>

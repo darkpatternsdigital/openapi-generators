@@ -479,6 +479,10 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 			StatusCodeResponses: ReadDictionary(key,
 				filter: statusCode => statusCode.Length == 3 && int.TryParse(statusCode, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
 				toKeyValuePair: (statusCode, key) => (Key: int.Parse(statusCode, NumberStyles.Integer, CultureInfo.InvariantCulture), Value: ConstructResponse(key))
+			),
+			StatusCodeRangeResponses: ReadDictionary(key,
+				filter: statusCode => statusCode.Length == 3 && statusCode[0] is >= '1' and <= '5' && statusCode.EndsWith("XX", StringComparison.Ordinal),
+				toKeyValuePair: (statusCode, key) => (Key: statusCode[0] - '0', Value: ConstructResponse(key))
 			)
 		);
 	}

@@ -610,7 +610,7 @@ public class OpenApi3_0SpecificationShould
 		Assert.Equal("OK", responses?.StatusCodeResponses[200].Description);
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Response ranges): `2XX`/`4XX` response keys are dropped")]
+	[Fact]
 	public void Read_response_status_code_ranges()
 	{
 		var document = ParseValid(ResponsesYaml);

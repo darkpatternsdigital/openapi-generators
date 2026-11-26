@@ -75,7 +75,9 @@ public static class MissingRequiredFieldDefaults
 		AllowEmptyValue: false,
 		Style: "form",
 		Explode: false,
-		Schema: null
+		AllowReserved: false,
+		Schema: null,
+		Content: null
 	);
 
 	public static OpenApiParameter ConstructPlaceholderParameter(Uri id) => new PlaceholderParameter(id);
@@ -90,17 +92,31 @@ public static class MissingRequiredFieldDefaults
 		AllowEmptyValue: false,
 		Style: "form",
 		Explode: false,
-		Schema: null
+		AllowReserved: false,
+		Schema: null,
+		Content: null
 	);
 
 	public static OpenApiParameter ConstructPlaceholderHeaderParameter(Uri id) => new PlaceholderHeaderParameter(id);
 
 	private record PlaceholderMediaTypeObject(Uri Id) : OpenApiMediaTypeObject(
 		Id,
-		Schema: null
+		Schema: null,
+		Encoding: null
 	);
 
 	public static OpenApiMediaTypeObject ConstructPlaceholderMediaTypeObject(Uri id) => new PlaceholderMediaTypeObject(id);
+
+	private record PlaceholderEncoding(Uri Id) : OpenApiEncoding(
+		Id,
+		ContentType: null,
+		Headers: Array.Empty<OpenApiParameter>(),
+		Style: "form",
+		Explode: true,
+		AllowReserved: false
+	);
+
+	public static OpenApiEncoding ConstructPlaceholderEncoding(Uri id) => new PlaceholderEncoding(id);
 
 	private record PlaceholderResponse(Uri Id) : OpenApiResponse(
 		Id,

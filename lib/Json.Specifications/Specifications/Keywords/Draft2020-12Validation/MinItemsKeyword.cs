@@ -27,7 +27,12 @@ public class MinItemsKeyword(string keyword, int value) : IJsonSchemaAnnotation
 
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchemaInfo context, EvaluationContext evaluationContext)
 	{
-		// TODO
-		throw new System.NotImplementedException($"Not implemented: limit min items to {value}");
+		if (nodeMetadata.Node is JsonArray array && array.Count < value)
+			yield return new MinItemsKeywordNotMet(value, evaluationContext.DocumentRegistry.ResolveLocation(nodeMetadata));
 	}
+}
+
+public record MinItemsKeywordNotMet(int MinItems, Location Location) : DiagnosticBase(Location)
+{
+	public override IReadOnlyList<string> GetTextArguments() => [MinItems.ToString(System.Globalization.CultureInfo.InvariantCulture)];
 }

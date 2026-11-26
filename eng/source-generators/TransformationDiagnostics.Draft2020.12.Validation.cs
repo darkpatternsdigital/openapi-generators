@@ -37,4 +37,44 @@ public partial class TransformationDiagnostics
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
+	[TransformationDiagnostic("DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation.EnumKeywordMismatch")]
+	public static readonly DiagnosticDescriptor JsonSchemaEnumKeywordMismatchDiagnostic =
+		new DiagnosticDescriptor(id: "DPD_JSON_2020_12_VAL_005",
+								title: "Value is not one of the allowed values",
+								messageFormat: DarkPatterns_Json_Specifications_Keywords_Draft2020_12Validation_EnumKeywordMismatch,
+								category: "DarkPatterns.OpenApiCodegen",
+								DiagnosticSeverity.Error,
+								isEnabledByDefault: true);
+	[TransformationDiagnostic("DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation.MinimumKeywordNotMet")]
+	public static readonly DiagnosticDescriptor JsonSchemaMinimumKeywordNotMetDiagnostic =
+		new DiagnosticDescriptor(id: "DPD_JSON_2020_12_VAL_006",
+								title: "Value is below the minimum",
+								messageFormat: DarkPatterns_Json_Specifications_Keywords_Draft2020_12Validation_MinimumKeywordNotMet,
+								category: "DarkPatterns.OpenApiCodegen",
+								DiagnosticSeverity.Error,
+								isEnabledByDefault: true);
+	[TransformationDiagnostic("DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation.MinItemsKeywordNotMet")]
+	public static readonly DiagnosticDescriptor JsonSchemaMinItemsKeywordNotMetDiagnostic =
+		new DiagnosticDescriptor(id: "DPD_JSON_2020_12_VAL_007",
+								title: "Array has too few items",
+								messageFormat: DarkPatterns_Json_Specifications_Keywords_Draft2020_12Validation_MinItemsKeywordNotMet,
+								category: "DarkPatterns.OpenApiCodegen",
+								DiagnosticSeverity.Error,
+								isEnabledByDefault: true);
+	[TransformationDiagnostic("DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation.MinPropertiesKeywordNotMet")]
+	public static readonly DiagnosticDescriptor JsonSchemaMinPropertiesKeywordNotMetDiagnostic =
+		new DiagnosticDescriptor(id: "DPD_JSON_2020_12_VAL_008",
+								title: "Object has too few properties",
+								messageFormat: DarkPatterns_Json_Specifications_Keywords_Draft2020_12Validation_MinPropertiesKeywordNotMet,
+								category: "DarkPatterns.OpenApiCodegen",
+								DiagnosticSeverity.Error,
+								isEnabledByDefault: true);
+	[TransformationDiagnostic("DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation.MaxPropertiesKeywordExceeded")]
+	public static readonly DiagnosticDescriptor JsonSchemaMaxPropertiesKeywordExceededDiagnostic =
+		new DiagnosticDescriptor(id: "DPD_JSON_2020_12_VAL_009",
+								title: "Object has too many properties",
+								messageFormat: DarkPatterns_Json_Specifications_Keywords_Draft2020_12Validation_MaxPropertiesKeywordExceeded,
+								category: "DarkPatterns.OpenApiCodegen",
+								DiagnosticSeverity.Error,
+								isEnabledByDefault: true);
 }

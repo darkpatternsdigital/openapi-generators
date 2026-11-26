@@ -22,7 +22,10 @@ public record OpenApiParameter(
 	// TODO - there's a bunch of ways to serialize parameters, this is only the simplest way
 	string Style,
 	bool Explode,
-	JsonSchema? Schema
+	bool AllowReserved,
+	JsonSchema? Schema,
+	// Used instead of Schema for more complex serialization
+	IReadOnlyDictionary<string, OpenApiMediaTypeObject>? Content
 ) : IReferenceableDocumentNode
 {
 	public NodeMetadata Metadata => new NodeMetadata(Id);
@@ -31,6 +34,9 @@ public record OpenApiParameter(
 	{
 		if (Schema != null)
 			yield return Schema;
+		if (Content != null)
+			foreach (var mediaType in Content.Values)
+				yield return mediaType;
 	}
 }
 

@@ -1,6 +1,8 @@
 
+using Json.More;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Nodes;
 using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.Json.Documents;
@@ -28,7 +30,9 @@ public class EnumKeyword(string keyword, JsonArray values) : IJsonSchemaAnnotati
 
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchemaInfo context, EvaluationContext evaluationContext)
 	{
-		// TODO
-		throw new System.NotImplementedException();
+		if (!values.Any(v => v.IsEquivalentTo(nodeMetadata.Node)))
+			yield return new EnumKeywordMismatch(evaluationContext.DocumentRegistry.ResolveLocation(nodeMetadata));
 	}
 }
+
+public record EnumKeywordMismatch(Location Location) : DiagnosticBase(Location);

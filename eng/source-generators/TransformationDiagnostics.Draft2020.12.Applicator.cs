@@ -21,5 +21,13 @@ public partial class TransformationDiagnostics
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
+	[TransformationDiagnostic("DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator.UnknownPropertyDiagnostic")]
+	public static readonly DiagnosticDescriptor UnknownPropertyDiagnostic =
+		new DiagnosticDescriptor(id: "DPD_JSON_2020_12_APP_003",
+								title: "Unknown property",
+								messageFormat: DarkPatterns_Json_Specifications_Keywords_Draft2020_12Applicator_UnknownPropertyDiagnostic,
+								category: "DarkPatterns.OpenApiCodegen",
+								DiagnosticSeverity.Error,
+								isEnabledByDefault: true);
 
 }

@@ -27,7 +27,12 @@ public class MaxPropertiesKeyword(string keyword, int value) : IJsonSchemaAnnota
 
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchemaInfo context, EvaluationContext evaluationContext)
 	{
-		// TODO
-		throw new System.NotImplementedException($"Not implemented: limit max properties to {value}");
+		if (nodeMetadata.Node is JsonObject obj && obj.Count > value)
+			yield return new MaxPropertiesKeywordExceeded(value, evaluationContext.DocumentRegistry.ResolveLocation(nodeMetadata));
 	}
+}
+
+public record MaxPropertiesKeywordExceeded(int MaxProperties, Location Location) : DiagnosticBase(Location)
+{
+	public override IReadOnlyList<string> GetTextArguments() => [MaxProperties.ToString(System.Globalization.CultureInfo.InvariantCulture)];
 }

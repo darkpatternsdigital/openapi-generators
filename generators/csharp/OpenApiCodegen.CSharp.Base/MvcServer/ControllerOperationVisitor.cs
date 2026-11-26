@@ -19,6 +19,8 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 	private readonly CSharpServerSchemaOptions options;
 	private readonly CSharpInlineSchemas inlineSchemas;
 	private readonly string controllerClassName;
+	private readonly IReadOnlyList<OpenApiSecurityRequirement> documentSecurityRequirements;
+	private readonly IReadOnlyDictionary<string, OpenApiSecurityScheme> securitySchemes;
 	private readonly Func<Uri, string> toSourceReference;
 
 	public record Argument(
@@ -46,12 +48,14 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 		public OpenApiOperation Operation { get; }
 	}
 
-	public ControllerOperationVisitor(ISchemaRegistry schemaRegistry, CSharpServerSchemaOptions options, string controllerClassName, Func<Uri, string> toSourceReference)
+	public ControllerOperationVisitor(ISchemaRegistry schemaRegistry, CSharpServerSchemaOptions options, string controllerClassName, IReadOnlyList<OpenApiSecurityRequirement> documentSecurityRequirements, IReadOnlyDictionary<string, OpenApiSecurityScheme> securitySchemes, Func<Uri, string> toSourceReference)
 	{
+		this.securitySchemes = securitySchemes;
 		this.schemaRegistry = schemaRegistry;
 		this.options = options;
 		this.inlineSchemas = new CSharpInlineSchemas(options, schemaRegistry.DocumentRegistry);
 		this.controllerClassName = controllerClassName;
+		this.documentSecurityRequirements = documentSecurityRequirements;
 		this.toSourceReference = toSourceReference;
 	}
 
@@ -77,6 +81,21 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 		var builder = new OperationBuilder(operation);
 
 		base.Visit(operation, httpMethod, argument with { Builder = builder });
+		// Without its own `security`, the operation uses the document's requirements
+		if (operation.SecurityRequirements == null)
+			foreach (var securityRequirement in documentSecurityRequirements)
+				Visit(securityRequirement, argument with { Builder = builder });
+
+		// Requirements are alternatives, but separate [Authorize] attributes must all pass, so only a single
+		// requirement with a single scheme and no scopes uses [Authorize]; others use the generated filter.
+		var securityRequirements = builder.SecurityRequirements;
+		var allowAnonymous = securityRequirements.Any(r => r.Schemes.Length == 0);
+		var useAuthorizeAttribute = securityRequirements is [{ Schemes: [{ ScopeNames: [] }] }];
+		string[] authorizePolicies =
+			// With an empty requirement, the policies still authenticate the user when they can
+			allowAnonymous ? [.. securityRequirements.SelectMany(r => r.Schemes).Select(s => s.SchemeName).Distinct()]
+			: useAuthorizeAttribute ? [securityRequirements[0].Schemes[0].SchemeName]
+			: [];
 
 		var operationId = operation.OperationId ?? $"{httpMethod} {path}";
 		var sharedParameters = builder.SharedParameters.ToArray();
@@ -94,6 +113,9 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 				),
 				SecurityRequirements: [.. builder.SecurityRequirements],
 				RawSecurityRequirements: [.. builder.RawSecurityRequirements],
+				AllowAnonymous: allowAnonymous,
+				AuthorizePolicies: authorizePolicies,
+				UseSecurityRequirementsAttribute: securityRequirements.Count > 0 && !allowAnonymous && !useAuthorizeAttribute,
 				SourceReference: toSourceReference(operation.Id)
 			));
 	}
@@ -261,7 +283,9 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 	{
 		argument.Builder?.SecurityRequirements.Add(new OperationSecurityRequirement(
 							 (from scheme in securityRequirement.SchemeRequirements
-							  select new Templates.OperationSecuritySchemeRequirement(scheme.SchemeName, scheme.ScopeNames.ToArray())).ToArray())
+							  // OpenAPI 3.0 defines scopes only for OAuth2 and OpenID Connect; on other schemes they're left to the securityAttribute
+							  let enforceScopes = securitySchemes.TryGetValue(scheme.SchemeName, out var definition) && definition.Type is SecuritySchemeType.OAuth2 or SecuritySchemeType.OpenIdConnect
+							  select new Templates.OperationSecuritySchemeRequirement(scheme.SchemeName, enforceScopes ? scheme.ScopeNames.ToArray() : [])).ToArray())
 						 );
 		argument.Builder?.RawSecurityRequirements.Add(
 			securityRequirement.SchemeRequirements.ToDictionary(req => req.SchemeName, req => req.ScopeNames.ToArray())

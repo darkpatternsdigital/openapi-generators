@@ -44,7 +44,7 @@ servers,
 | `fallbackType` | `object` | The type for a schema whose `type` isn't listed under `types`. |
 | `types` | see below | The C# type for each JSON Schema `type` and `format`. |
 | `overrideNames` | none | Maps a schema's URI to a namespace-qualified C# type name. Experimental, and may change or be removed. |
-| `securityAttribute` | none | An attribute added to each controller action whose operation has `security`. Its one argument is a string with the operation's `security` as JSON. Servers only. |
+| `securityAttribute` | none | An attribute added to each controller action whose operation has `security`, or inherits the document's. Its one argument is a string with those security requirements as JSON. Servers only. |
 | `extensions.controllerName` | `dotnet-mvc-server-controller` | The extension name (without `x-`) that sets an operation's controller. |
 | `extensions.typeNameOverride` | `dotnet-type-name` | The extension name (without `x-`) that sets a schema's type name. |
 | `extensions.namespaceOverride` | `dotnet-type-namespace` | The extension name (without `x-`) that sets a schema's namespace. |

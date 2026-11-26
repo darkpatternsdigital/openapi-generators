@@ -9,10 +9,11 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static partial class ServerSecurityExtensions
     {
-        public static IMvcBuilder AddOpenApiServerSecurity<TDocumentLevelController, TPublicController, TQueryKeyController, TCookieKeyController, TBasicController, TBearerController, TOpenIdConnectController, TOauthScopesController, TAllOfController, TAnyOfController>(this IServiceCollection services)
+        public static IMvcBuilder AddOpenApiServerSecurity<TDocumentLevelController, TPublicController, TQueryKeyController, TApiKeyScopesController, TCookieKeyController, TBasicController, TBearerController, TOpenIdConnectController, TOauthScopesController, TAllOfController, TAnyOfController>(this IServiceCollection services)
             where TDocumentLevelController : global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ServerSecurity.DocumentLevelControllerBase
             where TPublicController : global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ServerSecurity.PublicControllerBase
             where TQueryKeyController : global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ServerSecurity.QueryKeyControllerBase
+            where TApiKeyScopesController : global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ServerSecurity.ApiKeyScopesControllerBase
             where TCookieKeyController : global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ServerSecurity.CookieKeyControllerBase
             where TBasicController : global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ServerSecurity.BasicControllerBase
             where TBearerController : global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ServerSecurity.BearerControllerBase

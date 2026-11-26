@@ -27,6 +27,15 @@ public class QueryKeyController : QueryKeyControllerBase
 	}
 }
 
+public class ApiKeyScopesController : ApiKeyScopesControllerBase
+{
+	protected override Task<GetApiKeyScopesActionResult> GetApiKeyScopes()
+	{
+		this.DelegateRequest();
+		return this.DelegateResponse<GetApiKeyScopesActionResult>();
+	}
+}
+
 public class CookieKeyController : CookieKeyControllerBase
 {
 	protected override Task<GetCookieKeyActionResult> GetCookieKey()

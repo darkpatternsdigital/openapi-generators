@@ -159,9 +159,17 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 			Paths: ConstructPaths(key.Navigate("paths")),
 			SecurityRequirements: ReadArray(key.Navigate("security"), ConstructSecurityRequirement),
 			Servers: ReadArray(key.Navigate("servers"), ConstructServer),
-			Webhooks: ConstructWebhooksFromCallbacks(key)
+			Webhooks: ConstructWebhooksFromCallbacks(key),
+			SecuritySchemes: obj["components"] is JsonObject
+				? ConstructSecuritySchemes(key.Navigate("components").Navigate("securitySchemes"))
+				: new Dictionary<string, OpenApiSecurityScheme>()
 		);
 	}
+
+	private Dictionary<string, OpenApiSecurityScheme> ConstructSecuritySchemes(ResolvableNode key) =>
+		(from kvp in ReadDictionary(key, _ => true, (name, key) => (name, ConstructSecurityScheme(key)))
+		 where kvp.Value != null
+		 select kvp).ToDictionary(kvp => kvp.Key, kvp => kvp.Value!);
 
 	private Dictionary<string, OpenApiPath> ConstructWebhooksFromCallbacks(ResolvableNode key)
 	{
@@ -296,7 +304,8 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 			Description: obj["description"]?.GetValue<string>(),
 			OperationId: obj["operationId"]?.GetValue<string>(),
 			Parameters: OpenApiPath.MergeParameters(pathParameters, ReadArray(key.Navigate("parameters"), ConstructParameter)),
-			SecurityRequirements: ReadArray(key.Navigate("security"), ConstructSecurityRequirement),
+			// `security: []` removes the document's requirements; omitting `security` inherits them
+			SecurityRequirements: obj["security"] is null ? null : ReadArray(key.Navigate("security"), ConstructSecurityRequirement),
 			RequestBody: ConstructRequestBody(key.Navigate("requestBody")),
 			Responses: ConstructResponses(key.Navigate("responses")),
 			Deprecated: obj["deprecated"]?.GetValue<bool>() ?? false,
@@ -368,6 +377,64 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 
 		return new OpenApiSecurityRequirement(key.Id, schemeRequirements);
 	}
+
+	private OpenApiSecurityScheme? ConstructSecurityScheme(ResolvableNode key) =>
+		CatchDiagnostic(AllowReference(InternalConstructSecurityScheme), (_) => null)(key);
+	// https://spec.openapis.org/oas/v3.0.3#security-scheme-object
+	private OpenApiSecurityScheme? InternalConstructSecurityScheme(ResolvableNode key)
+	{
+		if (key.Node is not JsonObject obj) throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiSecurityScheme)));
+		return new OpenApiSecurityScheme(key.Id,
+			Type: obj["type"]?.GetValue<string>() switch
+			{
+				"apiKey" => SecuritySchemeType.ApiKey,
+				"http" => SecuritySchemeType.Http,
+				"oauth2" => SecuritySchemeType.OAuth2,
+				"openIdConnect" => SecuritySchemeType.OpenIdConnect,
+				_ => throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiSecurityScheme))),
+			},
+			Description: obj["description"]?.GetValue<string>(),
+			Name: obj["name"]?.GetValue<string>(),
+			In: obj["in"]?.GetValue<string>() switch
+			{
+				"query" => ApiKeyLocation.Query,
+				"header" => ApiKeyLocation.Header,
+				"cookie" => ApiKeyLocation.Cookie,
+				_ => null,
+			},
+			Scheme: obj["scheme"]?.GetValue<string>(),
+			BearerFormat: obj["bearerFormat"]?.GetValue<string>(),
+			Flows: obj["flows"] is JsonObject ? ConstructOAuthFlows(key.Navigate("flows")) : null,
+			OpenIdConnectUrl: ReadUri(obj["openIdConnectUrl"])
+		);
+	}
+
+	private OpenApiOAuthFlows ConstructOAuthFlows(ResolvableNode key) =>
+		new OpenApiOAuthFlows(key.Id,
+			Implicit: AllowNull(ConstructOAuthFlow)(key.Navigate("implicit")),
+			Password: AllowNull(ConstructOAuthFlow)(key.Navigate("password")),
+			ClientCredentials: AllowNull(ConstructOAuthFlow)(key.Navigate("clientCredentials")),
+			AuthorizationCode: AllowNull(ConstructOAuthFlow)(key.Navigate("authorizationCode"))
+		);
+
+	private OpenApiOAuthFlow? ConstructOAuthFlow(ResolvableNode key) =>
+		CatchDiagnostic(InternalConstructOAuthFlow, (_) => null)(key);
+	// https://spec.openapis.org/oas/v3.0.3#oauth-flow-object
+	private OpenApiOAuthFlow? InternalConstructOAuthFlow(ResolvableNode key)
+	{
+		if (key.Node is not JsonObject obj) throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiOAuthFlow)));
+		return new OpenApiOAuthFlow(key.Id,
+			AuthorizationUrl: ReadUri(obj["authorizationUrl"]),
+			TokenUrl: ReadUri(obj["tokenUrl"]),
+			RefreshUrl: ReadUri(obj["refreshUrl"]),
+			Scopes: ReadDictionary(key.Navigate("scopes"), _ => true, (scope, key) => (scope, key.Node?.GetValue<string>() ?? ""))
+		);
+	}
+
+	private static Uri? ReadUri(JsonNode? node) =>
+		node?.GetValue<string>() is string url && Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out var result)
+			? result
+			: null;
 
 	private JsonSchema? ConstructSchema(ResolvableNode key) =>
 		CatchDiagnostic(AllowReference(AllowNull(InternalConstructSchema)), (_) => null)(key);

@@ -372,7 +372,7 @@ public class OpenApi3_0SpecificationShould
 	{
 		var operation = Operation(ParseValid(PathsYaml), "/operation-details", "post");
 
-		Assert.Collection(operation.SecurityRequirements,
+		Assert.Collection(operation.SecurityRequirements!,
 			requirement => Assert.Equal(["basic", "apiKey"], requirement.SchemeRequirements.Select(s => s.SchemeName)),
 			requirement =>
 			{
@@ -382,7 +382,7 @@ public class OpenApi3_0SpecificationShould
 			});
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Security): operation `security: []` (explicitly none) is indistinguishable from omitted `security` (inherit)")]
+	[Fact]
 	public void Distinguish_explicitly_empty_operation_security_from_inherited()
 	{
 		var document = ParseValid(PathsYaml);
@@ -406,7 +406,7 @@ public class OpenApi3_0SpecificationShould
 	[InlineData("bearer")]
 	[InlineData("oauth")]
 	[InlineData("oidc")]
-	[Theory(Skip = "OpenAPI 3.0 gap (Security): `components.securitySchemes` are not in the document model")]
+	[Theory]
 	public void Model_security_schemes(string schemeName)
 	{
 		var document = ParseValid(DocumentYaml);
@@ -414,7 +414,7 @@ public class OpenApi3_0SpecificationShould
 		AssertModelsNode(document, DocumentYaml, $"/components/securitySchemes/{schemeName}");
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Security): `components.securitySchemes` are not in the document model")]
+	[Fact]
 	public void Model_security_scheme_details()
 	{
 		var document = ParseValid(DocumentYaml);
@@ -433,7 +433,7 @@ public class OpenApi3_0SpecificationShould
 		Assert.Equal("https://example.com/oauth/refresh", ModelProperty(password, "RefreshUrl")?.ToString());
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Parser): a security scheme with an invalid `type` reports no diagnostic")]
+	[Fact]
 	public void Report_invalid_security_scheme_type()
 	{
 		var result = Parse("oas-parser-invalid-security-scheme-type.yml");

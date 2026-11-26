@@ -175,7 +175,8 @@ securityAttribute: My.SecurityAttribute
   type name to use for the generated class. (Note: this feature is still
   experimental and may change or be removed in a later release.)
 - `securityAttribute`, if provided, specifies an additional attribute to add to every
-  MVC Controller action that has a `security` property in the corresponding operation.
+  MVC Controller action that has a `security` property in the corresponding operation,
+  or that inherits the document-level `security`.
   One parameter is passed: a string containing the JSON representing the security
   property.
 

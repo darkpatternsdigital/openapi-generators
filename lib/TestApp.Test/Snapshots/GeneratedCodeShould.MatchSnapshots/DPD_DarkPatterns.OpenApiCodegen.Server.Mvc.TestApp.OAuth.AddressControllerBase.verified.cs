@@ -19,8 +19,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OAuth
         [global::Microsoft.AspNetCore.Mvc.Route("/oauth/address")]
         // Sample Response
         [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(200, Type = typeof(string))] // application/json
-        [global::Microsoft.AspNetCore.Authorization.Authorize(Policy = "ApiKeyAuth")]
-        [global::Microsoft.AspNetCore.Authorization.Authorize(Policy = "OAuth2")]
+        [global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OAuth.OAuthScopesSampleSecuritySchemes.SecurityRequirementsAttribute("[{\u0022ApiKeyAuth\u0022:[]},{\u0022OAuth2\u0022:[\u0022read:user\u0022,\u0022user:email\u0022]}]")]
         [DarkPatterns.Security.SecurityActionFilter("[{\u0022ApiKeyAuth\u0022:[]},{\u0022OAuth2\u0022:[\u0022read:user\u0022,\u0022user:email\u0022]}]")]
         public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.IActionResult> GetAddressTypeSafeEntry(
             

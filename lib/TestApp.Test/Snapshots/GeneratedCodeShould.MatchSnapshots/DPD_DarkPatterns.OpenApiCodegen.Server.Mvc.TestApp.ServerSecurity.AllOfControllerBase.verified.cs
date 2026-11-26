@@ -19,7 +19,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ServerSecurity
         [global::Microsoft.AspNetCore.Mvc.Route("/security/all-of")]
         // Allowed with both API keys
         [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(204)] // 
-        [global::Microsoft.AspNetCore.Authorization.Authorize(Policy = "HeaderKey,QueryKey")]
+        [global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ServerSecurity.ServerSecuritySecuritySchemes.SecurityRequirementsAttribute("[{\u0022HeaderKey\u0022:[],\u0022QueryKey\u0022:[]}]")]
         [DarkPatterns.Security.SecurityActionFilter("[{\u0022HeaderKey\u0022:[],\u0022QueryKey\u0022:[]}]")]
         public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.IActionResult> GetAllOfTypeSafeEntry(
             

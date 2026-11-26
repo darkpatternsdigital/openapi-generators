@@ -6,6 +6,38 @@ every section between your version and the new one.
 
 Releases before C# 0.25.4 and TypeScript 0.13.0 aren't covered.
 
+## Unreleased
+
+**MVC servers apply document-level `security`.** An operation without its own
+`security` now requires the document's security requirements. Before, it was
+anonymous. To keep an operation anonymous, give it `security: []`.
+
+**MVC servers enforce security requirements as the OpenAPI spec describes.**
+The policy for each security scheme is still named after the scheme, so
+existing `AddPolicy` calls keep working. An operation that needs one scheme,
+without OAuth2 or OpenID Connect scopes, still gets an `[Authorize]` attribute
+for that policy. Other operations get the generated
+`SecurityRequirementsAttribute` filter instead. It's in the `…SecuritySchemes`
+class named after the document's `info.title`, such as
+`PetStoreSecuritySchemes`.
+
+- **Several requirements are alternatives.** A request that satisfies any one
+  of them is allowed. Before, each became its own `[Authorize]`, and the
+  request had to satisfy all of them.
+- **Several schemes in one requirement must all be satisfied.** Before, they
+  became one policy named `"A,B"`, which threw because no such policy exists.
+- **OAuth2 and OpenID Connect scopes are required.** The user needs a claim
+  listing each scope, separated by spaces. The claim types are `scope`, `scp`
+  and `http://schemas.microsoft.com/identity/claims/scope`; add others to
+  that class's `ScopeClaimTypes`. Before, scopes were ignored, so
+  tokens without them may now get 403. Scopes listed for other kinds of scheme,
+  such as `apiKey` or `http`, still aren't checked; they're passed to the
+  `securityAttribute`, as before.
+
+**The `securityAttribute` option includes document-level `security`.** Actions
+for operations that inherit the document's requirements now get the attribute
+too, with those requirements as its argument.
+
 ## C# 0.32.0, Json.Extensions 0.21.0, TypeScript 0.16.0, fetch 0.12.0, RxJS 0.11.0, MSW 0.11.0
 
 **The C# generator needs Roslyn 4.8 or later**, which ships with the .NET 8 SDK

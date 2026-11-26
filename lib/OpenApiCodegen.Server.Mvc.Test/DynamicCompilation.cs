@@ -36,6 +36,12 @@ internal class DynamicCompilation
 		typeof(Microsoft.AspNetCore.Http.HttpContext).Assembly.Location,
 		typeof(Microsoft.AspNetCore.Http.IHeaderDictionary).Assembly.Location,
 		typeof(Microsoft.AspNetCore.Authorization.AuthorizeAttribute).Assembly.Location,
+		typeof(Microsoft.AspNetCore.Authorization.IAllowAnonymous).Assembly.Location,
+		typeof(Microsoft.AspNetCore.Authorization.Policy.IPolicyEvaluator).Assembly.Location,
+		typeof(Microsoft.AspNetCore.Authentication.AuthenticationProperties).Assembly.Location,
+		typeof(System.Security.Claims.ClaimsPrincipal).Assembly.Location,
+		Path.Combine(Path.GetDirectoryName(typeof(object).Assembly.Location)!, "System.ComponentModel.dll"),
+		Path.Combine(Path.GetDirectoryName(typeof(object).Assembly.Location)!, "System.Memory.dll"),
 
 		typeof(DarkPatterns.OpenApiCodegen.Json.Extensions.JsonStringEnumPropertyNameConverter).Assembly.Location,
 	};

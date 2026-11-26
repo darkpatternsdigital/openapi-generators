@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using DarkPatterns.OpenApiCodegen.Handlebars.Templates;
 
 namespace DarkPatterns.OpenApiCodegen.CSharp.MvcServer.Templates;
@@ -6,6 +7,7 @@ namespace DarkPatterns.OpenApiCodegen.CSharp.MvcServer.Templates;
 public record ControllerTemplate(
 	PartialHeader Header,
 	string? SecurityAttribute,
+	string SecurityRequirementsAttribute,
 
 	string PackageName,
 	string ClassName,
@@ -27,8 +29,16 @@ public record ControllerOperation(
 	OperationResponses Responses,
 	OperationSecurityRequirement[] SecurityRequirements,
 	Dictionary<string, string[]>[] RawSecurityRequirements,
+	bool AllowAnonymous,
+	string[] AuthorizePolicies,
+	bool UseSecurityRequirementsAttribute,
 	string SourceReference
-);
+)
+{
+	/// <summary>The requirements the generated filter enforces: scopes only for OAuth2 and OpenID Connect schemes</summary>
+	public Dictionary<string, string[]>[] EnforcedSecurityRequirements =>
+		SecurityRequirements.Select(r => r.Schemes.ToDictionary(s => s.SchemeName, s => s.ScopeNames)).ToArray();
+}
 
 public record OperationParameter(
 	string? RawName,

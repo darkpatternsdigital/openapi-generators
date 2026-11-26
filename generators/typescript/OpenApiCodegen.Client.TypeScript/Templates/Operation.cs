@@ -1,6 +1,7 @@
 ﻿using DarkPatterns.OpenApi.TypeScript.Templates;
 using DarkPatterns.OpenApiCodegen.Handlebars.Templates;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DarkPatterns.OpenApiCodegen.Client.TypeScript.Templates;
 
@@ -28,6 +29,7 @@ public record Operation(
 )
 {
 	public bool HasQueryInPath => Path.Contains('?');
+	public bool HasCookieParams => SharedParams.Any(p => p.IsCookieParam);
 };
 
 public record OperationParameter(

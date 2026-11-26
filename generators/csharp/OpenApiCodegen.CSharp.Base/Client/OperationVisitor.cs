@@ -252,6 +252,7 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 			 IsForm: isForm,
 			 IsFile: parameters.Any(t => t.IsFile),
 			 HasQueryParam: sharedParams.Concat(parameters).Any(p => p.IsQueryParam),
+			 HasCookieParam: sharedParams.Concat(parameters).Any(p => p.IsCookieParam),
 			 RequestBodyType: requestBodyMimeType,
 			 AllParams: sharedParams.Concat(parameters)
 		 );

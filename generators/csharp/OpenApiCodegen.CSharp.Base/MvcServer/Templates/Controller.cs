@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using DarkPatterns.OpenApiCodegen.Handlebars.Templates;
 
 namespace DarkPatterns.OpenApiCodegen.CSharp.MvcServer.Templates;
@@ -16,7 +17,10 @@ public record ControllerTemplate(
 	string? Description,
 
 	ControllerOperation[] Operations
-);
+)
+{
+	public bool HasCookieParams => Operations.Any(o => o.RequestBodies.Any(b => b.AllParams.Any(p => p.IsCookieParam)));
+}
 
 public record ControllerOperation(
 	string HttpMethod,
@@ -29,7 +33,11 @@ public record ControllerOperation(
 	OperationSecurityRequirement[] SecurityRequirements,
 	Dictionary<string, string[]>[] RawSecurityRequirements,
 	string SourceReference
-);
+)
+{
+	// ASP.NET Core MVC has no HttpTraceAttribute
+	public string HttpMethodAttribute => HttpMethod == "Trace" ? "AcceptVerbs(\"TRACE\")" : $"Http{HttpMethod}";
+}
 
 public record OperationParameter(
 	string? RawName,

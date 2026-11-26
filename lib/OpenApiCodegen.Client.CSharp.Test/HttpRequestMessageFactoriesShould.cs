@@ -349,7 +349,7 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 	[Theory]
 	[InlineData("oas-client-methods.yaml", @"CheckItem(id: ""i-1"")", "HEAD", "items/i-1")]
 	[InlineData("oas-client-methods.yaml", @"ItemOptions(id: ""i-1"")", "OPTIONS", "items/i-1")]
-	[InlineData("oas-client-trace.yml", "TraceEcho()", "TRACE", "echo")]
+	[InlineData("oas-client-trace.yaml", "TraceEcho()", "TRACE", "echo")]
 	public async Task SendEachHttpMethod(string documentName, string operation, string method, string path)
 	{
 		var actualMessage = await GetRequestMessage(documentName, operation);
@@ -376,12 +376,20 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 		Assert.Equal("files/report.pdf", actualMessage.RequestUri?.OriginalString);
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Cookie parameters): cookie parameters are accepted but no Cookie header is sent")]
+	[Fact]
 	public async Task SendCookieParameters()
 	{
-		var actualMessage = await GetRequestMessage("oas-client-cookies.yaml", @"GetSession(session: ""abc"", theme: Optional.Create(""dark""))");
+		var actualMessage = await GetRequestMessage("oas-client-cookies.yaml", @"GetSession(session: ""abc"", theme: Optional.Create(""dark""), visits: null)");
 
 		Assert.Equal(["session=abc; theme=dark"], actualMessage.Headers.GetValues("Cookie"));
+	}
+
+	[Fact]
+	public async Task EncodeCookieValues()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-cookies.yaml", @"GetSession(session: ""a;b=c"", theme: null, visits: Optional.Create(3))");
+
+		Assert.Equal(["session=a%3Bb%3Dc; visits=3"], actualMessage.Headers.GetValues("Cookie"));
 	}
 
 	[Fact(Skip = "OpenAPI 3.0 gap (Parameter style): path arrays are formatted with ToString instead of comma-separated (simple style)")]

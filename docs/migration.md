@@ -72,6 +72,16 @@ parameter without `required: true`, both `example` and `examples` on the same
 object, unknown properties (other than `x-` extensions), and values of the
 wrong type, such as `email: 5`. Fix the document to match the specification.
 
+**C# and TypeScript clients send cookie parameters.** Parameters with
+`in: cookie` are sent in a `Cookie` header, as `name=value` pairs joined with
+`; ` and with values URL-encoded. They were accepted but dropped before. If you
+added these cookies yourself, such as through a `CookieContainer` or a fetch
+wrapper, stop, or the server may receive them twice. Browsers don't let fetch
+set `Cookie`, so there the header is still left out.
+
+**TypeScript's `HttpMethod` includes `'TRACE'`.** Code that switches over every
+`HttpMethod` needs a `'TRACE'` case.
+
 ## C# 0.32.0, Json.Extensions 0.21.0, TypeScript 0.16.0, fetch 0.12.0, RxJS 0.11.0, MSW 0.11.0
 
 **The C# generator needs Roslyn 4.8 or later**, which ships with the .NET 8 SDK

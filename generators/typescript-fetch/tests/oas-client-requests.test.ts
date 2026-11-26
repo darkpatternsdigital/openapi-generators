@@ -92,12 +92,20 @@ describe('typescript-fetch OpenAPI 3.0 requests', () => {
 		expect(received?.url.pathname).toBe('/files/report.pdf');
 	});
 
-	it.skip('sends cookie parameters in the Cookie header — OpenAPI 3.0 gap (Cookie parameters): cookie parameters are accepted but no Cookie header is sent', async () => {
+	it('sends cookie parameters in the Cookie header', async () => {
 		capture('/session');
 
 		await cookies.getSession({ params: { session: 'abc', theme: 'dark' } });
 
 		expect(received?.headers.get('Cookie')).toBe('session=abc; theme=dark');
+	});
+
+	it('encodes cookie values', async () => {
+		capture('/session');
+
+		await cookies.getSession({ params: { session: 'a;b=c', visits: 3 } });
+
+		expect(received?.headers.get('Cookie')).toBe('session=a%3Bb%3Dc; visits=3');
 	});
 
 	it('repeats exploded query arrays', async () => {

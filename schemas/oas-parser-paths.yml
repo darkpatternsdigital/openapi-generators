@@ -1,0 +1,114 @@
+openapi: 3.0.3
+info:
+  title: Paths fixture
+  version: 1.0.0
+security:
+  - basic: []
+x-path-items:
+  Shared:
+    summary: Shared path item
+    get:
+      operationId: getShared
+      responses:
+        '200':
+          description: OK
+paths:
+  /all-methods:
+    summary: Path summary
+    description: Path description
+    servers:
+      - url: https://path.example.com
+        description: Path server
+    get:
+      operationId: getAllMethods
+      responses:
+        '200':
+          description: OK
+    put:
+      operationId: putAllMethods
+      responses:
+        '200':
+          description: OK
+    post:
+      operationId: postAllMethods
+      responses:
+        '200':
+          description: OK
+    delete:
+      operationId: deleteAllMethods
+      responses:
+        '200':
+          description: OK
+    options:
+      operationId: optionsAllMethods
+      responses:
+        '200':
+          description: OK
+    head:
+      operationId: headAllMethods
+      responses:
+        '200':
+          description: OK
+    patch:
+      operationId: patchAllMethods
+      responses:
+        '200':
+          description: OK
+    trace:
+      operationId: traceAllMethods
+      responses:
+        '200':
+          description: OK
+  /aliased:
+    $ref: '#/x-path-items/Shared'
+  /operation-details:
+    get:
+      operationId: getOperationDetails
+      tags:
+        - widgets
+        - gadgets
+      summary: Operation summary
+      description: Operation description
+      deprecated: true
+      externalDocs:
+        description: Operation docs
+        url: https://example.com/docs/operation
+      servers:
+        - url: https://operation.example.com
+      security: []
+      responses:
+        '200':
+          description: OK
+    post:
+      operationId: postOperationDetails
+      security:
+        - basic: []
+          apiKey: []
+        - oauth:
+            - read
+            - write
+      responses:
+        '200':
+          description: OK
+  /no-operation-id:
+    get:
+      responses:
+        '200':
+          description: OK
+components:
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic
+    apiKey:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    oauth:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://example.com/oauth/token
+          scopes:
+            read: Read access
+            write: Write access

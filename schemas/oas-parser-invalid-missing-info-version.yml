@@ -1,0 +1,10 @@
+openapi: 3.0.3
+info:
+  title: Missing version
+paths:
+  /ping:
+    get:
+      operationId: ping
+      responses:
+        '200':
+          description: OK

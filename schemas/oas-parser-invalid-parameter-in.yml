@@ -1,0 +1,16 @@
+openapi: 3.0.3
+info:
+  title: Unknown parameter location
+  version: 1.0.0
+paths:
+  /items:
+    get:
+      operationId: getItems
+      parameters:
+        - name: id
+          in: body
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK

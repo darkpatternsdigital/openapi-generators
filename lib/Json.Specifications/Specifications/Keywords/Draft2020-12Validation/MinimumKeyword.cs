@@ -28,7 +28,16 @@ public class MinimumKeyword(string keyword, decimal value) : IJsonSchemaAnnotati
 
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchemaInfo context, EvaluationContext evaluationContext)
 	{
-		// TODO
-		throw new System.NotImplementedException();
+		if (nodeMetadata.Node is not JsonValue val || !val.TryGetValue<decimal>(out var actual)) yield break;
+
+		// Draft 04 uses a boolean exclusiveMinimum to modify minimum
+		var isExclusive = context.TryGetAnnotation<Draft04.ExclusiveMinimumKeyword>()?.IsExclusive ?? false;
+		if (isExclusive ? actual <= value : actual < value)
+			yield return new MinimumKeywordNotMet(value, isExclusive, evaluationContext.DocumentRegistry.ResolveLocation(nodeMetadata));
 	}
+}
+
+public record MinimumKeywordNotMet(decimal Minimum, bool IsExclusive, Location Location) : DiagnosticBase(Location)
+{
+	public override IReadOnlyList<string> GetTextArguments() => [(IsExclusive ? "> " : ">= ") + Minimum.ToString(System.Globalization.CultureInfo.InvariantCulture)];
 }

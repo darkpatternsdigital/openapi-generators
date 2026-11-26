@@ -172,6 +172,10 @@ public class OpenApi3_0ParserShould
 	{
 		var registry = DocumentLoader.CreateRegistry();
 		var result = GetOpenApiDocument("bad.2.yaml", registry);
-		Assert.Empty(result.Diagnostics);
+		// `{ '#/components/schemas/Name' }` is an object with an unknown property, which the OpenAPI 3.0 schema does not allow
+		var diagnostic = Assert.Single(result.Diagnostics);
+		var unknown = Assert.IsType<DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator.UnknownPropertyDiagnostic>(diagnostic);
+		Assert.Equal("#/components/schemas/Name", unknown.PropertyName);
+		Assert.Equal(18, diagnostic.Location.Range?.Start.Line);
 	}
 }

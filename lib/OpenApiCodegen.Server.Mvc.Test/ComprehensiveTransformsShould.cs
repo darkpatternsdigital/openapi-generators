@@ -1,6 +1,7 @@
 ﻿using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.Json.Specifications.Keywords;
+using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
 using DarkPatterns.OpenApiCodegen.TestUtils;
 using System.Linq;
 using Xunit;
@@ -125,6 +126,27 @@ public class ComprehensiveTransformsShould
 				Assert.Equal(26, diag.Location.Range?.Start.Line);
 				Assert.Equal(23, diag.Location.Range?.Start.Column);
 			},
+			// The OpenAPI 3.0 schema also reports the bad `required` and the responses without `description`
+			(DiagnosticBase diag) =>
+			{
+				Assert.IsType<TypeKeywordMismatch>(diag);
+				Assert.Equal(26, diag.Location.Range?.Start.Line);
+			},
+			(DiagnosticBase diag) =>
+			{
+				Assert.Contains("description", Assert.IsType<MissingRequiredProperties>(diag).Missing);
+				Assert.Equal(34, diag.Location.Range?.Start.Line);
+			},
+			(DiagnosticBase diag) =>
+			{
+				Assert.Contains("description", Assert.IsType<MissingRequiredProperties>(diag).Missing);
+				Assert.Equal(66, diag.Location.Range?.Start.Line);
+			},
+			(DiagnosticBase diag) =>
+			{
+				Assert.Contains("description", Assert.IsType<MissingRequiredProperties>(diag).Missing);
+				Assert.Equal(72, diag.Location.Range?.Start.Line);
+			},
 			(DiagnosticBase diag) =>
 			{
 				var targetNodeDiagnostic = Assert.IsType<CouldNotFindTargetNodeDiagnostic>(diag);
@@ -142,6 +164,13 @@ public class ComprehensiveTransformsShould
 		var diagnostics = GetDocumentDiagnostics("bad.2.yaml");
 
 		Assert.Collection(diagnostics,
+			(DiagnosticBase diag) =>
+			{
+				// The OpenAPI 3.0 schema does not allow the unknown property
+				var unknown = Assert.IsType<DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator.UnknownPropertyDiagnostic>(diag);
+				Assert.Equal("#/components/schemas/Name", unknown.PropertyName);
+				Assert.Equal(18, diag.Location.Range?.Start.Line);
+			},
 			(DiagnosticBase diag) =>
 			{
 				Assert.IsType<UnableToCreateInlineSchemaDiagnostic>(diag);

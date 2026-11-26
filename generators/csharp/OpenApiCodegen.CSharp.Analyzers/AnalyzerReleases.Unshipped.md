@@ -13,10 +13,16 @@ DPD_JSON_003 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
 DPD_JSON_004 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
 DPD_JSON_2020_12_APP_001 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
 DPD_JSON_2020_12_APP_002 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
+DPD_JSON_2020_12_APP_003 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
 DPD_JSON_2020_12_VAL_001 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
 DPD_JSON_2020_12_VAL_002 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
 DPD_JSON_2020_12_VAL_003 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
 DPD_JSON_2020_12_VAL_004 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
+DPD_JSON_2020_12_VAL_005 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
+DPD_JSON_2020_12_VAL_006 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
+DPD_JSON_2020_12_VAL_007 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
+DPD_JSON_2020_12_VAL_008 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
+DPD_JSON_2020_12_VAL_009 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
 DPD_OPENAPI_3_0_001 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
 DPD_OPENAPI_3_0_002 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics
 DPD_OPENAPI_CS_001 | DarkPatterns.OpenApiCodegen | Error | TransformationDiagnostics

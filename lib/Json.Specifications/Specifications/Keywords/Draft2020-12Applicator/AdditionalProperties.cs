@@ -31,17 +31,24 @@ public class AdditionalPropertiesKeyword(string keyword, JsonSchema schema) : IJ
 		if (nodeMetadata.Node is not JsonObject obj)
 			yield break;
 
-		// TODO - leverage patternProperties (but do not apply to OpenAPI 3.0, which means forking this keyword)
-		// compare given schema against all properties that do not satisfy `properties`
-		if (context.TryGetAnnotation<PropertiesKeyword>() is { Properties: var properties })
+		// compare given schema against all properties that do not satisfy `properties` or `patternProperties`
+		var properties = context.TryGetAnnotation<PropertiesKeyword>()?.Properties;
+		var patterns = context.TryGetAnnotation<PatternPropertiesKeyword>()?.PatternSchemas.Keys;
+		foreach (var diagnostic in from kvp in obj.AsEnumerable()
+								   where !(properties?.ContainsKey(kvp.Key) ?? false)
+								   where !(patterns?.Any(p => p.IsMatch(kvp.Key)) ?? false)
+								   from diag in Schema.BoolValue == false
+									   // `additionalProperties: false` forbids the property: name it, rather than reporting the `false` schema
+									   ? [new UnknownPropertyDiagnostic(kvp.Key, evaluationContext.DocumentRegistry.ResolveLocation(nodeMetadata.Navigate(kvp.Key)))]
+									   : Schema.Evaluate(nodeMetadata.Navigate(kvp.Key), evaluationContext.WithSchema(context.EffectiveSchema))
+								   select diag)
 		{
-			foreach (var diagnostic in from kvp in obj.AsEnumerable()
-									   where !properties.ContainsKey(kvp.Key)
-									   from diag in Schema.Evaluate(nodeMetadata.Navigate(kvp.Key), evaluationContext.WithSchema(context.EffectiveSchema))
-									   select diag)
-			{
-				yield return diagnostic;
-			}
+			yield return diagnostic;
 		}
 	}
+}
+
+public record UnknownPropertyDiagnostic(string PropertyName, Location Location) : DiagnosticBase(Location)
+{
+	public override IReadOnlyList<string> GetTextArguments() => [PropertyName];
 }

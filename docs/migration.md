@@ -62,6 +62,16 @@ keywords use `[MultipleOf]`, `[UniqueItems]`, `[MinProperties]` and
 Json.Extensions 0.22.0 or later**. With an older reference, the build reports
 `DPDAPI002`. Generated models used by clients get the same attributes.
 
+**OpenAPI 3.0 documents are now validated against the whole OpenAPI 3.0
+schema.** Before, only the document's top level was checked, so documents that
+break the specification were still generated. Now they are reported as errors
+(C# `DPD_JSON_*` diagnostics, which fail the build; the TypeScript generator
+prints them and writes no files). Common causes are a response without `description`, an
+operation without `responses`, `info` without `title` or `version`, a path
+parameter without `required: true`, both `example` and `examples` on the same
+object, unknown properties (other than `x-` extensions), and values of the
+wrong type, such as `email: 5`. Fix the document to match the specification.
+
 ## C# 0.32.0, Json.Extensions 0.21.0, TypeScript 0.16.0, fetch 0.12.0, RxJS 0.11.0, MSW 0.11.0
 
 **The C# generator needs Roslyn 4.8 or later**, which ships with the .NET 8 SDK

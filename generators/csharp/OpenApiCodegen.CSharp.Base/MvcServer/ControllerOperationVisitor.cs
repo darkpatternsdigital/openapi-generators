@@ -322,7 +322,7 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 	{
 		argument.Builder?.SecurityRequirements.Add(new OperationSecurityRequirement(
 							 (from scheme in securityRequirement.SchemeRequirements
-							  // OpenAPI 3.0 defines scopes only for OAuth2 and OpenID Connect; on other schemes they're left to the securityAttribute
+								  // OpenAPI 3.0 defines scopes only for OAuth2 and OpenID Connect; on other schemes they're left to the securityAttribute
 							  let enforceScopes = securitySchemes.TryGetValue(scheme.SchemeName, out var definition) && definition.Type is SecuritySchemeType.OAuth2 or SecuritySchemeType.OpenIdConnect
 							  select new Templates.OperationSecuritySchemeRequirement(scheme.SchemeName, enforceScopes ? scheme.ScopeNames.ToArray() : [])).ToArray())
 						 );

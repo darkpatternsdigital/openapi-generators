@@ -47,7 +47,7 @@ internal class DynamicCompilation
 	};
 
 	/// <summary>Generated source text by file name, for checking what the generated code says (such as documentation)</summary>
-	public static System.Collections.Generic.Dictionary<string, string> GetGeneratedSources(string documentName)
+	public static System.Collections.Generic.Dictionary<string, string> GetGeneratedSources(string documentName, bool jsonUnions = false)
 	{
 		var registry = DocumentLoader.CreateRegistry();
 		var docResult = GetOpenApiDocument(documentName, registry);
@@ -56,7 +56,7 @@ internal class DynamicCompilation
 
 		var transformer = TransformSettings.BuildComposite(registry, "", [
 			(s) => new PathControllerTransformerFactory(s).Build(docResult, options),
-			(s) => new CSharpSchemaSourceProvider(s, options)
+			(s) => new CSharpSchemaSourceProvider(s, options, useJsonUnions: jsonUnions)
 		]);
 
 		var generated = transformer.GetSources();
@@ -64,7 +64,7 @@ internal class DynamicCompilation
 		return generated.Sources.ToDictionary(e => e.Key, e => e.SourceText.ToString());
 	}
 
-	public static byte[] GetGeneratedLibrary(string documentName)
+	public static byte[] GetGeneratedLibrary(string documentName, bool jsonUnions = false)
 	{
 		var registry = DocumentLoader.CreateRegistry();
 		var docResult = GetOpenApiDocument(documentName, registry);
@@ -73,7 +73,7 @@ internal class DynamicCompilation
 
 		var transformer = TransformSettings.BuildComposite(registry, "", [
 			(s) => new PathControllerTransformerFactory(s).Build(docResult, options),
-			(s) => new CSharpSchemaSourceProvider(s, options)
+			(s) => new CSharpSchemaSourceProvider(s, options, useJsonUnions: jsonUnions)
 		]);
 		registry.DocumentRegistry.Register(docResult.Result);
 		var newDiagnostics = registry.RecursivelyFixupAll();

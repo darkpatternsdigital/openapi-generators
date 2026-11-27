@@ -3,6 +3,7 @@
 	<ItemGroup>
 		<CompilerVisibleProperty Include="RootNamespace" />
 		<CompilerVisibleProperty Include="ProjectDir" />
+		<CompilerVisibleProperty Include="_DPDPolySharpVersion" />
 
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="Identity" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="Link" />
@@ -43,6 +44,14 @@
 		<Watch Include="@(JsonSchemaDocument)" />
 		<Watch Include="@(OpenApiSchemaOptions)" />
 	</ItemGroup>
+
+	<!-- With jsonUnions in an options file below .NET 11, PolySharp 1.17+ generates UnionAttribute and IUnion, which the
+	     generator can't see, so it checks PolySharp's version instead -->
+	<Target Name="_DetectPolySharpForOpenApiCodegen" BeforeTargets="GenerateMSBuildEditorConfigFileShouldRun">
+		<PropertyGroup>
+			<_DPDPolySharpVersion>@(Analyzer->WithMetadataValue('NuGetPackageId', 'PolySharp')->'%(NuGetPackageVersion)'->Distinct())</_DPDPolySharpVersion>
+		</PropertyGroup>
+	</Target>
 
 	<Target Name="_InjectAdditionalFilesForOpenApiSchema" BeforeTargets="GenerateMSBuildEditorConfigFileShouldRun">
 		<ItemGroup>

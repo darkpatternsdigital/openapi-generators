@@ -154,10 +154,22 @@ public abstract class BaseGenerator : IIncrementalGenerator
 			.Select(static (tuple, cancellation) => GetOptions(tuple.Left, tuple.Right))
 			.Where(static (tuple) => tuple.TextContents != null)
 			.Where((tuple) => GetFileTypes(tuple) is not []);
-		context.RegisterSourceOutput(allAdditionalTexts.Collect(), (context, tuple) =>
+		// Compared by value, so generation reruns only when these details change
+		var compilationMetadata = context.CompilationProvider.Combine(context.AnalyzerConfigOptionsProvider)
+			.Select((tuple, cancellation) => new CompilationMetadata([.. GetCompilationMetadata(tuple.Left, tuple.Right.GlobalOptions)]));
+		context.RegisterSourceOutput(allAdditionalTexts.Collect().Combine(compilationMetadata), (context, tuple) =>
 		{
-			ReportFailures(context, () => GenerateSources(tuple, context));
+			ReportFailures(context, () => GenerateSources(tuple.Left, tuple.Right, context));
 		});
+	}
+
+	/// <summary>Details of the compilation, passed to the generator as metadata of every file</summary>
+	protected virtual IEnumerable<KeyValuePair<string, string>> GetCompilationMetadata(Compilation compilation, AnalyzerConfigOptions globalOptions) => [];
+
+	private sealed record CompilationMetadata(KeyValuePair<string, string>[] Entries)
+	{
+		public bool Equals(CompilationMetadata? other) => other is not null && Entries.SequenceEqual(other.Entries);
+		public override int GetHashCode() => Entries.Length;
 	}
 
 	protected record AdditionalTextWithOptions(string Path, string TextContents, AnalyzerConfigOptions ConfigOptions);
@@ -191,10 +203,10 @@ public abstract class BaseGenerator : IIncrementalGenerator
 
 	protected abstract void ReportCompilationDiagnostics(Compilation compilation, CompilerApis apis);
 	protected abstract string[] GetFileTypes(AdditionalTextWithOptions additionalText);
-	private void GenerateSources(IEnumerable<AdditionalTextWithOptions> additionalText, CompilerApis apis)
+	private void GenerateSources(IEnumerable<AdditionalTextWithOptions> additionalText, CompilationMetadata compilationMetadata, CompilerApis apis)
 	{
 		IEnumerable<string> metadataKeys = loaded.Value.GetMetadataKeys();
-		var additionalFileInputs = additionalText.Select((f) => AdditionalFileTypeParams.Load(f, metadataKeys, GetFileTypes(f))).ToArray();
+		var additionalFileInputs = additionalText.Select((f) => AdditionalFileTypeParams.Load(f, metadataKeys, GetFileTypes(f), compilationMetadata.Entries)).ToArray();
 
 		// result is of type DarkPatterns.OpenApiCodegen.GenerationResult
 		dynamic result = loaded.Value.Generate(
@@ -241,15 +253,16 @@ public abstract class BaseGenerator : IIncrementalGenerator
 
 	record AdditionalFileTypeParams(string Path, string TextContents, IReadOnlyList<string> FileTypes, ReadOnlyDictionary<string, string?> Metadata)
 	{
-		public static AdditionalFileTypeParams Load(AdditionalTextWithOptions additionalText, IEnumerable<string> metadataKeys, IEnumerable<string> fileTypes)
+		public static AdditionalFileTypeParams Load(AdditionalTextWithOptions additionalText, IEnumerable<string> metadataKeys, IEnumerable<string> fileTypes, IEnumerable<KeyValuePair<string, string>> compilationMetadata)
 		{
+			var metadata = metadataKeys.ToDictionary(key => key, key => GetMetadata(additionalText.ConfigOptions, key));
+			foreach (var entry in compilationMetadata)
+				metadata[entry.Key] = entry.Value;
 			return new AdditionalFileTypeParams(
 					additionalText.Path,
 					additionalText.TextContents,
 					fileTypes.ToArray(),
-					new ReadOnlyDictionary<string, string?>(
-						metadataKeys.ToDictionary(key => key, key => GetMetadata(additionalText.ConfigOptions, key))
-					)
+					new ReadOnlyDictionary<string, string?>(metadata)
 				);
 		}
 

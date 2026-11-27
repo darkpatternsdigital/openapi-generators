@@ -9,8 +9,10 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static partial class OneOfExampleExtensions
     {
-        public static IMvcBuilder AddOpenApiOneOfExample<TPetController>(this IServiceCollection services)
+        public static IMvcBuilder AddOpenApiOneOfExample<TPetController, TIdOrNameController, TDeclaredPetController>(this IServiceCollection services)
             where TPetController : global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.PetControllerBase
+            where TIdOrNameController : global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.IdOrNameControllerBase
+            where TDeclaredPetController : global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.DeclaredPetControllerBase
         {
             return services.AddControllers();
         }

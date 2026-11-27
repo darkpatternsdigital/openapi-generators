@@ -30,7 +30,8 @@ public record TypeUnionModel(
 	string ClassName,
 	bool AllowAnyOf,
 	string? DiscriminatorProperty,
-	TypeUnionEntry[] TypeEntries
+	TypeUnionEntry[] TypeEntries,
+	bool UseJsonUnion = false
 ) : Model(Description, ClassName);
 
 public record TypeUnionEntry(

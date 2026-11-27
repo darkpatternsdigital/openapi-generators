@@ -14,3 +14,21 @@ public class PetController : PetControllerBase
 		return this.DelegateResponse<GetRandomPetActionResult>();
 	}
 }
+
+public class IdOrNameController : IdOrNameControllerBase
+{
+	protected override Task<GetIdOrNameActionResult> GetIdOrName()
+	{
+		this.DelegateRequest();
+		return this.DelegateResponse<GetIdOrNameActionResult>();
+	}
+}
+
+public class DeclaredPetController : DeclaredPetControllerBase
+{
+	protected override Task<AddDeclaredPetActionResult> AddDeclaredPet(DeclaredPet addDeclaredPetBody)
+	{
+		this.DelegateRequest(addDeclaredPetBody);
+		return this.DelegateResponse<AddDeclaredPetActionResult>();
+	}
+}

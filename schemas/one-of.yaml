@@ -29,6 +29,41 @@ components:
       oneOf:
       - $ref: '#/components/schemas/Cat'
       - $ref: '#/components/schemas/Dog'
+    IdOrName:
+      oneOf:
+      - type: integer
+        format: int64
+      - type: string
+    DeclaredDog:
+      type: object
+      properties:
+        petType:
+          type: string
+        bark:
+          type: boolean
+      required:
+        - petType
+        - bark
+    DeclaredCat:
+      type: object
+      properties:
+        petType:
+          type: string
+        hunts:
+          type: boolean
+      required:
+        - petType
+        - hunts
+    DeclaredPet:
+      # Each case declares the discriminator property
+      oneOf:
+      - $ref: '#/components/schemas/DeclaredCat'
+      - $ref: '#/components/schemas/DeclaredDog'
+      discriminator:
+        propertyName: petType
+        mapping:
+          dog: '#/components/schemas/DeclaredDog'
+          cat: '#/components/schemas/DeclaredCat'
     SpecifiedPet:
       required:
       - petType
@@ -59,6 +94,28 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/SpecifiedPet'
+      responses:
+        '200':
+          description: OK
+  /id-or-name:
+    get:
+      operationId: getIdOrName
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdOrName'
+  /declared-pet:
+    post:
+      operationId: addDeclaredPet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeclaredPet'
       responses:
         '200':
           description: OK

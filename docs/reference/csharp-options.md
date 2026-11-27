@@ -44,6 +44,7 @@ servers,
 | `fallbackType` | `object` | The type for a schema whose `type` isn't listed under `types`. |
 | `types` | see below | The C# type for each JSON Schema `type` and `format`. |
 | `overrideNames` | none | Maps a schema's URI to a namespace-qualified C# type name. Experimental, and may change or be removed. |
+| `jsonUnions` | on for .NET 11+ | Whether `oneOf` models are System.Text.Json union types. Project-wide options only. See [`oneOf` and System.Text.Json unions](#oneof-and-systemtextjson-unions). |
 | `securityAttribute` | none | An attribute added to each controller action whose operation has `security`, or inherits the document's. Its one argument is a string with those security requirements as JSON. Servers only. |
 | `extensions.controllerName` | `dotnet-mvc-server-controller` | The extension name (without `x-`) that sets an operation's controller. |
 | `extensions.typeNameOverride` | `dotnet-type-name` | The extension name (without `x-`) that sets a schema's type name. |
@@ -87,6 +88,41 @@ key in an earlier one, and other keys are kept.
 Lists such as `globalReservedIdentifiers` are merged by position: the first
 entry in your file replaces the first default entry, and so on. To change a
 list, repeat the whole list.
+
+### `oneOf` and System.Text.Json unions
+
+A `oneOf` schema becomes a record with a nullable property for each case. A
+value matches a case when it deserializes as that case and passes its
+validation, or by its `discriminator`. Exactly one case must match; otherwise
+deserialization throws `JsonException`.
+
+With `jsonUnions`, the record is also a
+[union type](https://learn.microsoft.com/dotnet/standard/serialization/system-text-json/union-types)
+with a generated type classifier, and System.Text.Json reads the case itself. An
+error inside a case, such as a property of the wrong type, then reports the
+property's full path (`$.pets[0].pet.age`), which ASP.NET Core uses as the
+`ModelState` key. Without it, the error has the path of the `oneOf` value, and
+its message has the path inside the case.
+
+- On .NET 11 and later it's on unless an options file sets `jsonUnions: false`.
+- Below .NET 11, set `jsonUnions: true` and add both packages:
+  - `System.Text.Json` 11.0.0 or later.
+  - [PolySharp](https://www.nuget.org/packages/PolySharp) 1.17.0 or later,
+    for `UnionAttribute` and `IUnion`, with `PrivateAssets="all"`.
+
+  Without them, the build reports `DPDAPI004` or `DPDAPI005` at the options
+  file.
+
+Models are generated once for the whole project, so set `jsonUnions` in an
+`OpenApiSchemaOptions` file (or `csharp.config.yaml`), not in an item's
+`Configuration`.
+
+Some `oneOf` schemas keep the plain record and its `JsonConverter`:
+
+- A `oneOf` with one case, or with two cases of the same C# type.
+- A case named `Value`.
+- A `discriminator` whose property isn't declared by every case. Union types
+  serialize only the case, so the discriminator wouldn't be written.
 
 ## Schema extensions
 

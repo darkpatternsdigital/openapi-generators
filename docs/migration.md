@@ -29,18 +29,23 @@ anonymous. To keep an operation anonymous, give it `security: []`.
 
 **MVC servers enforce security requirements as the OpenAPI spec describes.**
 The policy for each security scheme is still named after the scheme, so
-existing `AddPolicy` calls keep working. An operation that needs one scheme,
-without OAuth2 or OpenID Connect scopes, still gets an `[Authorize]` attribute
-for that policy. Other operations get the generated
-`SecurityRequirementsAttribute` filter instead. It's in the `…SecuritySchemes`
-class named after the document's `info.title`, such as
-`PetStoreSecuritySchemes`.
+existing `AddPolicy` calls keep working. Each scheme that every requirement
+of an operation needs gets an `[Authorize]` attribute for its policy, so
+tools that only know `[Authorize]` still see it. When that doesn't cover the
+requirements, because they're alternatives or have OAuth2 or OpenID Connect
+scopes, the operation also gets the generated `SecurityRequirementsAttribute`
+filter. It's in the `…SecuritySchemes` class named after the document's
+`info.title`, such as `PetStoreSecuritySchemes`. Identical requirements count
+once, so a scheme listed twice with scopes that aren't checked still gets
+only `[Authorize]`.
 
 - **Several requirements are alternatives.** A request that satisfies any one
   of them is allowed. Before, each became its own `[Authorize]`, and the
-  request had to satisfy all of them.
-- **Several schemes in one requirement must all be satisfied.** Before, they
-  became one policy named `"A,B"`, which threw because no such policy exists.
+  request had to satisfy all of them. Schemes that only some alternatives use
+  no longer get `[Authorize]`.
+- **Several schemes in one requirement must all be satisfied.** Each gets its
+  own `[Authorize]`. Before, they became one policy named `"A,B"`, which threw
+  because no such policy exists.
 - **OAuth2 and OpenID Connect scopes are required.** The user needs a claim
   listing each scope, separated by spaces. The claim types are `scope`, `scp`
   and `http://schemas.microsoft.com/identity/claims/scope`; add others to

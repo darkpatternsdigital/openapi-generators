@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -195,4 +196,56 @@ public class ServerSecurityYamlShould
 	[Fact]
 	public Task Block_requests_that_satisfy_none_of_several_requirements() =>
 		TestBlocked(AnyOfControllerBase.GetAnyOfActionResult.NoContent(), Get("/security/any-of"), 401, 403);
+
+	[Fact]
+	public Task Allow_requests_that_satisfy_duplicate_requirements() =>
+		TestSingleRequest<DuplicateRequirementsControllerBase.GetDuplicateRequirementsActionResult>(new(
+			DuplicateRequirementsControllerBase.GetDuplicateRequirementsActionResult.NoContent(),
+			Get("/security/duplicate-requirements?api_key=key")
+		)
+		{
+			AssertResponseMessage = VerifyResponse(204),
+		});
+
+	[Fact]
+	public Task Block_requests_that_satisfy_none_of_duplicate_requirements() =>
+		TestBlocked(DuplicateRequirementsControllerBase.GetDuplicateRequirementsActionResult.NoContent(), Get("/security/duplicate-requirements"), 401);
+
+	[Theory]
+	[InlineData("scopes:read")]
+	[InlineData("scopes:write")]
+	public Task Allow_oauth2_tokens_with_any_alternative_scope(string token) =>
+		TestSingleRequest<OauthAlternativesControllerBase.GetOAuthAlternativesActionResult>(new(
+			OauthAlternativesControllerBase.GetOAuthAlternativesActionResult.NoContent(),
+			Get("/security/oauth-alternatives", ("Authorization", $"Bearer {token}"))
+		)
+		{
+			AssertResponseMessage = VerifyResponse(204),
+		});
+
+	[Fact]
+	public Task Block_oauth2_tokens_without_any_alternative_scope() =>
+		TestBlocked(OauthAlternativesControllerBase.GetOAuthAlternativesActionResult.NoContent(), Get("/security/oauth-alternatives", ("Authorization", "Bearer scopes:other")), 403);
+
+	// [Authorize] for each scheme every requirement needs, so tools that only know [Authorize] see it; the generated
+	// filter only when [Authorize] can't express the requirements (alternatives or OAuth2/OpenID Connect scopes)
+	[Theory]
+	[InlineData(typeof(DocumentLevelControllerBase), new[] { "HeaderKey" }, false)]
+	[InlineData(typeof(QueryKeyControllerBase), new[] { "QueryKey" }, false)]
+	[InlineData(typeof(ApiKeyScopesControllerBase), new[] { "QueryKey" }, false)]
+	[InlineData(typeof(DuplicateRequirementsControllerBase), new[] { "QueryKey" }, false)]
+	[InlineData(typeof(AllOfControllerBase), new[] { "HeaderKey", "QueryKey" }, false)]
+	[InlineData(typeof(OauthScopesControllerBase), new[] { "OAuth" }, true)]
+	[InlineData(typeof(OauthAlternativesControllerBase), new[] { "OAuth" }, true)]
+	[InlineData(typeof(AnyOfControllerBase), new string[0], true)]
+	public void Use_authorize_attributes_for_schemes_every_requirement_needs(Type controller, string[] policies, bool usesFilter)
+	{
+		var action = Assert.Single(controller.GetMethods(), m => m.GetCustomAttributes(typeof(Microsoft.AspNetCore.Mvc.HttpGetAttribute), false).Length > 0);
+		var authorizePolicies = action.GetCustomAttributes(typeof(Microsoft.AspNetCore.Authorization.AuthorizeAttribute), false)
+			.Cast<Microsoft.AspNetCore.Authorization.AuthorizeAttribute>()
+			.Select(a => a.Policy)
+			.Order();
+		Assert.Equal(policies, authorizePolicies);
+		Assert.Equal(usesFilter, action.GetCustomAttributes(typeof(ServerSecuritySecuritySchemes.SecurityRequirementsAttribute), false).Length > 0);
+	}
 }

@@ -98,3 +98,21 @@ public class AnyOfController : AnyOfControllerBase
 		return this.DelegateResponse<GetAnyOfActionResult>();
 	}
 }
+
+public class DuplicateRequirementsController : DuplicateRequirementsControllerBase
+{
+	protected override Task<GetDuplicateRequirementsActionResult> GetDuplicateRequirements()
+	{
+		this.DelegateRequest();
+		return this.DelegateResponse<GetDuplicateRequirementsActionResult>();
+	}
+}
+
+public class OAuthAlternativesController : OauthAlternativesControllerBase
+{
+	protected override Task<GetOAuthAlternativesActionResult> GetOAuthAlternatives()
+	{
+		this.DelegateRequest();
+		return this.DelegateResponse<GetOAuthAlternativesActionResult>();
+	}
+}

@@ -9,7 +9,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static partial class ServerSecurityExtensions
     {
-        public static IMvcBuilder AddOpenApiServerSecurity<TDocumentLevelController, TPublicController, TQueryKeyController, TApiKeyScopesController, TCookieKeyController, TBasicController, TBearerController, TOpenIdConnectController, TOauthScopesController, TAllOfController, TAnyOfController>(this IServiceCollection services)
+        public static IMvcBuilder AddOpenApiServerSecurity<TDocumentLevelController, TPublicController, TQueryKeyController, TApiKeyScopesController, TCookieKeyController, TBasicController, TBearerController, TOpenIdConnectController, TOauthScopesController, TAllOfController, TAnyOfController, TDuplicateRequirementsController, TOauthAlternativesController>(this IServiceCollection services)
             where TDocumentLevelController : global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ServerSecurity.DocumentLevelControllerBase
             where TPublicController : global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ServerSecurity.PublicControllerBase
             where TQueryKeyController : global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ServerSecurity.QueryKeyControllerBase
@@ -21,6 +21,8 @@ namespace Microsoft.Extensions.DependencyInjection
             where TOauthScopesController : global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ServerSecurity.OauthScopesControllerBase
             where TAllOfController : global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ServerSecurity.AllOfControllerBase
             where TAnyOfController : global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ServerSecurity.AnyOfControllerBase
+            where TDuplicateRequirementsController : global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ServerSecurity.DuplicateRequirementsControllerBase
+            where TOauthAlternativesController : global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ServerSecurity.OauthAlternativesControllerBase
         {
             return services.AddControllers();
         }

@@ -92,16 +92,25 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 			foreach (var securityRequirement in documentSecurityRequirements)
 				Visit(securityRequirement, argument with { Builder = builder });
 
-		// Requirements are alternatives, but separate [Authorize] attributes must all pass, so only a single
-		// requirement with a single scheme and no scopes uses [Authorize]; others use the generated filter.
-		var securityRequirements = builder.SecurityRequirements;
+		// Requirements are alternatives, but separate [Authorize] attributes must all pass, so [Authorize] is only used
+		// for schemes every requirement needs. The generated filter is added when that doesn't cover the
+		// requirements: when there are alternatives, or OAuth2/OpenID Connect scopes to check.
+		var securityRequirements = builder.SecurityRequirements
+			.GroupBy(r => string.Join("\n", r.Schemes
+				.Select(s => s.SchemeName + " " + string.Join(" ", s.ScopeNames.OrderBy(scope => scope, StringComparer.Ordinal)))
+				.OrderBy(scheme => scheme, StringComparer.Ordinal)))
+			.Select(duplicates => duplicates.First())
+			.ToArray();
 		var allowAnonymous = securityRequirements.Any(r => r.Schemes.Length == 0);
-		var useAuthorizeAttribute = securityRequirements is [{ Schemes: [{ ScopeNames: [] }] }];
+		var requiredSchemes = securityRequirements
+			.Select(r => r.Schemes.Select(s => s.SchemeName))
+			.Aggregate((IEnumerable<string>?)null, (common, schemes) => common?.Intersect(schemes) ?? schemes.Distinct())
+			?.ToArray() ?? [];
+		var useAuthorizeAttribute = securityRequirements is [var onlyRequirement] && onlyRequirement.Schemes.All(s => s.ScopeNames.Length == 0);
 		string[] authorizePolicies =
 			// With an empty requirement, the policies still authenticate the user when they can
 			allowAnonymous ? [.. securityRequirements.SelectMany(r => r.Schemes).Select(s => s.SchemeName).Distinct()]
-			: useAuthorizeAttribute ? [securityRequirements[0].Schemes[0].SchemeName]
-			: [];
+			: requiredSchemes;
 
 		var sharedParameters = builder.SharedParameters.ToArray();
 		argument.RegisterControllerOperation(
@@ -117,11 +126,11 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 					StatusResponse: new(builder.StatusResponses),
 					RangeResponse: new(builder.RangeResponses)
 				),
-				SecurityRequirements: [.. builder.SecurityRequirements],
+				SecurityRequirements: securityRequirements,
 				RawSecurityRequirements: [.. builder.RawSecurityRequirements],
 				AllowAnonymous: allowAnonymous,
 				AuthorizePolicies: authorizePolicies,
-				UseSecurityRequirementsAttribute: securityRequirements.Count > 0 && !allowAnonymous && !useAuthorizeAttribute,
+				UseSecurityRequirementsAttribute: securityRequirements.Length > 0 && !allowAnonymous && !useAuthorizeAttribute,
 				SourceReference: toSourceReference(operation.Id)
 			));
 	}

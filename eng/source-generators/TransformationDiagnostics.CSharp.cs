@@ -22,4 +22,22 @@ public partial class TransformationDiagnostics
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
+
+	[TransformationDiagnostic("DarkPatterns.OpenApiCodegen.CSharp.JsonUnionsRequireSystemTextJson11Diagnostic")]
+	public static readonly DiagnosticDescriptor OpenApiCSharpJsonUnionsRequireSystemTextJson11Diagnostic =
+		new DiagnosticDescriptor(id: "DPDAPI004",
+								title: "jsonUnions requires System.Text.Json 11",
+								messageFormat: DarkPatterns_OpenApiCodegen_CSharp_JsonUnionsRequireSystemTextJson11Diagnostic,
+								category: "DarkPatterns.OpenApiCodegen.CSharp",
+								DiagnosticSeverity.Warning,
+								isEnabledByDefault: true);
+
+	[TransformationDiagnostic("DarkPatterns.OpenApiCodegen.CSharp.JsonUnionsRequireUnionTypesDiagnostic")]
+	public static readonly DiagnosticDescriptor OpenApiCSharpJsonUnionsRequireUnionTypesDiagnostic =
+		new DiagnosticDescriptor(id: "DPDAPI005",
+								title: "jsonUnions requires UnionAttribute and IUnion",
+								messageFormat: DarkPatterns_OpenApiCodegen_CSharp_JsonUnionsRequireUnionTypesDiagnostic,
+								category: "DarkPatterns.OpenApiCodegen.CSharp",
+								DiagnosticSeverity.Warning,
+								isEnabledByDefault: true);
 }

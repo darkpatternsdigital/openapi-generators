@@ -19,6 +19,8 @@ namespace DarkPatterns.OpenApi.CSharp
 		public Dictionary<string, string> OverrideNames { get; set; } = new();
 		public Dictionary<Uri, string> NamespacesBySchema { get; set; } = new();
 		public Dictionary<string, OpenApiTypeFormats> Types { get; } = new();
+		// oneOf models as System.Text.Json union types; null uses them when the framework supports them (.NET 11+)
+		public bool? JsonUnions { get; set; }
 
 		internal string Find(string type, string? format)
 		{

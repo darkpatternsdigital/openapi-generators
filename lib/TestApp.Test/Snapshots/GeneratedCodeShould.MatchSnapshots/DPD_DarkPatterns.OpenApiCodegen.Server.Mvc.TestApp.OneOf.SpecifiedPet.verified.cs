@@ -14,63 +14,68 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf
     public partial record SpecifiedPet(
         global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Cat? Cat = null,
         global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Dog? Dog = null
-    ) {
-
+    )
+    {
         public partial class JsonConverter : global::System.Text.Json.Serialization.JsonConverter<SpecifiedPet>
         {
             public override SpecifiedPet? Read(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Type typeToConvert, global::System.Text.Json.JsonSerializerOptions options)
             {
-                var position = reader.BytesConsumed;
-                global::System.Text.Json.Utf8JsonReader discriminatorReader = reader;
-                var baseNode = global::System.Text.Json.Nodes.JsonNode.Parse(ref discriminatorReader).AsObject();
-                var discriminatorValue = baseNode["petType"].GetValue<string>();
-
-                if (discriminatorValue == "cat")
+                var discriminatorReader = reader;
+                var discriminatorValue = ReadDiscriminator(ref discriminatorReader);
+                switch (discriminatorValue)
                 {
-                    return new (
-                        Cat: global::System.Text.Json.JsonSerializer.Deserialize<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Cat>(ref reader, options)
-                    );
+                    case "cat":
+                        return new SpecifiedPet(Cat: ReadCase<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Cat>(ref reader, options, "cat"));
+                    case "dog":
+                        return new SpecifiedPet(Dog: ReadCase<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Dog>(ref reader, options, "dog"));
+                    default: throw UnknownDiscriminator(discriminatorValue);
                 }
-
-                if (discriminatorValue == "dog")
-                {
-                    return new (
-                        Dog: global::System.Text.Json.JsonSerializer.Deserialize<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Dog>(ref reader, options)
-                    );
-                }
-
-                throw new global::System.Text.Json.JsonException(
-                    $"Unknown discriminator value {discriminatorValue} at position {position}"
-                );
             }
 
             public override void Write(global::System.Text.Json.Utf8JsonWriter writer, SpecifiedPet value, global::System.Text.Json.JsonSerializerOptions options)
             {
-                var nodes = new[]
+                if (value.Cat is {} CatValue)
                 {
-                    value.Cat == null ? null : toNode<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Cat>(value.Cat, "cat"),
-                    value.Dog == null ? null : toNode<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Dog>(value.Dog, "dog"),
-                };
-                var result = global::System.Linq.Enumerable.Aggregate(nodes, (prev, next) =>
+                    var node = global::System.Text.Json.JsonSerializer.SerializeToNode<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Cat>(CatValue, options)!.AsObject();
+                    node["petType"] = "cat";
+                    node.WriteTo(writer, options);
+                    return;
+                }
+                if (value.Dog is {} DogValue)
                 {
-                    if (prev == null) return next;
-                    if (next == null) return prev;
-                    foreach (var (key, value) in next)
-                    {
-                        prev[key] = value;
-                    }
-                    return prev;
-                });
+                    var node = global::System.Text.Json.JsonSerializer.SerializeToNode<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Dog>(DogValue, options)!.AsObject();
+                    node["petType"] = "dog";
+                    node.WriteTo(writer, options);
+                    return;
+                }
+                writer.WriteNullValue();
+            }
 
-                result.WriteTo(writer, options);
-
-                global::System.Text.Json.Nodes.JsonObject toNode<T>(T value, string discriminatorValue)
+            private static T ReadCase<T>(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Text.Json.JsonSerializerOptions options, string discriminatorValue)
+            {
+                try
                 {
-                    var obj = global::System.Text.Json.JsonSerializer.SerializeToNode<T>(value, options).AsObject();
-                    obj["petType"] = discriminatorValue;
-                    return obj;
+                    return global::System.Text.Json.JsonSerializer.Deserialize<T>(ref reader, options)!;
+                }
+                catch (global::System.Text.Json.JsonException ex)
+                {
+                    // The serializer gives this exception the location of the SpecifiedPet; the message keeps the location inside the case
+                    throw new global::System.Text.Json.JsonException($"Unable to deserialize the \"{discriminatorValue}\" case of SpecifiedPet: {ex.Message}", ex);
                 }
             }
         }
+
+        private static string ReadDiscriminator(ref global::System.Text.Json.Utf8JsonReader reader)
+        {
+            using var document = global::System.Text.Json.JsonDocument.ParseValue(ref reader);
+            if (document.RootElement.ValueKind != global::System.Text.Json.JsonValueKind.Object)
+                throw new global::System.Text.Json.JsonException("Expected an object with a \"petType\" property for SpecifiedPet");
+            if (!document.RootElement.TryGetProperty("petType", out var discriminator) || discriminator.ValueKind != global::System.Text.Json.JsonValueKind.String)
+                throw new global::System.Text.Json.JsonException("Expected a string \"petType\" property for SpecifiedPet");
+            return discriminator.GetString()!;
+        }
+
+        private static global::System.Text.Json.JsonException UnknownDiscriminator(string discriminatorValue) =>
+            new global::System.Text.Json.JsonException($"Unknown \"petType\" value \"{discriminatorValue}\" for SpecifiedPet");
     }
 }

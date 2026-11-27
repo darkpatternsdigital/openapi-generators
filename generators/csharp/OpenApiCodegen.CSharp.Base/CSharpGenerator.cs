@@ -29,6 +29,10 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 	const string propPathPrefix = "pathPrefix";
 	const string propSchemaId = "schemaId";
 	const string propProjectDir = "build_property.projectdir";
+	// Set by the Roslyn generator from the compilation; missing when the generator runs without Roslyn
+	const string propCompilationJsonTypeClassifier = "compilation.jsonTypeClassifier";
+	const string propCompilationFrameworkUnionTypes = "compilation.frameworkUnionTypes";
+	const string propCompilationUnionTypes = "compilation.unionTypes";
 
 	const string typeMvcServer = "MvcServer";
 	const string typeClient = "Client";
@@ -118,7 +122,8 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 			.. webhookTransforms,
 			.. modelsDiagnostics,
 			new DiagnosticOnlySourceProvider(metadataDiagnostics),
-			new CSharpSchemaSourceProvider(settings, allSchemasOptions),
+			new DiagnosticOnlySourceProvider([.. JsonUnionsDiagnostics(allSchemasOptions, additionalTextInfos)]),
+			new CSharpSchemaSourceProvider(settings, allSchemasOptions, useJsonUnions: UseJsonUnions(allSchemasOptions, additionalTextInfos)),
 		]);
 
 		var result = sourceProvider.GetSources();
@@ -152,6 +157,40 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 
 		return result;
 	}
+
+	// On when the framework supports unions (.NET 11+); an options file's jsonUnions sets it either way
+	private static bool UseJsonUnions(CSharpSchemaOptions options, IEnumerable<AdditionalTextInfo> additionalTextInfos) =>
+		options.JsonUnions ?? (GetCompilationFact(additionalTextInfos, propCompilationFrameworkUnionTypes) == true
+			&& GetCompilationFact(additionalTextInfos, propCompilationJsonTypeClassifier) == true);
+
+	private static IEnumerable<DiagnosticBase> JsonUnionsDiagnostics(CSharpSchemaOptions options, IEnumerable<AdditionalTextInfo> additionalTextInfos)
+	{
+		if (options.JsonUnions != true)
+			yield break;
+		// Reported at each options file that turns jsonUnions on
+		var optionsFiles = (from file in additionalTextInfos
+							where file.Types.Contains(typeConfig)
+							where LoadOptionsFile(file).JsonUnions == true
+							select new Location(ToInternalUri(file))).ToArray();
+		if (GetCompilationFact(additionalTextInfos, propCompilationJsonTypeClassifier) == false)
+			foreach (var location in optionsFiles)
+				yield return new JsonUnionsRequireSystemTextJson11Diagnostic(location);
+		if (GetCompilationFact(additionalTextInfos, propCompilationUnionTypes) == false)
+			foreach (var location in optionsFiles)
+				yield return new JsonUnionsRequireUnionTypesDiagnostic(location);
+	}
+
+	private static CSharpSchemaOptions LoadOptionsFile(AdditionalTextInfo file)
+	{
+		using var stream = new MemoryStream(Encoding.UTF8.GetBytes(file.Contents));
+		return OptionsLoader.LoadOptions<CSharpSchemaOptions>([stream], []);
+	}
+
+	// The compilation is the same for every file; null when the generator runs without Roslyn
+	private static bool? GetCompilationFact(IEnumerable<AdditionalTextInfo> additionalTextInfos, string key) =>
+		additionalTextInfos.Select(f => f.Metadata.TryGetValue(key, out var value) ? value : null).FirstOrDefault(v => v != null) is string value
+			? string.Equals(value, "true", StringComparison.OrdinalIgnoreCase)
+			: null;
 
 	private static string ToOutputMetadataKey(string output, string name) => "DPD" + output + name;
 

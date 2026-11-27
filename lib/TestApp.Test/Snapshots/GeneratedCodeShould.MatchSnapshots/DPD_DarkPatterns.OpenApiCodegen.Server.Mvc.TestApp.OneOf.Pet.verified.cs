@@ -14,97 +14,77 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf
     public partial record Pet(
         global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Cat? Cat = null,
         global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Dog? Dog = null
-    ) {
-
+    )
+    {
         public partial class JsonConverter : global::System.Text.Json.Serialization.JsonConverter<Pet>
         {
             public override Pet? Read(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Type typeToConvert, global::System.Text.Json.JsonSerializerOptions options)
             {
-                var position = reader.BytesConsumed;
-
-                global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Cat resultForCat = default;
-                global::System.Exception? exceptionFromCat = null;
-                global::System.Text.Json.Utf8JsonReader readerCat = reader;
-                bool isCatValid;
-                try
-                {
-                    resultForCat = global::System.Text.Json.JsonSerializer.Deserialize<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Cat>(ref readerCat, options);
-                    global::System.ComponentModel.DataAnnotations.Validator.ValidateObject(
-                        resultForCat,
-                        new global::System.ComponentModel.DataAnnotations.ValidationContext(resultForCat)
-                    );
-                    isCatValid = true;
-                }
-                catch (global::System.Exception ex)
-                {
-                    resultForCat = default;
-                    exceptionFromCat = ex;
-                    isCatValid = false;
-                }
-
-                global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Dog resultForDog = default;
-                global::System.Exception? exceptionFromDog = null;
-                global::System.Text.Json.Utf8JsonReader readerDog = reader;
-                bool isDogValid;
-                try
-                {
-                    resultForDog = global::System.Text.Json.JsonSerializer.Deserialize<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Dog>(ref readerDog, options);
-                    global::System.ComponentModel.DataAnnotations.Validator.ValidateObject(
-                        resultForDog,
-                        new global::System.ComponentModel.DataAnnotations.ValidationContext(resultForDog)
-                    );
-                    isDogValid = true;
-                }
-                catch (global::System.Exception ex)
-                {
-                    resultForDog = default;
-                    exceptionFromDog = ex;
-                    isDogValid = false;
-                }
-
-                if (isCatValid)
+                var readerCat = reader;
+                var isCat = TryRead<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Cat>(ref readerCat, options, out var resultForCat, out var errorFromCat);
+                var readerDog = reader;
+                var isDog = TryRead<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Dog>(ref readerDog, options, out var resultForDog, out var errorFromDog);
+                var matches = new global::System.Collections.Generic.List<global::System.Type>();
+                if (isCat) matches.Add(typeof(global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Cat));
+                if (isDog) matches.Add(typeof(global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Dog));
+                if (matches.Count == 0)
+                    throw NoMatch(errorFromCat, errorFromDog);
+                if (matches.Count > 1)
+                    throw SeveralMatches(matches);
+                if (isCat)
                 {
                     reader = readerCat;
-                    return new (Cat: resultForCat);
+                    return new Pet(Cat: resultForCat);
                 }
-                if (isDogValid)
+                if (isDog)
                 {
                     reader = readerDog;
-                    return new (Dog: resultForDog);
+                    return new Pet(Dog: resultForDog);
                 }
-
-                throw new global::System.Text.Json.JsonException(
-                    "Unable to deserialize data as Pet at position {position}",
-                    new global::System.AggregateException(exceptionFromCat, exceptionFromDog)
-                );
+                throw new global::System.InvalidOperationException();
             }
 
             public override void Write(global::System.Text.Json.Utf8JsonWriter writer, Pet value, global::System.Text.Json.JsonSerializerOptions options)
             {
-                var nodes = new[]
+                if (value.Cat is {} CatValue)
                 {
-                    value.Cat == null ? null : toNode<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Cat>(value.Cat),
-                    value.Dog == null ? null : toNode<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Dog>(value.Dog),
-                };
-                var result = global::System.Linq.Enumerable.Aggregate(nodes, (prev, next) =>
-                {
-                    if (prev == null) return next;
-                    if (next == null) return prev;
-                    foreach (var (key, value) in next)
-                    {
-                        prev[key] = value;
-                    }
-                    return prev;
-                });
-
-                result.WriteTo(writer, options);
-
-                global::System.Text.Json.Nodes.JsonObject toNode<T>(T value)
-                {
-                    var obj = global::System.Text.Json.JsonSerializer.SerializeToNode<T>(value, options).AsObject();
-                    return obj;
+                    global::System.Text.Json.JsonSerializer.Serialize<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Cat>(writer, CatValue, options);
+                    return;
                 }
+                if (value.Dog is {} DogValue)
+                {
+                    global::System.Text.Json.JsonSerializer.Serialize<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OneOf.Dog>(writer, DogValue, options);
+                    return;
+                }
+                writer.WriteNullValue();
             }
         }
+
+        // oneOf: a case matches when it deserializes and passes validation
+        private static bool TryRead<T>(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Text.Json.JsonSerializerOptions options, out T? result, out global::System.Exception? error)
+        {
+            try
+            {
+                result = global::System.Text.Json.JsonSerializer.Deserialize<T>(ref reader, options);
+                if (result is null)
+                    throw new global::System.Text.Json.JsonException($"Expected a value for {typeof(T).Name}");
+                object instance = result;
+                global::System.ComponentModel.DataAnnotations.Validator.ValidateObject(instance, new global::System.ComponentModel.DataAnnotations.ValidationContext(instance));
+                error = null;
+                return true;
+            }
+            catch (global::System.Exception ex) when (ex is global::System.Text.Json.JsonException or global::System.ComponentModel.DataAnnotations.ValidationException)
+            {
+                result = default;
+                error = ex;
+                return false;
+            }
+        }
+
+        private static global::System.Text.Json.JsonException NoMatch(params global::System.Exception?[] errors) =>
+            new global::System.Text.Json.JsonException("The value matches no case of Pet", new global::System.AggregateException(global::System.Linq.Enumerable.OfType<global::System.Exception>(errors)));
+
+        private static global::System.Text.Json.JsonException SeveralMatches(global::System.Collections.Generic.IEnumerable<global::System.Type> matches) =>
+            new global::System.Text.Json.JsonException($"The value matches more than one case of Pet: {string.Join(", ", global::System.Linq.Enumerable.Select(matches, t => t.Name))}");
     }
 }

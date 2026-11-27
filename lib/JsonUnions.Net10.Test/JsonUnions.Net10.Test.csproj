@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- oneOf models as System.Text.Json union types below .NET 11: jsonUnions in an options file, with System.Text.Json 11 and PolySharp -->
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\one-of.yaml" Link="OneOf\one-of.yaml" Namespace="$(RootNamespace).OneOf" />
+		<OpenApiSchemaOptions Include="json-unions.yaml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+		<PackageReference Include="System.Text.Json" VersionOverride="11.0.0" />
+		<PackageReference Include="PolySharp" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="xunit" />
+		<PackageReference Include="xunit.runner.visualstudio">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="coverlet.collector">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference
+			Include="$(SolutionRoot)generators\csharp\OpenApiCodegen.CSharp.Analyzers\OpenApiCodegen.CSharp.Roslyn5.12.csproj"
+			OutputItemType="Analyzer"
+			ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\OpenApiCodegen.Json.Extensions\OpenApiCodegen.Json.Extensions.csproj" />
+	</ItemGroup>
+
+	<!-- The project reference won't include this due to the multi-version targeting trick -->
+	<Import Project="$(SolutionRoot)generators\csharp\OpenApiCodegen.CSharp\OpenApiCodegen.CSharp.props" />
+
+</Project>

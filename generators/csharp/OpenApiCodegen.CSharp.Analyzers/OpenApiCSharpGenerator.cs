@@ -37,6 +37,11 @@ public sealed class OpenApiCSharpGenerator() : BaseGenerator("DarkPatterns.OpenA
 																								DiagnosticSeverity.Warning,
 																								isEnabledByDefault: true);
 
+	// oneOf models use System.Text.Json 11's union support when the framework has it (.NET 11+), or when an options
+	// file sets jsonUnions, so the generator needs to know what the compilation has
+	private const string polySharpVersionProperty = "build_property._DPDPolySharpVersion";
+	private static readonly Version MinimumPolySharpVersion = new Version(1, 17, 0);
+
 	protected override void ReportCompilationDiagnostics(Compilation compilation, CompilerApis apis)
 	{
 		// check that the users compilation references the expected library
@@ -50,6 +55,32 @@ public sealed class OpenApiCSharpGenerator() : BaseGenerator("DarkPatterns.OpenA
 			apis.ReportDiagnostic(Diagnostic.Create(UpdateDependentDll, Location.None, MinimumJsonExtensionsVersion.ToString(3), jsonExtensions.Version.ToString(3)));
 		}
 	}
+
+	protected override IEnumerable<KeyValuePair<string, string>> GetCompilationMetadata(Compilation compilation, AnalyzerConfigOptions globalOptions)
+	{
+		var unionAttribute = compilation.GetTypeByMetadataName("System.Runtime.CompilerServices.UnionAttribute");
+		var unionInterface = compilation.GetTypeByMetadataName("System.Runtime.CompilerServices.IUnion");
+		// From a reference rather than the project's own source, as on .NET 11
+		var frameworkUnionTypes = unionAttribute != null && unionInterface != null
+			&& !SymbolEqualityComparer.Default.Equals(unionAttribute.ContainingAssembly, compilation.Assembly)
+			&& !SymbolEqualityComparer.Default.Equals(unionInterface.ContainingAssembly, compilation.Assembly);
+		// PolySharp generates the union types in the same compilation, which this generator can't see
+		var unionTypes = (unionAttribute != null && unionInterface != null) || HasPolySharpUnionTypes(globalOptions);
+		var jsonTypeClassifier = compilation.GetTypeByMetadataName("System.Text.Json.Serialization.JsonTypeClassifierFactory`1") != null;
+
+		return [
+			new("compilation.jsonTypeClassifier", ToMetadata(jsonTypeClassifier)),
+			new("compilation.frameworkUnionTypes", ToMetadata(frameworkUnionTypes)),
+			new("compilation.unionTypes", ToMetadata(unionTypes)),
+		];
+
+		static string ToMetadata(bool value) => value ? "true" : "false";
+	}
+
+	private static bool HasPolySharpUnionTypes(AnalyzerConfigOptions globalOptions) =>
+		globalOptions.TryGetValue(polySharpVersionProperty, out var polySharpVersion)
+		&& Version.TryParse(polySharpVersion.Split('-')[0], out var version)
+		&& version >= MinimumPolySharpVersion;
 
 	protected override string[] GetFileTypes(AdditionalTextWithOptions additionalText)
 	{

@@ -221,6 +221,14 @@
     <value>The file is listed more than once as {0} with different {1} metadata ('{2}'), so its {0} output was not generated. List it once as {0}, or give every entry the same metadata.</value>
     <comment>{0} is the MSBuild item type, {1} the metadata name, and {2} the joined values</comment>
   </data>
+  <data name="DarkPatterns.OpenApiCodegen.CSharp.JsonUnionsRequireSystemTextJson11Diagnostic" xml:space="preserve">
+    <value>jsonUnions requires System.Text.Json 11.0.0 or later. Reference the System.Text.Json package, or remove jsonUnions from the options file.</value>
+    <comment/>
+  </data>
+  <data name="DarkPatterns.OpenApiCodegen.CSharp.JsonUnionsRequireUnionTypesDiagnostic" xml:space="preserve">
+    <value>jsonUnions requires System.Runtime.CompilerServices.UnionAttribute and IUnion. Target .NET 11, reference PolySharp 1.17.0 or later, or remove jsonUnions from the options file.</value>
+    <comment/>
+  </data>
   <data name="DarkPatterns.OpenApi.Specifications.v3_0.TypeKeywordMismatch" xml:space="preserve">
     <value>Type did not match {0}</value>
     <comment/>

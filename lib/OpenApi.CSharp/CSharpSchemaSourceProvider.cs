@@ -20,7 +20,9 @@ namespace DarkPatterns.OpenApi.CSharp;
 public class CSharpSchemaSourceProvider(
 	TransformSettings settings,
 	CSharpSchemaOptions options,
-	HandlebarsFactory? handlebarsFactory = null
+	HandlebarsFactory? handlebarsFactory = null,
+	// Generate oneOf models as union types for System.Text.Json 11, which keeps the path of errors inside a case
+	bool useJsonUnions = false
 ) : SchemaSourceProvider(settings.SchemaRegistry)
 {
 	private readonly HandlebarsFactory handlebarsFactory = handlebarsFactory ?? HandlebarsFactoryDefaults.Default;
@@ -155,12 +157,7 @@ public class CSharpSchemaSourceProvider(
 		var discriminator = schema.TryGetAnnotation<DiscriminatorKeyword>();
 		var oneOf = schema.TryGetAnnotation<OneOfKeyword>()!;
 
-		return new Templates.TypeUnionModel(
-			schema.TryGetAnnotation<DescriptionKeyword>()?.Description,
-			className,
-			AllowAnyOf: false,
-			DiscriminatorProperty: discriminator?.PropertyName,
-			TypeEntries: oneOf.Schemas
+		var typeEntries = oneOf.Schemas
 				.Select((e, index) =>
 				{
 					var s = e.ResolveSchemaInfo();
@@ -178,8 +175,26 @@ public class CSharpSchemaSourceProvider(
 						Identifier: CSharpNaming.ToPropertyName(discriminatorValue ?? inlineSchemas.UriToClassIdentifier(id), options.ReservedIdentifiers("object", className)),
 						DiscriminatorValue: discriminatorValue
 					);
-				}).ToArray()
+				}).ToArray();
+
+		return new Templates.TypeUnionModel(
+			schema.TryGetAnnotation<DescriptionKeyword>()?.Description,
+			className,
+			AllowAnyOf: false,
+			DiscriminatorProperty: discriminator?.PropertyName,
+			TypeEntries: typeEntries,
+			UseJsonUnion: useJsonUnions && CanUseJsonUnion(oneOf, discriminator, typeEntries)
 		);
 	}
+
+	private static bool CanUseJsonUnion(OneOfKeyword oneOf, DiscriminatorKeyword? discriminator, TypeUnionEntry[] typeEntries) =>
+		// A constructor per case: a single case would repeat the record's constructor, and each case needs its own type
+		typeEntries.Length > 1
+		&& typeEntries.Select(e => e.TypeName).Distinct().Count() == typeEntries.Length
+		// The union's Value property
+		&& typeEntries.All(e => e.Identifier != "Value")
+		// Union serialization writes only the case, so each case must declare the discriminator itself
+		&& (discriminator == null || oneOf.Schemas.All(e =>
+			e.ResolveSchemaInfo().TryGetAnnotation<PropertiesKeyword>()?.Properties.ContainsKey(discriminator.PropertyName) == true));
 
 }

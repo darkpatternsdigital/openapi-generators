@@ -6,6 +6,36 @@ every section between your version and the new one.
 
 Releases before C# 0.25.4 and TypeScript 0.13.0 aren't covered.
 
+## C# 0.34.0
+
+**`oneOf` models are System.Text.Json union types on .NET 11.** Projects that
+target .NET 11 or later get them automatically. Errors inside a case then
+report the property's full path, which ASP.NET Core uses as the `ModelState`
+key. Each record gains a constructor for each case and a `Value` property, and
+loses its nested `JsonConverter` class. Code that uses that class stops
+compiling; set `jsonUnions: false` in an options file to keep it. Below .NET 11,
+you can opt in with System.Text.Json 11 and PolySharp. See
+[`oneOf` and System.Text.Json unions](./reference/csharp-options.md#oneof-and-systemtextjson-unions).
+
+**Deserializing a `oneOf` throws `JsonException` when the value matches more
+than one case.** Before, the first matching case was used. A value still
+matches a case when it deserializes as that case and passes its validation.
+
+**Invalid `oneOf` values with a `discriminator` throw `JsonException`.** Before,
+a value that wasn't an object threw `InvalidOperationException`, a missing
+discriminator threw `NullReferenceException`, and a discriminator that wasn't a
+string threw `InvalidOperationException`.
+
+**An error inside a `oneOf` case with a `discriminator` has the path of the
+`oneOf` value.** Before, the path was relative to the case (`$.bark` for a
+`oneOf` at `$.pets[0]`). The message now includes the path inside the case.
+
+**Serializing a `oneOf` writes the case that is set.** A `oneOf` whose cases
+aren't objects, such as an integer or a string, now compiles and serializes;
+before, it didn't compile. A record with no case set is written as `null`. If
+several cases are set, only the first is written; before, object cases were
+merged.
+
 ## C# 0.33.0, Json.Extensions 0.22.0, TypeScript 0.17.0, fetch 0.13.0, RxJS 0.12.0, MSW 0.12.0
 
 **Upgrade `DarkPatterns.OpenApiCodegen.Json.Extensions` to 0.22.0** along with

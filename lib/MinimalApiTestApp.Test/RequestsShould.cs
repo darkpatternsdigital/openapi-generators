@@ -2,6 +2,7 @@ using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using DarkPatterns.OpenApiCodegen.Json.Extensions;
 using Moq;
 using Xunit;
 
@@ -18,7 +19,7 @@ public class RequestsShould
 	public async Task Bind_path_and_query_parameters()
 	{
 		var api = new Mock<PathLevelParameters.IWidgetsWidgetIdApi>();
-		api.Setup(a => a.GetWidget("w1", true)).ReturnsAsync(PathLevelParameters.IWidgetsWidgetIdApi.GetWidgetResult.Ok("found"));
+		api.Setup(a => a.GetWidget("w1", Optional.Create(true))).ReturnsAsync(PathLevelParameters.IWidgetsWidgetIdApi.GetWidgetResult.Ok("found"));
 
 		await SendAsync(api, client => client.GetAsync("/path-level-parameters/widgets/w1?verbose=true"),
 			VerifyResponse(200, "application/json", "\"found\""));
@@ -28,7 +29,7 @@ public class RequestsShould
 	public async Task Bind_missing_optional_query_parameters_as_null()
 	{
 		var api = new Mock<PathLevelParameters.IWidgetsWidgetIdApi>();
-		api.Setup(a => a.DeleteWidget("w1", false, null)).ReturnsAsync(PathLevelParameters.IWidgetsWidgetIdApi.DeleteWidgetResult.NoContent());
+		api.Setup(a => a.DeleteWidget("w1", false, null!)).ReturnsAsync(PathLevelParameters.IWidgetsWidgetIdApi.DeleteWidgetResult.NoContent());
 
 		await SendAsync(api, client => client.DeleteAsync("/path-level-parameters/widgets/w1?verbose=false"),
 			VerifyResponse(204));
@@ -81,7 +82,7 @@ public class RequestsShould
 			VerifyResponse(400));
 	}
 
-	// MVC answers 415 Unsupported Media Type; Minimal API answers 400 for a missing body
+	// MVC answers 415 Unsupported Media Type; Minimal API answers 400 for a missing JSON body
 	[Fact]
 	public async Task Reject_requests_without_a_required_body()
 	{

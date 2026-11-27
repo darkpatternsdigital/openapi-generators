@@ -295,7 +295,8 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 				MultipleOf: info?.TryGetAnnotation<MultipleOfKeyword>()?.Value,
 				UniqueItems: info?.TryGetAnnotation<UniqueItemsKeyword>()?.MustBeUnique ?? false,
 				MinProperties: info?.TryGetAnnotation<MinPropertiesKeyword>()?.Value,
-				MaxProperties: info?.TryGetAnnotation<MaxPropertiesKeyword>()?.Value
+				MaxProperties: info?.TryGetAnnotation<MaxPropertiesKeyword>()?.Value,
+				EnumType: ToEnumType(param.Value)
 			);
 		IEnumerable<OperationParameter> GetStandardParams() =>
 			from ct in new[] { mediaType }

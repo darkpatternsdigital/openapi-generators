@@ -669,6 +669,8 @@ namespace DarkPatterns.OpenApiCodegen.Server.MinimalApi.TestApp.HttpMethods
                 global::Microsoft.AspNetCore.Http.HttpRequest __httpRequest,
                 [global::Microsoft.AspNetCore.Mvc.FromServices] IItemsIdApi __api
             ) => await __api.PutItem(id, putItemBody));
+            // Selects this endpoint by the request's Content-Type, and rejects others with 415 Unsupported Media Type, as MVC's [Consumes] does
+            global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.Accepts(PutItemEndpoint, typeof(string), false, "application/json");
             global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.Produces(PutItemEndpoint, 204);
             
             // Generated from operation: ../../schemas/oas-server-http-methods.yml#/paths/~1items~1{id}/post
@@ -678,6 +680,8 @@ namespace DarkPatterns.OpenApiCodegen.Server.MinimalApi.TestApp.HttpMethods
                 global::Microsoft.AspNetCore.Http.HttpRequest __httpRequest,
                 [global::Microsoft.AspNetCore.Mvc.FromServices] IItemsIdApi __api
             ) => await __api.PostItem(id, postItemBody));
+            // Selects this endpoint by the request's Content-Type, and rejects others with 415 Unsupported Media Type, as MVC's [Consumes] does
+            global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.Accepts(PostItemEndpoint, typeof(string), false, "application/json");
             global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.Produces(PostItemEndpoint, 204);
             
             // Generated from operation: ../../schemas/oas-server-http-methods.yml#/paths/~1items~1{id}/delete
@@ -695,6 +699,8 @@ namespace DarkPatterns.OpenApiCodegen.Server.MinimalApi.TestApp.HttpMethods
                 global::Microsoft.AspNetCore.Http.HttpRequest __httpRequest,
                 [global::Microsoft.AspNetCore.Mvc.FromServices] IItemsIdApi __api
             ) => await __api.PatchItem(id, patchItemBody));
+            // Selects this endpoint by the request's Content-Type, and rejects others with 415 Unsupported Media Type, as MVC's [Consumes] does
+            global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.Accepts(PatchItemEndpoint, typeof(string), false, "application/json");
             global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.Produces(PatchItemEndpoint, 200, typeof(string), "application/json");
             
             // Generated from operation: ../../schemas/oas-server-http-methods.yml#/paths/~1items~1{id}/head

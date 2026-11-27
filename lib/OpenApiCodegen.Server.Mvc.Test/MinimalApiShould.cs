@@ -13,7 +13,7 @@ namespace DarkPatterns.OpenApiCodegen.CSharp;
 /// </summary>
 public class MinimalApiShould
 {
-	// JSON bodies and path, query and header parameters; forms, text and binary bodies and cookies come later
+	// The same documents as ComprehensiveTransformsShould
 	[Theory]
 	[InlineData("all-of.yaml")]
 	[InlineData("enum.yaml")]
@@ -33,6 +33,22 @@ public class MinimalApiShould
 	[InlineData("oas-server-responses.yml")]
 	[InlineData("oas-server-validation.yml")]
 	[InlineData("oas-server-no-operation-id-body.yml")]
+	[InlineData("form.yaml")]
+	[InlineData("validation-optional.yaml")]
+	[InlineData("nullable-vs-optional-legacy.yaml")]
+	[InlineData("oas-server-cookie-parameters.yml")]
+	[InlineData("oas-server-request-bodies.yml")]
+	[InlineData("form-and-cookie-types.yaml")]
+	[InlineData("oas-server-multipart.yml")]
+	[InlineData("oas-server-parameter-styles.yml")]
+	[InlineData("oas-server-documentation.yml")]
+	[InlineData("oas-server-integer-enum.yml")]
+	[InlineData("oas-server-models.yml")]
+	[InlineData("oas-server-security.yml")]
+	[InlineData("oas-server-servers.yml")]
+	[InlineData("oas-server-xml.yml")]
+	[InlineData("oauth.yaml")]
+	[InlineData("openapi-3.0-callbacks.yaml")]
 	public void Compile(string name)
 	{
 		DynamicCompilation.GetGeneratedLibrary(name, minimalApi: true);

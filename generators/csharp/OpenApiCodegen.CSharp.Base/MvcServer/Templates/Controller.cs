@@ -84,7 +84,15 @@ public record OperationParameter(
 	/// <summary>Text and binary bodies are read from the request rather than bound as an action parameter</summary>
 	public bool IsReadFromRequest => IsTextBodyParam || IsStreamBodyParam;
 	// Base64 (`format: byte`) parameters outside the body, which Minimal API can't bind as byte[]
-	public bool IsBase64 => !IsBodyParam && DataType is "byte[]" or "byte[]?";
+	public bool IsBase64 => !IsBodyParam && !UsesRequestValue && DataType is "byte[]" or "byte[]?";
+	// MVC binds an empty form value as null; Minimal API binds an empty string
+	public bool IsNullableString => DataType == "string?";
+	// Minimal API passes optional query, header and cookie parameters as IOptional of the non-nullable type, and treats an empty value as omitted
+	public bool IsOptionalParameter => (IsQueryParam || IsHeaderParam || IsCookieParam) && !Required;
+	// Minimal API reads cookies and optional query and header parameters itself, since its binding rejects empty values
+	public bool UsesRequestValue => IsCookieParam || IsOptionalParameter;
+	public string RequestValueSource => IsQueryParam ? "query" : IsHeaderParam ? "header" : "cookie";
+	public string NonNullableDataType => DataType.TrimEnd('?');
 
 	public bool HasMinLength => MinLength.HasValue;
 	public bool HasMaxLength => MaxLength.HasValue;
@@ -126,6 +134,9 @@ public record OperationRequestBody(string Name, string? RequestBodyType, IEnumer
 	public IEnumerable<OperationParameter> EntryParams => AllParams.Where(p => !p.IsReadFromRequest);
 	/// <summary>A required body read from the request: a request without one is rejected, as MVC does for bound bodies</summary>
 	public bool RequiresBodyFromRequest => AllParams.Any(p => p.IsReadFromRequest && p.Required);
+	// For Minimal API's Accepts metadata: the type of the body, or object for a form, and whether a request can leave it out
+	public string AcceptsType => AllParams.FirstOrDefault(p => p.IsBodyParam || p.IsReadFromRequest)?.DataType.TrimEnd('?') ?? "object";
+	public bool BodyOptional => !AllParams.Any(p => (p.IsBodyParam || p.IsReadFromRequest || p.IsFormParam) && p.Required);
 }
 
 public record OperationSecurityRequirement(

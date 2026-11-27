@@ -28,8 +28,8 @@ namespace {{PackageName}}
         /// "}}</param>{{/each}}
         // Generated from operation: {{{Operation.SourceReference}}}
         global::System.Threading.Tasks.Task<{{Operation.Name}}Result> {{RequestBody.Name}}({{#each RequestBody.AllParams}}
-            {{#unless Optional}}{{{DataType}}}{{else
-            }}global::DarkPatterns.OpenApiCodegen.Json.Extensions.IOptional<{{{DataType}}}>{{/unless}} {{ParamName}}{{#unless @last}}, {{/unless}}{{/each}});
+            {{#if IsOptionalParameter}}global::DarkPatterns.OpenApiCodegen.Json.Extensions.IOptional<{{{NonNullableDataType}}}>{{else}}{{#unless Optional}}{{{DataType}}}{{else
+            }}global::DarkPatterns.OpenApiCodegen.Json.Extensions.IOptional<{{{DataType}}}>{{/unless}}{{/if}} {{ParamName}}{{#unless @last}}, {{/unless}}{{/each}});
         {{/each}}
 
         public readonly struct {{Name}}Result : global::Microsoft.AspNetCore.Http.IResult
@@ -155,19 +155,31 @@ namespace {{PackageName}}
             {{#each Operations as |Operation|}}{{#each RequestBodies as |RequestBody|}}
             // Generated from operation: {{{Operation.SourceReference}}}
             var {{RequestBody.Name}}Endpoint = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapMethods(group, "{{{Operation.Path}}}", new[] { "{{Operation.HttpMethodName}}" }, static async (
-                {{#each RequestBody.EntryParams}}[{{!
+                {{#each RequestBody.EntryParams}}[{{#if UsesRequestValue}}RequestValue("{{RequestValueSource}}", "{{RawName}}"{{#if Required}}, Required = true{{/if}}){{else}}{{!
                 }}{{#if IsPathParam}}global::Microsoft.AspNetCore.Mvc.FromRoute(Name = "{{RawName}}"){{/if}}{{!
                 }}{{#if IsQueryParam}}global::Microsoft.AspNetCore.Mvc.FromQuery(Name = "{{RawName}}"){{/if}}{{!
                 }}{{#if IsHeaderParam}}global::Microsoft.AspNetCore.Mvc.FromHeader(Name = "{{RawName}}"){{/if}}{{!
                 }}{{#if IsBodyParam}}global::Microsoft.AspNetCore.Mvc.FromBody{{#unless Required}}(EmptyBodyBehavior = global::Microsoft.AspNetCore.Mvc.ModelBinding.EmptyBodyBehavior.Allow){{/unless}}{{/if}}{{!
-                }}] {{#if IsBase64}}Base64Value{{#unless Required}}?{{/unless}}{{else}}{{#if EnumType}}EnumValue<{{{EnumType}}}>{{#if DataTypeEnumerable}}[]{{/if}}{{#unless Required}}?{{/unless}}{{else}}{{{DataType}}}{{#if Optional}}{{#unless DataTypeNullable}}?{{/unless}}{{/if}}{{/if}}{{/if}} {{ParamName}},
+                }}{{#if IsFormParam}}global::Microsoft.AspNetCore.Mvc.FromForm(Name = "{{RawName}}"){{/if}}{{/if}}{{!
+                }}] {{#if UsesRequestValue}}RequestValue<{{#if Required}}{{{DataType}}}{{else}}{{{NonNullableDataType}}}{{/if}}>{{else}}{{#if IsBase64}}Base64Value{{#unless Required}}?{{/unless}}{{else}}{{#if EnumType}}EnumValue<{{{EnumType}}}>{{#if DataTypeEnumerable}}[]{{/if}}{{#unless Required}}?{{/unless}}{{else}}{{{DataType}}}{{#if Optional}}{{#unless DataTypeNullable}}?{{/unless}}{{/if}}{{/if}}{{/if}}{{/if}} {{ParamName}},
                 {{/each}}global::Microsoft.AspNetCore.Http.HttpRequest __httpRequest,
                 [global::Microsoft.AspNetCore.Mvc.FromServices] {{@root.InterfaceName}} __api
-            ) => await __api.{{RequestBody.Name}}({{#each RequestBody.AllParams}}{{#if Optional}}{{#if IsBodyParam}}{{!
+            ) => {{#if RequestBody.RequiresBodyFromRequest}}__httpRequest.ContentType == null ? {{@root.InterfaceName}}.{{Operation.Name}}Result.Unsafe(global::Microsoft.AspNetCore.Http.Results.StatusCode(415)) : {{/if}}await __api.{{RequestBody.Name}}({{#each RequestBody.AllParams}}{{#if IsReadFromRequest}}{{!
+                Text and binary bodies are read from the request. A request without a Content-Type gets 415 when one is required, as in MVC.
+                }}{{#unless Required}}__httpRequest.ContentType == null ? null : global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{/unless}}{{#if IsTextBodyParam}}await new global::System.IO.StreamReader(__httpRequest.Body).ReadToEndAsync(){{else}}__httpRequest.Body{{/if}}{{#unless Required}}){{/unless}}{{else}}{{#if UsesRequestValue}}{{#if Required}}{{ParamName}}.Value{{else}}{{ParamName}}.HasValue ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{NonNullableDataType}}}>({{ParamName}}.Value) : null{{/if}}{{else}}{{#if Optional}}{{#if IsBodyParam}}{{!
                 An optional body binds null when the request has none. A nullable body can also be
                 sent as JSON null, so check for content.
                 }}{{#if DataTypeNullable}}__httpRequest.ContentType == null || __httpRequest.ContentLength == 0 ? null : global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}){{else
-                }}{{ParamName}} is { } {{ParamName}}Value ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}Value) : null{{/if}}{{/if}}{{else}}{{#if EnumType}}{{#if DataTypeEnumerable}}{{#unless Required}}{{ParamName}} == null ? null : {{/unless}}global::System.Linq.Enumerable.ToArray(global::System.Linq.Enumerable.Select({{ParamName}}, value => value.Value)){{else}}{{ParamName}}{{#unless Required}}?{{/unless}}.Value{{/if}}{{else}}{{ParamName}}{{#if IsBase64}}{{#unless Required}}?{{/unless}}.Bytes{{/if}}{{/if}}{{/if}}{{#unless @last}}, {{/unless}}{{/each}}));{{!
+                }}{{ParamName}} is { } {{ParamName}}Value ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}Value) : null{{/if}}{{else}}{{!
+                Optional form fields bind as nullable values. A missing field binds null, except that a
+                missing collection binds empty, and a nullable field sent empty is present with a null
+                value: for those, check the form for the key. Base64 and enum fields bind through their
+                TryParse types, so their values are unwrapped.
+                }}{{#if IsBase64}}{{ParamName}} is { } {{ParamName}}Value ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}Value.Bytes) : null{{else}}{{#if EnumType}}{{#if DataTypeEnumerable}}__httpRequest.HasFormContentType && __httpRequest.Form.ContainsKey("{{RawName}}") ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>(global::System.Linq.Enumerable.ToArray(global::System.Linq.Enumerable.Select({{ParamName}}!, value => value.Value))) : null{{else}}{{ParamName}} is { } {{ParamName}}Value ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}Value.Value) : null{{/if}}{{else}}{{#if DataTypeEnumerable}}__httpRequest.HasFormContentType && __httpRequest.Form.ContainsKey("{{RawName}}") ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}) : null{{else}}{{#if DataTypeNullable}}__httpRequest.HasFormContentType && __httpRequest.Form.ContainsKey("{{RawName}}") ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{#if IsNullableString}}global::System.String.IsNullOrEmpty({{ParamName}}) ? null : {{ParamName}}{{else}}{{ParamName}}{{/if}}) : null{{else
+                }}{{ParamName}} is { } {{ParamName}}Value ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}Value) : null{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{else}}{{#if EnumType}}{{#if DataTypeEnumerable}}{{#unless Required}}{{ParamName}} == null ? null : {{/unless}}global::System.Linq.Enumerable.ToArray(global::System.Linq.Enumerable.Select({{ParamName}}, value => value.Value)){{else}}{{ParamName}}{{#unless Required}}?{{/unless}}.Value{{/if}}{{else}}{{#if IsFormParam}}{{#if IsNullableString}}global::System.String.IsNullOrEmpty({{ParamName}}) ? null : {{/if}}{{/if}}{{ParamName}}{{#if IsBase64}}{{#unless Required}}?{{/unless}}.Bytes{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{#unless @last}}, {{/unless}}{{/each}}));{{!
+            }}{{#if RequestBody.RequestBodyType}}
+            // Selects this endpoint by the request's Content-Type, and rejects others with 415 Unsupported Media Type, as MVC's [Consumes] does
+            global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.Accepts({{RequestBody.Name}}Endpoint, typeof({{{RequestBody.AcceptsType}}}), {{#if RequestBody.BodyOptional}}true{{else}}false{{/if}}, "{{{RequestBody.RequestBodyType}}}");{{/if}}{{!
             }}{{#each Operation.Responses.StatusResponse as |Response StatusCode|}}{{#each Response.Content}}
             global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.Produces({{RequestBody.Name}}Endpoint, {{StatusCode}}{{#if DataType}}, typeof({{{DataType}}}), "{{MediaType}}"{{/if}});{{/each}}{{/each}}{{!
             }}{{#if Operation.Responses.DefaultResponse}}{{#each Operation.Responses.DefaultResponse.Content}}
@@ -212,6 +224,91 @@ namespace {{PackageName}}
                     ? new EnumValue<T>(converted)
                     : null;
                 return result != null;
+            }
+        }{{/if}}{{#if HasRequestValueParams}}
+
+        // Names the query, header or cookie value that RequestValue reads
+        [global::System.AttributeUsage(global::System.AttributeTargets.Parameter)]
+        private sealed class RequestValueAttribute : global::System.Attribute
+        {
+            public RequestValueAttribute(string source, string name)
+            {
+                Source = source;
+                Name = name;
+            }
+
+            public string Source { get; }
+            public string Name { get; }
+            public bool Required { get; set; }
+        }
+
+        // Reads cookies (Minimal API has no [FromCookie]) and optional query and header values (Minimal API rejects empty
+        // ones), and converts them as MVC's model binding does. An optional value that is missing or empty has no value. A
+        // missing required value or one that can't be converted binds null, which Minimal API rejects with 400 Bad Request.
+        private sealed class RequestValue<T>
+        {
+            private RequestValue(bool hasValue, T value)
+            {
+                HasValue = hasValue;
+                Value = value;
+            }
+
+            public bool HasValue { get; }
+            public T Value { get; }
+
+            public static global::System.Threading.Tasks.ValueTask<RequestValue<T>?> BindAsync(global::Microsoft.AspNetCore.Http.HttpContext context, global::System.Reflection.ParameterInfo parameter)
+            {
+                var attribute = (RequestValueAttribute)global::System.Attribute.GetCustomAttribute(parameter, typeof(RequestValueAttribute))!;
+                var values = attribute.Source switch
+                {
+                    "query" => context.Request.Query[attribute.Name],
+                    "header" => context.Request.Headers[attribute.Name],
+                    _ => context.Request.Cookies.TryGetValue(attribute.Name, out var cookie) ? new global::Microsoft.Extensions.Primitives.StringValues(cookie) : global::Microsoft.Extensions.Primitives.StringValues.Empty,
+                };
+                if (values.Count == 0 || (!attribute.Required && global::Microsoft.Extensions.Primitives.StringValues.IsNullOrEmpty(values)))
+                    return new(attribute.Required ? null : new RequestValue<T>(false, default!));
+                return new(TryConvert(values, out var value) ? new RequestValue<T>(true, value) : null);
+            }
+
+            private static bool TryConvert(global::Microsoft.Extensions.Primitives.StringValues values, out T value)
+            {
+                value = default!;
+                var type = typeof(T);
+                var elementType = type.IsArray ? type.GetElementType()
+                    : type.IsGenericType && type.GetGenericTypeDefinition() == typeof(global::System.Collections.Generic.IEnumerable<>) ? type.GetGenericArguments()[0]
+                    : null;
+                if (elementType != null && elementType != typeof(byte))
+                {
+                    var array = global::System.Array.CreateInstance(elementType, values.Count);
+                    for (var i = 0; i < values.Count; i++)
+                    {
+                        if (!TryConvertOne(values[i] ?? "", elementType, out var item))
+                            return false;
+                        array.SetValue(item, i);
+                    }
+                    value = (T)(object)array;
+                    return true;
+                }
+                if (!TryConvertOne(values[0] ?? "", type, out var single) || single is not T converted)
+                    return false;
+                value = converted;
+                return true;
+            }
+
+            private static bool TryConvertOne(string text, global::System.Type type, out object? value)
+            {
+                try
+                {
+                    value = type == typeof(byte[])
+                        ? global::System.Convert.FromBase64String(text)
+                        : global::System.ComponentModel.TypeDescriptor.GetConverter(type).ConvertFromInvariantString(text);
+                    return value != null;
+                }
+                catch (global::System.Exception)
+                {
+                    value = null;
+                    return false;
+                }
             }
         }{{/if}}
     }

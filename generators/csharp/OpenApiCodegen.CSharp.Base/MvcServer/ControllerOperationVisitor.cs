@@ -23,6 +23,8 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 	private readonly IReadOnlyList<OpenApiSecurityRequirement> documentSecurityRequirements;
 	private readonly IReadOnlyDictionary<string, OpenApiSecurityScheme> securitySchemes;
 	private readonly Func<Uri, string> toSourceReference;
+	// The scope whose reserved identifiers operation names avoid, such as ControllerBase for MVC controllers
+	private readonly string? operationNameScope;
 
 	public record Argument(
 		OpenApiTransformDiagnostic Diagnostic,
@@ -53,8 +55,9 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 		public string OperationId { get; }
 	}
 
-	public ControllerOperationVisitor(ISchemaRegistry schemaRegistry, CSharpServerSchemaOptions options, string controllerClassName, IReadOnlyList<OpenApiSecurityRequirement> documentSecurityRequirements, IReadOnlyDictionary<string, OpenApiSecurityScheme> securitySchemes, Func<Uri, string> toSourceReference)
+	public ControllerOperationVisitor(ISchemaRegistry schemaRegistry, CSharpServerSchemaOptions options, string controllerClassName, IReadOnlyList<OpenApiSecurityRequirement> documentSecurityRequirements, IReadOnlyDictionary<string, OpenApiSecurityScheme> securitySchemes, Func<Uri, string> toSourceReference, string? operationNameScope)
 	{
+		this.operationNameScope = operationNameScope;
 		this.securitySchemes = securitySchemes;
 		this.schemaRegistry = schemaRegistry;
 		this.options = options;
@@ -118,7 +121,7 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 				HttpMethod: CSharpNaming.ToTitleCaseIdentifier(httpMethod, []),
 				Summary: operation.Summary,
 				Description: operation.Description,
-				Name: CSharpNaming.ToTitleCaseIdentifier(operationId, options.ReservedIdentifiers("ControllerBase", controllerClassName)),
+				Name: CSharpNaming.ToTitleCaseIdentifier(operationId, options.ReservedIdentifiers(operationNameScope, controllerClassName)),
 				Path: path,
 				RequestBodies: builder.RequestBodies.DefaultIfEmpty(OperationRequestBodyFactory(operationId, null, Enumerable.Empty<OperationParameter>())).Select(transform => transform(sharedParameters)).ToArray(),
 				Responses: new Templates.OperationResponses(
@@ -171,8 +174,22 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 			MultipleOf: info?.TryGetAnnotation<MultipleOfKeyword>()?.Value,
 			UniqueItems: info?.TryGetAnnotation<UniqueItemsKeyword>()?.MustBeUnique ?? false,
 			MinProperties: info?.TryGetAnnotation<MinPropertiesKeyword>()?.Value,
-			MaxProperties: info?.TryGetAnnotation<MaxPropertiesKeyword>()?.Value
+			MaxProperties: info?.TryGetAnnotation<MaxPropertiesKeyword>()?.Value,
+			EnumType: ToEnumType(param.Schema)
 		));
+	}
+
+	// String enums bind by their schema values through the generated TypeConverter
+	private string? ToEnumType(JsonSchema? schema)
+	{
+		if (schema?.ResolveSchemaInfo() is not { } info)
+			return null;
+		if (info.TryGetAnnotation<EnumKeyword>() != null && info.TryGetAnnotation<TypeAnnotation>() is { AllowsString: true })
+			return inlineSchemas.ToInlineDataType(schema).Text.TrimEnd('?');
+		if (info.TryGetAnnotation<ItemsKeyword>()?.Schema is { } items && items.ResolveSchemaInfo() is { } itemsInfo
+			&& itemsInfo.TryGetAnnotation<EnumKeyword>() != null && itemsInfo.TryGetAnnotation<TypeAnnotation>() is { AllowsString: true })
+			return inlineSchemas.ToInlineDataType(items).Text.TrimEnd('?');
+		return null;
 	}
 
 	public override void Visit(OpenApiResponse response, int? statusCode, Argument argument) =>
@@ -331,7 +348,7 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 	{
 		argument.Builder?.SecurityRequirements.Add(new OperationSecurityRequirement(
 							 (from scheme in securityRequirement.SchemeRequirements
-								  // OpenAPI 3.0 defines scopes only for OAuth2 and OpenID Connect; on other schemes they're left to the securityAttribute
+							  // OpenAPI 3.0 defines scopes only for OAuth2 and OpenID Connect; on other schemes they're left to the securityAttribute
 							  let enforceScopes = securitySchemes.TryGetValue(scheme.SchemeName, out var definition) && definition.Type is SecuritySchemeType.OAuth2 or SecuritySchemeType.OpenIdConnect
 							  select new Templates.OperationSecuritySchemeRequirement(scheme.SchemeName, enforceScopes ? scheme.ScopeNames.ToArray() : [])).ToArray())
 						 );

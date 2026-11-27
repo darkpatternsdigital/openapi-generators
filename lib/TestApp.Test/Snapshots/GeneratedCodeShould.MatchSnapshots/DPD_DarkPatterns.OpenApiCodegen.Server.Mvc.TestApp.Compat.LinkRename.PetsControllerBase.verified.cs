@@ -101,7 +101,9 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename
             public static FindPetsActionResult Ok(global::System.Collections.Generic.IEnumerable<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename.Pet> result) =>
                 new FindPetsActionResult(200, "application/json", typeof(global::System.Collections.Generic.IEnumerable<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename.Pet>), result);
             
-            
+            /// <summary>
+            /// unexpected error
+            /// </summary>
             public static FindPetsActionResult OtherStatusCode(int statusCode, global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename.Error result) =>
                 new FindPetsActionResult(statusCode, "application/json", typeof(global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename.Error), result);
             
@@ -190,7 +192,9 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename
             public static AddPetActionResult Ok(global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename.Pet result) =>
                 new AddPetActionResult(200, "application/json", typeof(global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename.Pet), result);
             
-            
+            /// <summary>
+            /// unexpected error
+            /// </summary>
             public static AddPetActionResult OtherStatusCode(int statusCode, global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename.Error result) =>
                 new AddPetActionResult(statusCode, "application/json", typeof(global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename.Error), result);
             
@@ -278,7 +282,9 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename
             public static FindPetByIdActionResult Ok(global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename.Pet result) =>
                 new FindPetByIdActionResult(200, "application/json", typeof(global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename.Pet), result);
             
-            
+            /// <summary>
+            /// unexpected error
+            /// </summary>
             public static FindPetByIdActionResult OtherStatusCode(int statusCode, global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename.Error result) =>
                 new FindPetByIdActionResult(statusCode, "application/json", typeof(global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename.Error), result);
             
@@ -366,7 +372,9 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename
             public static DeletePetActionResult NoContent() =>
                 new DeletePetActionResult(204);
             
-            
+            /// <summary>
+            /// unexpected error
+            /// </summary>
             public static DeletePetActionResult OtherStatusCode(int statusCode, global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename.Error result) =>
                 new DeletePetActionResult(statusCode, "application/json", typeof(global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.LinkRename.Error), result);
             

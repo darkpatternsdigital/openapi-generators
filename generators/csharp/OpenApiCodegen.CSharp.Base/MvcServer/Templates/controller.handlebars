@@ -156,8 +156,8 @@ namespace {{PackageName}}
                 new {{../../Name}}ActionResult(statusCode / 100 == {{Range}} ? statusCode : throw new global::System.ArgumentOutOfRangeException(nameof(statusCode)){{#if DataType}}, "{{MediaType}}", typeof({{{DataType}}}), result{{/if}}{{#each ../Headers}},
                     new global::System.Collections.Generic.KeyValuePair<string, string>("{{RawName}}", {{ParamName}}){{/each}});
             {{/each}}{{/each}}{{#if Responses.DefaultResponse}}{{#each Responses.DefaultResponse.Content}}
-            {{#if Responses.DefaultResponse.Description}}/// <summary>
-            /// {{linewrap Responses.DefaultResponse.Description "
+            {{#if ../Responses.DefaultResponse.Description}}/// <summary>
+            /// {{linewrap ../Responses.DefaultResponse.Description "
             /// "}}
             /// </summary>{{/if}}
             public static {{../Name}}ActionResult {{ResponseMethodName}}(int statusCode{{#if DataType}}, {{{DataType}}} result{{/if}}{{#each ../Responses.DefaultResponse.Headers}},

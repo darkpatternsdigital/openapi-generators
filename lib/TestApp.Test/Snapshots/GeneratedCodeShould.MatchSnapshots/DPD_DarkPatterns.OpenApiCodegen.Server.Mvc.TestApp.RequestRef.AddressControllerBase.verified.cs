@@ -98,7 +98,9 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.RequestRef
             public static LookupRecordActionResult Conflict(global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.RequestRef.LookupRecordConflictResponse result) =>
                 new LookupRecordActionResult(409, "application/json", typeof(global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.RequestRef.LookupRecordConflictResponse), result);
             
-            
+            /// <summary>
+            /// unexpected error
+            /// </summary>
             public static LookupRecordActionResult OtherStatusCode(int statusCode, global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.RequestRef.LookupRecordOtherResponse result) =>
                 new LookupRecordActionResult(statusCode, "application/json", typeof(global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.RequestRef.LookupRecordOtherResponse), result);
             

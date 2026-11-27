@@ -41,6 +41,8 @@ public record ControllerOperation(
 {
 	// ASP.NET Core MVC has no HttpTraceAttribute
 	public string HttpMethodAttribute => HttpMethod == "Trace" ? "AcceptVerbs(\"TRACE\")" : $"Http{HttpMethod}";
+	// For Minimal API's MapMethods
+	public string HttpMethodName => HttpMethod.ToUpperInvariant();
 
 	/// <summary>The requirements the generated filter enforces: scopes only for OAuth2 and OpenID Connect schemes</summary>
 	public Dictionary<string, string[]>[] EnforcedSecurityRequirements =>
@@ -74,11 +76,15 @@ public record OperationParameter(
 	int? MinProperties,
 	int? MaxProperties,
 	bool IsTextBodyParam = false,
-	bool IsStreamBodyParam = false
+	bool IsStreamBodyParam = false,
+	// The C# enum type of a string enum parameter, or of the items of an array parameter
+	string? EnumType = null
 )
 {
 	/// <summary>Text and binary bodies are read from the request rather than bound as an action parameter</summary>
 	public bool IsReadFromRequest => IsTextBodyParam || IsStreamBodyParam;
+	// Base64 (`format: byte`) parameters outside the body, which Minimal API can't bind as byte[]
+	public bool IsBase64 => !IsBodyParam && DataType is "byte[]" or "byte[]?";
 
 	public bool HasMinLength => MinLength.HasValue;
 	public bool HasMaxLength => MaxLength.HasValue;

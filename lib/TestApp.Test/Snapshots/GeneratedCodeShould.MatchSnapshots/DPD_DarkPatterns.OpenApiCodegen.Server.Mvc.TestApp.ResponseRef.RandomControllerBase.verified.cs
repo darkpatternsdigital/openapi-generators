@@ -95,7 +95,9 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ResponseRef
             public static GetRandomActionResult BadRequest(global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ResponseRef.BadRequestResponse result) =>
                 new GetRandomActionResult(400, "application/json", typeof(global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ResponseRef.BadRequestResponse), result);
             
-            
+            /// <summary>
+            /// unexpected error
+            /// </summary>
             public static GetRandomActionResult OtherStatusCode(int statusCode, global::System.Text.Json.Nodes.JsonNode result) =>
                 new GetRandomActionResult(statusCode, "application/json", typeof(global::System.Text.Json.Nodes.JsonNode), result);
             

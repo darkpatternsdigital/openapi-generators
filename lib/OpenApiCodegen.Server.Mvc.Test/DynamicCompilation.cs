@@ -9,6 +9,7 @@ using static DarkPatterns.OpenApiCodegen.TestUtils.DocumentHelpers;
 using DarkPatterns.OpenApiCodegen.TestUtils;
 using DarkPatterns.OpenApiCodegen.Handlebars;
 using DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
+using DarkPatterns.OpenApiCodegen.CSharp.MinimalApi;
 using DarkPatterns.Json.Specifications;
 
 namespace DarkPatterns.OpenApiCodegen.CSharp;
@@ -40,6 +41,11 @@ internal class DynamicCompilation
 		typeof(Microsoft.AspNetCore.Authorization.Policy.IPolicyEvaluator).Assembly.Location,
 		typeof(Microsoft.AspNetCore.Authentication.AuthenticationProperties).Assembly.Location,
 		typeof(System.Security.Claims.ClaimsPrincipal).Assembly.Location,
+		typeof(Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions).Assembly.Location,
+		typeof(Microsoft.AspNetCore.Builder.IEndpointConventionBuilder).Assembly.Location,
+		typeof(Microsoft.AspNetCore.Http.Results).Assembly.Location,
+		typeof(Microsoft.AspNetCore.Http.HttpResponseJsonExtensions).Assembly.Location,
+		typeof(Microsoft.AspNetCore.Http.IResult).Assembly.Location,
 		Path.Combine(Path.GetDirectoryName(typeof(object).Assembly.Location)!, "System.ComponentModel.dll"),
 		Path.Combine(Path.GetDirectoryName(typeof(object).Assembly.Location)!, "System.Memory.dll"),
 
@@ -47,7 +53,7 @@ internal class DynamicCompilation
 	};
 
 	/// <summary>Generated source text by file name, for checking what the generated code says (such as documentation)</summary>
-	public static System.Collections.Generic.Dictionary<string, string> GetGeneratedSources(string documentName, bool jsonUnions = false)
+	public static System.Collections.Generic.Dictionary<string, string> GetGeneratedSources(string documentName, bool jsonUnions = false, bool minimalApi = false)
 	{
 		var registry = DocumentLoader.CreateRegistry();
 		var docResult = GetOpenApiDocument(documentName, registry);
@@ -55,7 +61,7 @@ internal class DynamicCompilation
 		var options = LoadOptions();
 
 		var transformer = TransformSettings.BuildComposite(registry, "", [
-			(s) => new PathControllerTransformerFactory(s).Build(docResult, options),
+			(s) => minimalApi ? new MinimalApiTransformerFactory(s).Build(docResult, options) : new PathControllerTransformerFactory(s).Build(docResult, options),
 			(s) => new CSharpSchemaSourceProvider(s, options, useJsonUnions: jsonUnions)
 		]);
 
@@ -64,7 +70,7 @@ internal class DynamicCompilation
 		return generated.Sources.ToDictionary(e => e.Key, e => e.SourceText.ToString());
 	}
 
-	public static byte[] GetGeneratedLibrary(string documentName, bool jsonUnions = false)
+	public static byte[] GetGeneratedLibrary(string documentName, bool jsonUnions = false, bool minimalApi = false)
 	{
 		var registry = DocumentLoader.CreateRegistry();
 		var docResult = GetOpenApiDocument(documentName, registry);
@@ -72,7 +78,7 @@ internal class DynamicCompilation
 		var options = LoadOptions();
 
 		var transformer = TransformSettings.BuildComposite(registry, "", [
-			(s) => new PathControllerTransformerFactory(s).Build(docResult, options),
+			(s) => minimalApi ? new MinimalApiTransformerFactory(s).Build(docResult, options) : new PathControllerTransformerFactory(s).Build(docResult, options),
 			(s) => new CSharpSchemaSourceProvider(s, options, useJsonUnions: jsonUnions)
 		]);
 		registry.DocumentRegistry.Register(docResult.Result);
@@ -83,8 +89,14 @@ internal class DynamicCompilation
 
 		Assert.Empty(generated.Diagnostics);
 
+		return Compile(generated.Sources.Select(e => (e.Key, e.SourceText)));
+	}
+
+	/// <summary>Compiles generated sources, such as the output of <see cref="CSharpGenerator"/>, and fails on any error</summary>
+	public static byte[] Compile(System.Collections.Generic.IEnumerable<(string Key, string SourceText)> sources)
+	{
 		var parseOptions = CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.CSharp11);
-		var syntaxTrees = generated.Sources.Select(e => CSharpSyntaxTree.ParseText(e.SourceText, options: parseOptions, path: e.Key)).ToArray();
+		var syntaxTrees = sources.Select(e => CSharpSyntaxTree.ParseText(e.SourceText, options: parseOptions, path: e.Key)).ToArray();
 
 		string assemblyName = Path.GetRandomFileName();
 		MetadataReference[] references = SystemTextCompilationRefPaths.Select(r => MetadataReference.CreateFromFile(r)).ToArray();

@@ -10,6 +10,7 @@
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDInclude" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDJsonSchema" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDGenerateMvcServer" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDGenerateMinimalApi" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDGenerateClient" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDGenerateWebhookClient" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDGenerateModels" />
@@ -20,6 +21,10 @@
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDMvcServerNamespace" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDMvcServerPathPrefix" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDMvcServerConfiguration" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDMinimalApiLink" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDMinimalApiNamespace" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDMinimalApiPathPrefix" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDMinimalApiConfiguration" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDClientLink" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDClientNamespace" />
 		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DPDClientPathPrefix" />
@@ -34,12 +39,14 @@
 
 		<AvailableItemName Include="OpenApiSchemaOptions" DisplayName="C# Options for Open API Code Generation (OpenApiCodeGen)" />
 		<AvailableItemName Include="OpenApiSchemaMvcServer" DisplayName="Open API Schema MVC Server (OpenApiCodeGen)" />
+		<AvailableItemName Include="OpenApiSchemaMinimalApi" DisplayName="Open API Schema Minimal API Server (OpenApiCodeGen)" />
 		<AvailableItemName Include="OpenApiSchemaClient" DisplayName="Open API Schema Client (OpenApiCodeGen)" />
 		<AvailableItemName Include="OpenApiSchemaWebhookClient" DisplayName="Open API Schema Webhook Client (OpenApiCodeGen)" />
 		<AvailableItemName Include="OpenApiSchemaModels" DisplayName="Open API Schema Models only (OpenApiCodeGen)" />
 		<Watch Include="@(OpenApiSchemaClient)" />
 		<Watch Include="@(OpenApiSchemaWebhookClient)" />
 		<Watch Include="@(OpenApiSchemaMvcServer)" />
+		<Watch Include="@(OpenApiSchemaMinimalApi)" />
 		<Watch Include="@(OpenApiSchemaModels)" />
 		<Watch Include="@(JsonSchemaDocument)" />
 		<Watch Include="@(OpenApiSchemaOptions)" />
@@ -68,6 +75,11 @@
 				<Namespace Condition="'%(AdditionalFiles.Namespace)' == ''">@(OpenApiSchemaMvcServer->'%(Namespace)'->Distinct())</Namespace>
 				<SchemaId Condition="'%(AdditionalFiles.SchemaId)' == ''">@(OpenApiSchemaMvcServer->'%(SchemaId)'->Distinct())</SchemaId>
 
+				<DPDGenerateMinimalApi>@(OpenApiSchemaMinimalApi->'true'->Distinct())</DPDGenerateMinimalApi>
+				<Link Condition="'%(AdditionalFiles.Link)' == ''">@(OpenApiSchemaMinimalApi->'%(Link)'->Distinct())</Link>
+				<Namespace Condition="'%(AdditionalFiles.Namespace)' == ''">@(OpenApiSchemaMinimalApi->'%(Namespace)'->Distinct())</Namespace>
+				<SchemaId Condition="'%(AdditionalFiles.SchemaId)' == ''">@(OpenApiSchemaMinimalApi->'%(SchemaId)'->Distinct())</SchemaId>
+
 				<DPDGenerateClient>@(OpenApiSchemaClient->'true'->Distinct())</DPDGenerateClient>
 				<Link Condition="'%(AdditionalFiles.Link)' == ''">@(OpenApiSchemaClient->'%(Link)'->Distinct())</Link>
 				<Namespace Condition="'%(AdditionalFiles.Namespace)' == ''">@(OpenApiSchemaClient->'%(Namespace)'->Distinct())</Namespace>
@@ -91,6 +103,11 @@
 				<DPDMvcServerNamespace>@(OpenApiSchemaMvcServer->'%(Namespace)'->Distinct(), '|')</DPDMvcServerNamespace>
 				<DPDMvcServerPathPrefix>@(OpenApiSchemaMvcServer->'%(PathPrefix)'->Distinct(), '|')</DPDMvcServerPathPrefix>
 				<DPDMvcServerConfiguration>@(OpenApiSchemaMvcServer->'%(Configuration)'->Distinct(), '|')</DPDMvcServerConfiguration>
+
+				<DPDMinimalApiLink>@(OpenApiSchemaMinimalApi->'%(Link)'->Distinct(), '|')</DPDMinimalApiLink>
+				<DPDMinimalApiNamespace>@(OpenApiSchemaMinimalApi->'%(Namespace)'->Distinct(), '|')</DPDMinimalApiNamespace>
+				<DPDMinimalApiPathPrefix>@(OpenApiSchemaMinimalApi->'%(PathPrefix)'->Distinct(), '|')</DPDMinimalApiPathPrefix>
+				<DPDMinimalApiConfiguration>@(OpenApiSchemaMinimalApi->'%(Configuration)'->Distinct(), '|')</DPDMinimalApiConfiguration>
 
 				<DPDClientLink>@(OpenApiSchemaClient->'%(Link)'->Distinct(), '|')</DPDClientLink>
 				<DPDClientNamespace>@(OpenApiSchemaClient->'%(Namespace)'->Distinct(), '|')</DPDClientNamespace>
@@ -118,11 +135,13 @@
 			<!-- Each output's namespace, computed the same way from its own Link (or the file's Identity) -->
 			<AdditionalFiles Condition=" '@(AdditionalFiles.DPDInclude)' != '' ">
 				<DPDMvcServerWorkingOutputPath Condition=" '%(AdditionalFiles.DPDGenerateMvcServer)' == 'true' and '%(AdditionalFiles.DPDMvcServerNamespace)' == '' ">$([System.Text.RegularExpressions.Regex]::Replace($([MSBuild]::ValueOrDefault('%(AdditionalFiles.DPDMvcServerLink)', '%(AdditionalFiles.Identity)')), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__'))</DPDMvcServerWorkingOutputPath>
+				<DPDMinimalApiWorkingOutputPath Condition=" '%(AdditionalFiles.DPDGenerateMinimalApi)' == 'true' and '%(AdditionalFiles.DPDMinimalApiNamespace)' == '' ">$([System.Text.RegularExpressions.Regex]::Replace($([MSBuild]::ValueOrDefault('%(AdditionalFiles.DPDMinimalApiLink)', '%(AdditionalFiles.Identity)')), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__'))</DPDMinimalApiWorkingOutputPath>
 				<DPDClientWorkingOutputPath Condition=" '%(AdditionalFiles.DPDGenerateClient)' == 'true' and '%(AdditionalFiles.DPDClientNamespace)' == '' ">$([System.Text.RegularExpressions.Regex]::Replace($([MSBuild]::ValueOrDefault('%(AdditionalFiles.DPDClientLink)', '%(AdditionalFiles.Identity)')), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__'))</DPDClientWorkingOutputPath>
 				<DPDWebhookClientWorkingOutputPath Condition=" '%(AdditionalFiles.DPDGenerateWebhookClient)' == 'true' and '%(AdditionalFiles.DPDWebhookClientNamespace)' == '' ">$([System.Text.RegularExpressions.Regex]::Replace($([MSBuild]::ValueOrDefault('%(AdditionalFiles.DPDWebhookClientLink)', '%(AdditionalFiles.Identity)')), '(?&lt;=^|\\|/)..(?=$|\\|/)', '__'))</DPDWebhookClientWorkingOutputPath>
 			</AdditionalFiles>
 			<AdditionalFiles Condition=" '@(AdditionalFiles.DPDInclude)' != '' ">
 				<DPDMvcServerNamespace Condition=" '%(AdditionalFiles.DPDMvcServerWorkingOutputPath)' != '' ">$(RootNamespace)$([System.Text.RegularExpressions.Regex]::Replace($([System.Text.RegularExpressions.Regex]::Replace('/$([System.IO.Path]::GetDirectoryName('%(AdditionalFiles.DPDMvcServerWorkingOutputPath)'))', '[/\\]', '.')), '\.$', ''))</DPDMvcServerNamespace>
+				<DPDMinimalApiNamespace Condition=" '%(AdditionalFiles.DPDMinimalApiWorkingOutputPath)' != '' ">$(RootNamespace)$([System.Text.RegularExpressions.Regex]::Replace($([System.Text.RegularExpressions.Regex]::Replace('/$([System.IO.Path]::GetDirectoryName('%(AdditionalFiles.DPDMinimalApiWorkingOutputPath)'))', '[/\\]', '.')), '\.$', ''))</DPDMinimalApiNamespace>
 				<DPDClientNamespace Condition=" '%(AdditionalFiles.DPDClientWorkingOutputPath)' != '' ">$(RootNamespace)$([System.Text.RegularExpressions.Regex]::Replace($([System.Text.RegularExpressions.Regex]::Replace('/$([System.IO.Path]::GetDirectoryName('%(AdditionalFiles.DPDClientWorkingOutputPath)'))', '[/\\]', '.')), '\.$', ''))</DPDClientNamespace>
 				<DPDWebhookClientNamespace Condition=" '%(AdditionalFiles.DPDWebhookClientWorkingOutputPath)' != '' ">$(RootNamespace)$([System.Text.RegularExpressions.Regex]::Replace($([System.Text.RegularExpressions.Regex]::Replace('/$([System.IO.Path]::GetDirectoryName('%(AdditionalFiles.DPDWebhookClientWorkingOutputPath)'))', '[/\\]', '.')), '\.$', ''))</DPDWebhookClientNamespace>
 			</AdditionalFiles>

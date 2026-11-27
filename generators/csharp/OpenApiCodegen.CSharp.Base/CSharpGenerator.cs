@@ -11,6 +11,7 @@ using DarkPatterns.OpenApi.Transformations.Specifications;
 using DarkPatterns.OpenApiCodegen.Handlebars;
 using DarkPatterns.OpenApi.CSharp;
 using DarkPatterns.OpenApiCodegen.CSharp.MvcServer;
+using DarkPatterns.OpenApiCodegen.CSharp.MinimalApi;
 using DarkPatterns.OpenApiCodegen.CSharp.Client;
 using System.IO;
 using System.Text;
@@ -35,6 +36,7 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 	const string propCompilationUnionTypes = "compilation.unionTypes";
 
 	const string typeMvcServer = "MvcServer";
+	const string typeMinimalApi = "MinimalApi";
 	const string typeClient = "Client";
 	const string typeWebhookClient = "WebhookClient";
 	const string typeModels = "Models";
@@ -45,6 +47,7 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 	private static readonly (string Output, string ItemType)[] outputItemTypes =
 	[
 		(typeMvcServer, "OpenApiSchemaMvcServer"),
+		(typeMinimalApi, "OpenApiSchemaMinimalApi"),
 		(typeClient, "OpenApiSchemaClient"),
 		(typeWebhookClient, "OpenApiSchemaWebhookClient"),
 	];
@@ -95,6 +98,13 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 			 where options != null
 			 let parseResult = CommonParsers.DefaultParsers.Parse(e.loaded, schemaRegistry)
 			 select new PathControllerTransformerFactory(settings).Build(parseResult, options)).ToArray();
+		var minimalApiTransforms =
+			(from e in docs
+			 where e.document.Types.Contains(typeMinimalApi)
+			 let options = LoadOutputOptions(typeMinimalApi, e.document, additionalTextInfos, metadataDiagnostics)
+			 where options != null
+			 let parseResult = CommonParsers.DefaultParsers.Parse(e.loaded, schemaRegistry)
+			 select new MinimalApiTransformerFactory(settings).Build(parseResult, options)).ToArray();
 		var clientTransforms =
 			(from e in docs
 			 where e.document.Types.Contains(typeClient)
@@ -118,6 +128,7 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 
 		var sourceProvider = new CompositeOpenApiSourceProvider([
 			.. mvcServerTransforms,
+			.. minimalApiTransforms,
 			.. clientTransforms,
 			.. webhookTransforms,
 			.. modelsDiagnostics,

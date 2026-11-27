@@ -100,7 +100,9 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Headers
                 new GetInfoActionResult(204,
                     new global::System.Collections.Generic.KeyValuePair<string, string>("X-Data", headerXData));
             
-            
+            /// <summary>
+            /// Another Response
+            /// </summary>
             public static GetInfoActionResult OtherStatusCode(int statusCode,
                 string headerXData,
                 string headerXDiag) =>

@@ -123,9 +123,10 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc
 		[InlineData("DPD.Controller.SpecifiedPet", "{ \"petType\": \"fish\" }")]
 		public async Task ThrowJsonExceptionsForInvalidOneOfObjects(string csharpType, string json)
 		{
-			var (exceptionType, _, message) = await DeserializeFailureAsync("one-of.yaml", "[" + json + "]", $"System.Collections.Generic.List<{csharpType}>");
+			var (exceptionType, path, message) = await DeserializeFailureAsync("one-of.yaml", "[" + json + "]", $"System.Collections.Generic.List<{csharpType}>");
 
 			Assert.Equal("System.Text.Json.JsonException", exceptionType);
+			Assert.Equal("$[0]", path);
 			Assert.DoesNotContain("{position}", message);
 		}
 

@@ -76,11 +76,13 @@ public class OneOfYamlShould
 				Assert.False(controller.ModelState.IsValid);
 #if NET11_0_OR_GREATER
 				// On .NET 11, oneOf models are union types, so System.Text.Json reads the case and reports the property inside it
-				Assert.Contains(controller.ModelState.Keys, key => key.EndsWith("$.bark", StringComparison.Ordinal));
+				Assert.Contains("$.bark", controller.ModelState.Keys);
+				Assert.DoesNotContain("$", controller.ModelState.Keys);
 #else
-				// The JsonConverter can only report the location of the oneOf value; its message names the property
-				Assert.Contains(controller.ModelState.Keys, key => key.EndsWith("$", StringComparison.Ordinal));
-				Assert.Contains(controller.ModelState.Values.SelectMany(v => v.Errors), e => e.Exception?.Message.Contains("$.bark", StringComparison.Ordinal) == true || e.ErrorMessage.Contains("$.bark", StringComparison.Ordinal));
+				// The JsonConverter can only report the location of the oneOf value (the body, `$`); its message names the property
+				Assert.DoesNotContain("$.bark", controller.ModelState.Keys);
+				var errors = controller.ModelState["$"]?.Errors ?? throw new Xunit.Sdk.XunitException("No ModelState entry for the oneOf value");
+				Assert.Contains(errors, e => e.Exception?.Message.Contains("$.bark", StringComparison.Ordinal) == true || e.ErrorMessage.Contains("$.bark", StringComparison.Ordinal));
 #endif
 			},
 			AssertResponseMessage = VerifyResponse(400)

@@ -1,0 +1,78 @@
+openapi: '3.0.3'
+info:
+  version: 1.0.0
+  title: Form, cookie, query and header types
+  description: Optional values and values whose types need conversion, such as enums, base64 and integers, in forms, cookies, queries and headers
+components:
+  schemas:
+    Choice:
+      type: string
+      enum: [rock-paper, scissors]
+paths:
+  /form-types:
+    post:
+      operationId: postFormTypes
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [choice, data, note]
+              properties:
+                choice:
+                  $ref: '#/components/schemas/Choice'
+                optionalChoice:
+                  $ref: '#/components/schemas/Choice'
+                data:
+                  type: string
+                  format: byte
+                optionalData:
+                  type: string
+                  format: byte
+                note:
+                  type: string
+                  nullable: true
+      responses:
+        '204':
+          description: Received
+  /cookie-types:
+    get:
+      operationId: getCookieTypes
+      parameters:
+        - name: count
+          in: cookie
+          schema:
+            type: integer
+        - name: choice
+          in: cookie
+          schema:
+            $ref: '#/components/schemas/Choice'
+      responses:
+        '204':
+          description: Received
+  /query-and-header-types:
+    get:
+      operationId: getQueryAndHeaderTypes
+      parameters:
+        - name: count
+          in: query
+          schema:
+            type: integer
+        - name: choice
+          in: query
+          schema:
+            $ref: '#/components/schemas/Choice'
+        - name: choices
+          in: query
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Choice'
+        - name: X-Note
+          in: header
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Received

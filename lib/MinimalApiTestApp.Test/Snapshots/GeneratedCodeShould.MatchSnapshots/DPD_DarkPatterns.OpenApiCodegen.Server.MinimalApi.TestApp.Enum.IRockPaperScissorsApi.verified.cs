@@ -124,6 +124,8 @@ namespace DarkPatterns.OpenApiCodegen.Server.MinimalApi.TestApp.Enum
                 global::Microsoft.AspNetCore.Http.HttpRequest __httpRequest,
                 [global::Microsoft.AspNetCore.Mvc.FromServices] IRockPaperScissorsApi __api
             ) => await __api.PlayRockPaperScissors(playRockPaperScissorsBody));
+            // Selects this endpoint by the request's Content-Type, and rejects others with 415 Unsupported Media Type, as MVC's [Consumes] does
+            global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.Accepts(PlayRockPaperScissorsEndpoint, typeof(global::DarkPatterns.OpenApiCodegen.Server.MinimalApi.TestApp.Enum.PlayRockPaperScissorsRequest), false, "application/json");
             global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.Produces(PlayRockPaperScissorsEndpoint, 200, typeof(global::DarkPatterns.OpenApiCodegen.Server.MinimalApi.TestApp.Enum.PlayRockPaperScissorsResponse), "application/json");
             global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.Produces(PlayRockPaperScissorsEndpoint, 409);
             

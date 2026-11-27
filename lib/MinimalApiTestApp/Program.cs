@@ -21,6 +21,19 @@ namespace DarkPatterns.OpenApiCodegen.Server.MinimalApi.TestApp
 			Enum.DifficultEnumApiEndpoints.MapDifficultEnumApi(endpoints);
 			Enum.RockPaperScissorsApiEndpoints.MapRockPaperScissorsApi(endpoints);
 			Enum.RockPaperScissorsQueryApiEndpoints.MapRockPaperScissorsQueryApi(endpoints);
+			// Form endpoints need antiforgery, which the generated code leaves to the app
+			Form.BasicApiEndpoints.MapBasicApi(endpoints).DisableAntiforgery();
+			ValidationOptional.FormApiEndpoints.MapFormApi(endpoints).DisableAntiforgery();
+			ValidationOptional.JsonApiEndpoints.MapJsonApi(endpoints);
+			CookieParameters.SessionApiEndpoints.MapSessionApi(endpoints);
+			RequestBodies.BinaryApiEndpoints.MapBinaryApi(endpoints);
+			RequestBodies.MultipleApiEndpoints.MapMultipleApi(endpoints).DisableAntiforgery();
+			RequestBodies.OptionalApiEndpoints.MapOptionalApi(endpoints);
+			RequestBodies.RefApiEndpoints.MapRefApi(endpoints);
+			RequestBodies.TextApiEndpoints.MapTextApi(endpoints);
+			FormAndCookieTypes.FormTypesApiEndpoints.MapFormTypesApi(endpoints).DisableAntiforgery();
+			FormAndCookieTypes.CookieTypesApiEndpoints.MapCookieTypesApi(endpoints);
+			FormAndCookieTypes.QueryAndHeaderTypesApiEndpoints.MapQueryAndHeaderTypesApi(endpoints);
 			OneOf.DeclaredPetApiEndpoints.MapDeclaredPetApi(endpoints);
 			OneOf.IdOrNameApiEndpoints.MapIdOrNameApi(endpoints);
 			OneOf.PetApiEndpoints.MapPetApi(endpoints);

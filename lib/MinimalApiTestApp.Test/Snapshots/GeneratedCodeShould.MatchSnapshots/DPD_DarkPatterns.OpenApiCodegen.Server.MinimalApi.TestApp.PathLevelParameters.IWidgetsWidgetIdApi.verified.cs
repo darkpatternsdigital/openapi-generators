@@ -19,7 +19,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.MinimalApi.TestApp.PathLevelParamet
         // Generated from operation: ../../schemas/path-level-parameters.yaml#/paths/~1widgets~1{widgetId}/get
         global::System.Threading.Tasks.Task<GetWidgetResult> GetWidget(
             string widgetId, 
-            bool? verbose);
+            global::DarkPatterns.OpenApiCodegen.Json.Extensions.IOptional<bool> verbose);
 
         public readonly struct GetWidgetResult : global::Microsoft.AspNetCore.Http.IResult
         {
@@ -112,7 +112,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.MinimalApi.TestApp.PathLevelParamet
         global::System.Threading.Tasks.Task<DeleteWidgetResult> DeleteWidget(
             string widgetId, 
             bool verbose, 
-            string? reason);
+            global::DarkPatterns.OpenApiCodegen.Json.Extensions.IOptional<string> reason);
 
         public readonly struct DeleteWidgetResult : global::Microsoft.AspNetCore.Http.IResult
         {
@@ -210,23 +210,108 @@ namespace DarkPatterns.OpenApiCodegen.Server.MinimalApi.TestApp.PathLevelParamet
             // Generated from operation: ../../schemas/path-level-parameters.yaml#/paths/~1widgets~1{widgetId}/get
             var GetWidgetEndpoint = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapMethods(group, "/path-level-parameters/widgets/{widgetId}", new[] { "GET" }, static async (
                 [global::Microsoft.AspNetCore.Mvc.FromRoute(Name = "widgetId")] string widgetId,
-                [global::Microsoft.AspNetCore.Mvc.FromQuery(Name = "verbose")] bool? verbose,
+                [RequestValue("query", "verbose")] RequestValue<bool> verbose,
                 global::Microsoft.AspNetCore.Http.HttpRequest __httpRequest,
                 [global::Microsoft.AspNetCore.Mvc.FromServices] IWidgetsWidgetIdApi __api
-            ) => await __api.GetWidget(widgetId, verbose));
+            ) => await __api.GetWidget(widgetId, verbose.HasValue ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<bool>(verbose.Value) : null));
             global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.Produces(GetWidgetEndpoint, 200, typeof(string), "application/json");
             
             // Generated from operation: ../../schemas/path-level-parameters.yaml#/paths/~1widgets~1{widgetId}/delete
             var DeleteWidgetEndpoint = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapMethods(group, "/path-level-parameters/widgets/{widgetId}", new[] { "DELETE" }, static async (
                 [global::Microsoft.AspNetCore.Mvc.FromRoute(Name = "widgetId")] string widgetId,
                 [global::Microsoft.AspNetCore.Mvc.FromQuery(Name = "verbose")] bool verbose,
-                [global::Microsoft.AspNetCore.Mvc.FromQuery(Name = "reason")] string? reason,
+                [RequestValue("query", "reason")] RequestValue<string> reason,
                 global::Microsoft.AspNetCore.Http.HttpRequest __httpRequest,
                 [global::Microsoft.AspNetCore.Mvc.FromServices] IWidgetsWidgetIdApi __api
-            ) => await __api.DeleteWidget(widgetId, verbose, reason));
+            ) => await __api.DeleteWidget(widgetId, verbose, reason.HasValue ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<string>(reason.Value) : null));
             global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.Produces(DeleteWidgetEndpoint, 204);
             
             return group;
+        }
+
+        // Names the query, header or cookie value that RequestValue reads
+        [global::System.AttributeUsage(global::System.AttributeTargets.Parameter)]
+        private sealed class RequestValueAttribute : global::System.Attribute
+        {
+            public RequestValueAttribute(string source, string name)
+            {
+                Source = source;
+                Name = name;
+            }
+
+            public string Source { get; }
+            public string Name { get; }
+            public bool Required { get; set; }
+        }
+
+        // Reads cookies (Minimal API has no [FromCookie]) and optional query and header values (Minimal API rejects empty
+        // ones), and converts them as MVC's model binding does. An optional value that is missing or empty has no value. A
+        // missing required value or one that can't be converted binds null, which Minimal API rejects with 400 Bad Request.
+        private sealed class RequestValue<T>
+        {
+            private RequestValue(bool hasValue, T value)
+            {
+                HasValue = hasValue;
+                Value = value;
+            }
+
+            public bool HasValue { get; }
+            public T Value { get; }
+
+            public static global::System.Threading.Tasks.ValueTask<RequestValue<T>?> BindAsync(global::Microsoft.AspNetCore.Http.HttpContext context, global::System.Reflection.ParameterInfo parameter)
+            {
+                var attribute = (RequestValueAttribute)global::System.Attribute.GetCustomAttribute(parameter, typeof(RequestValueAttribute))!;
+                var values = attribute.Source switch
+                {
+                    "query" => context.Request.Query[attribute.Name],
+                    "header" => context.Request.Headers[attribute.Name],
+                    _ => context.Request.Cookies.TryGetValue(attribute.Name, out var cookie) ? new global::Microsoft.Extensions.Primitives.StringValues(cookie) : global::Microsoft.Extensions.Primitives.StringValues.Empty,
+                };
+                if (values.Count == 0 || (!attribute.Required && global::Microsoft.Extensions.Primitives.StringValues.IsNullOrEmpty(values)))
+                    return new(attribute.Required ? null : new RequestValue<T>(false, default!));
+                return new(TryConvert(values, out var value) ? new RequestValue<T>(true, value) : null);
+            }
+
+            private static bool TryConvert(global::Microsoft.Extensions.Primitives.StringValues values, out T value)
+            {
+                value = default!;
+                var type = typeof(T);
+                var elementType = type.IsArray ? type.GetElementType()
+                    : type.IsGenericType && type.GetGenericTypeDefinition() == typeof(global::System.Collections.Generic.IEnumerable<>) ? type.GetGenericArguments()[0]
+                    : null;
+                if (elementType != null && elementType != typeof(byte))
+                {
+                    var array = global::System.Array.CreateInstance(elementType, values.Count);
+                    for (var i = 0; i < values.Count; i++)
+                    {
+                        if (!TryConvertOne(values[i] ?? "", elementType, out var item))
+                            return false;
+                        array.SetValue(item, i);
+                    }
+                    value = (T)(object)array;
+                    return true;
+                }
+                if (!TryConvertOne(values[0] ?? "", type, out var single) || single is not T converted)
+                    return false;
+                value = converted;
+                return true;
+            }
+
+            private static bool TryConvertOne(string text, global::System.Type type, out object? value)
+            {
+                try
+                {
+                    value = type == typeof(byte[])
+                        ? global::System.Convert.FromBase64String(text)
+                        : global::System.ComponentModel.TypeDescriptor.GetConverter(type).ConvertFromInvariantString(text);
+                    return value != null;
+                }
+                catch (global::System.Exception)
+                {
+                    value = null;
+                    return false;
+                }
+            }
         }
     }
 }

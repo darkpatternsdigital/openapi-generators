@@ -210,6 +210,8 @@ namespace DarkPatterns.OpenApiCodegen.Server.MinimalApi.TestApp.OneOf
                 global::Microsoft.AspNetCore.Http.HttpRequest __httpRequest,
                 [global::Microsoft.AspNetCore.Mvc.FromServices] IPetApi __api
             ) => await __api.AddPet(addPetBody));
+            // Selects this endpoint by the request's Content-Type, and rejects others with 415 Unsupported Media Type, as MVC's [Consumes] does
+            global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.Accepts(AddPetEndpoint, typeof(global::DarkPatterns.OpenApiCodegen.Server.MinimalApi.TestApp.OneOf.SpecifiedPet), false, "application/json");
             global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.Produces(AddPetEndpoint, 200);
             
             return group;

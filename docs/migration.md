@@ -6,7 +6,7 @@ every section between your version and the new one.
 
 Releases before C# 0.25.4 and TypeScript 0.13.0 aren't covered.
 
-## Unreleased
+## C# 0.34.0
 
 **`oneOf` models are System.Text.Json union types on .NET 11.** Projects that
 target .NET 11 or later get them automatically. Errors inside a case then

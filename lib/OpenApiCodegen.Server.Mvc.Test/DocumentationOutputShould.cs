@@ -35,6 +35,17 @@ public class DocumentationOutputShould
 		Assert.Contains("/// The gadgets", source);
 	}
 
+	[Theory]
+	[InlineData(false, "DefaultControllerBase.cs")]
+	[InlineData(true, "IDefaultApi.cs")]
+	public void Document_the_default_response_with_its_description(bool minimalApi, string fileName)
+	{
+		var source = DynamicCompilation.GetGeneratedSources("oas-server-responses.yml", minimalApi: minimalApi)
+			.Single(e => e.Key.EndsWith("." + fileName, System.StringComparison.Ordinal))
+			.Value;
+		Assert.Contains("/// Unexpected error", source);
+	}
+
 	[Fact]
 	public void Document_models_with_their_description()
 	{

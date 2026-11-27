@@ -76,7 +76,9 @@ public record OperationParameter(
 	int? MinProperties,
 	int? MaxProperties,
 	bool IsTextBodyParam = false,
-	bool IsStreamBodyParam = false
+	bool IsStreamBodyParam = false,
+	// The C# enum type of a string enum parameter, or of the items of an array parameter
+	string? EnumType = null
 )
 {
 	/// <summary>Text and binary bodies are read from the request rather than bound as an action parameter</summary>

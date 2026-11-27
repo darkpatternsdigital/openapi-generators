@@ -37,18 +37,18 @@ namespace {{PackageName}}
             public readonly global::Microsoft.AspNetCore.Http.IResult Result;
 
             /// <summary>The result before the response headers are added: a generated body or status code result, or the result passed to Unsafe</summary>
-            public global::Microsoft.AspNetCore.Http.IResult UnderlyingResult => (Result as HeaderResult)?.Original;
+            public global::Microsoft.AspNetCore.Http.IResult UnderlyingResult => (Result as __HeaderResult)?.Original;
 
             /// <summary>The response headers this result adds</summary>
             public global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<string, string>> Headers =>
-                (Result as HeaderResult)?.Headers ?? global::System.Linq.Enumerable.Empty<global::System.Collections.Generic.KeyValuePair<string, string>>();
+                (Result as __HeaderResult)?.Headers ?? global::System.Linq.Enumerable.Empty<global::System.Collections.Generic.KeyValuePair<string, string>>();
 
             global::System.Threading.Tasks.Task global::Microsoft.AspNetCore.Http.IResult.ExecuteAsync(global::Microsoft.AspNetCore.Http.HttpContext httpContext) =>
                 (Result ?? throw new global::System.InvalidOperationException("{{Name}}Result was not created from one of its factory methods")).ExecuteAsync(httpContext);
 
-            private sealed class HeaderResult : global::Microsoft.AspNetCore.Http.IResult
+            private sealed class __HeaderResult : global::Microsoft.AspNetCore.Http.IResult
             {
-                public HeaderResult(global::Microsoft.AspNetCore.Http.IResult original, global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<string, string>> headers)
+                public __HeaderResult(global::Microsoft.AspNetCore.Http.IResult original, global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<string, string>> headers)
                 {
                     Original = original;
                     Headers = headers;
@@ -65,14 +65,15 @@ namespace {{PackageName}}
                 }
             }
 
+            // The helper classes start with __ so they can't share a name with the result type, such as an operation named header
             // Writes a response body: streams as they are, strings as text unless the media type is JSON, and anything else as JSON
-            private sealed class BodyResult<T> : global::Microsoft.AspNetCore.Http.IResult
+            private sealed class __BodyResult<T> : global::Microsoft.AspNetCore.Http.IResult
             {
                 private readonly int statusCode;
                 private readonly string mediaType;
                 private readonly T value;
 
-                public BodyResult(int statusCode, string mediaType, T value)
+                public __BodyResult(int statusCode, string mediaType, T value)
                 {
                     this.statusCode = statusCode;
                     this.mediaType = mediaType;
@@ -100,7 +101,7 @@ namespace {{PackageName}}
 
             private {{Name}}Result(global::Microsoft.AspNetCore.Http.IResult result, global::System.Collections.Generic.KeyValuePair<string, string>[] headers)
             {
-                Result = new HeaderResult(result, headers);
+                Result = new __HeaderResult(result, headers);
             }
             {{#each Responses.StatusResponse as |Response Code|}}{{#each Content}}
             {{#if Response.Description}}/// <summary>
@@ -110,7 +111,7 @@ namespace {{PackageName}}
             public static {{../../Name}}Result {{ResponseMethodName}}({{#if DataType}}{{{DataType}}} result{{#if ../Headers.Length}},
                 {{/if}}{{/if}}{{#each ../Headers}}{{#unless @first}},
                 {{/unless}}string {{ParamName}}{{/each}}) =>
-                new {{../../Name}}Result({{#if DataType}}new BodyResult<{{{DataType}}}>({{Code}}, "{{MediaType}}", result){{else}}global::Microsoft.AspNetCore.Http.Results.StatusCode({{Code}}){{/if}}, new global::System.Collections.Generic.KeyValuePair<string, string>[] { {{#each ../Headers}}
+                new {{../../Name}}Result({{#if DataType}}new __BodyResult<{{{DataType}}}>({{Code}}, "{{MediaType}}", result){{else}}global::Microsoft.AspNetCore.Http.Results.StatusCode({{Code}}){{/if}}, new global::System.Collections.Generic.KeyValuePair<string, string>[] { {{#each ../Headers}}
                     new global::System.Collections.Generic.KeyValuePair<string, string>("{{RawName}}", {{ParamName}}),{{/each}} });
             {{/each}}{{/each}}{{#each Responses.RangeResponse as |Response Range|}}{{#each Content}}
             {{#if Response.Description}}/// <summary>
@@ -123,17 +124,17 @@ namespace {{PackageName}}
             {
                 if (statusCode / 100 != {{Range}})
                     throw new global::System.ArgumentOutOfRangeException(nameof(statusCode));
-                return new {{../../Name}}Result({{#if DataType}}new BodyResult<{{{DataType}}}>(statusCode, "{{MediaType}}", result){{else}}global::Microsoft.AspNetCore.Http.Results.StatusCode(statusCode){{/if}}, new global::System.Collections.Generic.KeyValuePair<string, string>[] { {{#each ../Headers}}
+                return new {{../../Name}}Result({{#if DataType}}new __BodyResult<{{{DataType}}}>(statusCode, "{{MediaType}}", result){{else}}global::Microsoft.AspNetCore.Http.Results.StatusCode(statusCode){{/if}}, new global::System.Collections.Generic.KeyValuePair<string, string>[] { {{#each ../Headers}}
                     new global::System.Collections.Generic.KeyValuePair<string, string>("{{RawName}}", {{ParamName}}),{{/each}} });
             }
             {{/each}}{{/each}}{{#if Responses.DefaultResponse}}{{#each Responses.DefaultResponse.Content}}
-            {{#if Responses.DefaultResponse.Description}}/// <summary>
-            /// {{linewrap Responses.DefaultResponse.Description "
+            {{#if ../Responses.DefaultResponse.Description}}/// <summary>
+            /// {{linewrap ../Responses.DefaultResponse.Description "
             /// "}}
             /// </summary>{{/if}}
             public static {{../Name}}Result {{ResponseMethodName}}(int statusCode{{#if DataType}}, {{{DataType}}} result{{/if}}{{#each ../Responses.DefaultResponse.Headers}},
                 string {{ParamName}}{{/each}}) =>
-                new {{../Name}}Result({{#if DataType}}new BodyResult<{{{DataType}}}>(statusCode, "{{MediaType}}", result){{else}}global::Microsoft.AspNetCore.Http.Results.StatusCode(statusCode){{/if}}, new global::System.Collections.Generic.KeyValuePair<string, string>[] { {{#each ../Responses.DefaultResponse.Headers}}
+                new {{../Name}}Result({{#if DataType}}new __BodyResult<{{{DataType}}}>(statusCode, "{{MediaType}}", result){{else}}global::Microsoft.AspNetCore.Http.Results.StatusCode(statusCode){{/if}}, new global::System.Collections.Generic.KeyValuePair<string, string>[] { {{#each ../Responses.DefaultResponse.Headers}}
                     new global::System.Collections.Generic.KeyValuePair<string, string>("{{RawName}}", {{ParamName}}),{{/each}} });
             {{/each}}{{/if}}
 
@@ -159,16 +160,18 @@ namespace {{PackageName}}
                 }}{{#if IsQueryParam}}global::Microsoft.AspNetCore.Mvc.FromQuery(Name = "{{RawName}}"){{/if}}{{!
                 }}{{#if IsHeaderParam}}global::Microsoft.AspNetCore.Mvc.FromHeader(Name = "{{RawName}}"){{/if}}{{!
                 }}{{#if IsBodyParam}}global::Microsoft.AspNetCore.Mvc.FromBody{{#unless Required}}(EmptyBodyBehavior = global::Microsoft.AspNetCore.Mvc.ModelBinding.EmptyBodyBehavior.Allow){{/unless}}{{/if}}{{!
-                }}] {{#if IsBase64}}Base64Value{{#unless Required}}?{{/unless}}{{else}}{{{DataType}}}{{#if Optional}}{{#unless DataTypeNullable}}?{{/unless}}{{/if}}{{/if}} {{ParamName}},
+                }}] {{#if IsBase64}}Base64Value{{#unless Required}}?{{/unless}}{{else}}{{#if EnumType}}EnumValue<{{{EnumType}}}>{{#if DataTypeEnumerable}}[]{{/if}}{{#unless Required}}?{{/unless}}{{else}}{{{DataType}}}{{#if Optional}}{{#unless DataTypeNullable}}?{{/unless}}{{/if}}{{/if}}{{/if}} {{ParamName}},
                 {{/each}}global::Microsoft.AspNetCore.Http.HttpRequest __httpRequest,
                 [global::Microsoft.AspNetCore.Mvc.FromServices] {{@root.InterfaceName}} __api
             ) => await __api.{{RequestBody.Name}}({{#each RequestBody.AllParams}}{{#if Optional}}{{#if IsBodyParam}}{{!
                 An optional body binds null when the request has none. A nullable body can also be
                 sent as JSON null, so check for content.
                 }}{{#if DataTypeNullable}}__httpRequest.ContentType == null || __httpRequest.ContentLength == 0 ? null : global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}){{else
-                }}{{ParamName}} is { } {{ParamName}}Value ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}Value) : null{{/if}}{{/if}}{{else}}{{ParamName}}{{#if IsBase64}}{{#unless Required}}?{{/unless}}.Bytes{{/if}}{{/if}}{{#unless @last}}, {{/unless}}{{/each}}));{{!
+                }}{{ParamName}} is { } {{ParamName}}Value ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}Value) : null{{/if}}{{/if}}{{else}}{{#if EnumType}}{{#if DataTypeEnumerable}}{{#unless Required}}{{ParamName}} == null ? null : {{/unless}}global::System.Linq.Enumerable.ToArray(global::System.Linq.Enumerable.Select({{ParamName}}, value => value.Value)){{else}}{{ParamName}}{{#unless Required}}?{{/unless}}.Value{{/if}}{{else}}{{ParamName}}{{#if IsBase64}}{{#unless Required}}?{{/unless}}.Bytes{{/if}}{{/if}}{{/if}}{{#unless @last}}, {{/unless}}{{/each}}));{{!
             }}{{#each Operation.Responses.StatusResponse as |Response StatusCode|}}{{#each Response.Content}}
-            global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.Produces({{RequestBody.Name}}Endpoint, {{StatusCode}}{{#if DataType}}, typeof({{{DataType}}}), "{{MediaType}}"{{/if}});{{/each}}{{/each}}
+            global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.Produces({{RequestBody.Name}}Endpoint, {{StatusCode}}{{#if DataType}}, typeof({{{DataType}}}), "{{MediaType}}"{{/if}});{{/each}}{{/each}}{{!
+            }}{{#if Operation.Responses.DefaultResponse}}{{#each Operation.Responses.DefaultResponse.Content}}
+            global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithMetadata({{RequestBody.Name}}Endpoint, new global::Microsoft.AspNetCore.Mvc.ProducesDefaultResponseTypeAttribute({{#if DataType}}typeof({{{DataType}}}){{/if}}));{{/each}}{{/if}}
             {{/each}}{{/each}}
             return group;
         }{{#if HasBase64Params}}
@@ -192,6 +195,23 @@ namespace {{PackageName}}
                     result = null;
                     return false;
                 }
+            }
+        }{{/if}}{{#if HasEnumParams}}
+
+        // Generated enums read their schema values through their TypeConverter, which Minimal API doesn't use
+        private sealed class EnumValue<T>
+            where T : struct
+        {
+            private EnumValue(T value) => Value = value;
+
+            public T Value { get; }
+
+            public static bool TryParse(string? value, out EnumValue<T>? result)
+            {
+                result = value != null && global::System.ComponentModel.TypeDescriptor.GetConverter(typeof(T)).ConvertFromInvariantString(value) is T converted
+                    ? new EnumValue<T>(converted)
+                    : null;
+                return result != null;
             }
         }{{/if}}
     }

@@ -89,8 +89,14 @@ internal class DynamicCompilation
 
 		Assert.Empty(generated.Diagnostics);
 
+		return Compile(generated.Sources.Select(e => (e.Key, e.SourceText)));
+	}
+
+	/// <summary>Compiles generated sources, such as the output of <see cref="CSharpGenerator"/>, and fails on any error</summary>
+	public static byte[] Compile(System.Collections.Generic.IEnumerable<(string Key, string SourceText)> sources)
+	{
 		var parseOptions = CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.CSharp11);
-		var syntaxTrees = generated.Sources.Select(e => CSharpSyntaxTree.ParseText(e.SourceText, options: parseOptions, path: e.Key)).ToArray();
+		var syntaxTrees = sources.Select(e => CSharpSyntaxTree.ParseText(e.SourceText, options: parseOptions, path: e.Key)).ToArray();
 
 		string assemblyName = Path.GetRandomFileName();
 		MetadataReference[] references = SystemTextCompilationRefPaths.Select(r => MetadataReference.CreateFromFile(r)).ToArray();

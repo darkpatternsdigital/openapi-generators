@@ -59,6 +59,49 @@ public class MinimalApiShould
 	}
 
 	[Fact]
+	public void Compile_operations_named_like_the_result_types_helpers()
+	{
+		// header and body would be the HeaderResult and BodyResult structs, which contain the result's helper classes;
+		// the enum array covers binding each query value as an enum
+		var result = GenerateMinimalApi("""
+			openapi: 3.0.3
+			info: { title: Names, version: 1.0.0 }
+			paths:
+			  /header:
+			    get:
+			      operationId: header
+			      parameters:
+			        - name: options
+			          in: query
+			          schema: { type: array, items: { type: string, enum: [a, b] } }
+			      responses:
+			        '200':
+			          description: OK
+			          content: { application/json: { schema: { type: string } } }
+			  /body:
+			    get:
+			      operationId: body
+			      responses:
+			        '200':
+			          description: OK
+			          content: { application/json: { schema: { type: string } } }
+			""");
+
+		Assert.Empty(result.Diagnostics);
+		DynamicCompilation.Compile(result.Sources.Select(s => (s.Key, s.SourceText)));
+	}
+
+	private static GenerationResult GenerateMinimalApi(string yaml) =>
+		new CSharpGenerator().Generate([
+			new AdditionalTextInfo(
+				Path: Path.Combine(Path.GetTempPath(), "minimal-api.yaml"),
+				Contents: yaml,
+				Types: ["MinimalApi"],
+				Metadata: new Dictionary<string, string?> { ["Namespace"] = "DPD.Controller" }
+			),
+		]);
+
+	[Fact]
 	public void Generate_for_files_listed_as_OpenApiSchemaMinimalApi()
 	{
 		const string schemaName = "simple-types.yaml";

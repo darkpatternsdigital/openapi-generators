@@ -21,4 +21,5 @@ public record MinimalApiTemplate(
 )
 {
 	public bool HasBase64Params => Operations.Any(o => o.RequestBodies.Any(b => b.AllParams.Any(p => p.IsBase64)));
+	public bool HasEnumParams => Operations.Any(o => o.RequestBodies.Any(b => b.AllParams.Any(p => p.EnumType != null)));
 }

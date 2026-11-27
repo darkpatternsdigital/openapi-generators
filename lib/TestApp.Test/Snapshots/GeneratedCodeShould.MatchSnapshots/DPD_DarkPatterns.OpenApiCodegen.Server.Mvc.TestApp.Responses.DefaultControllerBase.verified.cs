@@ -87,7 +87,9 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Responses
             public static GetDefaultActionResult Ok(string result) =>
                 new GetDefaultActionResult(200, "application/json", typeof(string), result);
             
-            
+            /// <summary>
+            /// Unexpected error
+            /// </summary>
             public static GetDefaultActionResult OtherStatusCode(int statusCode, global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Responses.Error result) =>
                 new GetDefaultActionResult(statusCode, "application/json", typeof(global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Responses.Error), result);
             

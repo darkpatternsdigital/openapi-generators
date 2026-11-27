@@ -89,7 +89,9 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.ClientAndServer
             public static GetPhotoActionResult Ok(global::System.IO.Stream result) =>
                 new GetPhotoActionResult(200, "application/octet-stream", typeof(global::System.IO.Stream), result);
             
-            
+            /// <summary>
+            /// unexpected error
+            /// </summary>
             public static GetPhotoActionResult OtherStatusCode(int statusCode, global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.ClientAndServer.GetPhotoOtherResponse result) =>
                 new GetPhotoActionResult(statusCode, "application/json", typeof(global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.Compat.ClientAndServer.GetPhotoOtherResponse), result);
             

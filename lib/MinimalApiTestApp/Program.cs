@@ -1,6 +1,8 @@
 using DarkPatterns.OpenApiCodegen.Server.MinimalApi.TestApp;
 
 var builder = WebApplication.CreateBuilder(args);
+// So tests can check the response metadata that OpenAPI documents are built from
+builder.Services.AddEndpointsApiExplorer();
 var app = builder.Build();
 app.MapTestApis();
 app.Run();
@@ -16,6 +18,9 @@ namespace DarkPatterns.OpenApiCodegen.Server.MinimalApi.TestApp
 			Headers.RedirectApiEndpoints.MapRedirectApi(endpoints);
 			HttpMethods.ItemsIdApiEndpoints.MapItemsIdApi(endpoints);
 			HttpTrace.ItemsApiEndpoints.MapItemsApi(endpoints);
+			Enum.DifficultEnumApiEndpoints.MapDifficultEnumApi(endpoints);
+			Enum.RockPaperScissorsApiEndpoints.MapRockPaperScissorsApi(endpoints);
+			Enum.RockPaperScissorsQueryApiEndpoints.MapRockPaperScissorsQueryApi(endpoints);
 			OneOf.DeclaredPetApiEndpoints.MapDeclaredPetApi(endpoints);
 			OneOf.IdOrNameApiEndpoints.MapIdOrNameApi(endpoints);
 			OneOf.PetApiEndpoints.MapPetApi(endpoints);

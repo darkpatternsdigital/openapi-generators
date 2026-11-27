@@ -26,18 +26,18 @@ namespace DarkPatterns.OpenApiCodegen.Server.MinimalApi.TestApp.PathLevelParamet
             public readonly global::Microsoft.AspNetCore.Http.IResult Result;
 
             /// <summary>The result before the response headers are added: a generated body or status code result, or the result passed to Unsafe</summary>
-            public global::Microsoft.AspNetCore.Http.IResult UnderlyingResult => (Result as HeaderResult)?.Original;
+            public global::Microsoft.AspNetCore.Http.IResult UnderlyingResult => (Result as __HeaderResult)?.Original;
 
             /// <summary>The response headers this result adds</summary>
             public global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<string, string>> Headers =>
-                (Result as HeaderResult)?.Headers ?? global::System.Linq.Enumerable.Empty<global::System.Collections.Generic.KeyValuePair<string, string>>();
+                (Result as __HeaderResult)?.Headers ?? global::System.Linq.Enumerable.Empty<global::System.Collections.Generic.KeyValuePair<string, string>>();
 
             global::System.Threading.Tasks.Task global::Microsoft.AspNetCore.Http.IResult.ExecuteAsync(global::Microsoft.AspNetCore.Http.HttpContext httpContext) =>
                 (Result ?? throw new global::System.InvalidOperationException("GetWidgetResult was not created from one of its factory methods")).ExecuteAsync(httpContext);
 
-            private sealed class HeaderResult : global::Microsoft.AspNetCore.Http.IResult
+            private sealed class __HeaderResult : global::Microsoft.AspNetCore.Http.IResult
             {
-                public HeaderResult(global::Microsoft.AspNetCore.Http.IResult original, global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<string, string>> headers)
+                public __HeaderResult(global::Microsoft.AspNetCore.Http.IResult original, global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<string, string>> headers)
                 {
                     Original = original;
                     Headers = headers;
@@ -54,14 +54,15 @@ namespace DarkPatterns.OpenApiCodegen.Server.MinimalApi.TestApp.PathLevelParamet
                 }
             }
 
+            // The helper classes start with __ so they can't share a name with the result type, such as an operation named header
             // Writes a response body: streams as they are, strings as text unless the media type is JSON, and anything else as JSON
-            private sealed class BodyResult<T> : global::Microsoft.AspNetCore.Http.IResult
+            private sealed class __BodyResult<T> : global::Microsoft.AspNetCore.Http.IResult
             {
                 private readonly int statusCode;
                 private readonly string mediaType;
                 private readonly T value;
 
-                public BodyResult(int statusCode, string mediaType, T value)
+                public __BodyResult(int statusCode, string mediaType, T value)
                 {
                     this.statusCode = statusCode;
                     this.mediaType = mediaType;
@@ -89,14 +90,14 @@ namespace DarkPatterns.OpenApiCodegen.Server.MinimalApi.TestApp.PathLevelParamet
 
             private GetWidgetResult(global::Microsoft.AspNetCore.Http.IResult result, global::System.Collections.Generic.KeyValuePair<string, string>[] headers)
             {
-                Result = new HeaderResult(result, headers);
+                Result = new __HeaderResult(result, headers);
             }
             
             /// <summary>
             /// The widget
             /// </summary>
             public static GetWidgetResult Ok(string result) =>
-                new GetWidgetResult(new BodyResult<string>(200, "application/json", result), new global::System.Collections.Generic.KeyValuePair<string, string>[] {  });
+                new GetWidgetResult(new __BodyResult<string>(200, "application/json", result), new global::System.Collections.Generic.KeyValuePair<string, string>[] {  });
             
 
             /// <summary>Allows for results not specified in the API</summary>
@@ -118,18 +119,18 @@ namespace DarkPatterns.OpenApiCodegen.Server.MinimalApi.TestApp.PathLevelParamet
             public readonly global::Microsoft.AspNetCore.Http.IResult Result;
 
             /// <summary>The result before the response headers are added: a generated body or status code result, or the result passed to Unsafe</summary>
-            public global::Microsoft.AspNetCore.Http.IResult UnderlyingResult => (Result as HeaderResult)?.Original;
+            public global::Microsoft.AspNetCore.Http.IResult UnderlyingResult => (Result as __HeaderResult)?.Original;
 
             /// <summary>The response headers this result adds</summary>
             public global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<string, string>> Headers =>
-                (Result as HeaderResult)?.Headers ?? global::System.Linq.Enumerable.Empty<global::System.Collections.Generic.KeyValuePair<string, string>>();
+                (Result as __HeaderResult)?.Headers ?? global::System.Linq.Enumerable.Empty<global::System.Collections.Generic.KeyValuePair<string, string>>();
 
             global::System.Threading.Tasks.Task global::Microsoft.AspNetCore.Http.IResult.ExecuteAsync(global::Microsoft.AspNetCore.Http.HttpContext httpContext) =>
                 (Result ?? throw new global::System.InvalidOperationException("DeleteWidgetResult was not created from one of its factory methods")).ExecuteAsync(httpContext);
 
-            private sealed class HeaderResult : global::Microsoft.AspNetCore.Http.IResult
+            private sealed class __HeaderResult : global::Microsoft.AspNetCore.Http.IResult
             {
-                public HeaderResult(global::Microsoft.AspNetCore.Http.IResult original, global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<string, string>> headers)
+                public __HeaderResult(global::Microsoft.AspNetCore.Http.IResult original, global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<string, string>> headers)
                 {
                     Original = original;
                     Headers = headers;
@@ -146,14 +147,15 @@ namespace DarkPatterns.OpenApiCodegen.Server.MinimalApi.TestApp.PathLevelParamet
                 }
             }
 
+            // The helper classes start with __ so they can't share a name with the result type, such as an operation named header
             // Writes a response body: streams as they are, strings as text unless the media type is JSON, and anything else as JSON
-            private sealed class BodyResult<T> : global::Microsoft.AspNetCore.Http.IResult
+            private sealed class __BodyResult<T> : global::Microsoft.AspNetCore.Http.IResult
             {
                 private readonly int statusCode;
                 private readonly string mediaType;
                 private readonly T value;
 
-                public BodyResult(int statusCode, string mediaType, T value)
+                public __BodyResult(int statusCode, string mediaType, T value)
                 {
                     this.statusCode = statusCode;
                     this.mediaType = mediaType;
@@ -181,7 +183,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.MinimalApi.TestApp.PathLevelParamet
 
             private DeleteWidgetResult(global::Microsoft.AspNetCore.Http.IResult result, global::System.Collections.Generic.KeyValuePair<string, string>[] headers)
             {
-                Result = new HeaderResult(result, headers);
+                Result = new __HeaderResult(result, headers);
             }
             
             /// <summary>

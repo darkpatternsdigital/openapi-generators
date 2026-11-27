@@ -23,8 +23,8 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.RequestBodies
         [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(200, Type = typeof(int))] // application/json
         
         public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.IActionResult> PostBinaryTypeSafeEntry(
-            [global::Microsoft.AspNetCore.Mvc.FromBody, global::System.ComponentModel.DataAnnotations.Required] global::System.IO.Stream postBinaryBody
-        ) => (await PostBinary(postBinaryBody)).ActionResult;
+            
+        ) => Request.ContentType == null ? new global::Microsoft.AspNetCore.Mvc.UnsupportedMediaTypeResult() : (await PostBinary(Request.Body)).ActionResult;
 
         protected abstract global::System.Threading.Tasks.Task<PostBinaryActionResult> PostBinary(
             global::System.IO.Stream postBinaryBody);

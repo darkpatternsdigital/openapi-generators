@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.Json.Nodes;
 using DarkPatterns.Json.Diagnostics;
@@ -63,14 +64,23 @@ public class TypeAnnotation(string keyword, IReadOnlyList<PrimitiveType> allowed
 		{
 			JsonArray _ => PrimitiveType.Array,
 			JsonObject _ => PrimitiveType.Object,
-			JsonValue v when v.TryGetValue(out bool _) => PrimitiveType.Boolean,
-			JsonValue v when v.TryGetValue(out string? s) && s is not null => PrimitiveType.String,
-			JsonValue v when v.TryGetValue(out double d) =>
-				0 == d % 1 ? PrimitiveType.Integer : PrimitiveType.Number,
+			// The underlying value may be any CLR type (such as decimal from YAML), so check the JSON representation
+			JsonValue v => v.ToJsonString() switch
+			{
+				"true" or "false" => PrimitiveType.Boolean,
+				"null" => PrimitiveType.Null,
+				['"', ..] => PrimitiveType.String,
+				var n => decimal.TryParse(n, NumberStyles.Float, CultureInfo.InvariantCulture, out var d) && 0 == d % 1
+					? PrimitiveType.Integer
+					: PrimitiveType.Number,
+			},
 			_ => PrimitiveType.Null,
 		};
 
 		if (AllowedTypes.Contains(actualType))
+			return [];
+		// Every integer is also a number
+		if (actualType == PrimitiveType.Integer && AllowedTypes.Contains(PrimitiveType.Number))
 			return [];
 		return [new TypeKeywordMismatch(actualType, AllowedTypes, evaluationContext.DocumentRegistry.ResolveLocation(nodeMetadata))];
 	}

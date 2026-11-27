@@ -20,7 +20,7 @@ public class CSharpControllerTransformer(TransformSettings settings, OpenApiDocu
 		var className = CSharpNaming.ToClassName(groupName + " base", options.ReservedIdentifiers());
 
 		var resultOperations = new List<ControllerOperation>();
-		var visitor = new ControllerOperationVisitor(settings.SchemaRegistry, options, controllerClassName: className, toSourceReference: settings.ToSourceReference);
+		var visitor = new ControllerOperationVisitor(settings.SchemaRegistry, options, controllerClassName: className, documentSecurityRequirements: document.SecurityRequirements, securitySchemes: document.SecuritySchemes, toSourceReference: settings.ToSourceReference);
 		foreach (var (operation, method, path) in operations)
 		{
 			try
@@ -36,6 +36,7 @@ public class CSharpControllerTransformer(TransformSettings settings, OpenApiDocu
 		var template = new Templates.ControllerTemplate(
 			Header: settings.Header(document.Id),
 			SecurityAttribute: options.SecurityAttribute,
+			SecurityRequirementsAttribute: $"global::{baseNamespace}.{SecuritySchemesClassName}.SecurityRequirementsAttribute",
 
 			PackageName: baseNamespace,
 			ClassName: className,
@@ -78,10 +79,12 @@ public class CSharpControllerTransformer(TransformSettings settings, OpenApiDocu
 		);
 	}
 
+	private string SecuritySchemesClassName => CSharpNaming.ToClassName(document.Info.Title + " security schemes", options.ReservedIdentifiers());
+
 	internal IEnumerable<SourceEntry> TransformSecurityPoliciesHelper(IEnumerable<string> initialSecuritySchemes, OpenApiTransformDiagnostic diagnostic)
 	{
 		var baseNamespace = options.DefaultNamespace;
-		var securitySchemesClassName = CSharpNaming.ToClassName(document.Info.Title + " security schemes", options.ReservedIdentifiers());
+		var securitySchemesClassName = SecuritySchemesClassName;
 		var schemes = initialSecuritySchemes.Distinct().ToArray();
 		if (schemes.Length == 0)
 			return Enumerable.Empty<SourceEntry>();
@@ -93,7 +96,7 @@ public class CSharpControllerTransformer(TransformSettings settings, OpenApiDocu
 				PackageName: baseNamespace,
 				Schemes: [
 					.. from scheme in schemes.Distinct()
-					   let propertyName = CSharpNaming.ToPropertyName(scheme, [.. options.ReservedIdentifiers(), "AllPolicies"])
+					   let propertyName = CSharpNaming.ToPropertyName(scheme, [.. options.ReservedIdentifiers(), "AllPolicies", "ScopeClaimTypes", "SecurityRequirementsAttribute"])
 					   select new Templates.SecuritySchemeReference(propertyName, scheme)
 				]
 			))

@@ -329,7 +329,7 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 	[Fact]
 	public async Task SendPatchRequestsWithAnOptionalBody()
 	{
-		var actualMessage = await GetRequestMessage("oas-client-methods.yaml", @"UpdateItem(id: ""i-1"", updateItemBody: new(Name: ""n""))");
+		var actualMessage = await GetRequestMessage("oas-client-methods.yaml", @"UpdateItem(id: ""i-1"", updateItemBody: Optional.Create(new Item(Name: ""n"")))");
 
 		Assert.Equal("PATCH", actualMessage.Method.Method);
 		Assert.Equal("items/i-1", actualMessage.RequestUri?.OriginalString);
@@ -349,7 +349,7 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 	[Theory]
 	[InlineData("oas-client-methods.yaml", @"CheckItem(id: ""i-1"")", "HEAD", "items/i-1")]
 	[InlineData("oas-client-methods.yaml", @"ItemOptions(id: ""i-1"")", "OPTIONS", "items/i-1")]
-	[InlineData("oas-client-trace.yml", "TraceEcho()", "TRACE", "echo")]
+	[InlineData("oas-client-trace.yaml", "TraceEcho()", "TRACE", "echo")]
 	public async Task SendEachHttpMethod(string documentName, string operation, string method, string path)
 	{
 		var actualMessage = await GetRequestMessage(documentName, operation);
@@ -376,12 +376,20 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 		Assert.Equal("files/report.pdf", actualMessage.RequestUri?.OriginalString);
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Cookie parameters): cookie parameters are accepted but no Cookie header is sent")]
+	[Fact]
 	public async Task SendCookieParameters()
 	{
-		var actualMessage = await GetRequestMessage("oas-client-cookies.yaml", @"GetSession(session: ""abc"", theme: Optional.Create(""dark""))");
+		var actualMessage = await GetRequestMessage("oas-client-cookies.yaml", @"GetSession(session: ""abc"", theme: Optional.Create(""dark""), visits: null)");
 
 		Assert.Equal(["session=abc; theme=dark"], actualMessage.Headers.GetValues("Cookie"));
+	}
+
+	[Fact]
+	public async Task EncodeCookieValues()
+	{
+		var actualMessage = await GetRequestMessage("oas-client-cookies.yaml", @"GetSession(session: ""a;b=c"", theme: null, visits: Optional.Create(3))");
+
+		Assert.Equal(["session=a%3Bb%3Dc; visits=3"], actualMessage.Headers.GetValues("Cookie"));
 	}
 
 	[Fact(Skip = "OpenAPI 3.0 gap (Parameter style): path arrays are formatted with ToString instead of comma-separated (simple style)")]
@@ -487,7 +495,7 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 		Assert.Equal(["true"], actualMessage.Headers.GetValues("X-Enabled"));
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Request bodies): text/plain bodies are JSON-encoded (quoted)")]
+	[Fact]
 	public async Task SendTextBodiesAsText()
 	{
 		var actualMessage = await GetRequestMessage("oas-client-request-bodies.yaml", @"SendText(sendTextBody: ""hello"")");
@@ -496,7 +504,7 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 		Assert.Equal("hello", await actualMessage.Content!.ReadAsStringAsync());
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Request bodies): application/octet-stream bodies are sent without a Content-Type")]
+	[Fact]
 	public async Task SendBinaryBodies()
 	{
 		var actualMessage = await GetRequestMessage("oas-client-request-bodies.yaml", "SendBinary(sendBinaryBody: new System.IO.MemoryStream(new byte[] { 1, 2, 3 }))");
@@ -514,7 +522,7 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 		CompareJson(await actualMessage.Content!.ReadAsStringAsync(), new { text = "hello" });
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Request bodies): text/plain bodies are JSON-encoded (quoted)")]
+	[Fact]
 	public async Task SendTheTextMediaTypeOfARequestBodyWithSeveral()
 	{
 		var actualMessage = await GetRequestMessage("oas-client-request-bodies.yaml", @"SendEither(sendEitherBody: ""hello"")");
@@ -527,7 +535,7 @@ public class HttpRequestMessageFactoriesShould : IClassFixture<TempDirectory>
 	public async Task OmitAnOptionalJsonRequestBody()
 	{
 		var withoutBody = await GetRequestMessage("oas-client-request-bodies.yaml", "SaveNote()");
-		var withBody = await GetRequestMessage("oas-client-request-bodies.yaml", @"SaveNote(saveNoteBody: new(Text: ""hello""))");
+		var withBody = await GetRequestMessage("oas-client-request-bodies.yaml", @"SaveNote(saveNoteBody: Optional.Create(new Note(Text: ""hello"")))");
 
 		Assert.Equal("PUT", withoutBody.Method.Method);
 		Assert.Null(withoutBody.Content);

@@ -13,4 +13,13 @@ public partial class TransformationDiagnostics
 								category: "DarkPatterns.OpenApiCodegen",
 								DiagnosticSeverity.Error,
 								isEnabledByDefault: true);
+
+	[TransformationDiagnostic("DarkPatterns.OpenApiCodegen.CSharp.ConflictingOutputMetadataDiagnostic")]
+	public static readonly DiagnosticDescriptor OpenApiCSharpConflictingOutputMetadataDiagnostic =
+		new DiagnosticDescriptor(id: "DPD_OPENAPI_CS_002",
+								title: "A file is listed more than once as the same output with different metadata",
+								messageFormat: DarkPatterns_OpenApiCodegen_CSharp_ConflictingOutputMetadataDiagnostic,
+								category: "DarkPatterns.OpenApiCodegen",
+								DiagnosticSeverity.Error,
+								isEnabledByDefault: true);
 }

@@ -23,11 +23,11 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.RequestBodies
         [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(204)] // 
         
         public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.IActionResult> PostOptionalTypeSafeEntry(
-            [global::Microsoft.AspNetCore.Mvc.FromBody, global::System.ComponentModel.DataAnnotations.Required] global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.RequestBodies.Note postOptionalBody
-        ) => (await PostOptional(postOptionalBody)).ActionResult;
+            [global::Microsoft.AspNetCore.Mvc.FromBody(EmptyBodyBehavior = global::Microsoft.AspNetCore.Mvc.ModelBinding.EmptyBodyBehavior.Allow)] global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.RequestBodies.Note? postOptionalBody
+        ) => (await PostOptional(postOptionalBody is { } postOptionalBodyValue ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.RequestBodies.Note>(postOptionalBodyValue) : null)).ActionResult;
 
         protected abstract global::System.Threading.Tasks.Task<PostOptionalActionResult> PostOptional(
-            global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.RequestBodies.Note postOptionalBody);
+            global::DarkPatterns.OpenApiCodegen.Json.Extensions.IOptional<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.RequestBodies.Note> postOptionalBody);
 
         public readonly struct PostOptionalActionResult
         {

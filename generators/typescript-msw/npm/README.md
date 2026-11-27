@@ -37,6 +37,9 @@ const server = setupServer(
 
 This API will use the type safety from OpenAPI along with msw.
 
+MSW can't mock `TRACE` operations: it builds a Fetch API `Request`, which
+doesn't allow the `TRACE` method.
+
 [1]: https://www.npmjs.com/package/@darkpatternsdigital/openapi-codegen-typescript
 
 ## Documentation

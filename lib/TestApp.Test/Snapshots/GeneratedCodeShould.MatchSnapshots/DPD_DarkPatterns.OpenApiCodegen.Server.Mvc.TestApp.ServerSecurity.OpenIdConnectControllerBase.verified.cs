@@ -20,6 +20,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ServerSecurity
         // Allowed with an OpenID Connect token
         [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(204)] // 
         [global::Microsoft.AspNetCore.Authorization.Authorize(Policy = "Oidc")]
+        [global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ServerSecurity.ServerSecuritySecuritySchemes.SecurityRequirementsAttribute("[{\u0022Oidc\u0022:[\u0022read\u0022]}]")]
         [DarkPatterns.Security.SecurityActionFilter("[{\u0022Oidc\u0022:[\u0022read\u0022]}]")]
         public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.IActionResult> GetOpenIdConnectTypeSafeEntry(
             

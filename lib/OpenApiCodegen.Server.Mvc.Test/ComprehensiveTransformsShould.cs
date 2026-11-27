@@ -1,6 +1,7 @@
 ﻿using DarkPatterns.OpenApi.Transformations;
 using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.Json.Specifications.Keywords;
+using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
 using DarkPatterns.OpenApiCodegen.TestUtils;
 using System.Linq;
 using Xunit;
@@ -38,8 +39,10 @@ public class ComprehensiveTransformsShould
 	[InlineData("response-ref.yaml")]
 	[InlineData("openapi-3.0-callbacks.yaml")]
 	[InlineData("oas-server-http-methods.yml")]
+	[InlineData("oas-server-http-trace.yml")]
 	[InlineData("oas-server-paths.yml")]
 	[InlineData("oas-server-parameter-styles.yml")]
+	[InlineData("oas-server-cookie-parameters.yml")]
 	[InlineData("oas-server-request-bodies.yml")]
 	[InlineData("oas-server-multipart.yml")]
 	[InlineData("oas-server-responses.yml")]
@@ -58,18 +61,6 @@ public class ComprehensiveTransformsShould
 	}
 
 	// OpenAPI 3.0 features whose generated code doesn't compile yet, so they're kept out of the TestApp
-
-	[Fact(Skip = "OpenAPI 3.0 gap (HTTP methods): trace emits [HttpTrace], which ASP.NET Core MVC doesn't have")]
-	public void Generate_and_compile_the_trace_method()
-	{
-		DynamicCompilation.GetGeneratedLibrary("oas-server-http-trace.yml");
-	}
-
-	[Fact(Skip = "OpenAPI 3.0 gap (Cookie parameters): cookie parameters are left out of the action's signature but still passed to the abstract method (CS0103)")]
-	public void Generate_and_compile_cookie_parameters()
-	{
-		DynamicCompilation.GetGeneratedLibrary("oas-server-cookie-parameters.yml");
-	}
 
 	[Fact(Skip = "OpenAPI 3.0 gap (Models): an anyOf schema is referenced as a type that is never generated (CS0234)")]
 	public void Generate_and_compile_any_of()
@@ -125,6 +116,27 @@ public class ComprehensiveTransformsShould
 				Assert.Equal(26, diag.Location.Range?.Start.Line);
 				Assert.Equal(23, diag.Location.Range?.Start.Column);
 			},
+			// The OpenAPI 3.0 schema also reports the bad `required` and the responses without `description`
+			(DiagnosticBase diag) =>
+			{
+				Assert.IsType<TypeKeywordMismatch>(diag);
+				Assert.Equal(26, diag.Location.Range?.Start.Line);
+			},
+			(DiagnosticBase diag) =>
+			{
+				Assert.Contains("description", Assert.IsType<MissingRequiredProperties>(diag).Missing);
+				Assert.Equal(34, diag.Location.Range?.Start.Line);
+			},
+			(DiagnosticBase diag) =>
+			{
+				Assert.Contains("description", Assert.IsType<MissingRequiredProperties>(diag).Missing);
+				Assert.Equal(66, diag.Location.Range?.Start.Line);
+			},
+			(DiagnosticBase diag) =>
+			{
+				Assert.Contains("description", Assert.IsType<MissingRequiredProperties>(diag).Missing);
+				Assert.Equal(72, diag.Location.Range?.Start.Line);
+			},
 			(DiagnosticBase diag) =>
 			{
 				var targetNodeDiagnostic = Assert.IsType<CouldNotFindTargetNodeDiagnostic>(diag);
@@ -142,6 +154,13 @@ public class ComprehensiveTransformsShould
 		var diagnostics = GetDocumentDiagnostics("bad.2.yaml");
 
 		Assert.Collection(diagnostics,
+			(DiagnosticBase diag) =>
+			{
+				// The OpenAPI 3.0 schema does not allow the unknown property
+				var unknown = Assert.IsType<DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator.UnknownPropertyDiagnostic>(diag);
+				Assert.Equal("#/components/schemas/Name", unknown.PropertyName);
+				Assert.Equal(18, diag.Location.Range?.Start.Line);
+			},
 			(DiagnosticBase diag) =>
 			{
 				Assert.IsType<UnableToCreateInlineSchemaDiagnostic>(diag);

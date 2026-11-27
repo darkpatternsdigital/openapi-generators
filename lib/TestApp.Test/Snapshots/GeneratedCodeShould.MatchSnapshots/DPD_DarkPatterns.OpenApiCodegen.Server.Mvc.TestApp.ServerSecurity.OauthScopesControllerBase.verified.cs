@@ -20,6 +20,7 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ServerSecurity
         // Allowed with an OAuth token that has the write scope
         [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(204)] // 
         [global::Microsoft.AspNetCore.Authorization.Authorize(Policy = "OAuth")]
+        [global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ServerSecurity.ServerSecuritySecuritySchemes.SecurityRequirementsAttribute("[{\u0022OAuth\u0022:[\u0022write\u0022]}]")]
         [DarkPatterns.Security.SecurityActionFilter("[{\u0022OAuth\u0022:[\u0022write\u0022]}]")]
         public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.IActionResult> GetOAuthScopesTypeSafeEntry(
             

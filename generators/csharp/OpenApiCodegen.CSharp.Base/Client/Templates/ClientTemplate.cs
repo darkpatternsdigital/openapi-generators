@@ -51,7 +51,9 @@ public record OperationParameter(
 
 public record OperationResponses(
 	OperationResponse? DefaultResponse,
-	Dictionary<int, OperationResponse> StatusResponse
+	Dictionary<int, OperationResponse> StatusResponse,
+	// Keyed by the first digit of the status code range, such as 4 for `4XX`
+	Dictionary<int, OperationResponse> RangeResponse
 );
 
 public record OperationResponse(
@@ -70,7 +72,7 @@ public record OperationResponseContentOption(
 	string MediaTypeCondition
 );
 
-public record OperationRequestBody(string Name, bool IsForm, bool IsFile, bool HasQueryParam, string? RequestBodyType, IEnumerable<OperationParameter> AllParams);
+public record OperationRequestBody(string Name, bool IsForm, bool IsText, bool IsFile, bool HasQueryParam, bool HasCookieParam, string? RequestBodyType, IEnumerable<OperationParameter> AllParams);
 
 public record OperationSecurityRequirement(
 	OperationSecuritySchemeRequirement[] Schemes

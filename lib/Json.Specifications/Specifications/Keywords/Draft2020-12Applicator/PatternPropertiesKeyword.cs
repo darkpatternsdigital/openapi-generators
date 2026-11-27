@@ -14,6 +14,7 @@ public class PatternPropertiesKeyword(string keyword, IReadOnlyDictionary<Regex,
 	public static readonly IJsonSchemaKeyword Instance = new JsonSchemaKeyword(Parse);
 
 	public string Keyword => keyword;
+	public IReadOnlyDictionary<Regex, JsonSchema> PatternSchemas => patternSchemas;
 
 	private static DiagnosableResult<IJsonSchemaAnnotation> Parse(string keyword, ResolvableNode nodeInfo, JsonSchemaParserOptions options)
 	{

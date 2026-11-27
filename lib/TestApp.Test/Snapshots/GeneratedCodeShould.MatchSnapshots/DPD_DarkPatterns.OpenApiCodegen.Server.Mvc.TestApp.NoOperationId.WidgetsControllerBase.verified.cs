@@ -22,11 +22,11 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.NoOperationId
         // Created
         [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(204)] // 
         
-        public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.IActionResult> _TypeSafeEntry(
+        public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.IActionResult> PostNoOperationIdWidgetsTypeSafeEntry(
             [global::Microsoft.AspNetCore.Mvc.FromBody, global::System.ComponentModel.DataAnnotations.Required] string body
-        ) => (await _(body)).ActionResult;
+        ) => (await PostNoOperationIdWidgets(body)).ActionResult;
 
-        protected abstract global::System.Threading.Tasks.Task<PostNoOperationIdWidgetsActionResult> _(
+        protected abstract global::System.Threading.Tasks.Task<PostNoOperationIdWidgetsActionResult> PostNoOperationIdWidgets(
             string body);
 
         public readonly struct PostNoOperationIdWidgetsActionResult

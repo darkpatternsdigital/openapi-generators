@@ -153,6 +153,10 @@
     <value>Value matched multiple 'oneOf'-constrained schemas</value>
     <comment/>
   </data>
+  <data name="DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator.UnknownPropertyDiagnostic" xml:space="preserve">
+    <value>Unknown property '{0}'. Check its spelling and indentation.</value>
+    <comment/>
+  </data>
   <data name="DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation.JsonSchemaPatternMismatchDiagnostic" xml:space="preserve">
     <value>Value did not match pattern: {0}</value>
     <comment/>
@@ -167,6 +171,26 @@
   </data>
   <data name="DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation.UniqueItemsKeywordNotUnique" xml:space="preserve">
     <value>Array items must be unique; detected duplicate array</value>
+    <comment/>
+  </data>
+  <data name="DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation.EnumKeywordMismatch" xml:space="preserve">
+    <value>Value did not match any of the allowed values</value>
+    <comment/>
+  </data>
+  <data name="DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation.MinimumKeywordNotMet" xml:space="preserve">
+    <value>Value must be {0}</value>
+    <comment/>
+  </data>
+  <data name="DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation.MinItemsKeywordNotMet" xml:space="preserve">
+    <value>Array must have at least {0} items</value>
+    <comment/>
+  </data>
+  <data name="DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation.MinPropertiesKeywordNotMet" xml:space="preserve">
+    <value>Object must have at least {0} properties</value>
+    <comment/>
+  </data>
+  <data name="DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation.MaxPropertiesKeywordExceeded" xml:space="preserve">
+    <value>Object must have at most {0} properties</value>
     <comment/>
   </data>
   <data name="DarkPatterns.Json.Documents.UnableToParseSchema" xml:space="preserve">
@@ -192,6 +216,10 @@
   <data name="DarkPatterns.OpenApi.CSharp.UnableToCreateInlineSchemaDiagnostic" xml:space="preserve">
     <value>Could not recognize schema to become a C# type. This could be an unimplemented feature or an error with the schema.</value>
     <comment/>
+  </data>
+  <data name="DarkPatterns.OpenApiCodegen.CSharp.ConflictingOutputMetadataDiagnostic" xml:space="preserve">
+    <value>The file is listed more than once as {0} with different {1} metadata ('{2}'), so its {0} output was not generated. List it once as {0}, or give every entry the same metadata.</value>
+    <comment>{0} is the MSBuild item type, {1} the metadata name, and {2} the joined values</comment>
   </data>
   <data name="DarkPatterns.OpenApi.Specifications.v3_0.TypeKeywordMismatch" xml:space="preserve">
     <value>Type did not match {0}</value>

@@ -38,20 +38,24 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OpenApi30Callbacks
         public static async global::System.Threading.Tasks.Task<PostOnDataReturnType> PostOnData(
             this global::System.Net.Http.HttpMessageInvoker client,
             global::System.Uri uri,
-            global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OpenApi30Callbacks.PostStreamsPostOnDataRequest body,
+            global::DarkPatterns.OpenApiCodegen.Json.Extensions.IOptional<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OpenApi30Callbacks.PostStreamsPostOnDataRequest>? body,
             global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken)
         ) => await (await client.SendAsync(PostOnData(uri, body), cancellationToken).ConfigureAwait(false))
             .ParsePostOnData().ConfigureAwait(false);
 
         public static global::System.Net.Http.HttpRequestMessage PostOnData(
             global::System.Uri uri
-            , global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OpenApi30Callbacks.PostStreamsPostOnDataRequest body
+            , global::DarkPatterns.OpenApiCodegen.Json.Extensions.IOptional<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OpenApi30Callbacks.PostStreamsPostOnDataRequest>? body
             )
         {
             var requestMessage = new global::System.Net.Http.HttpRequestMessage(
                 global::System.Net.Http.HttpMethod.Post,
                 uri.OriginalString);
-            requestMessage.Content = global::System.Net.Http.Json.JsonContent.Create<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OpenApi30Callbacks.PostStreamsPostOnDataRequest>(body, global::System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json"));
+
+            if (body != null)
+            {
+                requestMessage.Content = global::System.Net.Http.Json.JsonContent.Create<global::DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.OpenApi30Callbacks.PostStreamsPostOnDataRequest>(global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.GetValueOrThrow(body), global::System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json"));
+            }
 
 
             return requestMessage;

@@ -20,6 +20,7 @@ public class MinPropertiesKeyword(string keyword, int value) : IJsonSchemaAnnota
 	}
 
 	public string Keyword => keyword;
+	public int Value => value;
 
 	public IEnumerable<JsonSchema> GetReferencedSchemas() => [];
 	public IEnumerable<IJsonSchemaAnnotation> GetDynamicAnnotations()
@@ -27,7 +28,12 @@ public class MinPropertiesKeyword(string keyword, int value) : IJsonSchemaAnnota
 
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchemaInfo context, EvaluationContext evaluationContext)
 	{
-		// TODO
-		throw new System.NotImplementedException($"Not implemented: limit min properties to {value}");
+		if (nodeMetadata.Node is JsonObject obj && obj.Count < value)
+			yield return new MinPropertiesKeywordNotMet(value, evaluationContext.DocumentRegistry.ResolveLocation(nodeMetadata));
 	}
+}
+
+public record MinPropertiesKeywordNotMet(int MinProperties, Location Location) : DiagnosticBase(Location)
+{
+	public override IReadOnlyList<string> GetTextArguments() => [MinProperties.ToString(System.Globalization.CultureInfo.InvariantCulture)];
 }

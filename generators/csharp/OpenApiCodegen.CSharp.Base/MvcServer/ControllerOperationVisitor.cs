@@ -5,6 +5,7 @@ using DarkPatterns.OpenApi.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DarkPatterns.Json.Specifications.Keywords.Draft04;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Validation;
 using DarkPatterns.Json.Specifications.Keywords.Draft2020_12Applicator;
 using DarkPatterns.OpenApi.CSharp;
@@ -19,6 +20,8 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 	private readonly CSharpServerSchemaOptions options;
 	private readonly CSharpInlineSchemas inlineSchemas;
 	private readonly string controllerClassName;
+	private readonly IReadOnlyList<OpenApiSecurityRequirement> documentSecurityRequirements;
+	private readonly IReadOnlyDictionary<string, OpenApiSecurityScheme> securitySchemes;
 	private readonly Func<Uri, string> toSourceReference;
 
 	public record Argument(
@@ -31,27 +34,33 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 
 	public class OperationBuilder
 	{
-		public OperationBuilder(OpenApiOperation operation)
+		public OperationBuilder(OpenApiOperation operation, string operationId)
 		{
 			Operation = operation;
+			OperationId = operationId;
 		}
 
 		public List<Func<OperationParameter[], OperationRequestBody>> RequestBodies { get; } = [];
 
 		public OperationResponse? DefaultResponse { get; set; }
 		public Dictionary<int, OperationResponse> StatusResponses { get; } = [];
+		public Dictionary<int, OperationResponse> RangeResponses { get; } = [];
 		public List<OperationSecurityRequirement> SecurityRequirements { get; } = [];
 		public List<Dictionary<string, string[]>> RawSecurityRequirements { get; } = [];
 		public List<OperationParameter> SharedParameters { get; } = [];
 		public OpenApiOperation Operation { get; }
+		/// <summary>The operationId, or a name from the method and path when there is none</summary>
+		public string OperationId { get; }
 	}
 
-	public ControllerOperationVisitor(ISchemaRegistry schemaRegistry, CSharpServerSchemaOptions options, string controllerClassName, Func<Uri, string> toSourceReference)
+	public ControllerOperationVisitor(ISchemaRegistry schemaRegistry, CSharpServerSchemaOptions options, string controllerClassName, IReadOnlyList<OpenApiSecurityRequirement> documentSecurityRequirements, IReadOnlyDictionary<string, OpenApiSecurityScheme> securitySchemes, Func<Uri, string> toSourceReference)
 	{
+		this.securitySchemes = securitySchemes;
 		this.schemaRegistry = schemaRegistry;
 		this.options = options;
 		this.inlineSchemas = new CSharpInlineSchemas(options, schemaRegistry.DocumentRegistry);
 		this.controllerClassName = controllerClassName;
+		this.documentSecurityRequirements = documentSecurityRequirements;
 		this.toSourceReference = toSourceReference;
 	}
 
@@ -74,11 +83,35 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 				? options.PathPrefix.Trim('/') + "/"
 				: "")
 			+ pathSuffix.TrimStart('/');
-		var builder = new OperationBuilder(operation);
+		var operationId = operation.OperationId ?? $"{httpMethod} {path}";
+		var builder = new OperationBuilder(operation, operationId);
 
 		base.Visit(operation, httpMethod, argument with { Builder = builder });
+		// Without its own `security`, the operation uses the document's requirements
+		if (operation.SecurityRequirements == null)
+			foreach (var securityRequirement in documentSecurityRequirements)
+				Visit(securityRequirement, argument with { Builder = builder });
 
-		var operationId = operation.OperationId ?? $"{httpMethod} {path}";
+		// Requirements are alternatives, but separate [Authorize] attributes must all pass, so [Authorize] is only used
+		// for schemes every requirement needs. The generated filter is added when that doesn't cover the
+		// requirements: when there are alternatives, or OAuth2/OpenID Connect scopes to check.
+		var securityRequirements = builder.SecurityRequirements
+			.GroupBy(r => string.Join("\n", r.Schemes
+				.Select(s => s.SchemeName + " " + string.Join(" ", s.ScopeNames.OrderBy(scope => scope, StringComparer.Ordinal)))
+				.OrderBy(scheme => scheme, StringComparer.Ordinal)))
+			.Select(duplicates => duplicates.First())
+			.ToArray();
+		var allowAnonymous = securityRequirements.Any(r => r.Schemes.Length == 0);
+		var requiredSchemes = securityRequirements
+			.Select(r => r.Schemes.Select(s => s.SchemeName))
+			.Aggregate((IEnumerable<string>?)null, (common, schemes) => common?.Intersect(schemes) ?? schemes.Distinct())
+			?.ToArray() ?? [];
+		var useAuthorizeAttribute = securityRequirements is [var onlyRequirement] && onlyRequirement.Schemes.All(s => s.ScopeNames.Length == 0);
+		string[] authorizePolicies =
+			// With an empty requirement, the policies still authenticate the user when they can
+			allowAnonymous ? [.. securityRequirements.SelectMany(r => r.Schemes).Select(s => s.SchemeName).Distinct()]
+			: requiredSchemes;
+
 		var sharedParameters = builder.SharedParameters.ToArray();
 		argument.RegisterControllerOperation(
 			new Templates.ControllerOperation(
@@ -90,10 +123,14 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 				RequestBodies: builder.RequestBodies.DefaultIfEmpty(OperationRequestBodyFactory(operationId, null, Enumerable.Empty<OperationParameter>())).Select(transform => transform(sharedParameters)).ToArray(),
 				Responses: new Templates.OperationResponses(
 					DefaultResponse: builder.DefaultResponse,
-					StatusResponse: new(builder.StatusResponses)
+					StatusResponse: new(builder.StatusResponses),
+					RangeResponse: new(builder.RangeResponses)
 				),
-				SecurityRequirements: [.. builder.SecurityRequirements],
+				SecurityRequirements: securityRequirements,
 				RawSecurityRequirements: [.. builder.RawSecurityRequirements],
+				AllowAnonymous: allowAnonymous,
+				AuthorizePolicies: authorizePolicies,
+				UseSecurityRequirementsAttribute: securityRequirements.Length > 0 && !allowAnonymous && !useAuthorizeAttribute,
 				SourceReference: toSourceReference(operation.Id)
 			));
 	}
@@ -125,17 +162,29 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 			Optional: false,
 			Required: param.Required,
 			Pattern: info?.TryGetAnnotation<PatternKeyword>()?.Pattern,
-			MinLength: info?.TryGetAnnotation<MinLengthKeyword>()?.Value,
-			MaxLength: info?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
+			MinLength: info?.TryGetAnnotation<MinLengthKeyword>()?.Value ?? info?.TryGetAnnotation<MinItemsKeyword>()?.Value,
+			MaxLength: info?.TryGetAnnotation<MaxLengthKeyword>()?.Value ?? info?.TryGetAnnotation<MaxItemsKeyword>()?.Value,
 			Minimum: info?.TryGetAnnotation<MinimumKeyword>()?.Value,
-			Maximum: info?.TryGetAnnotation<MaximumKeyword>()?.Value
+			Maximum: info?.TryGetAnnotation<MaximumKeyword>()?.Value,
+			ExclusiveMinimum: info?.TryGetAnnotation<ExclusiveMinimumKeyword>()?.IsExclusive ?? false,
+			ExclusiveMaximum: info?.TryGetAnnotation<ExclusiveMaximumKeyword>()?.IsExclusive ?? false,
+			MultipleOf: info?.TryGetAnnotation<MultipleOfKeyword>()?.Value,
+			UniqueItems: info?.TryGetAnnotation<UniqueItemsKeyword>()?.MustBeUnique ?? false,
+			MinProperties: info?.TryGetAnnotation<MinPropertiesKeyword>()?.Value,
+			MaxProperties: info?.TryGetAnnotation<MaxPropertiesKeyword>()?.Value
 		));
 	}
 
-	public override void Visit(OpenApiResponse response, int? statusCode, Argument argument)
+	public override void Visit(OpenApiResponse response, int? statusCode, Argument argument) =>
+		VisitResponse(response, statusCode, null, argument);
+	public override void VisitStatusCodeRange(OpenApiResponse response, int statusCodeClass, Argument argument) =>
+		VisitResponse(response, null, statusCodeClass, argument);
+	private void VisitResponse(OpenApiResponse response, int? statusCode, int? statusCodeClass, Argument argument)
 	{
 		string statusCodeName;
-		if (!statusCode.HasValue)
+		if (statusCodeClass.HasValue)
+			statusCodeName = HttpStatusCodes.StatusCodeRangeNames[statusCodeClass.Value];
+		else if (!statusCode.HasValue)
 			statusCodeName = "other status code";
 		else if (!HttpStatusCodes.StatusCodeNames.TryGetValue(statusCode.Value, out statusCodeName))
 			statusCodeName = $"status code {statusCode}";
@@ -175,7 +224,9 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 					  )).ToArray()
 		);
 
-		if (statusCode.HasValue)
+		if (statusCodeClass.HasValue)
+			argument.Builder.RangeResponses.Add(statusCodeClass.Value, result);
+		else if (statusCode.HasValue)
 			argument.Builder.StatusResponses.Add(statusCode.Value, result);
 		else
 			argument.Builder.DefaultResponse = result;
@@ -189,11 +240,13 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 		var mimeType = mediaType.GetLastContextPart();
 
 		var isForm = mimeType == "application/x-www-form-urlencoded";
+		var kind = MediaTypes.Classify(mimeType);
+		var bodyRequired = argument.Builder?.Operation.RequestBody?.Required ?? false;
 
 		var singleContentType = argument.Builder?.Operation.RequestBody?.Content?.Count is not > 1;
 
 		var mediaTypeSchemaInfo = mediaType.Schema?.ResolveSchemaInfo();
-		argument.Builder?.RequestBodies.Add(OperationRequestBodyFactory(argument.Builder?.Operation.OperationId + (singleContentType ? "" : mimeType), mimeType, isForm ? GetFormParams() : GetStandardParams()));
+		argument.Builder?.RequestBodies.Add(OperationRequestBodyFactory(argument.Builder?.OperationId + (singleContentType ? "" : mimeType), mimeType, isForm ? GetFormParams() : GetStandardParams()));
 
 		IEnumerable<OperationParameter> GetFormParams() =>
 			from param in mediaTypeSchemaInfo?.TryGetAnnotation<PropertiesKeyword>()?.Properties
@@ -216,15 +269,24 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 				Required: required,
 				Optional: !required,
 				Pattern: info?.TryGetAnnotation<PatternKeyword>()?.Pattern,
-				MinLength: info?.TryGetAnnotation<MinLengthKeyword>()?.Value,
-				MaxLength: info?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
+				MinLength: info?.TryGetAnnotation<MinLengthKeyword>()?.Value ?? info?.TryGetAnnotation<MinItemsKeyword>()?.Value,
+				MaxLength: info?.TryGetAnnotation<MaxLengthKeyword>()?.Value ?? info?.TryGetAnnotation<MaxItemsKeyword>()?.Value,
 				Minimum: info?.TryGetAnnotation<MinimumKeyword>()?.Value,
-				Maximum: info?.TryGetAnnotation<MaximumKeyword>()?.Value
+				Maximum: info?.TryGetAnnotation<MaximumKeyword>()?.Value,
+				ExclusiveMinimum: info?.TryGetAnnotation<ExclusiveMinimumKeyword>()?.IsExclusive ?? false,
+				ExclusiveMaximum: info?.TryGetAnnotation<ExclusiveMaximumKeyword>()?.IsExclusive ?? false,
+				MultipleOf: info?.TryGetAnnotation<MultipleOfKeyword>()?.Value,
+				UniqueItems: info?.TryGetAnnotation<UniqueItemsKeyword>()?.MustBeUnique ?? false,
+				MinProperties: info?.TryGetAnnotation<MinPropertiesKeyword>()?.Value,
+				MaxProperties: info?.TryGetAnnotation<MaxPropertiesKeyword>()?.Value
 			);
 		IEnumerable<OperationParameter> GetStandardParams() =>
 			from ct in new[] { mediaType }
 			let info = ct.Schema?.ResolveSchemaInfo()
 			let dataType = inlineSchemas.ToInlineDataType(ct.Schema)
+			// Text and binary bodies are read from the request directly, so they need no input formatter
+			let isTextBody = kind == MediaTypeKind.Text && dataType.Text is "string" or "string?"
+			let isStreamBody = kind != MediaTypeKind.Json && dataType.Text is "global::System.IO.Stream" or "global::System.IO.Stream?"
 			select new Templates.OperationParameter(
 				RawName: null,
 				ParamName: CSharpNaming.ToParameterName(argument.Builder?.Operation.OperationId + " body", options.ReservedIdentifiers()),
@@ -236,15 +298,23 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 				IsQueryParam: false,
 				IsHeaderParam: false,
 				IsCookieParam: false,
-				IsBodyParam: true,
+				IsBodyParam: !isTextBody && !isStreamBody,
 				IsFormParam: false,
-				Required: true,
-				Optional: false,
+				Required: bodyRequired,
+				Optional: !bodyRequired,
 				Pattern: info?.TryGetAnnotation<PatternKeyword>()?.Pattern,
-				MinLength: info?.TryGetAnnotation<MinLengthKeyword>()?.Value,
-				MaxLength: info?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
+				MinLength: info?.TryGetAnnotation<MinLengthKeyword>()?.Value ?? info?.TryGetAnnotation<MinItemsKeyword>()?.Value,
+				MaxLength: info?.TryGetAnnotation<MaxLengthKeyword>()?.Value ?? info?.TryGetAnnotation<MaxItemsKeyword>()?.Value,
 				Minimum: info?.TryGetAnnotation<MinimumKeyword>()?.Value,
-				Maximum: info?.TryGetAnnotation<MaximumKeyword>()?.Value
+				Maximum: info?.TryGetAnnotation<MaximumKeyword>()?.Value,
+				ExclusiveMinimum: info?.TryGetAnnotation<ExclusiveMinimumKeyword>()?.IsExclusive ?? false,
+				ExclusiveMaximum: info?.TryGetAnnotation<ExclusiveMaximumKeyword>()?.IsExclusive ?? false,
+				MultipleOf: info?.TryGetAnnotation<MultipleOfKeyword>()?.Value,
+				UniqueItems: info?.TryGetAnnotation<UniqueItemsKeyword>()?.MustBeUnique ?? false,
+				MinProperties: info?.TryGetAnnotation<MinPropertiesKeyword>()?.Value,
+				MaxProperties: info?.TryGetAnnotation<MaxPropertiesKeyword>()?.Value,
+				IsTextBodyParam: isTextBody,
+				IsStreamBodyParam: isStreamBody
 			);
 	}
 
@@ -261,7 +331,9 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 	{
 		argument.Builder?.SecurityRequirements.Add(new OperationSecurityRequirement(
 							 (from scheme in securityRequirement.SchemeRequirements
-							  select new Templates.OperationSecuritySchemeRequirement(scheme.SchemeName, scheme.ScopeNames.ToArray())).ToArray())
+								  // OpenAPI 3.0 defines scopes only for OAuth2 and OpenID Connect; on other schemes they're left to the securityAttribute
+							  let enforceScopes = securitySchemes.TryGetValue(scheme.SchemeName, out var definition) && definition.Type is SecuritySchemeType.OAuth2 or SecuritySchemeType.OpenIdConnect
+							  select new Templates.OperationSecuritySchemeRequirement(scheme.SchemeName, enforceScopes ? scheme.ScopeNames.ToArray() : [])).ToArray())
 						 );
 		argument.Builder?.RawSecurityRequirements.Add(
 			securityRequirement.SchemeRequirements.ToDictionary(req => req.SchemeName, req => req.ScopeNames.ToArray())

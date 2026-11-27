@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DarkPatterns.Json.Diagnostics;
 using DarkPatterns.Json.Documents;
 using DarkPatterns.Json.Specifications;
 using DarkPatterns.OpenApi.Abstractions;
@@ -35,6 +36,22 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 	const string typeModels = "Models";
 	const string typeConfig = "Config";
 	const string sharedSourceGroup = "JsonSchema";
+
+	// Each output's own metadata (`DPD{Output}{Name}`), applied over the merged metadata for that output
+	private static readonly (string Output, string ItemType)[] outputItemTypes =
+	[
+		(typeMvcServer, "OpenApiSchemaMvcServer"),
+		(typeClient, "OpenApiSchemaClient"),
+		(typeWebhookClient, "OpenApiSchemaWebhookClient"),
+	];
+	private static readonly (string Key, string Name)[] outputMetadataNames =
+	[
+		(propNamespace, "Namespace"),
+		(propLink, "Link"),
+		(propPathPrefix, "PathPrefix"),
+		(propConfig, "Configuration"),
+	];
+
 	private readonly IEnumerable<string> metadataKeys =
 	[
 		propNamespace,
@@ -44,6 +61,9 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 		propPathPrefix,
 		propSchemaId,
 		propProjectDir,
+		.. from output in outputItemTypes
+		   from name in outputMetadataNames
+		   select ToOutputMetadataKey(output.Output, name.Name),
 	];
 
 	public IEnumerable<string> MetadataKeys => metadataKeys;
@@ -61,24 +81,30 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 
 		var docs = (from document in additionalTextInfos
 					let loaded = registry.ResolveDocument(ToInternalUri(document), relativeDocument: null)
-					let options = LoadOptionsFromMetadata(document.Metadata, additionalTextInfos)
-					select new { document, loaded, options }).ToArray();
+					select new { document, loaded }).ToArray();
+		var metadataDiagnostics = new List<DiagnosticBase>();
 
 		var mvcServerTransforms =
 			(from e in docs
 			 where e.document.Types.Contains(typeMvcServer)
+			 let options = LoadOutputOptions(typeMvcServer, e.document, additionalTextInfos, metadataDiagnostics)
+			 where options != null
 			 let parseResult = CommonParsers.DefaultParsers.Parse(e.loaded, schemaRegistry)
-			 select new PathControllerTransformerFactory(settings).Build(parseResult, e.options)).ToArray();
+			 select new PathControllerTransformerFactory(settings).Build(parseResult, options)).ToArray();
 		var clientTransforms =
 			(from e in docs
 			 where e.document.Types.Contains(typeClient)
+			 let options = LoadOutputOptions(typeClient, e.document, additionalTextInfos, metadataDiagnostics)
+			 where options != null
 			 let parseResult = CommonParsers.DefaultParsers.Parse(e.loaded, schemaRegistry)
-			 select new ClientTransformerFactory(settings).Build(parseResult, e.options)).ToArray();
+			 select new ClientTransformerFactory(settings).Build(parseResult, options)).ToArray();
 		var webhookTransforms =
 			(from e in docs
 			 where e.document.Types.Contains(typeWebhookClient)
+			 let options = LoadOutputOptions(typeWebhookClient, e.document, additionalTextInfos, metadataDiagnostics)
+			 where options != null
 			 let parseResult = CommonParsers.DefaultParsers.Parse(e.loaded, schemaRegistry)
-			 select new WebhookClientTransformerFactory(settings).Build(parseResult, e.options)).ToArray();
+			 select new WebhookClientTransformerFactory(settings).Build(parseResult, options)).ToArray();
 		var modelsDiagnostics =
 			(from e in docs
 			 where e.document.Types.Contains(typeModels)
@@ -91,6 +117,7 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 			.. clientTransforms,
 			.. webhookTransforms,
 			.. modelsDiagnostics,
+			new DiagnosticOnlySourceProvider(metadataDiagnostics),
 			new CSharpSchemaSourceProvider(settings, allSchemasOptions),
 		]);
 
@@ -124,6 +151,39 @@ public class CSharpGenerator : IOpenApiCodeGenerator
 		}
 
 		return result;
+	}
+
+	private static string ToOutputMetadataKey(string output, string name) => "DPD" + output + name;
+
+	/// <summary>
+	/// Loads the options for one output of a file. Without per-output metadata (such as when the
+	/// generator isn't run through the package's props), the merged metadata is used.
+	/// </summary>
+	/// <returns>null when the file is listed as the same output more than once with different metadata</returns>
+	private static CSharpServerSchemaOptions? LoadOutputOptions(string output, AdditionalTextInfo document, IEnumerable<AdditionalTextInfo> additionalSchemas, List<DiagnosticBase> diagnostics)
+	{
+		var itemType = outputItemTypes.Single(t => t.Output == output).ItemType;
+		var metadata = new Dictionary<string, string?>();
+		foreach (var entry in document.Metadata)
+			metadata[entry.Key] = entry.Value;
+
+		var conflicting = false;
+		foreach (var (key, name) in outputMetadataNames)
+		{
+			if (!document.Metadata.TryGetValue(ToOutputMetadataKey(output, name), out var value) || value == null)
+				continue;
+			// The props join differing values with `|`; several Configuration files are all applied
+			if (key == propConfig)
+				value = value.Replace('|', ';');
+			else if (value.Contains('|'))
+			{
+				diagnostics.Add(new ConflictingOutputMetadataDiagnostic(itemType, name, value.Replace('|', ';'), new Location(ToInternalUri(document))));
+				conflicting = true;
+			}
+			metadata[key] = value;
+		}
+
+		return conflicting ? null : LoadOptionsFromMetadata(metadata, additionalSchemas);
 	}
 
 	private static CSharpServerSchemaOptions LoadOptionsFromMetadata(IReadOnlyDictionary<string, string?> entrypointMetadata, IEnumerable<AdditionalTextInfo> additionalSchemas)

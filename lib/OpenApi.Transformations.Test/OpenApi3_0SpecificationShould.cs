@@ -196,7 +196,7 @@ public class OpenApi3_0SpecificationShould
 		Assert.Equal(("MIT", "https://opensource.org/licenses/MIT"), (info.License?.Name, info.License?.Url?.OriginalString));
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Parser): a missing `info.title` reports no diagnostic")]
+	[Fact]
 	public void Report_missing_info_title()
 	{
 		var result = Parse("oas-parser-invalid-missing-info-title.yml");
@@ -204,7 +204,7 @@ public class OpenApi3_0SpecificationShould
 		Assert.Contains(result.Diagnostics, d => d is MissingRequiredProperties m && m.Missing.Contains("title"));
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Parser): a missing `info.version` reports no diagnostic")]
+	[Fact]
 	public void Report_missing_info_version()
 	{
 		var result = Parse("oas-parser-invalid-missing-info-version.yml");
@@ -212,7 +212,7 @@ public class OpenApi3_0SpecificationShould
 		Assert.Contains(result.Diagnostics, d => d is MissingRequiredProperties m && m.Missing.Contains("version"));
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Parser): `contact.email: 5` reports UnhandledExceptionDiagnostic from GetValue<string>")]
+	[Fact]
 	public void Report_wrong_scalar_types_without_unhandled_exceptions()
 	{
 		var result = Parse("oas-parser-invalid-scalar-type.yml");
@@ -339,7 +339,7 @@ public class OpenApi3_0SpecificationShould
 		Assert.Equal("https://example.com/docs/operation", ModelProperty(externalDocs, "Url")?.ToString());
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Parser): an operation without `responses` reports no diagnostic")]
+	[Fact]
 	public void Report_missing_responses()
 	{
 		var result = Parse("oas-parser-invalid-missing-responses.yml");
@@ -372,7 +372,7 @@ public class OpenApi3_0SpecificationShould
 	{
 		var operation = Operation(ParseValid(PathsYaml), "/operation-details", "post");
 
-		Assert.Collection(operation.SecurityRequirements,
+		Assert.Collection(operation.SecurityRequirements!,
 			requirement => Assert.Equal(["basic", "apiKey"], requirement.SchemeRequirements.Select(s => s.SchemeName)),
 			requirement =>
 			{
@@ -382,7 +382,7 @@ public class OpenApi3_0SpecificationShould
 			});
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Security): operation `security: []` (explicitly none) is indistinguishable from omitted `security` (inherit)")]
+	[Fact]
 	public void Distinguish_explicitly_empty_operation_security_from_inherited()
 	{
 		var document = ParseValid(PathsYaml);
@@ -406,7 +406,7 @@ public class OpenApi3_0SpecificationShould
 	[InlineData("bearer")]
 	[InlineData("oauth")]
 	[InlineData("oidc")]
-	[Theory(Skip = "OpenAPI 3.0 gap (Security): `components.securitySchemes` are not in the document model")]
+	[Theory]
 	public void Model_security_schemes(string schemeName)
 	{
 		var document = ParseValid(DocumentYaml);
@@ -414,7 +414,7 @@ public class OpenApi3_0SpecificationShould
 		AssertModelsNode(document, DocumentYaml, $"/components/securitySchemes/{schemeName}");
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Security): `components.securitySchemes` are not in the document model")]
+	[Fact]
 	public void Model_security_scheme_details()
 	{
 		var document = ParseValid(DocumentYaml);
@@ -433,7 +433,7 @@ public class OpenApi3_0SpecificationShould
 		Assert.Equal("https://example.com/oauth/refresh", ModelProperty(password, "RefreshUrl")?.ToString());
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Parser): a security scheme with an invalid `type` reports no diagnostic")]
+	[Fact]
 	public void Report_invalid_security_scheme_type()
 	{
 		var result = Parse("oas-parser-invalid-security-scheme-type.yml");
@@ -479,7 +479,7 @@ public class OpenApi3_0SpecificationShould
 		Assert.Equal((style, explode), (parameter.Style, parameter.Explode));
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Parser): `Explode` is read from the `allowEmptyValue` key instead of `explode`")]
+	[Fact]
 	public void Read_explode_from_the_explode_field()
 	{
 		var document = ParseValid(ParametersYaml);
@@ -510,7 +510,7 @@ public class OpenApi3_0SpecificationShould
 		Assert.Equal(ParameterLocation.Header, parameter.In);
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Parser): parameter `allowReserved` is not in the document model")]
+	[Fact]
 	public void Read_parameter_allow_reserved()
 	{
 		var parameter = Parameter(ParseValid(ParametersYaml), "/items/{itemId}", "get", "reserved");
@@ -518,12 +518,12 @@ public class OpenApi3_0SpecificationShould
 		Assert.Equal(true, ModelProperty(parameter, "AllowReserved"));
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Parser): `content`-based parameters are not in the document model")]
+	[Fact]
 	public void Read_content_based_parameters()
 	{
 		var document = ParseValid(ParametersYaml);
 
-		var mediaType = AssertModelsNode(document, ParametersYaml, "/paths/~1items~1{itemId}/get/parameters/9/content/application~1json");
+		var mediaType = AssertModelsNode(document, ParametersYaml, "/paths/~1items~1%7BitemId%7D/get/parameters/9/content/application~1json");
 		Assert.NotNull((mediaType as OpenApiMediaTypeObject)?.Schema);
 	}
 
@@ -538,7 +538,7 @@ public class OpenApi3_0SpecificationShould
 		AssertModelsNode(document, ParametersYaml, "/components/examples/Second");
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Parser): a path parameter without `required: true` reports no diagnostic")]
+	[Fact]
 	public void Report_path_parameters_that_are_not_required()
 	{
 		var result = Parse("oas-parser-invalid-path-param-not-required.yml");
@@ -577,7 +577,7 @@ public class OpenApi3_0SpecificationShould
 		Assert.NotNull(requestBody.Content?["multipart/form-data"].Schema);
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Parser): MediaType `encoding` is not in the document model")]
+	[Fact]
 	public void Read_media_type_encoding()
 	{
 		var document = ParseValid(ResponsesYaml);
@@ -610,7 +610,7 @@ public class OpenApi3_0SpecificationShould
 		Assert.Equal("OK", responses?.StatusCodeResponses[200].Description);
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Response ranges): `2XX`/`4XX` response keys are dropped")]
+	[Fact]
 	public void Read_response_status_code_ranges()
 	{
 		var document = ParseValid(ResponsesYaml);
@@ -619,7 +619,7 @@ public class OpenApi3_0SpecificationShould
 		Assert.Equal("Client error", (AssertModelsNode(document, ResponsesYaml, "/paths/~1responses/get/responses/4XX") as OpenApiResponse)?.Description);
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Parser): a response without `description` reports no diagnostic")]
+	[Fact]
 	public void Report_missing_response_description()
 	{
 		var result = Parse("oas-parser-invalid-missing-response-description.yml");
@@ -691,7 +691,7 @@ public class OpenApi3_0SpecificationShould
 		Assert.Single(range.Annotations.OfType<MultipleOfKeyword>());
 	}
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Validation): `exclusiveMaximum` is registered as `exclusiveMaimum`, so it is an unknown keyword")]
+	[Fact]
 	public void Read_boolean_exclusive_minimum_and_maximum()
 	{
 		var range = ComponentSchema(ParseValid(SchemasYaml), "range");

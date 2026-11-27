@@ -14,7 +14,7 @@ internal class DotNetMvcSecurityPoliciesTransformer(CSharpControllerTransformer 
 			schemaTransformer.TransformSecurityPoliciesHelper([
 				.. from paths in document.Paths
 				   from operation in paths.Value.Operations
-				   from securityRequirement in operation.Value.SecurityRequirements
+				   from securityRequirement in operation.Value.SecurityRequirements ?? []
 				   from schemeRequirement in securityRequirement.SchemeRequirements
 				   select schemeRequirement.SchemeName,
 				.. from securityRequirement in document.SecurityRequirements

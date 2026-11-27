@@ -53,7 +53,7 @@ public abstract class OpenApiDocumentVisitor<TArgument> : IOpenApiDocumentVisito
 	public virtual void Visit(OpenApiLicense license, TArgument argument) { }
 	public virtual void Visit(OpenApiOperation operation, string method, TArgument argument)
 	{
-		foreach (var e in operation.SecurityRequirements)
+		foreach (var e in operation.SecurityRequirements ?? [])
 			this.Visit(e, argument);
 		// this.VisitHelper(operation.Callbacks, argument);
 		if (operation.Responses != null)
@@ -88,10 +88,23 @@ public abstract class OpenApiDocumentVisitor<TArgument> : IOpenApiDocumentVisito
 			foreach (var e in response.Content.Values)
 				this.Visit(e, argument);
 	}
+	/// <param name="response">The response</param>
+	/// <param name="statusCodeClass">The first digit of the status code range, such as 4 for `4XX`</param>
+	/// <param name="argument">The visitor argument</param>
+	public virtual void VisitStatusCodeRange(OpenApiResponse response, int statusCodeClass, TArgument argument)
+	{
+		foreach (var e in response.Headers)
+			this.Visit(e, argument);
+		if (response.Content != null)
+			foreach (var e in response.Content.Values)
+				this.Visit(e, argument);
+	}
 	public virtual void Visit(OpenApiResponses responses, TArgument argument)
 	{
 		foreach (var kvp in responses.StatusCodeResponses)
 			this.Visit(kvp.Value, kvp.Key, argument);
+		foreach (var kvp in responses.StatusCodeRangeResponses)
+			this.VisitStatusCodeRange(kvp.Value, kvp.Key, argument);
 		if (responses.Default != null)
 			this.Visit(responses.Default, null, argument);
 	}

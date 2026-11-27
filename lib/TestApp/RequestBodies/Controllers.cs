@@ -1,3 +1,5 @@
+using DarkPatterns.OpenApiCodegen.Json.Extensions;
+
 namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.RequestBodies;
 
 public class TextController : TextControllerBase
@@ -23,9 +25,9 @@ public class BinaryController : BinaryControllerBase
 
 public class OptionalController : OptionalControllerBase
 {
-	protected override Task<PostOptionalActionResult> PostOptional(Note postOptionalBody)
+	protected override Task<PostOptionalActionResult> PostOptional(IOptional<Note> postOptionalBody)
 	{
-		this.DelegateRequest<Note?>(postOptionalBody);
+		this.DelegateRequest<IOptional<Note>?>(postOptionalBody);
 		return this.DelegateResponse<PostOptionalActionResult>();
 	}
 }

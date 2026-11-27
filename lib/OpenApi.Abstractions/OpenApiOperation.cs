@@ -20,7 +20,8 @@ public record OpenApiOperation(
 	IReadOnlyList<OpenApiParameter> Parameters,
 	OpenApiRequestBody? RequestBody,
 	OpenApiResponses? Responses,
-	IReadOnlyList<OpenApiSecurityRequirement> SecurityRequirements,
+	// Null when the operation doesn't declare `security`, so the document's requirements apply
+	IReadOnlyList<OpenApiSecurityRequirement>? SecurityRequirements,
 
 	bool Deprecated,
 	IReadOnlyDictionary<string, JsonNode?> Extensions

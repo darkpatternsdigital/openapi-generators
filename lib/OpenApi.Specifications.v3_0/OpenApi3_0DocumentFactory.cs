@@ -58,7 +58,7 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 				("title", Keywords.Draft2020_12Metadata.TitleKeyword.Instance),
 				("multipleOf", Keywords.Draft2020_12Validation.MultipleOfKeyword.Instance),
 				("maximum", Keywords.Draft2020_12Validation.MaximumKeyword.Instance),
-				("exclusiveMaimum", Draft04.ExclusiveMaximumKeyword.Instance),
+				("exclusiveMaximum", Draft04.ExclusiveMaximumKeyword.Instance),
 				("minimum", Keywords.Draft2020_12Validation.MinimumKeyword.Instance),
 				("exclusiveMinimum", Draft04.ExclusiveMinimumKeyword.Instance),
 				("maxLength", Keywords.Draft2020_12Validation.MaxLengthKeyword.Instance),
@@ -117,10 +117,10 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 
 	private static DocumentInfo OpenApi3_0DocumentInfo(IDocumentReference doc)
 	{
-		var title = doc.RootNode?["info"]?["title"]?.GetValue<string>();
-		var version = doc.RootNode?["info"]?["version"]?.GetValue<string>();
-		var description = doc.RootNode?["info"]?["description"]?.GetValue<string>();
-		var emailLine = doc.RootNode?["info"]?["contact"]?["email"]?.GetValue<string>() switch
+		var title = doc.RootNode?["info"]?["title"]?.AsStringOrNull();
+		var version = doc.RootNode?["info"]?["version"]?.AsStringOrNull();
+		var description = doc.RootNode?["info"]?["description"]?.AsStringOrNull();
+		var emailLine = doc.RootNode?["info"]?["contact"]?["email"]?.AsStringOrNull() switch
 		{
 			string email => $"API Contact: {email}",
 			_ => null
@@ -153,15 +153,23 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 	{
 		if (key.Node is not JsonObject obj) throw new InvalidOperationException(Errors.InvalidOpenApiRootNode);
 		return new OpenApiDocument(key.Id,
-			OpenApiSpecVersion: new OpenApiSpecVersion("openapi", obj["openapi"]?.GetValue<string>() ?? "3.0.3"),
+			OpenApiSpecVersion: new OpenApiSpecVersion("openapi", obj["openapi"]?.GetScalar<string>() ?? "3.0.3"),
 			Info: ConstructInfo(key.Navigate("info")),
 			Dialect: OpenApiDialect,
 			Paths: ConstructPaths(key.Navigate("paths")),
 			SecurityRequirements: ReadArray(key.Navigate("security"), ConstructSecurityRequirement),
 			Servers: ReadArray(key.Navigate("servers"), ConstructServer),
-			Webhooks: ConstructWebhooksFromCallbacks(key)
+			Webhooks: ConstructWebhooksFromCallbacks(key),
+			SecuritySchemes: obj["components"] is JsonObject
+				? ConstructSecuritySchemes(key.Navigate("components").Navigate("securitySchemes"))
+				: new Dictionary<string, OpenApiSecurityScheme>()
 		);
 	}
+
+	private Dictionary<string, OpenApiSecurityScheme> ConstructSecuritySchemes(ResolvableNode key) =>
+		(from kvp in ReadDictionary(key, _ => true, (name, key) => (name, ConstructSecurityScheme(key)))
+		 where kvp.Value != null
+		 select kvp).ToDictionary(kvp => kvp.Key, kvp => kvp.Value!);
 
 	private Dictionary<string, OpenApiPath> ConstructWebhooksFromCallbacks(ResolvableNode key)
 	{
@@ -201,11 +209,11 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 	{
 		if (key.Node is not JsonObject obj) throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiServer)));
 		return new OpenApiServer(key.Id,
-			Url: obj["url"]?.GetValue<string>() is string url
+			Url: obj["url"]?.GetScalar<string>() is string url
 				&& Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out var result)
 					? result
 					: new Uri("#", UriKind.Relative),
-			Description: obj["description"]?.GetValue<string>(),
+			Description: obj["description"]?.GetScalar<string>(),
 			Variables: ReadDictionary(key.Navigate("variables"), v => true, (prop, key) => (prop, ConstructServerVariable(key)))
 		);
 	}
@@ -217,9 +225,9 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 		if (key.Node is not JsonObject obj) throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiServerVariable)));
 		return new OpenApiServerVariable(
 			key.Id,
-			AllowedValues: ReadArray(key.Navigate("enum"), (n) => n.Node?.GetValue<string>() ?? MissingRequiredFieldDefaults.ServerVariableAllowedValue),
-			DefaultValue: obj["default"]?.GetValue<string>() ?? MissingRequiredFieldDefaults.ServerVariableAllowedValue,
-			Description: obj["description"]?.GetValue<string>()
+			AllowedValues: ReadArray(key.Navigate("enum"), (n) => n.Node?.GetScalar<string>() ?? MissingRequiredFieldDefaults.ServerVariableAllowedValue),
+			DefaultValue: obj["default"]?.GetScalar<string>() ?? MissingRequiredFieldDefaults.ServerVariableAllowedValue,
+			Description: obj["description"]?.GetScalar<string>()
 		);
 	}
 
@@ -229,12 +237,12 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 	{
 		if (key.Node is not JsonObject obj) throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiContact)));
 		return new OpenApiContact(key.Id,
-			Name: obj["name"]?.GetValue<string>(),
-			Url: obj["url"]?.GetValue<string>() is string url
+			Name: obj["name"]?.GetScalar<string>(),
+			Url: obj["url"]?.GetScalar<string>() is string url
 				&& Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out var result)
 					? result
 					: null,
-			Email: obj["email"]?.GetValue<string>()
+			Email: obj["email"]?.GetScalar<string>()
 		);
 	}
 
@@ -244,10 +252,10 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 	{
 		if (key.Node is not JsonObject obj) throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiInfo)));
 		return new OpenApiInfo(key.Id,
-			Title: obj["title"]?.GetValue<string>() ?? MissingRequiredFieldDefaults.InfoTitle,
+			Title: obj["title"]?.GetScalar<string>() ?? MissingRequiredFieldDefaults.InfoTitle,
 			Summary: null,
-			Description: obj["description"]?.GetValue<string>(),
-			TermsOfService: obj["termsOfService"]?.GetValue<string>() is string tos
+			Description: obj["description"]?.GetScalar<string>(),
+			TermsOfService: obj["termsOfService"]?.GetScalar<string>() is string tos
 				&& Uri.TryCreate(tos, UriKind.RelativeOrAbsolute, out var result)
 					? result
 					: null,
@@ -255,7 +263,7 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 				? ConstructContact(key.Navigate("contact"))
 				: null,
 			License: ConstructLicense(key.Navigate("license")),
-			Version: obj["version"]?.GetValue<string>() ?? MissingRequiredFieldDefaults.InfoVersion
+			Version: obj["version"]?.GetScalar<string>() ?? MissingRequiredFieldDefaults.InfoVersion
 		);
 	}
 
@@ -265,8 +273,8 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 	{
 		if (key.Node is not JsonObject obj) throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiLicense)));
 		return new OpenApiLicense(key.Id,
-			Name: obj["name"]?.GetValue<string>() ?? MissingRequiredFieldDefaults.LicenseName,
-			Url: obj["url"]?.GetValue<string>() is string url
+			Name: obj["name"]?.GetScalar<string>() ?? MissingRequiredFieldDefaults.LicenseName,
+			Url: obj["url"]?.GetScalar<string>() is string url
 					&& Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out var result)
 						? result
 						: null,
@@ -281,7 +289,26 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 	{
 		if (key.Node is not JsonObject obj) throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiMediaTypeObject)));
 		var schema = ConstructSchema(key.Navigate("schema"));
-		return new OpenApiMediaTypeObject(key.Id, Schema: schema);
+		return new OpenApiMediaTypeObject(key.Id,
+			Schema: schema,
+			Encoding: ReadDictionary(key.Navigate("encoding"), _ => true, (prop, key) => (prop, ConstructEncoding(key)))
+		);
+	}
+
+	private OpenApiEncoding ConstructEncoding(ResolvableNode key) =>
+		CatchDiagnostic(InternalConstructEncoding, MissingRequiredFieldDefaults.ConstructPlaceholderEncoding)(key);
+	// https://spec.openapis.org/oas/v3.0.0#encoding-object
+	private OpenApiEncoding InternalConstructEncoding(ResolvableNode key)
+	{
+		if (key.Node is not JsonObject obj) throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiEncoding)));
+		var style = obj["style"]?.GetScalar<string>() ?? "form";
+		return new OpenApiEncoding(key.Id,
+			ContentType: obj["contentType"]?.GetScalar<string>(),
+			Headers: ConstructHeaders(key.Navigate("headers")),
+			Style: style,
+			Explode: obj["explode"]?.GetScalar<bool>() ?? (style == "form"),
+			AllowReserved: obj["allowReserved"]?.GetScalar<bool>() ?? false
+		);
 	}
 
 	private OpenApiOperation ConstructOperation(ResolvableNode key, IReadOnlyList<OpenApiParameter> pathParameters) =>
@@ -291,15 +318,16 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 	{
 		if (key.Node is not JsonObject obj) throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiOperation)));
 		return new OpenApiOperation(key.Id,
-			Tags: ReadArray(key.Navigate("tags"), k => k.Node?.GetValue<string>() ?? MissingRequiredFieldDefaults.OperationTag),
-			Summary: obj["summary"]?.GetValue<string>(),
-			Description: obj["description"]?.GetValue<string>(),
-			OperationId: obj["operationId"]?.GetValue<string>(),
+			Tags: ReadArray(key.Navigate("tags"), k => k.Node?.GetScalar<string>() ?? MissingRequiredFieldDefaults.OperationTag),
+			Summary: obj["summary"]?.GetScalar<string>(),
+			Description: obj["description"]?.GetScalar<string>(),
+			OperationId: obj["operationId"]?.GetScalar<string>(),
 			Parameters: OpenApiPath.MergeParameters(pathParameters, ReadArray(key.Navigate("parameters"), ConstructParameter)),
-			SecurityRequirements: ReadArray(key.Navigate("security"), ConstructSecurityRequirement),
+			// `security: []` removes the document's requirements; omitting `security` inherits them
+			SecurityRequirements: obj["security"] is null ? null : ReadArray(key.Navigate("security"), ConstructSecurityRequirement),
 			RequestBody: ConstructRequestBody(key.Navigate("requestBody")),
 			Responses: ConstructResponses(key.Navigate("responses")),
-			Deprecated: obj["deprecated"]?.GetValue<bool>() ?? false,
+			Deprecated: obj["deprecated"]?.GetScalar<bool>() ?? false,
 			Extensions: GetExtensions(obj)
 		);
 	}
@@ -322,7 +350,7 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 
 	private OpenApiParameter LoadParameter(ResolvableNode key, JsonObject obj, ParameterLocation location)
 	{
-		var style = obj["style"]?.GetValue<string>() ?? (location switch
+		var style = obj["style"]?.GetScalar<string>() ?? (location switch
 		{
 			ParameterLocation.Header => "simple",
 			ParameterLocation.Query => "form",
@@ -332,15 +360,17 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 		});
 		return new OpenApiParameter(
 					Id: key.Id,
-					Name: obj["name"]?.GetValue<string>() ?? MissingRequiredFieldDefaults.ParameterName,
+					Name: obj["name"]?.GetScalar<string>() ?? MissingRequiredFieldDefaults.ParameterName,
 					In: location,
-					Description: obj["description"]?.GetValue<string>(),
-					Required: location == ParameterLocation.Path ? true : obj["required"]?.GetValue<bool>() ?? false,
-					Deprecated: obj["deprecated"]?.GetValue<bool>() ?? false,
-					AllowEmptyValue: obj["allowEmptyValue"]?.GetValue<bool>() ?? false,
+					Description: obj["description"]?.GetScalar<string>(),
+					Required: location == ParameterLocation.Path ? true : obj["required"]?.GetScalar<bool>() ?? false,
+					Deprecated: obj["deprecated"]?.GetScalar<bool>() ?? false,
+					AllowEmptyValue: obj["allowEmptyValue"]?.GetScalar<bool>() ?? false,
 					Style: style,
-					Explode: obj["allowEmptyValue"]?.GetValue<bool>() ?? (style == "form"),
-					Schema: ConstructSchema(key.Navigate("schema"))
+					Explode: obj["explode"]?.GetScalar<bool>() ?? (style == "form"),
+					AllowReserved: obj["allowReserved"]?.GetScalar<bool>() ?? false,
+					Schema: ConstructSchema(key.Navigate("schema")),
+					Content: ConstructMediaContentDictionary(key.Navigate("content"))
 				);
 	}
 
@@ -369,6 +399,64 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 		return new OpenApiSecurityRequirement(key.Id, schemeRequirements);
 	}
 
+	private OpenApiSecurityScheme? ConstructSecurityScheme(ResolvableNode key) =>
+		CatchDiagnostic(AllowReference(InternalConstructSecurityScheme), (_) => null)(key);
+	// https://spec.openapis.org/oas/v3.0.3#security-scheme-object
+	private OpenApiSecurityScheme? InternalConstructSecurityScheme(ResolvableNode key)
+	{
+		if (key.Node is not JsonObject obj) throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiSecurityScheme)));
+		return new OpenApiSecurityScheme(key.Id,
+			Type: obj["type"]?.GetValue<string>() switch
+			{
+				"apiKey" => SecuritySchemeType.ApiKey,
+				"http" => SecuritySchemeType.Http,
+				"oauth2" => SecuritySchemeType.OAuth2,
+				"openIdConnect" => SecuritySchemeType.OpenIdConnect,
+				_ => throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiSecurityScheme))),
+			},
+			Description: obj["description"]?.GetValue<string>(),
+			Name: obj["name"]?.GetValue<string>(),
+			In: obj["in"]?.GetValue<string>() switch
+			{
+				"query" => ApiKeyLocation.Query,
+				"header" => ApiKeyLocation.Header,
+				"cookie" => ApiKeyLocation.Cookie,
+				_ => null,
+			},
+			Scheme: obj["scheme"]?.GetValue<string>(),
+			BearerFormat: obj["bearerFormat"]?.GetValue<string>(),
+			Flows: obj["flows"] is JsonObject ? ConstructOAuthFlows(key.Navigate("flows")) : null,
+			OpenIdConnectUrl: ReadUri(obj["openIdConnectUrl"])
+		);
+	}
+
+	private OpenApiOAuthFlows ConstructOAuthFlows(ResolvableNode key) =>
+		new OpenApiOAuthFlows(key.Id,
+			Implicit: AllowNull(ConstructOAuthFlow)(key.Navigate("implicit")),
+			Password: AllowNull(ConstructOAuthFlow)(key.Navigate("password")),
+			ClientCredentials: AllowNull(ConstructOAuthFlow)(key.Navigate("clientCredentials")),
+			AuthorizationCode: AllowNull(ConstructOAuthFlow)(key.Navigate("authorizationCode"))
+		);
+
+	private OpenApiOAuthFlow? ConstructOAuthFlow(ResolvableNode key) =>
+		CatchDiagnostic(InternalConstructOAuthFlow, (_) => null)(key);
+	// https://spec.openapis.org/oas/v3.0.3#oauth-flow-object
+	private OpenApiOAuthFlow? InternalConstructOAuthFlow(ResolvableNode key)
+	{
+		if (key.Node is not JsonObject obj) throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiOAuthFlow)));
+		return new OpenApiOAuthFlow(key.Id,
+			AuthorizationUrl: ReadUri(obj["authorizationUrl"]),
+			TokenUrl: ReadUri(obj["tokenUrl"]),
+			RefreshUrl: ReadUri(obj["refreshUrl"]),
+			Scopes: ReadDictionary(key.Navigate("scopes"), _ => true, (scope, key) => (scope, key.Node?.GetValue<string>() ?? ""))
+		);
+	}
+
+	private static Uri? ReadUri(JsonNode? node) =>
+		node?.GetValue<string>() is string url && Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out var result)
+			? result
+			: null;
+
 	private JsonSchema? ConstructSchema(ResolvableNode key) =>
 		CatchDiagnostic(AllowReference(AllowNull(InternalConstructSchema)), (_) => null)(key);
 	private JsonSchema InternalConstructSchema(ResolvableNode key)
@@ -382,7 +470,7 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 
 	private ParameterLocation ToParameterLocation(JsonNode? jsonNode)
 	{
-		switch (jsonNode?.GetValue<string>())
+		switch (jsonNode?.GetScalar<string>())
 		{
 			case "path": return ParameterLocation.Path;
 			case "query": return ParameterLocation.Query;
@@ -410,8 +498,8 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 		if (key.Node is not JsonObject obj) throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiPath)));
 		var parameters = ReadArray(key.Navigate("parameters"), ConstructParameter);
 		return new OpenApiPath(key.Id,
-			Summary: obj["summary"]?.GetValue<string>(),
-			Description: obj["description"]?.GetValue<string>(),
+			Summary: obj["summary"]?.GetScalar<string>(),
+			Description: obj["description"]?.GetScalar<string>(),
 			Parameters: parameters,
 			Operations: ReadDictionary(key, validMethods.Contains, toKeyValuePair: (method, key) => (Key: method, Value: ConstructOperation(key, parameters))),
 			Extensions: GetExtensions(obj)
@@ -426,9 +514,9 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 		if (key.Node is not JsonObject obj) throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiRequestBody)));
 		return new OpenApiRequestBody(
 			Id: key.Id,
-			Description: obj["description"]?.GetValue<string>(),
+			Description: obj["description"]?.GetScalar<string>(),
 			Content: ConstructMediaContentDictionary(key.Navigate("content")),
-			Required: obj["required"]?.GetValue<bool>() ?? false
+			Required: obj["required"]?.GetScalar<bool>() ?? false
 		);
 	}
 
@@ -450,7 +538,7 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 	{
 		if (key.Node is not JsonObject obj) throw new DiagnosticException(InvalidNode.Builder(nameof(OpenApiResponse)));
 		return new OpenApiResponse(key.Id,
-			Description: obj["description"]?.GetValue<string>() ?? MissingRequiredFieldDefaults.ResponseDescription,
+			Description: obj["description"]?.GetScalar<string>() ?? MissingRequiredFieldDefaults.ResponseDescription,
 			Headers: ConstructHeaders(key.Navigate("headers")),
 			Content: ConstructMediaContentDictionary(key.Navigate("content"))
 		);
@@ -479,6 +567,10 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 			StatusCodeResponses: ReadDictionary(key,
 				filter: statusCode => statusCode.Length == 3 && int.TryParse(statusCode, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
 				toKeyValuePair: (statusCode, key) => (Key: int.Parse(statusCode, NumberStyles.Integer, CultureInfo.InvariantCulture), Value: ConstructResponse(key))
+			),
+			StatusCodeRangeResponses: ReadDictionary(key,
+				filter: statusCode => statusCode.Length == 3 && statusCode[0] is >= '1' and <= '5' && statusCode.EndsWith("XX", StringComparison.Ordinal),
+				toKeyValuePair: (statusCode, key) => (Key: statusCode[0] - '0', Value: ConstructResponse(key))
 			)
 		);
 	}
@@ -521,7 +613,7 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 		return (key) =>
 		{
 			if (key.Node is not JsonObject obj) return toItem(key);
-			if (obj["$ref"]?.GetValue<string>() is not string refName) return toItem(key);
+			if (obj["$ref"]?.GetScalar<string>() is not string refName) return toItem(key);
 
 			if (!Uri.TryCreate(refName, UriKind.RelativeOrAbsolute, out var uri))
 				throw new DiagnosticException(InvalidRefDiagnostic.Builder(refName));
@@ -552,5 +644,20 @@ public class OpenApi3_0DocumentFactory : IOpenApiDocumentFactory
 
 public record InvalidNode(string NodeType, Location Location) : DiagnosticBase(Location)
 {
+	public override IReadOnlyList<string> GetTextArguments() => [NodeType];
 	public static DiagnosticException.ToDiagnostic Builder(string nodeType) => (Location) => new InvalidNode(nodeType, Location);
+}
+
+internal static class JsonNodeScalarExtensions
+{
+	/// <summary>
+	/// Like <see cref="JsonNode.GetValue{T}"/>, but reports a diagnostic instead of an unhandled exception for the wrong type.
+	/// </summary>
+	public static T GetScalar<T>(this JsonNode node) =>
+		node is JsonValue value && value.TryGetValue<T>(out var result)
+			? result
+			: throw new DiagnosticException(InvalidNode.Builder(typeof(T).Name));
+
+	public static string? AsStringOrNull(this JsonNode node) =>
+		node is JsonValue value && value.TryGetValue<string>(out var result) ? result : null;
 }

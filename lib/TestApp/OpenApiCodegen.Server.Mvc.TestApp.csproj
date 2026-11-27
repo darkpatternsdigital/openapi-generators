@@ -43,9 +43,11 @@
     <JsonSchemaDocument Include="$(SolutionRoot)schemas\multi-file-ref-endpoints.yaml" Link="MultiFileRef\Endpoints\multi-file-ref-endpoints.yaml" SchemaId="proj://darkpatterns-openapi/multi-file-ref-endpoints.yaml" />
     <!-- OpenAPI 3.0 coverage for the MVC server output -->
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\oas-server-http-methods.yml" Link="HttpMethods\oas-server-http-methods.yml" PathPrefix="/http-methods" />
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\oas-server-http-trace.yml" Link="HttpTrace\oas-server-http-trace.yml" PathPrefix="/http-trace" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\oas-server-paths.yml" Link="PathTemplates\oas-server-paths.yml" PathPrefix="/paths" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\oas-server-no-operation-id-body.yml" Link="NoOperationId\oas-server-no-operation-id-body.yml" PathPrefix="/no-operation-id" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\oas-server-parameter-styles.yml" Link="ParameterStyles\oas-server-parameter-styles.yml" PathPrefix="/parameter-styles" />
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\oas-server-cookie-parameters.yml" Link="CookieParameters\oas-server-cookie-parameters.yml" PathPrefix="/cookie-parameters" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\oas-server-request-bodies.yml" Link="RequestBodies\oas-server-request-bodies.yml" PathPrefix="/request-bodies" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\oas-server-multipart.yml" Link="Multipart\oas-server-multipart.yml" PathPrefix="/multipart" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\oas-server-responses.yml" Link="Responses\oas-server-responses.yml" PathPrefix="/responses" />
@@ -80,6 +82,15 @@
     <CompatPartialSchema Include="..\..\schemas\compat-parts\*.yaml" Namespace="$(RootNamespace).Compat.Parts.%(Filename)" PathPrefix="/compat/parts" />
     <OpenApiSchemaMvcServer Include="@(CompatPartialSchema)" Visible="false" PathPrefix="/_Incorrect" />
     <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\compat-part-consumer.yaml" Link="Compat\Parts\compat-part-consumer.yaml" PathPrefix="/compat/parts" />
+    <!-- The same item listed twice with the same metadata (e.g. overlapping globs) -->
+    <OpenApiSchemaClient Include="$(SolutionRoot)schemas\query-in-path.yaml" Link="Compat\DuplicateItem\query-in-path.yaml" />
+    <OpenApiSchemaClient Include="$(SolutionRoot)schemas\query-in-path.yaml" Link="Compat\DuplicateItem\query-in-path.yaml" />
+  </ItemGroup>
+
+  <!-- The same file as Client and MvcServer with different metadata: each output uses its own (planning #3) -->
+  <ItemGroup>
+    <OpenApiSchemaClient Include="$(SolutionRoot)schemas\simple-types.yaml" Link="PerOutput\Client\simple-types.yaml" />
+    <OpenApiSchemaMvcServer Include="$(SolutionRoot)schemas\simple-types.yaml" Link="PerOutput\Server\simple-types.yaml" PathPrefix="/per-output" />
   </ItemGroup>
 
   <ItemGroup>

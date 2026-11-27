@@ -28,6 +28,14 @@ paths:
       responses:
         '204':
           description: Allowed with an API key in the query
+  /api-key-scopes:
+    get:
+      operationId: getApiKeyScopes
+      security:
+        - QueryKey: [custom:permission]
+      responses:
+        '204':
+          description: Allowed with an API key; scopes are only checked for OAuth2 and OpenID Connect
   /cookie-key:
     get:
       operationId: getCookieKey
@@ -88,6 +96,26 @@ paths:
       responses:
         '204':
           description: Allowed with either API key
+  /duplicate-requirements:
+    get:
+      operationId: getDuplicateRequirements
+      # Scopes on an API key aren't checked, so both requirements are the same
+      security:
+        - QueryKey: [first:permission]
+        - QueryKey: [second:permission]
+      responses:
+        '204':
+          description: Allowed with the query API key
+  /oauth-alternatives:
+    get:
+      operationId: getOAuthAlternatives
+      # Every requirement needs the OAuth scheme, with either scope
+      security:
+        - OAuth: [read]
+        - OAuth: [write]
+      responses:
+        '204':
+          description: Allowed with an OAuth token that has either scope
 components:
   securitySchemes:
     HeaderKey:

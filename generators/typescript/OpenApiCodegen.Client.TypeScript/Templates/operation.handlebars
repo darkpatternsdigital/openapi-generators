@@ -3,6 +3,9 @@
 {{#with Operation}}
 import type { HttpHeaders, AdapterRequestArgs, AdapterResponseArgs, RequestConversion, StandardResponse, TransformRequest } from '@darkpatternsdigital/openapi-codegen-typescript';
 import { encodeURI, throwIfNullOrUndefined, toMediaType, toParameterString } from '@darkpatternsdigital/openapi-codegen-typescript';
+{{#if Responses.RangeResponse}}
+import type { StatusCodeRange } from '@darkpatternsdigital/openapi-codegen-typescript';
+{{/if}}
 {{#each Imports}}
 import {
 {{#each Members}}
@@ -54,11 +57,23 @@ export type StructuredResponses = {
         {{/each}}
     };
     {{/each}}
+    {{#each Responses.RangeResponse as |Response Range|}}
+    {{#if Response.Description}}
+    /** {{Response.Description}} */
+    {{/if}}
+    '{{Range}}XX': {
+        {{#each Response.Content}}
+        '{{MediaType}}': {{#if DataType}}{{{DataType}}}{{else}}undefined{{/if}};
+        {{/each}}
+    };
+    {{/each}}
 };
 export type Responses = {{#if Responses.DefaultResponse}}{{#each Responses.DefaultResponse.Content}}
     | StandardResponse<'other', '{{MediaType}}', {{#if DataType}}{{{DataType}}}{{else}}undefined{{/if}}>{{/each}}{{/if}}{{!--
     --}}{{#each Responses.StatusResponse as |Response StatusCode|}}{{#each Response.Content}}
-    | StandardResponse<{{StatusCode}}, '{{MediaType}}', {{#if DataType}}{{{DataType}}}{{else}}undefined{{/if}}>{{/each}}{{/each}};
+    | StandardResponse<{{StatusCode}}, '{{MediaType}}', {{#if DataType}}{{{DataType}}}{{else}}undefined{{/if}}>{{/each}}{{/each}}{{!--
+    --}}{{#each Responses.RangeResponse as |Response Range|}}{{#each Response.Content}}
+    | StandardResponse<Exclude<StatusCodeRange<{{Range}}>, keyof StructuredResponses>, '{{MediaType}}', {{#if DataType}}{{{DataType}}}{{else}}undefined{{/if}}>{{/each}}{{/each}};
 
 export const method = '{{HttpMethod}}';
 export const rawUrl = '{{{Path}}}';
@@ -102,6 +117,15 @@ export function constructHeaders(params: RequestParams{{#if RequestBodies.length
     if (params.{{{ParamName}}} !== undefined) headers['{{{RawName}}}'] = params.{{{ParamName}}}; {{!-- TODO - openapi style/explode combo --}}
     {{/if}}
     {{/each}}
+    {{#if HasCookieParams}}
+    const cookies: string[] = [];
+    {{#each SharedParams}}
+    {{#if IsCookieParam}}
+    if (params.{{{ParamName}}} !== undefined) cookies.push('{{{RawName}}}=' + encodeURI(params.{{{ParamName}}}));
+    {{/if}}
+    {{/each}}
+    if (cookies.length) headers['Cookie'] = cookies.join('; ');
+    {{/if}}
 
     return headers;
 }
@@ -128,7 +152,8 @@ export const constructRequestBodyByMimeType: {
             {{/each}}
             return formData;
         {{else}}
-            throw new Error('Non-JSON requests not supported');
+            {{!-- text and binary bodies (a string or a Blob) are sent as given --}}
+            return body;
         {{/ifEquals}}
         {{/ifEquals}}
     },
@@ -166,7 +191,9 @@ export function constructResponse(res: AdapterResponseArgs) {
     return ({
         statusCode: [{{#each Responses.StatusResponse as |Response StatusCode|}}
             {{StatusCode}},{{/each}}
-        ].indexOf(res.status) === -1 ? 'other' : res.status,
+        ].indexOf(res.status) === -1{{#if Responses.RangeResponse}} && [{{#each Responses.RangeResponse as |Response Range|}}
+            {{Range}},{{/each}}
+        ].indexOf(Math.floor(res.status / 100)) === -1{{/if}} ? 'other' : res.status,
         mimeType: toMediaType(res.getResponseHeader("Content-Type")),
         data: res.response,
         response: res,

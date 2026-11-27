@@ -28,7 +28,7 @@ namespace {{PackageName}}
         /// <param name="{{ParamName}}">{{linewrap Description "
         /// "}}</param>{{/each}}
         // Generated from operation: {{{Operation.SourceReference}}}
-        [global::Microsoft.AspNetCore.Mvc.Http{{Operation.HttpMethod}}]
+        [global::Microsoft.AspNetCore.Mvc.{{{Operation.HttpMethodAttribute}}}]
         [global::Microsoft.AspNetCore.Mvc.Route("{{{Operation.Path}}}")]{{#if RequestBody.RequestBodyType}}
         [global::Microsoft.AspNetCore.Mvc.Consumes("{{{RequestBody.RequestBodyType}}}")]{{/if}}{{!
         }}{{#if Operation.Responses.DefaultResponse}}
@@ -39,38 +39,44 @@ namespace {{PackageName}}
         // {{Response.Description}}
         {{#each Response.Content}}
         [global::Microsoft.AspNetCore.Mvc.ProducesResponseType({{StatusCode}}{{#if DataType}}, Type = typeof({{{DataType}}}){{/if}})] // {{MediaType}}{{/each}}{{/each}}{{!
-        }}{{#each Operation.SecurityRequirements}}{{#if Schemes.Length}}
-        [global::Microsoft.AspNetCore.Authorization.Authorize(Policy = "{{#each Schemes}}{{SchemeName}}{{#unless @last}},{{/unless}}{{/each}}")]{{else}}
-        [global::Microsoft.AspNetCore.Authorization.AllowAnonymous]{{/if}}{{/each}}
+        }}{{#if Operation.AllowAnonymous}}
+        [global::Microsoft.AspNetCore.Authorization.AllowAnonymous]{{/if}}{{#each Operation.AuthorizePolicies}}
+        [global::Microsoft.AspNetCore.Authorization.Authorize(Policy = "{{this}}")]{{/each}}{{#if Operation.UseSecurityRequirementsAttribute}}
+        [{{{@root.SecurityRequirementsAttribute}}}({{{jsonString Operation.EnforcedSecurityRequirements}}})]{{/if}}
         {{#if Operation.SecurityRequirements}}{{#if @root.SecurityAttribute~}}
         [{{{@root.SecurityAttribute}}}({{{jsonString Operation.RawSecurityRequirements}}})]
         {{~/if}}{{/if}}
         public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.IActionResult> {{RequestBody.Name}}TypeSafeEntry(
-            {{#each RequestBody.AllParams}}{{#unless IsCookieParam}}[{{!
+            {{#each RequestBody.EntryParams}}[{{!
+            }}{{#if IsCookieParam}}global::Microsoft.AspNetCore.Mvc.ModelBinder(typeof(CookieModelBinder), Name = "{{RawName}}"){{/if}}{{!
             }}{{#if IsPathParam}}global::Microsoft.AspNetCore.Mvc.FromRoute(Name = "{{RawName}}"){{/if}}{{!
             }}{{#if IsQueryParam}}global::Microsoft.AspNetCore.Mvc.FromQuery(Name = "{{RawName}}"){{/if}}{{!
-            }}{{#if IsBodyParam}}global::Microsoft.AspNetCore.Mvc.FromBody{{/if}}{{!
+            }}{{#if IsBodyParam}}global::Microsoft.AspNetCore.Mvc.FromBody{{#unless Required}}(EmptyBodyBehavior = global::Microsoft.AspNetCore.Mvc.ModelBinding.EmptyBodyBehavior.Allow){{/unless}}{{/if}}{{!
             }}{{#if IsFormParam}}global::Microsoft.AspNetCore.Mvc.FromForm(Name = "{{RawName}}"){{/if}}{{!
             }}{{#if IsHeaderParam}}global::Microsoft.AspNetCore.Mvc.FromHeader(Name = "{{RawName}}"){{/if}}{{!
             }}{{#if Required}}, global::System.ComponentModel.DataAnnotations.Required{{/if}}{{!
             }}{{#if Pattern}}, global::System.ComponentModel.DataAnnotations.RegularExpression(@".*{{{escapeverbatimstring Pattern}}}.*"){{/if}}{{!
             }}{{#if HasMinLength}}, global::System.ComponentModel.DataAnnotations.MinLength({{MinLength}}){{/if}}{{!
             }}{{#if HasMaxLength}}, global::System.ComponentModel.DataAnnotations.MaxLength({{MaxLength}}){{/if}}{{!
-            }}{{#if HasMinimum}}{{#if HasMaximum}}, global::System.ComponentModel.DataAnnotations.Range({{Minimum}}, {{Maximum}}){{/if}}{{/if}}{{!
+            }}{{#if HasRange}}, global::System.ComponentModel.DataAnnotations.Range({{Minimum}}, {{Maximum}}){{/if}}{{!
+            }}{{#if MinimumText}}, global::DarkPatterns.OpenApiCodegen.Json.Extensions.Minimum({{MinimumText}}{{#if ExclusiveMinimum}}, Exclusive = true{{/if}}){{/if}}{{!
+            }}{{#if MaximumText}}, global::DarkPatterns.OpenApiCodegen.Json.Extensions.Maximum({{MaximumText}}{{#if ExclusiveMaximum}}, Exclusive = true{{/if}}){{/if}}{{!
+            }}{{#if MultipleOfText}}, global::DarkPatterns.OpenApiCodegen.Json.Extensions.MultipleOf({{MultipleOfText}}){{/if}}{{!
+            }}{{#if UniqueItems}}, global::DarkPatterns.OpenApiCodegen.Json.Extensions.UniqueItems{{/if}}{{!
+            }}{{#if HasMinProperties}}, global::DarkPatterns.OpenApiCodegen.Json.Extensions.MinProperties({{MinProperties}}){{/if}}{{!
+            }}{{#if HasMaxProperties}}, global::DarkPatterns.OpenApiCodegen.Json.Extensions.MaxProperties({{MaxProperties}}){{/if}}{{!
             }}] {{{DataType}}}{{#if Optional}}{{#unless DataTypeNullable}}?{{/unless}}{{/if}} {{ParamName}}{{#unless @last}},
-            {{/unless}}{{/unless}}{{/each}}
-        ) => (await {{RequestBody.Name}}({{#each RequestBody.AllParams}}{{#if Optional}}{{!
+            {{/unless}}{{/each}}
+        ) => {{#if RequestBody.RequiresBodyFromRequest}}Request.ContentType == null ? new global::Microsoft.AspNetCore.Mvc.UnsupportedMediaTypeResult() : {{/if}}(await {{RequestBody.Name}}({{#each RequestBody.AllParams}}{{#if IsReadFromRequest}}{{#unless Required}}Request.ContentType == null ? null : global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{/unless}}{{#if IsTextBodyParam}}await new global::System.IO.StreamReader(Request.Body).ReadToEndAsync(){{else}}Request.Body{{/if}}{{#unless Required}}){{/unless}}{{else}}{{#if Optional}}{{#if IsBodyParam}}{{!
+            An optional body binds null when the request has none. A nullable body can also be
+            sent as JSON null, so check for content.
+            }}{{#if DataTypeNullable}}Request.ContentType == null || Request.ContentLength == 0 ? null : global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}){{else
+            }}{{ParamName}} is { } {{ParamName}}Value ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}Value) : null{{/if}}{{else}}{{!
             Optional form fields bind as nullable values. A missing field binds null, except that a
             missing collection binds empty, and a nullable field sent empty is present with a null
             value: for those, check the form for the key.
             }}{{#if DataTypeEnumerable}}Request.HasFormContentType && Request.Form.ContainsKey("{{RawName}}") ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}) : null{{else}}{{#if DataTypeNullable}}Request.HasFormContentType && Request.Form.ContainsKey("{{RawName}}") ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}) : null{{else
-            }}{{ParamName}} is { } {{ParamName}}Value ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}Value) : null{{/if}}{{/if}}{{else}}{{ParamName}}{{/if}}{{#unless @last}},{{/unless}}{{/each}})).ActionResult;
-        {{!--
-            TODO - check scopes
-            {{#each Operation.SecurityRequirements}}{{#if Schemes.Length}}{{#if }}
-            if (User.Identity?.AuthenticationType == "OAuth2" && !await VerifyScopes(User, "read:user", "user:email"))
-                return Forbid();{{/if}}{{/if}}{{/each}}
-            return --}}
+            }}{{ParamName}} is { } {{ParamName}}Value ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}Value) : null{{/if}}{{/if}}{{/if}}{{else}}{{ParamName}}{{/if}}{{/if}}{{#unless @last}},{{/unless}}{{/each}})).ActionResult;
 
         protected abstract global::System.Threading.Tasks.Task<{{Operation.Name}}ActionResult> {{RequestBody.Name}}({{#each RequestBody.AllParams}}
             {{#unless Optional}}{{{DataType}}}{{else
@@ -139,6 +145,16 @@ namespace {{PackageName}}
                 {{/unless}}string {{ParamName}}{{/each}}) =>
                 new {{../../Name}}ActionResult({{Code}}{{#if DataType}}, "{{MediaType}}", typeof({{{DataType}}}), result{{/if}}{{#each ../Headers}},
                     new global::System.Collections.Generic.KeyValuePair<string, string>("{{RawName}}", {{ParamName}}){{/each}});
+            {{/each}}{{/each}}{{#each Responses.RangeResponse as |Response Range|}}{{#each Content}}
+            {{#if Response.Description}}/// <summary>
+            /// {{linewrap Response.Description "
+            /// "}}
+            /// </summary>{{/if}}
+            /// <param name="statusCode">A status code from {{Range}}00 to {{Range}}99</param>
+            public static {{../../Name}}ActionResult {{ResponseMethodName}}(int statusCode{{#if DataType}}, {{{DataType}}} result{{/if}}{{#each ../Headers}},
+                string {{ParamName}}{{/each}}) =>
+                new {{../../Name}}ActionResult(statusCode / 100 == {{Range}} ? statusCode : throw new global::System.ArgumentOutOfRangeException(nameof(statusCode)){{#if DataType}}, "{{MediaType}}", typeof({{{DataType}}}), result{{/if}}{{#each ../Headers}},
+                    new global::System.Collections.Generic.KeyValuePair<string, string>("{{RawName}}", {{ParamName}}){{/each}});
             {{/each}}{{/each}}{{#if Responses.DefaultResponse}}{{#each Responses.DefaultResponse.Content}}
             {{#if Responses.DefaultResponse.Description}}/// <summary>
             /// {{linewrap Responses.DefaultResponse.Description "
@@ -155,6 +171,29 @@ namespace {{PackageName}}
                 new {{Name}}ActionResult(actionResult, headers);
         }
         {{/each}}
+        {{#if HasCookieParams}}
+
+        // ASP.NET Core MVC has no FromCookie attribute, so cookie parameters bind through this
+        private sealed class CookieModelBinder : global::Microsoft.AspNetCore.Mvc.ModelBinding.IModelBinder
+        {
+            public global::System.Threading.Tasks.Task BindModelAsync(global::Microsoft.AspNetCore.Mvc.ModelBinding.ModelBindingContext bindingContext)
+            {
+                if (bindingContext.HttpContext.Request.Cookies.TryGetValue(bindingContext.ModelName, out var value))
+                {
+                    try
+                    {
+                        bindingContext.Result = global::Microsoft.AspNetCore.Mvc.ModelBinding.ModelBindingResult.Success(
+                            global::System.ComponentModel.TypeDescriptor.GetConverter(bindingContext.ModelType).ConvertFromInvariantString(value));
+                    }
+                    catch (global::System.Exception ex)
+                    {
+                        bindingContext.ModelState.TryAddModelError(bindingContext.ModelName, ex, bindingContext.ModelMetadata);
+                    }
+                }
+                return global::System.Threading.Tasks.Task.CompletedTask;
+            }
+        }
+        {{/if}}
     }
 {{/if}}
 }

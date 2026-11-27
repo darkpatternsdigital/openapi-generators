@@ -30,6 +30,7 @@ public class ExclusiveMinimumKeyword(string keyword, bool isExclusive) : IJsonSc
 
 	public IEnumerable<DiagnosticBase> Evaluate(ResolvableNode nodeMetadata, JsonSchemaInfo context, EvaluationContext evaluationContext)
 	{
-		throw new NotImplementedException();
+		// Evaluated as part of `minimum`
+		yield break;
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using DarkPatterns.OpenApi.TypeScript.Templates;
 using DarkPatterns.OpenApiCodegen.Handlebars.Templates;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DarkPatterns.OpenApiCodegen.Client.TypeScript.Templates;
 
@@ -28,6 +29,7 @@ public record Operation(
 )
 {
 	public bool HasQueryInPath => Path.Contains('?');
+	public bool HasCookieParams => SharedParams.Any(p => p.IsCookieParam);
 };
 
 public record OperationParameter(
@@ -57,7 +59,9 @@ public record OperationParameter(
 
 public record OperationResponses(
 	OperationResponse? DefaultResponse,
-	Dictionary<int, OperationResponse> StatusResponse
+	Dictionary<int, OperationResponse> StatusResponse,
+	// Keyed by the first digit of the status code range, such as 4 for `4XX`
+	Dictionary<int, OperationResponse> RangeResponse
 );
 
 public record OperationResponse(

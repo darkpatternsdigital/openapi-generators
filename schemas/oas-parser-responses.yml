@@ -25,6 +25,10 @@ paths:
                     type: integer
               example:
                 id: 1
+            # `example` and `examples` are mutually exclusive
+            application/x-examples+json:
+              schema:
+                type: object
               examples:
                 referenced:
                   $ref: '#/components/examples/Item'

@@ -24,6 +24,8 @@
         <TestedSchema Include="form" />
         <TestedSchema Include="parameter-formats" />
         <TestedSchema Include="oas-client-methods" />
+        <TestedSchema Include="oas-client-trace" />
+        <TestedSchema Include="oas-client-request-bodies" />
     </ItemGroup>
 
     <ItemGroup>

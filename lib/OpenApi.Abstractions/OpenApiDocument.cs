@@ -18,11 +18,12 @@ public record OpenApiDocument(
 	IReadOnlyDictionary<string, OpenApiPath> Paths,
 	IReadOnlyList<OpenApiSecurityRequirement> SecurityRequirements,
 	IReadOnlyList<OpenApiServer> Servers,
-	IReadOnlyDictionary<string, OpenApiPath> Webhooks
+	IReadOnlyDictionary<string, OpenApiPath> Webhooks,
+	IReadOnlyDictionary<string, OpenApiSecurityScheme> SecuritySchemes
 ) : IReferenceableDocument
 {
 	// We don't use the following internally (yet?) directly, so we probably won't map them... at least for now
-	// components
+	// components (other than securitySchemes)
 	// tags
 	// externalDocs
 
@@ -39,5 +40,7 @@ public record OpenApiDocument(
 			yield return securityRequirement;
 		foreach (var webhook in Webhooks.Values)
 			yield return webhook;
+		foreach (var securityScheme in SecuritySchemes.Values)
+			yield return securityScheme;
 	}
 }

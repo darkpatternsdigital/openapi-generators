@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,7 +39,7 @@ public class ServerSecurityYamlShould
 	private static string BasicCredentials(string user, string password) =>
 		"Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes($"{user}:{password}"));
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Server security): document-level security is not applied, so an anonymous request reaches the controller (204)")]
+	[Fact]
 	public Task Apply_document_level_security_to_operations_without_their_own() =>
 		TestBlocked(DocumentLevelControllerBase.GetDocumentLevelActionResult.NoContent(), Get("/security/document-level"), 401);
 
@@ -76,6 +77,16 @@ public class ServerSecurityYamlShould
 	[Fact]
 	public Task Block_requests_without_the_query_api_key() =>
 		TestBlocked(QueryKeyControllerBase.GetQueryKeyActionResult.NoContent(), Get("/security/query-key"), 401);
+
+	[Fact]
+	public Task Ignore_scopes_on_api_key_schemes() =>
+		TestSingleRequest<ApiKeyScopesControllerBase.GetApiKeyScopesActionResult>(new(
+			ApiKeyScopesControllerBase.GetApiKeyScopesActionResult.NoContent(),
+			Get("/security/api-key-scopes?api_key=key")
+		)
+		{
+			AssertResponseMessage = VerifyResponse(204),
+		});
 
 	[Fact]
 	public Task Allow_api_keys_in_a_cookie() =>
@@ -144,11 +155,11 @@ public class ServerSecurityYamlShould
 			AssertResponseMessage = VerifyResponse(204),
 		});
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Server security): OAuth2 scopes are not enforced, so a token without the write scope reaches the controller (204)")]
+	[Fact]
 	public Task Block_oauth2_tokens_without_the_required_scopes() =>
 		TestBlocked(OauthScopesControllerBase.GetOAuthScopesActionResult.NoContent(), Get("/security/oauth-scopes", ("Authorization", "Bearer scopes:read")), 403);
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Server security): a requirement with two schemes emits one policy named 'HeaderKey,QueryKey', which doesn't exist (InvalidOperationException)")]
+	[Fact]
 	public Task Allow_requests_that_satisfy_every_scheme_of_a_requirement() =>
 		TestSingleRequest<AllOfControllerBase.GetAllOfActionResult>(new(
 			AllOfControllerBase.GetAllOfActionResult.NoContent(),
@@ -158,11 +169,11 @@ public class ServerSecurityYamlShould
 			AssertResponseMessage = VerifyResponse(204),
 		});
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Server security): a requirement with two schemes emits one policy named 'HeaderKey,QueryKey', which doesn't exist (InvalidOperationException)")]
+	[Fact]
 	public Task Block_requests_that_satisfy_only_one_scheme_of_a_requirement() =>
 		TestBlocked(AllOfControllerBase.GetAllOfActionResult.NoContent(), Get("/security/all-of", ("X-Header-Key", "key")), 401, 403);
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Server security): each alternative requirement emits its own [Authorize], which ASP.NET Core ANDs, so one scheme alone gets 403")]
+	[Fact]
 	public Task Allow_requests_that_satisfy_the_first_of_several_requirements() =>
 		TestSingleRequest<AnyOfControllerBase.GetAnyOfActionResult>(new(
 			AnyOfControllerBase.GetAnyOfActionResult.NoContent(),
@@ -172,7 +183,7 @@ public class ServerSecurityYamlShould
 			AssertResponseMessage = VerifyResponse(204),
 		});
 
-	[Fact(Skip = "OpenAPI 3.0 gap (Server security): each alternative requirement emits its own [Authorize], which ASP.NET Core ANDs, so one scheme alone gets 403")]
+	[Fact]
 	public Task Allow_requests_that_satisfy_the_second_of_several_requirements() =>
 		TestSingleRequest<AnyOfControllerBase.GetAnyOfActionResult>(new(
 			AnyOfControllerBase.GetAnyOfActionResult.NoContent(),
@@ -185,4 +196,56 @@ public class ServerSecurityYamlShould
 	[Fact]
 	public Task Block_requests_that_satisfy_none_of_several_requirements() =>
 		TestBlocked(AnyOfControllerBase.GetAnyOfActionResult.NoContent(), Get("/security/any-of"), 401, 403);
+
+	[Fact]
+	public Task Allow_requests_that_satisfy_duplicate_requirements() =>
+		TestSingleRequest<DuplicateRequirementsControllerBase.GetDuplicateRequirementsActionResult>(new(
+			DuplicateRequirementsControllerBase.GetDuplicateRequirementsActionResult.NoContent(),
+			Get("/security/duplicate-requirements?api_key=key")
+		)
+		{
+			AssertResponseMessage = VerifyResponse(204),
+		});
+
+	[Fact]
+	public Task Block_requests_that_satisfy_none_of_duplicate_requirements() =>
+		TestBlocked(DuplicateRequirementsControllerBase.GetDuplicateRequirementsActionResult.NoContent(), Get("/security/duplicate-requirements"), 401);
+
+	[Theory]
+	[InlineData("scopes:read")]
+	[InlineData("scopes:write")]
+	public Task Allow_oauth2_tokens_with_any_alternative_scope(string token) =>
+		TestSingleRequest<OauthAlternativesControllerBase.GetOAuthAlternativesActionResult>(new(
+			OauthAlternativesControllerBase.GetOAuthAlternativesActionResult.NoContent(),
+			Get("/security/oauth-alternatives", ("Authorization", $"Bearer {token}"))
+		)
+		{
+			AssertResponseMessage = VerifyResponse(204),
+		});
+
+	[Fact]
+	public Task Block_oauth2_tokens_without_any_alternative_scope() =>
+		TestBlocked(OauthAlternativesControllerBase.GetOAuthAlternativesActionResult.NoContent(), Get("/security/oauth-alternatives", ("Authorization", "Bearer scopes:other")), 403);
+
+	// [Authorize] for each scheme every requirement needs, so tools that only know [Authorize] see it; the generated
+	// filter only when [Authorize] can't express the requirements (alternatives or OAuth2/OpenID Connect scopes)
+	[Theory]
+	[InlineData(typeof(DocumentLevelControllerBase), new[] { "HeaderKey" }, false)]
+	[InlineData(typeof(QueryKeyControllerBase), new[] { "QueryKey" }, false)]
+	[InlineData(typeof(ApiKeyScopesControllerBase), new[] { "QueryKey" }, false)]
+	[InlineData(typeof(DuplicateRequirementsControllerBase), new[] { "QueryKey" }, false)]
+	[InlineData(typeof(AllOfControllerBase), new[] { "HeaderKey", "QueryKey" }, false)]
+	[InlineData(typeof(OauthScopesControllerBase), new[] { "OAuth" }, true)]
+	[InlineData(typeof(OauthAlternativesControllerBase), new[] { "OAuth" }, true)]
+	[InlineData(typeof(AnyOfControllerBase), new string[0], true)]
+	public void Use_authorize_attributes_for_schemes_every_requirement_needs(Type controller, string[] policies, bool usesFilter)
+	{
+		var action = Assert.Single(controller.GetMethods(), m => m.GetCustomAttributes(typeof(Microsoft.AspNetCore.Mvc.HttpGetAttribute), false).Length > 0);
+		var authorizePolicies = action.GetCustomAttributes(typeof(Microsoft.AspNetCore.Authorization.AuthorizeAttribute), false)
+			.Cast<Microsoft.AspNetCore.Authorization.AuthorizeAttribute>()
+			.Select(a => a.Policy)
+			.Order();
+		Assert.Equal(policies, authorizePolicies);
+		Assert.Equal(usesFilter, action.GetCustomAttributes(typeof(ServerSecuritySecuritySchemes.SecurityRequirementsAttribute), false).Length > 0);
+	}
 }

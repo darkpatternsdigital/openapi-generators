@@ -19,7 +19,8 @@ namespace DarkPatterns.OpenApiCodegen.Server.Mvc.TestApp.ServerSecurity
         [global::Microsoft.AspNetCore.Mvc.Route("/security/document-level")]
         // Allowed by the document-level requirement
         [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(204)] // 
-        
+        [global::Microsoft.AspNetCore.Authorization.Authorize(Policy = "HeaderKey")]
+        [DarkPatterns.Security.SecurityActionFilter("[{\u0022HeaderKey\u0022:[]}]")]
         public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.IActionResult> GetDocumentLevelTypeSafeEntry(
             
         ) => (await GetDocumentLevel()).ActionResult;

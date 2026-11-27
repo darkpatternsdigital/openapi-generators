@@ -37,6 +37,7 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 
 		public OperationResponse? DefaultResponse { get; set; }
 		public Dictionary<int, OperationResponse> StatusResponses { get; } = new();
+		public Dictionary<int, OperationResponse> RangeResponses { get; } = new();
 		public List<OperationSecurityRequirement> SecurityRequirements { get; } = new();
 		public List<OperationParameter> SharedParameters { get; } = new();
 		public OpenApiOperation Operation { get; }
@@ -85,7 +86,8 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 				 HasQueryStringEmbedded: path.Contains("?"),
 				 Responses: new OperationResponses(
 					 DefaultResponse: builder.DefaultResponse,
-					 StatusResponse: new(builder.StatusResponses)
+					 StatusResponse: new(builder.StatusResponses),
+					 RangeResponse: new(builder.RangeResponses)
 				 ),
 				 SecurityRequirements: builder.SecurityRequirements.ToArray(),
 				 SourceReference: toSourceReference(operation.Id)
@@ -118,10 +120,16 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 			Maximum: info?.TryGetAnnotation<MaximumKeyword>()?.Value
 		));
 	}
-	public override void Visit(OpenApiResponse response, int? statusCode, Argument argument)
+	public override void Visit(OpenApiResponse response, int? statusCode, Argument argument) =>
+		VisitResponse(response, statusCode, null, argument);
+	public override void VisitStatusCodeRange(OpenApiResponse response, int statusCodeClass, Argument argument) =>
+		VisitResponse(response, null, statusCodeClass, argument);
+	private void VisitResponse(OpenApiResponse response, int? statusCode, int? statusCodeClass, Argument argument)
 	{
 		string statusCodeName;
-		if (!statusCode.HasValue)
+		if (statusCodeClass.HasValue)
+			statusCodeName = HttpStatusCodes.StatusCodeRangeNames[statusCodeClass.Value];
+		else if (!statusCode.HasValue)
 			statusCodeName = "other status code";
 		else if (!HttpStatusCodes.StatusCodeNames.TryGetValue(statusCode.Value, out statusCodeName))
 			statusCodeName = $"status code {statusCode}";
@@ -164,7 +172,9 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 					  )).ToArray()
 		);
 
-		if (statusCode.HasValue)
+		if (statusCodeClass.HasValue)
+			argument.Builder.RangeResponses.Add(statusCodeClass.Value, result);
+		else if (statusCode.HasValue)
 			argument.Builder.StatusResponses.Add(statusCode.Value, result);
 		else
 			argument.Builder.DefaultResponse = result;
@@ -182,7 +192,10 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 		var singleContentType = argument.Builder?.Operation.RequestBody?.Content?.Count is not > 1;
 
 		var mediaTypeSchemaInfo = mediaType.Schema?.ResolveSchemaInfo();
-		argument.Builder?.RequestBodies.Add(OperationRequestBodyFactory(argument.Builder?.Operation.OperationId + (singleContentType ? "" : mimeType), mimeType, isForm ? GetFormParams() : GetStandardParams(), isForm));
+		var parameters = (isForm ? GetFormParams() : GetStandardParams()).ToArray();
+		// A text/* body with a string schema is sent as the string itself, not as JSON
+		var isText = !isForm && MediaTypes.Classify(mimeType) == MediaTypeKind.Text && parameters.All(p => p.DataType is "string" or "string?");
+		argument.Builder?.RequestBodies.Add(OperationRequestBodyFactory(argument.Builder?.Operation.OperationId + (singleContentType ? "" : mimeType), mimeType, parameters, isForm, isText));
 
 		IEnumerable<OperationParameter> GetFormParams() =>
 			from param in mediaTypeSchemaInfo?.TryGetAnnotation<PropertiesKeyword>()?.Properties
@@ -226,7 +239,7 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 				IsCookieParam: false,
 				IsBodyParam: true,
 				IsFormParam: false,
-				Required: true,
+				Required: argument.Builder?.Operation.RequestBody?.Required ?? false,
 				Pattern: info?.TryGetAnnotation<PatternKeyword>()?.Pattern,
 				MinLength: info?.TryGetAnnotation<MinLengthKeyword>()?.Value,
 				MaxLength: info?.TryGetAnnotation<MaxLengthKeyword>()?.Value,
@@ -235,13 +248,15 @@ class OperationVisitor(ISchemaRegistry schemaRegistry, CSharpSchemaOptions optio
 		   );
 	}
 
-	private Func<OperationParameter[], OperationRequestBody> OperationRequestBodyFactory(string operationName, string? requestBodyMimeType, IEnumerable<OperationParameter> parameters, bool isForm)
+	private Func<OperationParameter[], OperationRequestBody> OperationRequestBodyFactory(string operationName, string? requestBodyMimeType, IEnumerable<OperationParameter> parameters, bool isForm, bool isText = false)
 	{
 		return sharedParams => new OperationRequestBody(
 			 Name: CSharpNaming.ToTitleCaseIdentifier(operationName, options.ReservedIdentifiers()),
 			 IsForm: isForm,
+			 IsText: isText,
 			 IsFile: parameters.Any(t => t.IsFile),
 			 HasQueryParam: sharedParams.Concat(parameters).Any(p => p.IsQueryParam),
+			 HasCookieParam: sharedParams.Concat(parameters).Any(p => p.IsCookieParam),
 			 RequestBodyType: requestBodyMimeType,
 			 AllParams: sharedParams.Concat(parameters)
 		 );

@@ -27,6 +27,15 @@ public class QueryKeyController : QueryKeyControllerBase
 	}
 }
 
+public class ApiKeyScopesController : ApiKeyScopesControllerBase
+{
+	protected override Task<GetApiKeyScopesActionResult> GetApiKeyScopes()
+	{
+		this.DelegateRequest();
+		return this.DelegateResponse<GetApiKeyScopesActionResult>();
+	}
+}
+
 public class CookieKeyController : CookieKeyControllerBase
 {
 	protected override Task<GetCookieKeyActionResult> GetCookieKey()
@@ -87,5 +96,23 @@ public class AnyOfController : AnyOfControllerBase
 	{
 		this.DelegateRequest();
 		return this.DelegateResponse<GetAnyOfActionResult>();
+	}
+}
+
+public class DuplicateRequirementsController : DuplicateRequirementsControllerBase
+{
+	protected override Task<GetDuplicateRequirementsActionResult> GetDuplicateRequirements()
+	{
+		this.DelegateRequest();
+		return this.DelegateResponse<GetDuplicateRequirementsActionResult>();
+	}
+}
+
+public class OAuthAlternativesController : OauthAlternativesControllerBase
+{
+	protected override Task<GetOAuthAlternativesActionResult> GetOAuthAlternatives()
+	{
+		this.DelegateRequest();
+		return this.DelegateResponse<GetOAuthAlternativesActionResult>();
 	}
 }

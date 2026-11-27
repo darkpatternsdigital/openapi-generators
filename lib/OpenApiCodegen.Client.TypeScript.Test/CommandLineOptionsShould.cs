@@ -36,7 +36,34 @@ public class CommandLineOptionsShould
 		}
 	}
 
+	[Fact]
+	public async Task Report_parse_diagnostics_without_crashing()
+	{
+		var input = Path.Combine(SolutionConfiguration.SolutionRoot, "schemas", "oas-parser-invalid-parameter-in.yml");
+		var output = Directory.CreateTempSubdirectory().FullName;
+		try
+		{
+			var (exitCode, errors) = await ExecuteCli(input, output);
+
+			// The CLI doesn't return its exit code yet, so it is 0 rather than 3; it must not crash, though
+			Assert.Equal(0, exitCode);
+			Assert.Contains("oas-parser-invalid-parameter-in.yml(", errors);
+			Assert.DoesNotContain("Unhandled exception", errors);
+		}
+		finally
+		{
+			Directory.Delete(output, recursive: true);
+		}
+	}
+
 	private static async Task<int> RunCli(string input, string output, params string[] options)
+	{
+		var (exitCode, errors) = await ExecuteCli(input, output, options);
+		Assert.Equal("", errors);
+		return exitCode;
+	}
+
+	private static Task<(int ExitCode, string Errors)> ExecuteCli(string input, string output, params string[] options)
 	{
 		var startInfo = new ProcessStartInfo("dotnet");
 		startInfo.ArgumentList.Add(Path.Combine(AppContext.BaseDirectory, "DarkPatterns.OpenApiCodegen.Client.TypeScript.dll"));
@@ -45,9 +72,7 @@ public class CommandLineOptionsShould
 		startInfo.ArgumentList.Add(input);
 		startInfo.ArgumentList.Add(output);
 
-		var (exitCode, errors) = await ProcessUtility.ExecuteProcess(startInfo, (process, ct) => process.StandardError.ReadToEndAsync(ct));
-		Assert.Equal("", errors);
-		return exitCode;
+		return ProcessUtility.ExecuteProcess(startInfo, (process, ct) => process.StandardError.ReadToEndAsync(ct));
 	}
 
 	private static (string Path, string Contents)[] ReadAllFiles(string directory) =>

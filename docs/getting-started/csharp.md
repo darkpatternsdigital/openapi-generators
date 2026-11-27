@@ -16,8 +16,8 @@ build, so nothing is checked in and the code always matches the document.
 
 ```xml
 <ItemGroup>
-	<PackageReference Include="DarkPatterns.OpenApiCodegen.Json.Extensions" Version="0.21.0" />
-	<PackageReference Include="DarkPatterns.OpenApiCodegen.CSharp" Version="0.32.0" PrivateAssets="All" />
+	<PackageReference Include="DarkPatterns.OpenApiCodegen.Json.Extensions" Version="0.22.0" />
+	<PackageReference Include="DarkPatterns.OpenApiCodegen.CSharp" Version="0.33.0" PrivateAssets="All" />
 </ItemGroup>
 ```
 

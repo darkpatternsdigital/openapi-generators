@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+
+		<IsPackable>false</IsPackable>
+
+		<RootNamespace>$(RootNamespacePrefix).OpenApiCodegen.Server.MinimalApi.TestApp</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="Moq" />
+		<PackageReference Include="Verify.Xunit" />
+		<PackageReference Include="xunit" />
+		<PackageReference Include="xunit.runner.visualstudio">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="coverlet.collector">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Snapshots of the test app's generated code; see GeneratedCodeShould -->
+		<Compile Remove="Snapshots/**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\OpenApiCodegen.Json.Extensions\OpenApiCodegen.Json.Extensions.csproj" />
+		<ProjectReference Include="..\MinimalApiTestApp\OpenApiCodegen.Server.MinimalApi.TestApp.csproj" />
+		<ProjectReference Include="..\OpenApiCodegen.TestUtils\OpenApiCodegen.TestUtils.csproj" />
+	</ItemGroup>
+</Project>

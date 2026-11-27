@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!-- Consumes the Minimal API output (planning #30), as lib/TestApp does the MVC output -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>$(RootNamespacePrefix).OpenApiCodegen.Server.MinimalApi.TestApp</RootNamespace>
+
+    <!-- Generated code doesn't depend on the target framework, so write it once rather than having both builds write the same files -->
+    <EmitCompilerGeneratedFiles Condition=" '$(TargetFramework)' == 'net10.0' ">true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>generated</CompilerGeneratedFilesOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <OpenApiSchemaMinimalApi Include="$(SolutionRoot)schemas\one-of.yaml" Link="OneOf\one-of.yaml" PathPrefix="/one-of" />
+    <OpenApiSchemaMinimalApi Include="$(SolutionRoot)schemas\headers.yaml" Link="Headers\headers.yaml" PathPrefix="/headers" />
+    <OpenApiSchemaMinimalApi Include="$(SolutionRoot)schemas\path-level-parameters.yaml" Link="PathLevelParameters\path-level-parameters.yaml" PathPrefix="/path-level-parameters" />
+    <OpenApiSchemaMinimalApi Include="$(SolutionRoot)schemas\oas-server-responses.yml" Link="Responses\oas-server-responses.yml" PathPrefix="/responses" />
+    <OpenApiSchemaMinimalApi Include="$(SolutionRoot)schemas\oas-server-http-methods.yml" Link="HttpMethods\oas-server-http-methods.yml" PathPrefix="/http-methods" />
+    <OpenApiSchemaMinimalApi Include="$(SolutionRoot)schemas\oas-server-http-trace.yml" Link="HttpTrace\oas-server-http-trace.yml" PathPrefix="/http-trace" />
+
+    <Compile Remove="generated/**/*" />
+    <Clean Include="generated/**/*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference
+      Include="$(SolutionRoot)generators\csharp\OpenApiCodegen.CSharp.Analyzers\OpenApiCodegen.CSharp.Roslyn5.12.csproj"
+      OutputItemType="Analyzer"
+      ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\OpenApiCodegen.Json.Extensions\OpenApiCodegen.Json.Extensions.csproj" />
+  </ItemGroup>
+
+  <!-- The project reference won't include this due to the multi-version targeting trick -->
+  <Import Project="$(SolutionRoot)generators\csharp\OpenApiCodegen.CSharp\OpenApiCodegen.CSharp.props" />
+
+</Project>

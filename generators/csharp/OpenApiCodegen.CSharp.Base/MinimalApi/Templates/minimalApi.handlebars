@@ -1,0 +1,199 @@
+{{>partial_header Header}}
+#nullable enable
+#nullable disable warnings
+#pragma warning disable
+
+namespace {{PackageName}}
+{ {{#if Operations}}{{#if Summary}}
+    /// <summary>
+    /// {{linewrap Summary "
+    /// "}}
+    /// </summary>{{/if}}{{#if Description}}
+    /// <remarks>
+    /// {{linewrap Description "
+    /// "}}
+    /// </remarks>{{/if}}
+    public interface {{InterfaceName}}
+    {
+        {{#each Operations as |Operation|}}{{#each RequestBodies as |RequestBody|}}{{#if Operation.Summary}}
+        /// <summary>
+        /// {{linewrap Operation.Summary "
+        /// "}}
+        /// </summary>{{/if}}{{#if Operation.Description}}
+        /// <remarks>
+        /// {{linewrap Operation.Description "
+        /// "}}
+        /// </remarks>{{/if}}{{#each RequestBody.AllParams}}
+        /// <param name="{{ParamName}}">{{linewrap Description "
+        /// "}}</param>{{/each}}
+        // Generated from operation: {{{Operation.SourceReference}}}
+        global::System.Threading.Tasks.Task<{{Operation.Name}}Result> {{RequestBody.Name}}({{#each RequestBody.AllParams}}
+            {{#unless Optional}}{{{DataType}}}{{else
+            }}global::DarkPatterns.OpenApiCodegen.Json.Extensions.IOptional<{{{DataType}}}>{{/unless}} {{ParamName}}{{#unless @last}}, {{/unless}}{{/each}});
+        {{/each}}
+
+        public readonly struct {{Name}}Result : global::Microsoft.AspNetCore.Http.IResult
+        {
+            public readonly global::Microsoft.AspNetCore.Http.IResult Result;
+
+            /// <summary>The result before the response headers are added: a generated body or status code result, or the result passed to Unsafe</summary>
+            public global::Microsoft.AspNetCore.Http.IResult UnderlyingResult => (Result as HeaderResult)?.Original;
+
+            /// <summary>The response headers this result adds</summary>
+            public global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<string, string>> Headers =>
+                (Result as HeaderResult)?.Headers ?? global::System.Linq.Enumerable.Empty<global::System.Collections.Generic.KeyValuePair<string, string>>();
+
+            global::System.Threading.Tasks.Task global::Microsoft.AspNetCore.Http.IResult.ExecuteAsync(global::Microsoft.AspNetCore.Http.HttpContext httpContext) =>
+                (Result ?? throw new global::System.InvalidOperationException("{{Name}}Result was not created from one of its factory methods")).ExecuteAsync(httpContext);
+
+            private sealed class HeaderResult : global::Microsoft.AspNetCore.Http.IResult
+            {
+                public HeaderResult(global::Microsoft.AspNetCore.Http.IResult original, global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<string, string>> headers)
+                {
+                    Original = original;
+                    Headers = headers;
+                }
+
+                public global::Microsoft.AspNetCore.Http.IResult Original { get; }
+                public global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<string, string>> Headers { get; }
+
+                public global::System.Threading.Tasks.Task ExecuteAsync(global::Microsoft.AspNetCore.Http.HttpContext httpContext)
+                {
+                    foreach (var header in Headers)
+                        httpContext.Response.Headers[header.Key] = global::Microsoft.Extensions.Primitives.StringValues.Concat(httpContext.Response.Headers[header.Key], header.Value);
+                    return Original.ExecuteAsync(httpContext);
+                }
+            }
+
+            // Writes a response body: streams as they are, strings as text unless the media type is JSON, and anything else as JSON
+            private sealed class BodyResult<T> : global::Microsoft.AspNetCore.Http.IResult
+            {
+                private readonly int statusCode;
+                private readonly string mediaType;
+                private readonly T value;
+
+                public BodyResult(int statusCode, string mediaType, T value)
+                {
+                    this.statusCode = statusCode;
+                    this.mediaType = mediaType;
+                    this.value = value;
+                }
+
+                public async global::System.Threading.Tasks.Task ExecuteAsync(global::Microsoft.AspNetCore.Http.HttpContext httpContext)
+                {
+                    httpContext.Response.StatusCode = statusCode;
+                    var isJson = mediaType == "application/json" || mediaType == "text/json" || mediaType.EndsWith("+json", global::System.StringComparison.Ordinal);
+                    if (value is global::System.IO.Stream stream)
+                    {
+                        httpContext.Response.ContentType = mediaType;
+                        await stream.CopyToAsync(httpContext.Response.Body, httpContext.RequestAborted);
+                    }
+                    else if (value is string text && !isJson)
+                    {
+                        httpContext.Response.ContentType = mediaType;
+                        await global::Microsoft.AspNetCore.Http.HttpResponseWritingExtensions.WriteAsync(httpContext.Response, text, httpContext.RequestAborted);
+                    }
+                    else
+                        await global::Microsoft.AspNetCore.Http.HttpResponseJsonExtensions.WriteAsJsonAsync<T>(httpContext.Response, value, (global::System.Text.Json.JsonSerializerOptions?)null, mediaType, httpContext.RequestAborted);
+                }
+            }
+
+            private {{Name}}Result(global::Microsoft.AspNetCore.Http.IResult result, global::System.Collections.Generic.KeyValuePair<string, string>[] headers)
+            {
+                Result = new HeaderResult(result, headers);
+            }
+            {{#each Responses.StatusResponse as |Response Code|}}{{#each Content}}
+            {{#if Response.Description}}/// <summary>
+            /// {{linewrap Response.Description "
+            /// "}}
+            /// </summary>{{/if}}
+            public static {{../../Name}}Result {{ResponseMethodName}}({{#if DataType}}{{{DataType}}} result{{#if ../Headers.Length}},
+                {{/if}}{{/if}}{{#each ../Headers}}{{#unless @first}},
+                {{/unless}}string {{ParamName}}{{/each}}) =>
+                new {{../../Name}}Result({{#if DataType}}new BodyResult<{{{DataType}}}>({{Code}}, "{{MediaType}}", result){{else}}global::Microsoft.AspNetCore.Http.Results.StatusCode({{Code}}){{/if}}, new global::System.Collections.Generic.KeyValuePair<string, string>[] { {{#each ../Headers}}
+                    new global::System.Collections.Generic.KeyValuePair<string, string>("{{RawName}}", {{ParamName}}),{{/each}} });
+            {{/each}}{{/each}}{{#each Responses.RangeResponse as |Response Range|}}{{#each Content}}
+            {{#if Response.Description}}/// <summary>
+            /// {{linewrap Response.Description "
+            /// "}}
+            /// </summary>{{/if}}
+            /// <param name="statusCode">A status code from {{Range}}00 to {{Range}}99</param>
+            public static {{../../Name}}Result {{ResponseMethodName}}(int statusCode{{#if DataType}}, {{{DataType}}} result{{/if}}{{#each ../Headers}},
+                string {{ParamName}}{{/each}})
+            {
+                if (statusCode / 100 != {{Range}})
+                    throw new global::System.ArgumentOutOfRangeException(nameof(statusCode));
+                return new {{../../Name}}Result({{#if DataType}}new BodyResult<{{{DataType}}}>(statusCode, "{{MediaType}}", result){{else}}global::Microsoft.AspNetCore.Http.Results.StatusCode(statusCode){{/if}}, new global::System.Collections.Generic.KeyValuePair<string, string>[] { {{#each ../Headers}}
+                    new global::System.Collections.Generic.KeyValuePair<string, string>("{{RawName}}", {{ParamName}}),{{/each}} });
+            }
+            {{/each}}{{/each}}{{#if Responses.DefaultResponse}}{{#each Responses.DefaultResponse.Content}}
+            {{#if Responses.DefaultResponse.Description}}/// <summary>
+            /// {{linewrap Responses.DefaultResponse.Description "
+            /// "}}
+            /// </summary>{{/if}}
+            public static {{../Name}}Result {{ResponseMethodName}}(int statusCode{{#if DataType}}, {{{DataType}}} result{{/if}}{{#each ../Responses.DefaultResponse.Headers}},
+                string {{ParamName}}{{/each}}) =>
+                new {{../Name}}Result({{#if DataType}}new BodyResult<{{{DataType}}}>(statusCode, "{{MediaType}}", result){{else}}global::Microsoft.AspNetCore.Http.Results.StatusCode(statusCode){{/if}}, new global::System.Collections.Generic.KeyValuePair<string, string>[] { {{#each ../Responses.DefaultResponse.Headers}}
+                    new global::System.Collections.Generic.KeyValuePair<string, string>("{{RawName}}", {{ParamName}}),{{/each}} });
+            {{/each}}{{/if}}
+
+            /// <summary>Allows for results not specified in the API</summary>
+            public static {{Name}}Result Unsafe(global::Microsoft.AspNetCore.Http.IResult result, params global::System.Collections.Generic.KeyValuePair<string, string>[] headers) =>
+                new {{Name}}Result(result, headers);
+        }
+        {{/each}}
+    }
+
+    public static class {{EndpointsClassName}}
+    {
+        /// <summary>Maps the routes of <see cref="{{InterfaceName}}"/>, which is resolved from the request's services</summary>
+        /// <returns>The group of these routes, to add conventions such as authorization to all of them</returns>
+        public static global::Microsoft.AspNetCore.Routing.RouteGroupBuilder {{MapMethodName}}(this global::Microsoft.AspNetCore.Routing.IEndpointRouteBuilder endpoints)
+        {
+            var group = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapGroup(endpoints, "");
+            {{#each Operations as |Operation|}}{{#each RequestBodies as |RequestBody|}}
+            // Generated from operation: {{{Operation.SourceReference}}}
+            var {{RequestBody.Name}}Endpoint = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapMethods(group, "{{{Operation.Path}}}", new[] { "{{Operation.HttpMethodName}}" }, static async (
+                {{#each RequestBody.EntryParams}}[{{!
+                }}{{#if IsPathParam}}global::Microsoft.AspNetCore.Mvc.FromRoute(Name = "{{RawName}}"){{/if}}{{!
+                }}{{#if IsQueryParam}}global::Microsoft.AspNetCore.Mvc.FromQuery(Name = "{{RawName}}"){{/if}}{{!
+                }}{{#if IsHeaderParam}}global::Microsoft.AspNetCore.Mvc.FromHeader(Name = "{{RawName}}"){{/if}}{{!
+                }}{{#if IsBodyParam}}global::Microsoft.AspNetCore.Mvc.FromBody{{#unless Required}}(EmptyBodyBehavior = global::Microsoft.AspNetCore.Mvc.ModelBinding.EmptyBodyBehavior.Allow){{/unless}}{{/if}}{{!
+                }}] {{#if IsBase64}}Base64Value{{#unless Required}}?{{/unless}}{{else}}{{{DataType}}}{{#if Optional}}{{#unless DataTypeNullable}}?{{/unless}}{{/if}}{{/if}} {{ParamName}},
+                {{/each}}global::Microsoft.AspNetCore.Http.HttpRequest __httpRequest,
+                [global::Microsoft.AspNetCore.Mvc.FromServices] {{@root.InterfaceName}} __api
+            ) => await __api.{{RequestBody.Name}}({{#each RequestBody.AllParams}}{{#if Optional}}{{#if IsBodyParam}}{{!
+                An optional body binds null when the request has none. A nullable body can also be
+                sent as JSON null, so check for content.
+                }}{{#if DataTypeNullable}}__httpRequest.ContentType == null || __httpRequest.ContentLength == 0 ? null : global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}){{else
+                }}{{ParamName}} is { } {{ParamName}}Value ? global::DarkPatterns.OpenApiCodegen.Json.Extensions.Optional.Create<{{{DataType}}}>({{ParamName}}Value) : null{{/if}}{{/if}}{{else}}{{ParamName}}{{#if IsBase64}}{{#unless Required}}?{{/unless}}.Bytes{{/if}}{{/if}}{{#unless @last}}, {{/unless}}{{/each}}));{{!
+            }}{{#each Operation.Responses.StatusResponse as |Response StatusCode|}}{{#each Response.Content}}
+            global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.Produces({{RequestBody.Name}}Endpoint, {{StatusCode}}{{#if DataType}}, typeof({{{DataType}}}), "{{MediaType}}"{{/if}});{{/each}}{{/each}}
+            {{/each}}{{/each}}
+            return group;
+        }{{#if HasBase64Params}}
+
+        // Minimal API binds types with a TryParse method, and rejects values it can't parse with 400 Bad Request
+        private sealed class Base64Value
+        {
+            private Base64Value(byte[] bytes) => Bytes = bytes;
+
+            public byte[] Bytes { get; }
+
+            public static bool TryParse(string? value, out Base64Value? result)
+            {
+                try
+                {
+                    result = new Base64Value(global::System.Convert.FromBase64String(value ?? ""));
+                    return value != null;
+                }
+                catch (global::System.FormatException)
+                {
+                    result = null;
+                    return false;
+                }
+            }
+        }{{/if}}
+    }
+{{/if}}
+}

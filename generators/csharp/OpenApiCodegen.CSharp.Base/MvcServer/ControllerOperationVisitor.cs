@@ -23,6 +23,8 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 	private readonly IReadOnlyList<OpenApiSecurityRequirement> documentSecurityRequirements;
 	private readonly IReadOnlyDictionary<string, OpenApiSecurityScheme> securitySchemes;
 	private readonly Func<Uri, string> toSourceReference;
+	// The scope whose reserved identifiers operation names avoid, such as ControllerBase for MVC controllers
+	private readonly string? operationNameScope;
 
 	public record Argument(
 		OpenApiTransformDiagnostic Diagnostic,
@@ -53,8 +55,9 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 		public string OperationId { get; }
 	}
 
-	public ControllerOperationVisitor(ISchemaRegistry schemaRegistry, CSharpServerSchemaOptions options, string controllerClassName, IReadOnlyList<OpenApiSecurityRequirement> documentSecurityRequirements, IReadOnlyDictionary<string, OpenApiSecurityScheme> securitySchemes, Func<Uri, string> toSourceReference)
+	public ControllerOperationVisitor(ISchemaRegistry schemaRegistry, CSharpServerSchemaOptions options, string controllerClassName, IReadOnlyList<OpenApiSecurityRequirement> documentSecurityRequirements, IReadOnlyDictionary<string, OpenApiSecurityScheme> securitySchemes, Func<Uri, string> toSourceReference, string? operationNameScope)
 	{
+		this.operationNameScope = operationNameScope;
 		this.securitySchemes = securitySchemes;
 		this.schemaRegistry = schemaRegistry;
 		this.options = options;
@@ -118,7 +121,7 @@ class ControllerOperationVisitor : OpenApiDocumentVisitor<ControllerOperationVis
 				HttpMethod: CSharpNaming.ToTitleCaseIdentifier(httpMethod, []),
 				Summary: operation.Summary,
 				Description: operation.Description,
-				Name: CSharpNaming.ToTitleCaseIdentifier(operationId, options.ReservedIdentifiers("ControllerBase", controllerClassName)),
+				Name: CSharpNaming.ToTitleCaseIdentifier(operationId, options.ReservedIdentifiers(operationNameScope, controllerClassName)),
 				Path: path,
 				RequestBodies: builder.RequestBodies.DefaultIfEmpty(OperationRequestBodyFactory(operationId, null, Enumerable.Empty<OperationParameter>())).Select(transform => transform(sharedParameters)).ToArray(),
 				Responses: new Templates.OperationResponses(
